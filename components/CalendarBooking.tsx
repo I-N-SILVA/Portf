@@ -179,7 +179,7 @@ export default function CalendarBooking() {
     <div className="glass-dark rounded-3xl p-8 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-8 text-center">
-        <h2 className="text-4xl font-black text-white mb-2">Let's Grab Coffee ☕</h2>
+        <h2 className="text-4xl font-black text-white mb-2">Let&apos;s Grab Coffee ☕</h2>
         <p className="text-gray-400 text-sm">{availabilityNote}</p>
         <p className="text-xs text-gray-500 mt-2">Timezone: {getUserTimezone()}</p>
       </div>
@@ -193,11 +193,10 @@ export default function CalendarBooking() {
               <motion.button
                 key={date.toISOString()}
                 onClick={() => handleDateSelect(date)}
-                className={`w-full p-4 rounded-xl text-left transition-all ${
-                  selectedDate?.toDateString() === date.toDateString()
+                className={`w-full p-4 rounded-xl text-left transition-all ${selectedDate?.toDateString() === date.toDateString()
                     ? "bg-gradient-to-r from-neonPink to-electricPurple text-white"
                     : "bg-white/5 text-gray-300 hover:bg-white/10"
-                }`}
+                  }`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
@@ -245,13 +244,12 @@ export default function CalendarBooking() {
                     key={slot.id}
                     onClick={() => handleSlotSelect(slot)}
                     disabled={!slot.available}
-                    className={`p-3 rounded-lg font-semibold transition-all ${
-                      selectedSlot?.id === slot.id
+                    className={`p-3 rounded-lg font-semibold transition-all ${selectedSlot?.id === slot.id
                         ? "bg-skyBlue text-white"
                         : slot.available
-                        ? "bg-white/10 text-gray-300 hover:bg-white/20"
-                        : "bg-white/5 text-gray-600 cursor-not-allowed"
-                    }`}
+                          ? "bg-white/10 text-gray-300 hover:bg-white/20"
+                          : "bg-white/5 text-gray-600 cursor-not-allowed"
+                      }`}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.03 }}

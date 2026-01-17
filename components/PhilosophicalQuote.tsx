@@ -50,7 +50,7 @@ const PhilosophicalQuote = memo(function PhilosophicalQuote() {
           transition={{ duration: 0.8 }}
         >
           <p className="text-xs text-gray-500 italic font-light">
-            "{currentQuote.text}"
+            &quot;{currentQuote.text}&quot;
           </p>
           <p className="text-[10px] text-gray-600 mt-1">
             — {currentQuote.author}

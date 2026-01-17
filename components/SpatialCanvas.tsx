@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, PanInfo } from "framer-motion";
+import { motion, useMotionValue, useSpring, PanInfo, useAnimation } from "framer-motion";
 import { ReactNode, useEffect, useState, useCallback, useRef, memo } from "react";
 
 interface SpatialCanvasProps {
@@ -109,10 +109,69 @@ export const SpatialCard = memo(function SpatialCard({
 }: SpatialCardProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const controls = useAnimation();
+
+  // Hint variant for the "nudge" animation
+  const hintVariant = {
+    nudge: {
+      x: [0, 30, 0],     // Move right slightly
+      y: [0, -20, 0],    // Lift up slightly
+      scale: [1, 1.05, 1], // Subtle scale up "lift"
+      rotate: [0, 5, 0],   // Slight tilt
+      transition: {
+        duration: 1.2,
+        ease: "easeInOut",
+        times: [0, 0.5, 1]
+      }
+    },
+    enter: {
+      left: `${x}%`,
+      top: `${y}%`,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        delay: shuffleDelay * 0.1,
+        duration: 0.4,
+        ease: "easeOut",
+      }
+    },
+    initial: {
+      left: `${x}%`,
+      top: `${y}%`,
+      opacity: 0,
+      scale: 0.8
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    // Check if user has seen the drag hint
+    const hasSeenHint = sessionStorage.getItem('hasSeenDragHint');
+
+    // Start entry animation
+    controls.start("enter").then(() => {
+      // After entry, if this is the first card (id === "1" or similar logic) or just random one, 
+      // or simply wait a bit and hint. Let's hint one specific card or all with staggered delay.
+      // For simplicity and effectiveness, let's hint the first card after a delay.
+
+      if (isMounted && !hasSeenHint && shuffleDelay === 1) { // Only hint the first card/early card
+        setTimeout(() => {
+          if (isMounted) controls.start("nudge");
+        }, 2000);
+      }
+      if (isMounted) setHasAnimated(true);
+    });
+
+    return () => { isMounted = false; };
+  }, [controls, shuffleDelay]);
 
   const handleDragStart = useCallback(() => {
     setIsDragging(true);
     onDragStart?.(id);
+    // Mark hint as seen when user drags any card
+    if (!sessionStorage.getItem('hasSeenDragHint')) {
+      sessionStorage.setItem('hasSeenDragHint', 'true');
+    }
   }, [id, onDragStart]);
 
   const handleDragEnd = useCallback((_event: any, info: PanInfo) => {
@@ -146,23 +205,9 @@ export const SpatialCard = memo(function SpatialCard({
           scale: 1.05,
           cursor: "grabbing",
         }}
-        initial={{
-          left: `${x}%`,
-          top: `${y}%`,
-          opacity: 0,
-          scale: 0.8,
-        }}
-        animate={{
-          left: `${x}%`,
-          top: `${y}%`,
-          opacity: 1,
-          scale: 1,
-        }}
-        transition={{
-          delay: shuffleDelay * 0.1,
-          duration: 0.4,
-          ease: "easeOut",
-        }}
+        initial="initial"
+        animate={controls}
+        variants={hintVariant}
       >
         <div style={{ transform: `scale(${parallaxStrength})`, pointerEvents: isDragging ? "none" : "auto" }}>
           {children}
@@ -172,11 +217,11 @@ export const SpatialCard = memo(function SpatialCard({
       {/* Mobile: Simplified animation */}
       <motion.div
         className="lg:hidden w-full"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-10%" }}
         transition={{
-          delay: shuffleDelay * 0.05,
-          duration: 0.3,
+          duration: 0.5,
           ease: "easeOut",
         }}
       >

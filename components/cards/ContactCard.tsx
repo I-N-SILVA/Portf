@@ -38,7 +38,7 @@ export default function ContactCard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                Let's Get Connected
+                Let&apos;s Get Connected
               </motion.p>
 
               <motion.h2

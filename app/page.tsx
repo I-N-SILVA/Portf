@@ -1,20 +1,19 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
-import GradientBlobs from "@/components/GradientBlobs";
 import SpatialCanvas, { SpatialCard } from "@/components/SpatialCanvas";
-import CustomCursor from "@/components/CustomCursor";
-import BackgroundVideo from "@/components/BackgroundVideo";
 import ProjectCard from "@/components/cards/ProjectCard";
 import ExpandedCard from "@/components/cards/ExpandedCard";
-import PhilosophicalQuote from "@/components/PhilosophicalQuote";
 import LeftPanel from "@/components/left-panel/LeftPanel";
-import { projects, Project } from "@/lib/placeholder-content";
+import { projects } from "@/lib/placeholder-content";
 import { initializeSounds, playSound } from "@/lib/sounds";
 import { debouncedSavePosition } from "@/lib/storage";
 import { getZIndexManager } from "@/lib/zIndexManager";
+import PhilosophicalQuote from "@/components/PhilosophicalQuote";
+import MusicPlayer from "@/components/MusicPlayer";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Home() {
   const [cardZIndexes, setCardZIndexes] = useState<Record<string, number>>({});
@@ -93,19 +92,21 @@ export default function Home() {
   }, [showConfetti]);
 
   return (
-    <main className="relative min-h-screen flex flex-col lg:flex-row lg:cursor-none">
-      <CustomCursor />
-      {showConfetti && <Confetti recycle={false} onConfettiComplete={() => setShowConfetti(false)} />}
-      <BackgroundVideo src="/videos/background.mp4" opacity={0.6} blur={0} />
-      <GradientBlobs />
+    <main className="relative min-h-screen flex flex-col lg:flex-row bg-background text-foreground overflow-hidden">
+      {/* Background with subtle gradient instead of blobs/video for clean look */}
+      <div className="absolute inset-0 bg-background pointer-events-none" />
 
-      {/* Left Panel (30%) */}
-      <div className="w-full lg:w-3/10 lg:fixed lg:h-full lg:top-0 lg:left-0 overflow-y-auto">
+      {showConfetti && <Confetti recycle={false} onConfettiComplete={() => setShowConfetti(false)} />}
+
+      {/* Left Panel (40%) - Updated width */}
+      <div className="w-full lg:w-[40%] lg:h-screen lg:fixed lg:top-0 lg:left-0 overflow-y-auto z-40 bg-sidebar border-r border-border shadow-2xl">
         <LeftPanel />
       </div>
 
-      {/* Right Panel (70%) */}
-      <div className="w-full lg:w-7/10 lg:ml-[30%]">
+      {/* Right Panel (60%) - Updated width */}
+      <div className="w-full lg:w-[60%] lg:ml-[40%] relative min-h-screen">
+        <MusicPlayer className="absolute top-6 right-6" />
+        <ThemeToggle className="absolute top-6 left-6 z-50" />
         <SpatialCanvas>
           <div id="projects">
             {projects.map((project, index) => (
@@ -126,6 +127,7 @@ export default function Home() {
           </div>
         </SpatialCanvas>
       </div>
+
       <PhilosophicalQuote />
 
       <AnimatePresence>

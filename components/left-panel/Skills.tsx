@@ -15,12 +15,12 @@ const skills = [
 export default function Skills() {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white mb-4">Skills</h2>
+      <h2 className="text-2xl font-bold text-foreground mb-4">Skills</h2>
       <ul className="space-y-2">
         {skills.map((skill, index) => (
           <motion.li
             key={skill}
-            className="text-gray-300"
+            className="text-muted-foreground font-medium"
             variants={textRevealVariants}
             initial="hidden"
             animate="visible"

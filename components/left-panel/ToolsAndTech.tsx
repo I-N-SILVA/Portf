@@ -16,7 +16,7 @@ const techStack = {
 export default function ToolsAndTech() {
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white mb-4">Tools & Tech Stack</h2>
+      <h2 className="text-2xl font-bold text-foreground mb-4">Tools & Tech Stack</h2>
       {Object.entries(techStack).map(([category, tools], index) => (
         <motion.div
           key={category}
@@ -26,12 +26,12 @@ export default function ToolsAndTech() {
           animate="visible"
           transition={{ delay: index * 0.1 }}
         >
-          <h3 className="text-lg font-semibold text-neonPink mb-2">{category}</h3>
+          <h3 className="text-lg font-semibold text-primary mb-2">{category}</h3>
           <div className="flex flex-wrap gap-2">
             {tools.map((tool) => (
               <span
                 key={tool}
-                className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-sm"
+                className="bg-muted text-muted-foreground border border-border/50 px-3 py-1 rounded-full text-sm font-medium"
               >
                 {tool}
               </span>

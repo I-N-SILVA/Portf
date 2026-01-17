@@ -13,7 +13,7 @@ export default function SkillsCard() {
   const [showBadges, setShowBadges] = useState(false);
   const [animationStage, setAnimationStage] = useState<"initial" | "burst" | "coalesce" | "complete">("initial");
   const containerRef = useRef<HTMLDivElement>(null);
-  const badgeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const badgeRefs = useRef<(HTMLElement | null)[]>([]);
 
   const colorMap: Record<string, string> = {
     neonPink: "bg-neonPink shadow-glow-pink",
@@ -60,7 +60,7 @@ export default function SkillsCard() {
   useEffect(() => {
     if (showBadges && particles.length > 0 && badgeRefs.current.length > 0) {
       const badgePositions = badgeRefs.current
-        .filter((ref): ref is HTMLDivElement => ref !== null)
+        .filter((ref): ref is HTMLElement => ref !== null)
         .map((ref) => {
           const rect = ref.getBoundingClientRect();
           const containerRect = containerRef.current?.getBoundingClientRect();
@@ -74,7 +74,7 @@ export default function SkillsCard() {
 
       setParticles((prev) => updateParticleTargets(prev, badgePositions));
     }
-  }, [showBadges]);
+  }, [showBadges, particles.length]);
 
   return (
     <motion.div
@@ -239,9 +239,8 @@ export default function SkillsCard() {
                           ref={(el) => {
                             badgeRefs.current[flatIndex] = el;
                           }}
-                          className={`text-sm font-bold px-4 py-2 rounded-full text-white ${
-                            colorMap[skillCategory.color] || "bg-gray-700"
-                          }`}
+                          className={`text-sm font-bold px-4 py-2 rounded-full text-white ${colorMap[skillCategory.color] || "bg-gray-700"
+                            }`}
                           initial={{ opacity: 0, scale: 0 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{

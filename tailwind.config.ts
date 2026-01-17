@@ -6,61 +6,58 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
-      width: {
-        '3/10': '30%',
-        '7/10': '70%',
-      },
-      margin: {
-        '30%': '30%',
-      },
       colors: {
-        // Backgrounds
-        deepBlack: '#0a0a0a',
-        charcoalGray: '#1a1a1a',
-        softGray: '#e5e5e5',
-
-        // Considered neon accents
-        neonPink: '#ff006e',
-        electricPurple: '#8338ec',
-        brightYellow: '#ffbe0b',
-        skyBlue: '#3a86ff',
-        limeGreen: '#06ffa5',
-
-        // Text
-        lightGray: '#a0a0a0',
-        darkGray: '#2a2a2a',
-      },
-      animation: {
-        'float': 'float 6s ease-in-out infinite',
-        'float-slow': 'float 8s ease-in-out infinite',
-        'float-slower': 'float 10s ease-in-out infinite',
-        'spin-slow': 'spin 8s linear infinite',
-        'shimmer': 'shimmer 2s linear infinite',
-        'blob': 'blob 10s ease-in-out infinite',
-      },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-20px)' },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        primary: {
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
         },
-        shimmer: {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(100%)' },
+        secondary: {
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
         },
-        blob: {
-          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-          '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
-          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        muted: {
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
+        },
+        accent: {
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
+        },
+        popover: {
+          DEFAULT: "var(--popover)",
+          foreground: "var(--popover-foreground)",
+        },
+        card: {
+          DEFAULT: "var(--card)",
+          foreground: "var(--card-foreground)",
+        },
+        sidebar: {
+          DEFAULT: 'var(--sidebar)',
+          foreground: 'var(--sidebar-foreground)',
+          primary: 'var(--sidebar-primary)',
+          'primary-foreground': 'var(--sidebar-primary-foreground)',
+          accent: 'var(--sidebar-accent)',
+          'accent-foreground': 'var(--sidebar-accent-foreground)',
+          border: 'var(--sidebar-border)',
+          ring: 'var(--sidebar-ring)',
         },
       },
-      boxShadow: {
-        'glow-pink': '0 0 20px rgba(255, 0, 110, 0.3), 0 0 40px rgba(255, 0, 110, 0.1)',
-        'glow-purple': '0 0 20px rgba(131, 56, 236, 0.3), 0 0 40px rgba(131, 56, 236, 0.1)',
-        'glow-blue': '0 0 20px rgba(58, 134, 255, 0.3), 0 0 40px rgba(58, 134, 255, 0.1)',
-        'glow-yellow': '0 0 20px rgba(255, 190, 11, 0.3), 0 0 40px rgba(255, 190, 11, 0.1)',
-        'dramatic': '0 20px 60px rgba(0, 0, 0, 0.3), 0 0 100px rgba(255, 0, 110, 0.1)',
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
     },
   },

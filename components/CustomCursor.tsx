@@ -2,6 +2,7 @@
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useCallback, useRef, memo } from "react";
+import { useTheme } from "next-themes";
 
 type CursorState = "default" | "hover" | "dragging" | "clickable";
 
@@ -14,8 +15,8 @@ const CustomCursor = memo(function CustomCursor() {
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
 
-  // Reduced spring stiffness for better performance
-  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
+  // Tighter spring physics for snappier response
+  const springConfig = { damping: 35, stiffness: 800, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
@@ -78,13 +79,19 @@ const CustomCursor = memo(function CustomCursor() {
 
   const size = cursorState === "hover" ? 60 : cursorState === "dragging" ? 80 : cursorState === "clickable" ? 40 : 32;
   const dotSize = cursorState === "hover" ? 8 : cursorState === "dragging" ? 10 : cursorState === "clickable" ? 6 : 4;
-  const color = cursorState === "hover" ? "#ff006e" : cursorState === "dragging" ? "#8338ec" : cursorState === "clickable" ? "#3a86ff" : "#ffffff";
+  const { theme } = useTheme();
+
+  // High visibility colors
+  const primaryColor = theme === "dark" ? "#ffffff" : "#000000";
+  const hoverColor = theme === "dark" ? "#ff006e" : "#d90429";
+
+  const color = cursorState === "hover" ? hoverColor : cursorState === "dragging" ? "#8338ec" : cursorState === "clickable" ? "#3a86ff" : primaryColor;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999] hidden lg:block">
-      {/* Outer ring - simplified */}
+      {/* Outer ring */}
       <motion.div
-        className="absolute rounded-full border-2 mix-blend-difference"
+        className="absolute rounded-full border-2"
         style={{
           left: cursorXSpring,
           top: cursorYSpring,
@@ -99,7 +106,7 @@ const CustomCursor = memo(function CustomCursor() {
 
       {/* Center dot */}
       <motion.div
-        className="absolute rounded-full mix-blend-difference"
+        className="absolute rounded-full"
         style={{
           left: cursorXSpring,
           top: cursorYSpring,

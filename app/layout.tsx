@@ -18,17 +18,23 @@ export const metadata: Metadata = {
   description: "A modern, interactive portfolio featuring spatial design and bold typography",
 };
 
+import CustomCursor from "@/components/CustomCursor";
+import { Providers } from "./providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-deepBlack text-white overflow-x-hidden`}
+        className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
       >
-        {children}
+        <Providers>
+          <CustomCursor />
+          {children}
+        </Providers>
       </body>
     </html>
   );

@@ -27,23 +27,25 @@ const LeftPanel = memo(function LeftPanel() {
 
   return (
     <div className="h-full flex flex-col p-8">
-      <h1 className="text-6xl font-black leading-none tracking-tighter text-white font-[family-name:var(--font-outfit)]">
-        Ian N.
+      <h1 className="text-6xl font-black leading-none tracking-tighter text-foreground font-[family-name:var(--font-outfit)]">
+        Ian N. <span className="text-primary">Silva</span>
       </h1>
 
-      <nav className="my-8">
+      <nav className="my-4">
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item}>
-              <button
+              <motion.button
                 onClick={() => handleNavClick(item)}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeSection === item
-                    ? "bg-neonPink text-white"
-                    : "text-gray-400 hover:bg-gray-800"
+                className={`w-full text-left px-4 py-3 rounded-xl transition-colors duration-200 font-medium ${activeSection === item
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
+                whileHover={{ scale: 1.02, x: 5 }}
+                whileTap={{ scale: 0.98 }}
               >
                 {item}
-              </button>
+              </motion.button>
             </li>
           ))}
         </ul>

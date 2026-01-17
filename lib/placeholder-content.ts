@@ -36,8 +36,8 @@ export const profileData = {
   bio: "Building intelligent systems and economic frameworks at the intersection of AI, Web3, and behavioral psychology. Specializing in rapid prototyping, automation workflows, and strategic product development. Transforming complex ideas into viable digital products.",
   location: "Building Remotely",
   avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop",
-  credentials: "BA Economics | MSc Psychology (Merit, 65%) | Arden University",
-  currentStatus: "Currently: Building PLYAZ | Exploring AI Agents & MCP | £10K MRR Goal",
+  credentials: "BA Economics | MSc Psychology | Arden University",
+  currentStatus: "Currently: Exploring AI Agents & MCP | £10K MRR Goal",
 };
 
 // Projects data
