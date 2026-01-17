@@ -3,48 +3,45 @@
 import { motion } from "framer-motion";
 import { Project } from "@/lib/placeholder-content";
 import Image from "next/image";
+import { memo, useCallback } from "react";
 
 interface ExpandedCardProps {
   project: Project;
   onClose: () => void;
 }
 
-export default function ExpandedCard({ project, onClose }: ExpandedCardProps) {
+const ExpandedCard = memo(function ExpandedCard({ project, onClose }: ExpandedCardProps) {
+  const handleBackdropClick = useCallback(() => onClose(), [onClose]);
+  const handleCardClick = useCallback((e: React.MouseEvent) => e.stopPropagation(), []);
+
   return (
     <motion.div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      onClick={onClose}
+      onClick={handleBackdropClick}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
       <motion.div
-        className="absolute inset-0 bg-black/80 backdrop-blur-lg"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      />
-      <motion.div
-        className="relative z-10 max-w-4xl w-full bg-charcoalGray rounded-2xl overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-        layoutId={`card-container-${project.id}`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          type: "spring",
-          damping: 25,
-          stiffness: 300,
-        }}
+        className="relative z-10 max-w-4xl w-full bg-charcoalGray rounded-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+        onClick={handleCardClick}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.2 }}
       >
-        <motion.div className="relative w-full h-64" layoutId={`card-image-${project.id}`}>
+        <div className="relative w-full h-64">
           <Image
-            src={project.image}
+            src={project.bannerImage || project.image}
             alt={project.title}
             fill
             className="object-cover"
+            sizes="(max-width: 896px) 100vw, 896px"
+            priority
           />
-        </motion.div>
+        </div>
         <div className="p-8">
           <h2 className="text-4xl font-bold text-white mb-4">{project.title}</h2>
           <p className="text-gray-300 mb-6">{project.fullDescription}</p>
@@ -52,7 +49,7 @@ export default function ExpandedCard({ project, onClose }: ExpandedCardProps) {
             {project.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-xs font-medium text-white/80 bg-white/10 backdrop-blur-sm px-2 py-1 rounded border border-white/20"
+                className="text-xs font-medium text-white/80 bg-white/10 px-2 py-1 rounded border border-white/20"
               >
                 {tag}
               </span>
@@ -77,7 +74,7 @@ export default function ExpandedCard({ project, onClose }: ExpandedCardProps) {
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white bg-neonPink px-6 py-2 rounded-full font-semibold"
+                className="text-white bg-neonPink px-6 py-2 rounded-full font-semibold hover:opacity-90 transition-opacity"
               >
                 View Project
               </a>
@@ -87,7 +84,7 @@ export default function ExpandedCard({ project, onClose }: ExpandedCardProps) {
                 href={project.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white bg-gray-700 px-6 py-2 rounded-full font-semibold"
+                className="text-white bg-gray-700 px-6 py-2 rounded-full font-semibold hover:opacity-90 transition-opacity"
               >
                 GitHub
               </a>
@@ -96,7 +93,7 @@ export default function ExpandedCard({ project, onClose }: ExpandedCardProps) {
         </div>
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center"
+          className="absolute top-4 right-4 w-8 h-8 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors"
         >
           <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -105,4 +102,6 @@ export default function ExpandedCard({ project, onClose }: ExpandedCardProps) {
       </motion.div>
     </motion.div>
   );
-}
+});
+
+export default ExpandedCard;

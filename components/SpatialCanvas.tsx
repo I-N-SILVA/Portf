@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, PanInfo } from "framer-motion";
-import { ReactNode, useEffect, useState, useCallback } from "react";
+import { ReactNode, useEffect, useState, useCallback, useRef, memo } from "react";
 
 interface SpatialCanvasProps {
   children: ReactNode;
@@ -9,37 +9,49 @@ interface SpatialCanvasProps {
   onCardDragEnd?: (cardId: string, position: { x: number; y: number }) => void;
 }
 
-export default function SpatialCanvas({ children, onCardDragStart, onCardDragEnd }: SpatialCanvasProps) {
+const SpatialCanvas = memo(function SpatialCanvas({ children }: SpatialCanvasProps) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [isDragging, setIsDragging] = useState(false);
+  const rafRef = useRef<number | null>(null);
+  const lastMousePos = useRef({ x: 0, y: 0 });
 
-  const springConfig = { damping: 25, stiffness: 150 };
+  // Reduced spring stiffness for smoother, less CPU-intensive animation
+  const springConfig = { damping: 30, stiffness: 100, mass: 0.8 };
   const smoothMouseX = useSpring(mouseX, springConfig);
   const smoothMouseY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (isDragging) return; // Disable parallax when dragging
-
-      const { clientX, clientY } = e;
+    const updateParallax = () => {
       const { innerWidth, innerHeight } = window;
+      const x = (lastMousePos.current.x / innerWidth - 0.5) * 2;
+      const y = (lastMousePos.current.y / innerHeight - 0.5) * 2;
 
-      // Normalize mouse position to -1 to 1 range
-      const x = (clientX / innerWidth - 0.5) * 2;
-      const y = (clientY / innerHeight - 0.5) * 2;
-
-      mouseX.set(x * 30); // Multiply for desired parallax strength
-      mouseY.set(y * 30);
+      mouseX.set(x * 20); // Reduced parallax strength
+      mouseY.set(y * 20);
+      rafRef.current = null;
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY, isDragging]);
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging) return;
 
-  const handleDragStateChange = useCallback((dragging: boolean) => {
-    setIsDragging(dragging);
-  }, []);
+      lastMousePos.current = { x: e.clientX, y: e.clientY };
+
+      // Throttle with RAF
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(updateParallax);
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [mouseX, mouseY, isDragging]);
 
   return (
     <div className="relative min-h-screen w-full">
@@ -50,6 +62,7 @@ export default function SpatialCanvas({ children, onCardDragStart, onCardDragEnd
           style={{
             x: isDragging ? 0 : smoothMouseX,
             y: isDragging ? 0 : smoothMouseY,
+            willChange: "transform",
           }}
         >
           {children}
@@ -62,24 +75,26 @@ export default function SpatialCanvas({ children, onCardDragStart, onCardDragEnd
       </div>
     </div>
   );
-}
+});
+
+export default SpatialCanvas;
 
 // Utility component for positioning cards in spatial layout
 interface SpatialCardProps {
   children: ReactNode;
-  x: number; // Percentage (0-100)
-  y: number; // Percentage (0-100)
-  parallaxStrength?: number; // 0.2 to 1 (lower = slower movement)
+  x: number;
+  y: number;
+  parallaxStrength?: number;
   className?: string;
-  id: string; // Unique ID for the card
-  draggable?: boolean; // Enable drag
+  id: string;
+  draggable?: boolean;
   onDragStart?: (id: string) => void;
   onDragEnd?: (id: string, x: number, y: number) => void;
   zIndex?: number;
-  shuffleDelay?: number; // Delay for shuffle animation (in order)
+  shuffleDelay?: number;
 }
 
-export function SpatialCard({
+export const SpatialCard = memo(function SpatialCard({
   children,
   x,
   y,
@@ -93,27 +108,33 @@ export function SpatialCard({
   shuffleDelay = 0,
 }: SpatialCardProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
-  const handleDragStart = () => {
+  const handleDragStart = useCallback(() => {
     setIsDragging(true);
     onDragStart?.(id);
-  };
+  }, [id, onDragStart]);
 
-  const handleDragEnd = (_event: any, info: PanInfo) => {
+  const handleDragEnd = useCallback((_event: any, info: PanInfo) => {
     setIsDragging(false);
-    const newX = info.point.x;
-    const newY = info.point.y;
-    onDragEnd?.(id, newX, newY);
-  };
+    onDragEnd?.(id, info.point.x, info.point.y);
+  }, [id, onDragEnd]);
+
+  // Mark as animated after initial animation completes
+  useEffect(() => {
+    const timer = setTimeout(() => setHasAnimated(true), (shuffleDelay * 0.1 + 0.6) * 1000);
+    return () => clearTimeout(timer);
+  }, [shuffleDelay]);
 
   return (
     <>
-      {/* Desktop: Absolute positioned with drag + shuffle animation */}
+      {/* Desktop: Absolute positioned with drag */}
       <motion.div
         className={`hidden lg:block absolute ${className}`}
         style={{
           zIndex: isDragging ? 9999 : zIndex,
           cursor: draggable ? "grab" : "default",
+          willChange: hasAnimated ? "auto" : "transform, opacity",
         }}
         drag={draggable}
         dragMomentum={false}
@@ -124,28 +145,23 @@ export function SpatialCard({
         whileDrag={{
           scale: 1.05,
           cursor: "grabbing",
-          boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4), 0 0 100px rgba(255, 0, 110, 0.2)",
         }}
         initial={{
-          left: "50%",
-          top: "50%",
-          x: "-50%",
-          y: "-50%",
+          left: `${x}%`,
+          top: `${y}%`,
           opacity: 0,
-          scale: 0,
-          rotate: -10,
+          scale: 0.8,
         }}
         animate={{
           left: `${x}%`,
           top: `${y}%`,
           opacity: 1,
           scale: 1,
-          rotate: 0,
         }}
         transition={{
           delay: shuffleDelay * 0.1,
-          duration: 0.6,
-          ease: [0.34, 1.56, 0.64, 1], // Bounce
+          duration: 0.4,
+          ease: "easeOut",
         }}
       >
         <div style={{ transform: `scale(${parallaxStrength})`, pointerEvents: isDragging ? "none" : "auto" }}>
@@ -153,27 +169,19 @@ export function SpatialCard({
         </div>
       </motion.div>
 
-      {/* Mobile: Static block with drag + shuffle */}
+      {/* Mobile: Simplified animation */}
       <motion.div
         className="lg:hidden w-full"
-        drag={draggable}
-        dragMomentum={false}
-        dragElastic={0.2}
-        dragConstraints={{ top: -50, bottom: 50, left: -50, right: 50 }}
-        whileDrag={{
-          scale: 1.02,
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-        }}
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
-          delay: shuffleDelay * 0.08,
-          duration: 0.5,
-          ease: [0.22, 1, 0.36, 1],
+          delay: shuffleDelay * 0.05,
+          duration: 0.3,
+          ease: "easeOut",
         }}
       >
         {children}
       </motion.div>
     </>
   );
-}
+});

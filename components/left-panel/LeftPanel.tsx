@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AboutMe from "./AboutMe";
 import ToolsAndTech from "./ToolsAndTech";
@@ -16,33 +16,31 @@ const contentComponents: { [key: string]: React.ComponentType } = {
   "Contact": Contact,
 };
 
-export default function LeftPanel() {
+const LeftPanel = memo(function LeftPanel() {
   const [activeSection, setActiveSection] = useState("About Me");
+
+  const handleNavClick = useCallback((item: string) => {
+    setActiveSection(item);
+  }, []);
 
   const ActiveComponent = contentComponents[activeSection];
 
   return (
     <div className="h-full flex flex-col p-8">
-      <motion.h1
-        className="text-6xl font-black leading-none tracking-tighter text-white font-[family-name:var(--font-outfit)]"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
+      <h1 className="text-6xl font-black leading-none tracking-tighter text-white font-[family-name:var(--font-outfit)]">
         Ian N.
-      </motion.h1>
+      </h1>
 
       <nav className="my-8">
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item}>
               <button
-                onClick={() => setActiveSection(item)}
-                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${
-                  activeSection === item
+                onClick={() => handleNavClick(item)}
+                className={`w-full text-left px-4 py-2 rounded-lg transition-colors ${activeSection === item
                     ? "bg-neonPink text-white"
                     : "text-gray-400 hover:bg-gray-800"
-                }`}
+                  }`}
               >
                 {item}
               </button>
@@ -55,10 +53,10 @@ export default function LeftPanel() {
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSection}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
           >
             <ActiveComponent />
           </motion.div>
@@ -66,4 +64,6 @@ export default function LeftPanel() {
       </div>
     </div>
   );
-}
+});
+
+export default LeftPanel;

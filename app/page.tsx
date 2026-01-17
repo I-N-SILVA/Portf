@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Confetti from "react-confetti";
 import GradientBlobs from "@/components/GradientBlobs";
@@ -22,13 +22,26 @@ export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
 
-  // Generate random positions for project cards once
-  const randomPositions = useMemo(() => {
-    return projects.map(() => ({
-      x: Math.random() * 60 + 10, // 10% to 70%
-      y: Math.random() * 60 + 10, // 10% to 70%
-    }));
-  }, [projects]);
+  // Generate random positions and rotations for project cards only on client
+  const [randomPositions, setRandomPositions] = useState<Array<{ x: number; y: number; rotation: number }>>(() =>
+    // Initial static positions for SSR - these will be replaced on client
+    projects.map((_, index) => ({
+      x: 20 + (index * 10) % 50,
+      y: 20 + (index * 8) % 50,
+      rotation: 0,
+    }))
+  );
+
+  // Generate truly random positions only on client to avoid hydration mismatch
+  useEffect(() => {
+    setRandomPositions(
+      projects.map(() => ({
+        x: Math.random() * 60 + 10, // 10% to 70%
+        y: Math.random() * 60 + 10, // 10% to 70%
+        rotation: Math.random() * 20 - 10, // -10 to +10 degrees
+      }))
+    );
+  }, []);
 
   // Initialize sounds on first user interaction
   useEffect(() => {
@@ -60,13 +73,13 @@ export default function Home() {
     debouncedSavePosition(cardId, { x, y });
   }, []);
 
-  const handleCardClick = (projectId: string) => {
+  const handleCardClick = useCallback((projectId: string) => {
     setExpandedCardId(projectId);
-  };
+  }, []);
 
-  const handleCloseExpandedCard = () => {
+  const handleCloseExpandedCard = useCallback(() => {
     setExpandedCardId(null);
-  };
+  }, []);
 
   const expandedProject = projects.find(p => p.id === expandedCardId);
 
@@ -83,7 +96,7 @@ export default function Home() {
     <main className="relative min-h-screen flex flex-col lg:flex-row lg:cursor-none">
       <CustomCursor />
       {showConfetti && <Confetti recycle={false} onConfettiComplete={() => setShowConfetti(false)} />}
-      <BackgroundVideo src="/videos/background.mp4" opacity={0.15} blur={0} />
+      <BackgroundVideo src="/videos/background.mp4" opacity={0.6} blur={0} />
       <GradientBlobs />
 
       {/* Left Panel (30%) */}
@@ -107,7 +120,7 @@ export default function Home() {
                 zIndex={cardZIndexes[project.id] || 10}
                 shuffleDelay={index + 1}
               >
-                <ProjectCard project={project} onExpand={() => handleCardClick(project.id)} rotation={Math.random() * 20 - 10} />
+                <ProjectCard project={project} onExpand={() => handleCardClick(project.id)} rotation={randomPositions[index].rotation} />
               </SpatialCard>
             ))}
           </div>

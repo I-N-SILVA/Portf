@@ -1,18 +1,21 @@
 "use client";
 
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef, memo } from "react";
 
 type CursorState = "default" | "hover" | "dragging" | "clickable";
 
-export default function CustomCursor() {
+const CustomCursor = memo(function CustomCursor() {
   const [cursorState, setCursorState] = useState<CursorState>("default");
   const [isVisible, setIsVisible] = useState(false);
+  const rafRef = useRef<number | null>(null);
+  const lastMousePos = useRef({ x: 0, y: 0 });
 
   const cursorX = useMotionValue(0);
   const cursorY = useMotionValue(0);
 
-  const springConfig = { damping: 30, stiffness: 400 };
+  // Reduced spring stiffness for better performance
+  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
@@ -25,9 +28,20 @@ export default function CustomCursor() {
 
     setIsVisible(true);
 
+    // Use RAF for smooth cursor updates
+    const updateCursor = () => {
+      cursorX.set(lastMousePos.current.x);
+      cursorY.set(lastMousePos.current.y);
+      rafRef.current = null;
+    };
+
     const handleMouseMove = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+      lastMousePos.current = { x: e.clientX, y: e.clientY };
+
+      // Throttle updates using RAF
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(updateCursor);
+      }
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -48,49 +62,27 @@ export default function CustomCursor() {
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    document.addEventListener("mouseover", handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseover", handleMouseOver);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
   }, [cursorX, cursorY]);
 
   if (!isVisible) return null;
 
-  const getCursorSize = () => {
-    switch (cursorState) {
-      case "hover":
-        return { size: 60, dotSize: 8 };
-      case "dragging":
-        return { size: 80, dotSize: 10 };
-      case "clickable":
-        return { size: 40, dotSize: 6 };
-      default:
-        return { size: 32, dotSize: 4 };
-    }
-  };
-
-  const getCursorColor = () => {
-    switch (cursorState) {
-      case "hover":
-        return "#ff006e"; // neonPink
-      case "dragging":
-        return "#8338ec"; // electricPurple
-      case "clickable":
-        return "#3a86ff"; // skyBlue
-      default:
-        return "#ffffff";
-    }
-  };
-
-  const { size, dotSize } = getCursorSize();
-  const color = getCursorColor();
+  const size = cursorState === "hover" ? 60 : cursorState === "dragging" ? 80 : cursorState === "clickable" ? 40 : 32;
+  const dotSize = cursorState === "hover" ? 8 : cursorState === "dragging" ? 10 : cursorState === "clickable" ? 6 : 4;
+  const color = cursorState === "hover" ? "#ff006e" : cursorState === "dragging" ? "#8338ec" : cursorState === "clickable" ? "#3a86ff" : "#ffffff";
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[9999]">
-      {/* Outer ring */}
+    <div className="pointer-events-none fixed inset-0 z-[9999] hidden lg:block">
+      {/* Outer ring - simplified */}
       <motion.div
         className="absolute rounded-full border-2 mix-blend-difference"
         style={{
@@ -101,28 +93,9 @@ export default function CustomCursor() {
           width: size,
           height: size,
           borderColor: color,
+          willChange: "transform",
         }}
-        animate={{
-          scale: cursorState === "clickable" ? [1, 1.2, 1] : 1,
-        }}
-        transition={{
-          scale: {
-            duration: 0.6,
-            repeat: cursorState === "clickable" ? Infinity : 0,
-            ease: "easeInOut",
-          },
-          width: { duration: 0.2 },
-          height: { duration: 0.2 },
-        }}
-      >
-        {/* Glow effect */}
-        <div
-          className="absolute inset-0 rounded-full opacity-30 blur-md"
-          style={{
-            background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
-          }}
-        />
-      </motion.div>
+      />
 
       {/* Center dot */}
       <motion.div
@@ -135,30 +108,11 @@ export default function CustomCursor() {
           width: dotSize,
           height: dotSize,
           backgroundColor: color,
+          willChange: "transform",
         }}
-        animate={{
-          scale: cursorState === "hover" ? 1.5 : 1,
-        }}
-        transition={{ duration: 0.2 }}
       />
-
-      {/* Text hint for hover state */}
-      {cursorState === "hover" && (
-        <motion.div
-          className="absolute text-xs font-bold text-white whitespace-nowrap pointer-events-none"
-          style={{
-            left: cursorXSpring,
-            top: cursorYSpring,
-            x: "-50%",
-            y: "-150%",
-          }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-        >
-          DRAG
-        </motion.div>
-      )}
     </div>
   );
-}
+});
+
+export default CustomCursor;

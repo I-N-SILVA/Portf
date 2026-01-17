@@ -38,6 +38,7 @@ const config: Config = {
         'float-slower': 'float 10s ease-in-out infinite',
         'spin-slow': 'spin 8s linear infinite',
         'shimmer': 'shimmer 2s linear infinite',
+        'blob': 'blob 10s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -47,6 +48,11 @@ const config: Config = {
         shimmer: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' },
+        },
+        blob: {
+          '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+          '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
         },
       },
       boxShadow: {

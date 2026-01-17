@@ -3,6 +3,7 @@ export interface Project {
   title: string;
   description: string;
   image: string;
+  bannerImage?: string; // Optional: different image for expanded view
   tags: string[];
   link?: string;
   github?: string;
@@ -45,11 +46,12 @@ export const projects: Project[] = [
     id: "7",
     title: "Event Management Calendar System",
     description: "A full-stack event management calendar application with a cyberpunk-inspired dark UI and comprehensive scheduling capabilities.",
-    image: "https://images.unsplash.com/photo-1506784096365-f2c9ada18cfc?w=800&h=600&fit=crop",
+    image: "/calendar-preview.png",
+    bannerImage: "/calendar-banner.png",
     tags: ["Next.js", "React", "TypeScript", "Custom CSS", "Vercel"],
-    link: "#",
+    link: "https://calendar-app-three-omega.vercel.app/",
     github: "#",
-    badge: "NEW",
+    badge: "LIVE",
     fullDescription: "This project showcases advanced frontend development with interactive calendar views and real-time event management. The application provides multiple calendar viewing modes including day, week, and month views with click-to-create event functionality. Users can schedule, organize, and execute events through an intuitive interface featuring keyboard shortcuts (CMD+K for search, SHIFT+CLICK for cycle modes) and quick-add event slots across all time periods. The system includes navigation controls for moving between time periods, a statistics dashboard, and search capabilities with a distinctive terminal-style aesthetic.",
     features: [
       "Multiple calendar viewing modes (day, week, month)",
@@ -87,22 +89,25 @@ export const projects: Project[] = [
   },
   {
     id: "3",
-    title: "BehaviorMetrics",
-    description: "Data visualization platform analyzing behavioral economics patterns and decision-making frameworks with real-time insights",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
-    tags: ["Python", "D3.js", "FastAPI", "PostgreSQL", "Supabase"],
-    link: "#",
-    badge: "2024",
-    fullDescription: "Real-time insights for market analysis and consumer psychology research. Combines behavioral economics theory with modern data analytics to reveal patterns in human decision-making and market behavior.",
+    title: "Promptuous",
+    description: "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
+    image: "/promptuous-preview.png",
+    tags: ["Next.js", "React", "TypeScript", "Vercel", "OCR"],
+    link: "https://prompt-vaulty.vercel.app/",
+    badge: "LIVE",
+    fullDescription: "Promptuous is a full-featured prompt library and management system designed for AI practitioners, developers, and content creators who need to organize, refine, and deploy AI prompts efficiently. The platform provides a centralized workspace for storing, categorizing, and iterating on prompts across different use cases, from creative applications to general-purpose workflows. Built with Next.js and deployed on Vercel, demonstrating modern web development practices with server-side rendering, optimized performance, and seamless deployment workflows.",
     features: [
-      "Predictive behavioral modeling",
-      "Pattern recognition algorithms",
-      "Interactive data visualizations",
-      "Consumer psychology analysis",
-      "Market trend forecasting",
+      "Smart Organization with category-based system and tagging",
+      "OCR Import to extract prompts from images",
+      "Built-in refinement tools for prompt optimization",
+      "Quick search with keyboard shortcuts (⌘K)",
+      "Snippets Library for reusable prompt components",
+      "Interactive Playground for prompt testing",
+      "Dark Mode Support with theme customization",
+      "Automatic metadata and version tracking",
     ],
-    role: "Data Engineer & Economist",
-    duration: "5 months",
+    role: "Full-Stack Developer",
+    duration: "3 months",
     teamSize: "Solo developer",
   },
   {
@@ -213,21 +218,6 @@ export const socialLinks: SocialLink[] = [
     name: "GitHub",
     url: "https://github.com/I-N-SILVA",
     icon: "github",
-  },
-  {
-    name: "LinkedIn",
-    url: "#",
-    icon: "linkedin",
-  },
-  {
-    name: "X / Twitter",
-    url: "#",
-    icon: "twitter",
-  },
-  {
-    name: "Substack",
-    url: "#",
-    icon: "substack",
   },
 ];
 

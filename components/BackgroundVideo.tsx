@@ -1,41 +1,62 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 
 interface BackgroundVideoProps {
-  src: string; // Path to video file, e.g., "/videos/background.mp4"
-  opacity?: number; // 0-1, default 0.15 (15%)
-  blur?: number; // 0-10, default 0 (no blur)
+  src: string;
+  opacity?: number;
+  blur?: number;
 }
 
-export default function BackgroundVideo({
+const BackgroundVideo = memo(function BackgroundVideo({
   src,
   opacity = 0.15,
   blur = 0,
 }: BackgroundVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Play video when mounted
-    video.play().catch((err) => {
-      console.warn("Video autoplay failed:", err);
-    });
+    // Reduce playback rate for performance
+    video.playbackRate = 0.8;
+
+    if (video.readyState >= 3) {
+      setIsLoaded(true);
+      video.play().catch((err) => console.warn("Auto-play failed:", err));
+    }
+
+    const handleCanPlay = () => {
+      console.log("Video can play!");
+      setIsLoaded(true);
+      video.play().catch((err) => {
+        console.warn("Video autoplay failed:", err);
+      });
+    };
+
+    const handleError = (e: any) => {
+      console.error("Video error:", video.error, e);
+    };
+
+    video.addEventListener("canplay", handleCanPlay);
+    video.addEventListener("error", handleError);
 
     // Pause when tab is hidden (save battery/performance)
     const handleVisibilityChange = () => {
       if (document.hidden) {
         video.pause();
       } else {
-        video.play().catch(() => {});
+        video.play().catch(() => { });
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      video.removeEventListener("canplay", handleCanPlay);
+      video.removeEventListener("error", handleError);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
@@ -47,19 +68,16 @@ export default function BackgroundVideo({
         className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover"
         style={{
           transform: "translate(-50%, -50%)",
-          opacity: opacity,
+          opacity: isLoaded ? opacity : 0,
           filter: blur > 0 ? `blur(${blur}px)` : "none",
-          willChange: "auto", // Optimize performance
+          transition: "opacity 0.5s ease-in-out",
         }}
-        autoPlay
-        loop
         muted
+        loop
         playsInline
-        preload="auto"
+        preload="metadata"
       >
         <source src={src} type="video/mp4" />
-        {/* Fallback for browsers that don't support video */}
-        <div className="w-full h-full bg-deepBlack" />
       </video>
 
       {/* Gradient overlay to blend video with design */}
@@ -69,4 +87,6 @@ export default function BackgroundVideo({
       />
     </div>
   );
-}
+});
+
+export default BackgroundVideo;
