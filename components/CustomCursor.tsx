@@ -7,8 +7,15 @@ import { useTheme } from "next-themes";
 type CursorState = "default" | "hover" | "dragging" | "clickable";
 
 const CustomCursor = memo(function CustomCursor() {
+  const { theme } = useTheme();
   const [cursorState, setCursorState] = useState<CursorState>("default");
   const [isVisible, setIsVisible] = useState(false);
+
+  // ... rest of state ...
+
+  // High visibility colors logic moved to render or kept here but safe
+  const primaryColor = theme === "dark" ? "#ffffff" : "#000000";
+  const hoverColor = theme === "dark" ? "#ff006e" : "#d90429";
   const rafRef = useRef<number | null>(null);
   const lastMousePos = useRef({ x: 0, y: 0 });
 
@@ -79,11 +86,6 @@ const CustomCursor = memo(function CustomCursor() {
 
   const size = cursorState === "hover" ? 60 : cursorState === "dragging" ? 80 : cursorState === "clickable" ? 40 : 32;
   const dotSize = cursorState === "hover" ? 8 : cursorState === "dragging" ? 10 : cursorState === "clickable" ? 6 : 4;
-  const { theme } = useTheme();
-
-  // High visibility colors
-  const primaryColor = theme === "dark" ? "#ffffff" : "#000000";
-  const hoverColor = theme === "dark" ? "#ff006e" : "#d90429";
 
   const color = cursorState === "hover" ? hoverColor : cursorState === "dragging" ? "#8338ec" : cursorState === "clickable" ? "#3a86ff" : primaryColor;
 

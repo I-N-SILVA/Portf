@@ -22,7 +22,7 @@ export default function ContactSection() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 }}
                 >
-                    Let's build something at the intersection of AI, economics, and human behavior.
+                    Let&apos;s build something at the intersection of AI, economics, and human behavior.
                 </motion.p>
 
                 <motion.div

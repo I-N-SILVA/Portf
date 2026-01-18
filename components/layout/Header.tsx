@@ -51,7 +51,7 @@ export default function Header() {
                     href="#contact"
                     className="px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
                 >
-                    Let's Talk
+                    Let&apos;s Talk
                 </a>
             </div>
         </motion.header>
