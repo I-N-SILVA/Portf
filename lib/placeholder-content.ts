@@ -43,6 +43,26 @@ export const profileData = {
 // Projects data
 export const projects: Project[] = [
   {
+    id: "8",
+    title: "StockSnap Mobile Vehicle Stocktaking",
+    description: "A responsive web application built for mobile vehicle inventory management and stocktaking operations.",
+    image: "/stocksnap.png",
+    tags: ["Bolt.new", "React", "TypeScript", "Vite", "Tailwind CSS", "Supabase"],
+    link: "https://stocksnap-mobile-veh-eie0.bolt.host/",
+    badge: "FEATURED",
+    fullDescription: "A responsive web application built for mobile vehicle inventory management and stocktaking operations. The platform enables businesses to efficiently track and manage vehicle stock through an intuitive authentication-protected interface. Use of Bolt.new rapid development platform allowed for 35+ iterations during development.",
+    features: [
+      "Secure user authentication with Supabase",
+      "Password reset with Resend API",
+      "Dashboard for stock management",
+      "Mobile-responsive design",
+      "Real-time database integration"
+    ],
+    role: "Full-Stack Developer",
+    duration: "Rapid Dev",
+    teamSize: "Solo",
+  },
+  {
     id: "7",
     title: "Event Management Calendar System",
     description: "A full-stack event management calendar application with a cyberpunk-inspired dark UI and comprehensive scheduling capabilities.",
