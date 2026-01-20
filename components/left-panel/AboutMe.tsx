@@ -2,13 +2,21 @@
 
 import { motion } from "framer-motion";
 import { textRevealVariants } from "@/lib/animations";
+import TypewriterEffect from "@/components/TypewriterEffect";
 
 const profileData = {
   title: "AI Automation Engineer & Behavioral Economist",
   bio: "I build intelligent systems and leverage insights from behavioral science to create compelling user experiences. My passion lies at the intersection of human psychology and cutting-edge technology.",
   education: "BA Economics | MSc Psychology | Arden University",
-  currentStatus: "Currently: Exploring AI Agents & MCP | £10K MRR Goal",
 };
+
+const terminalLines = [
+  "$ whoami",
+  "AI Automation Engineer",
+  "$ current_focus",
+  "Exploring AI Agents & MCP",
+  "£10K MRR Goal 🎯",
+];
 
 export default function AboutMe() {
   return (
@@ -44,17 +52,25 @@ export default function AboutMe() {
       </motion.p>
 
       <motion.div
-        className="mt-4 inline-block"
+        className="mt-6 max-w-md"
         variants={textRevealVariants}
         initial="hidden"
         animate="visible"
         transition={{ delay: 0.7 }}
       >
-        <div className="bg-muted border border-border rounded-lg px-4 py-2">
-          <p className="text-xs text-primary font-bold">
-            {profileData.currentStatus}
-          </p>
-        </div>
+        <TypewriterEffect
+          lines={terminalLines}
+          speed="fast"
+          accentColor="#CCFF00"
+          backgroundColor="#0a0a0a"
+          terminalStyle={true}
+          showLineNumbers={false}
+          showPrompt={true}
+          promptChar="❯"
+          loop={true}
+          pauseTime={2000}
+          cursorStyle="line"
+        />
       </motion.div>
     </div>
   );
