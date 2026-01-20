@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useTheme } from "next-themes";
 import { socialLinks } from "@/lib/placeholder-content";
 
 type Message = {
@@ -24,10 +25,13 @@ const COMMANDS: Record<string, string> = {
 };
 
 export default function Contact() {
+  const { theme } = useTheme();
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [inputValue, setInputValue] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isDarkMode = theme === "dark";
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
@@ -76,20 +80,26 @@ export default function Contact() {
 
       {/* Terminal Window */}
       <div
-        className="flex-grow bg-black/60 border border-white/10 rounded-2xl p-4 font-mono text-sm overflow-hidden flex flex-col shadow-2xl backdrop-blur-md"
+        className={`
+                    flex-grow border rounded-2xl p-4 font-mono text-sm overflow-hidden flex flex-col shadow-2xl backdrop-blur-md transition-colors duration-300
+                    ${isDarkMode
+            ? "bg-black/60 border-white/10"
+            : "bg-slate-100/80 border-black/10 shadow-inner"
+          }
+                `}
         onClick={() => inputRef.current?.focus()}
       >
         {/* Output Area */}
         <div
           ref={scrollRef}
-          className="flex-grow overflow-y-auto mb-4 space-y-2 scrollbar-thin scrollbar-thumb-white/10"
+          className="flex-grow overflow-y-auto mb-4 space-y-2 scrollbar-thin scrollbar-thumb-primary/20"
         >
           {messages.map((msg, i) => (
             <div key={i} className={`
-              ${msg.type === "system" ? "text-primary/50 text-[10px]" : ""}
-              ${msg.type === "user" ? "text-white/40" : ""}
-              ${msg.type === "response" ? "text-primary shadow-glow-sm" : ""}
-            `}>
+                            ${msg.type === "system" ? (isDarkMode ? "text-primary/50 text-[10px]" : "text-blue-600/60 text-[10px]") : ""}
+                            ${msg.type === "user" ? (isDarkMode ? "text-white/40" : "text-black/40") : ""}
+                            ${msg.type === "response" ? (isDarkMode ? "text-primary shadow-glow-sm" : "text-primary font-bold") : ""}
+                        `}>
               {msg.type === "user" && <span className="mr-2 opacity-30">❯</span>}
               {msg.type === "system" && <span className="mr-2">[*]</span>}
               {msg.text}
@@ -98,14 +108,14 @@ export default function Contact() {
         </div>
 
         {/* Input Area */}
-        <form onSubmit={handleSubmit} className="flex items-center gap-2 border-t border-white/5 pt-3">
+        <form onSubmit={handleSubmit} className={`flex items-center gap-2 border-t pt-3 ${isDarkMode ? "border-white/5" : "border-black/5"}`}>
           <span className="text-primary animate-pulse font-bold">❯</span>
           <input
             ref={inputRef}
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="bg-transparent border-none outline-none flex-grow text-white placeholder:text-white/10"
+            className={`bg-transparent border-none outline-none flex-grow ${isDarkMode ? "text-white placeholder:text-white/10" : "text-black placeholder:text-black/10"}`}
             placeholder="Type 'help'..."
             autoFocus
           />
@@ -113,7 +123,7 @@ export default function Contact() {
       </div>
 
       {/* Social Links Mini Footer */}
-      <div className="mt-6 flex flex-wrap gap-3">
+      <div className="mt-6 flex flex-wrap items-center gap-4">
         {socialLinks.map((social) => (
           <a
             key={social.name}
@@ -125,8 +135,17 @@ export default function Contact() {
             {social.name}
           </a>
         ))}
+        {/* Direct Contact Button next to Github/Social */}
+        <button
+          onClick={() => window.location.href = "mailto:iannogueira@proton.me"}
+          className="text-[11px] text-primary hover:underline uppercase tracking-widest font-black flex items-center gap-1 ml-auto"
+        >
+          <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+          Quick Contact
+        </button>
       </div>
     </div>
   );
 }
+
 

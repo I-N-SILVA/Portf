@@ -23,9 +23,9 @@ const NeuralBackground = memo(function NeuralBackground() {
 
         let animationFrameId: number;
         let nodes: Node[] = [];
-        const nodeCount = 80;
-        const connectionDistance = 150;
-        const mouseConnectionDistance = 250;
+        const nodeCount = 40; // Fewer nodes for better focus
+        const connectionDistance = 200; // Larger connection distance
+        const mouseConnectionDistance = 350; // Larger mouse influence
 
         const resize = () => {
             canvas.width = window.innerWidth;
@@ -39,8 +39,8 @@ const NeuralBackground = memo(function NeuralBackground() {
                 nodes.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
+                    vx: (Math.random() - 0.5) * 1.8, // Faster movement
+                    vy: (Math.random() - 0.5) * 1.8, // Faster movement
                     radius: Math.random() * 2 + 1,
                 });
             }
@@ -49,22 +49,30 @@ const NeuralBackground = memo(function NeuralBackground() {
         const draw = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Mouse influence
+            const targetMouseX = mouseRef.current.x;
+            const targetMouseY = mouseRef.current.y;
+
             // Draw connections
             ctx.lineWidth = 0.5;
             for (let i = 0; i < nodes.length; i++) {
                 const nodeA = nodes[i];
 
                 // Connect to mouse
-                const dxMouse = nodeA.x - mouseRef.current.x;
-                const dyMouse = nodeA.y - mouseRef.current.y;
+                const dxMouse = nodeA.x - targetMouseX;
+                const dyMouse = nodeA.y - targetMouseY;
                 const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
 
                 if (distMouse < mouseConnectionDistance) {
                     ctx.beginPath();
-                    ctx.strokeStyle = `rgba(204, 255, 0, ${1 - distMouse / mouseConnectionDistance})`;
+                    ctx.strokeStyle = `rgba(204, 255, 0, ${(1 - distMouse / mouseConnectionDistance) * 0.4})`;
                     ctx.moveTo(nodeA.x, nodeA.y);
-                    ctx.lineTo(mouseRef.current.x, mouseRef.current.y);
+                    ctx.lineTo(targetMouseX, targetMouseY);
                     ctx.stroke();
+
+                    // Gentle attraction to mouse
+                    nodeA.vx -= dxMouse * 0.0001;
+                    nodeA.vy -= dyMouse * 0.0001;
                 }
 
                 // Connect to other nodes
@@ -90,16 +98,16 @@ const NeuralBackground = memo(function NeuralBackground() {
                 ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
 
                 // Nodes near mouse glow
-                const dx = node.x - mouseRef.current.x;
-                const dy = node.y - mouseRef.current.y;
+                const dx = node.x - targetMouseX;
+                const dy = node.y - targetMouseY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
 
                 if (dist < 150) {
                     ctx.fillStyle = `rgba(204, 255, 0, ${0.4 + (1 - dist / 150) * 0.6})`;
-                    ctx.shadowBlur = 10;
+                    ctx.shadowBlur = 15;
                     ctx.shadowColor = "#CCFF00";
                 } else {
-                    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
                     ctx.shadowBlur = 0;
                 }
 
@@ -109,9 +117,17 @@ const NeuralBackground = memo(function NeuralBackground() {
                 node.x += node.vx;
                 node.y += node.vy;
 
-                // Bounce off walls
-                if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
-                if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+                // Friction to prevent over-acceleration
+                node.vx *= 0.995;
+                node.vy *= 0.995;
+
+                // Bounce off walls with wrap-around for a smoother feel
+                const margin = 20;
+                if (node.x < -margin) node.x = canvas.width + margin;
+                else if (node.x > canvas.width + margin) node.x = -margin;
+
+                if (node.y < -margin) node.y = canvas.height + margin;
+                else if (node.y > canvas.height + margin) node.y = -margin;
             }
 
             animationFrameId = requestAnimationFrame(draw);
@@ -138,7 +154,7 @@ const NeuralBackground = memo(function NeuralBackground() {
         <canvas
             ref={canvasRef}
             className="fixed inset-0 pointer-events-none z-0"
-            style={{ opacity: 0.2 }}
+            style={{ opacity: 0.1 }}
         />
     );
 });

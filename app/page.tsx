@@ -15,6 +15,7 @@ import PhilosophicalQuote from "@/components/PhilosophicalQuote";
 import MusicPlayer from "@/components/MusicPlayer";
 import ThemeToggle from "@/components/ThemeToggle";
 import NeuralBackground from "@/components/NeuralBackground";
+import BlueprintGrid from "@/components/BlueprintGrid";
 
 export default function Home() {
   const [cardZIndexes, setCardZIndexes] = useState<Record<string, number>>({});
@@ -107,6 +108,7 @@ export default function Home() {
 
       {/* Right Panel (60%) - Updated width */}
       <div className="w-full lg:w-[60%] lg:ml-[40%] relative min-h-screen">
+        <BlueprintGrid />
         <MusicPlayer className="absolute top-6 right-6" />
         <ThemeToggle className="absolute top-6 left-6 z-50" />
         <SpatialCanvas>
