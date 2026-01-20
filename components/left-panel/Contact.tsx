@@ -1,86 +1,132 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { contactCTA, socialLinks } from "@/lib/placeholder-content";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { socialLinks } from "@/lib/placeholder-content";
+
+type Message = {
+  type: "system" | "user" | "response";
+  text: string;
+};
+
+const INITIAL_MESSAGES: Message[] = [
+  { type: "system", text: "Initializing Mission Control..." },
+  { type: "system", text: "Connected to Silva_OS v1.0.4" },
+  { type: "response", text: "Ian is currently online. How can I assist you today?" },
+];
+
+const COMMANDS: Record<string, string> = {
+  help: "Available commands: status, focus, contact, social, clear",
+  status: "System Monitor: Operational. AI Intelligence at 98%. Availability: High.",
+  focus: "Current Mission: Building AI Agents & Automations for the next generation of SaaS.",
+  social: "Follow the mission on GitHub and LinkedIn. Links are below.",
+  contact: "Redirecting to primary communication channel (Email)...",
+};
 
 export default function Contact() {
-  const handleContact = () => {
-    window.location.href = "mailto:iannogueira@proton.me";
+  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [inputValue, setInputValue] = useState("");
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  const handleCommand = (cmd: string) => {
+    const cleanCmd = cmd.toLowerCase().trim();
+
+    if (cleanCmd === "clear") {
+      setMessages([]);
+      return;
+    }
+
+    if (cleanCmd === "contact") {
+      setTimeout(() => {
+        window.location.href = "mailto:iannogueira@proton.me";
+      }, 1000);
+    }
+
+    const response = COMMANDS[cleanCmd] || `Command not found: ${cleanCmd}. Type 'help' for options.`;
+
+    setMessages(prev => [
+      ...prev,
+      { type: "user", text: cmd },
+      { type: "response", text: response }
+    ]);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputValue.trim()) return;
+
+    handleCommand(inputValue);
+    setInputValue("");
   };
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold text-foreground mb-4">Contact</h2>
-      <div className="space-y-4">
-        <motion.button
-          className="group relative bg-muted text-foreground border border-border px-8 py-5 rounded-full flex items-center gap-4 w-full hover:shadow-lg hover:border-primary/50 transition-all duration-300"
-          onClick={handleContact}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center flex-shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-          <div className="flex-1 text-left">
-            <div className="font-bold text-lg">Send a Quick Email</div>
-            <div className="text-sm text-muted-foreground">iannogueira@proton.me</div>
-          </div>
-          <svg
-            className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8l4 4m0 0l-4 4m4-4H3"
-            />
-          </svg>
-        </motion.button>
-      </div>
-      <motion.div
-        className="mt-8 pt-8 border-t border-border"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
+    <div className="flex flex-col h-full max-h-[500px]">
+      <h2 className="text-2xl font-bold text-foreground mb-4">Mission Control</h2>
+
+      {/* Terminal Window */}
+      <div
+        className="flex-grow bg-black/60 border border-white/10 rounded-2xl p-4 font-mono text-sm overflow-hidden flex flex-col shadow-2xl backdrop-blur-md"
+        onClick={() => inputRef.current?.focus()}
       >
-        <p className="text-sm text-muted-foreground mb-4">Or find me on</p>
-        <div className="flex gap-4 flex-wrap">
-          {socialLinks.map((social, index) => (
-            <motion.a
-              key={social.name}
-              href={social.url}
-              className="px-4 py-2 rounded-full bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all text-sm font-medium border border-transparent hover:border-primary/20"
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6 + index * 0.05 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {social.name}
-            </motion.a>
+        {/* Output Area */}
+        <div
+          ref={scrollRef}
+          className="flex-grow overflow-y-auto mb-4 space-y-2 scrollbar-thin scrollbar-thumb-white/10"
+        >
+          {messages.map((msg, i) => (
+            <div key={i} className={`
+              ${msg.type === "system" ? "text-primary/50 text-[10px]" : ""}
+              ${msg.type === "user" ? "text-white/40" : ""}
+              ${msg.type === "response" ? "text-primary shadow-glow-sm" : ""}
+            `}>
+              {msg.type === "user" && <span className="mr-2 opacity-30">❯</span>}
+              {msg.type === "system" && <span className="mr-2">[*]</span>}
+              {msg.text}
+            </div>
           ))}
         </div>
-      </motion.div>
+
+        {/* Input Area */}
+        <form onSubmit={handleSubmit} className="flex items-center gap-2 border-t border-white/5 pt-3">
+          <span className="text-primary animate-pulse font-bold">❯</span>
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            className="bg-transparent border-none outline-none flex-grow text-white placeholder:text-white/10"
+            placeholder="Type 'help'..."
+            autoFocus
+          />
+        </form>
+      </div>
+
+      {/* Social Links Mini Footer */}
+      <div className="mt-6 flex flex-wrap gap-3">
+        {socialLinks.map((social) => (
+          <a
+            key={social.name}
+            href={social.url}
+            className="text-[11px] text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest font-bold"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {social.name}
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
+

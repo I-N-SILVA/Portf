@@ -14,6 +14,7 @@ import { getZIndexManager } from "@/lib/zIndexManager";
 import PhilosophicalQuote from "@/components/PhilosophicalQuote";
 import MusicPlayer from "@/components/MusicPlayer";
 import ThemeToggle from "@/components/ThemeToggle";
+import NeuralBackground from "@/components/NeuralBackground";
 
 export default function Home() {
   const [cardZIndexes, setCardZIndexes] = useState<Record<string, number>>({});
@@ -95,6 +96,7 @@ export default function Home() {
     <main className="relative min-h-screen flex flex-col lg:flex-row bg-background text-foreground overflow-hidden">
       {/* Background with subtle gradient instead of blobs/video for clean look */}
       <div className="absolute inset-0 bg-background pointer-events-none" />
+      <NeuralBackground />
 
       {showConfetti && <Confetti recycle={false} onConfettiComplete={() => setShowConfetti(false)} />}
 
