@@ -189,7 +189,7 @@ export const SpatialCard = memo(function SpatialCard({
     <>
       {/* Desktop: Absolute positioned with drag */}
       <motion.div
-        className={`hidden lg:block absolute ${className}`}
+        className={`hidden lg:block absolute group ${className}`}
         style={{
           zIndex: isDragging ? 9999 : zIndex,
           cursor: draggable ? "grab" : "default",
@@ -209,7 +209,13 @@ export const SpatialCard = memo(function SpatialCard({
         animate={controls}
         variants={hintVariant}
       >
-        <div style={{ transform: `scale(${parallaxStrength})`, pointerEvents: isDragging ? "none" : "auto" }}>
+        {/* Gravity Well / Magnetic Mass Effect */}
+        <div className="absolute inset-[-40px] rounded-[2rem] pointer-events-none -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="absolute inset-0 bg-primary/5 blur-2xl rounded-full" />
+          <div className="absolute inset-4 backdrop-blur-[2px] backdrop-brightness-125 backdrop-contrast-125 rounded-[2rem] border border-primary/10 shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]" />
+        </div>
+
+        <div className="relative group" style={{ transform: `scale(${parallaxStrength})`, pointerEvents: isDragging ? "none" : "auto" }}>
           {children}
         </div>
       </motion.div>
