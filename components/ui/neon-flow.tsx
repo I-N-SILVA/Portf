@@ -118,7 +118,7 @@ export function TubesBackground({
             />
 
             {/* Content Overlay */}
-            <div className="relative z-10 w-full h-full pointer-events-none">
+            <div className="relative z-10 w-full h-full">
                 {children}
             </div>
         </div>

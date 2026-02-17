@@ -144,9 +144,12 @@ export default function PortfolioHero() {
                         <button
                             ref={buttonRef}
                             type="button"
-                            className="p-2 transition-colors duration-300 z-50 text-neutral-500 hover:text-primary"
+                            className="p-2 transition-colors duration-300 z-50 text-neutral-500 hover:text-primary pointer-events-auto"
                             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsMenuOpen(!isMenuOpen);
+                            }}
                         >
                             {isMenuOpen ? (
                                 <X className="w-8 h-8 transition-colors duration-300" strokeWidth={2} />
@@ -167,7 +170,7 @@ export default function PortfolioHero() {
                                     <a
                                         key={item.label}
                                         href={item.href}
-                                        className="block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300"
+                                        className="block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300 pointer-events-auto"
                                         style={{
                                             color: item.highlight ? "var(--primary)" : isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)",
                                         }}
@@ -177,7 +180,10 @@ export default function PortfolioHero() {
                                         onMouseLeave={(e) => {
                                             e.currentTarget.style.color = item.highlight ? "var(--primary)" : (isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)");
                                         }}
-                                        onClick={() => setIsMenuOpen(false)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsMenuOpen(false);
+                                        }}
                                     >
                                         {item.label}
                                     </a>
@@ -194,8 +200,11 @@ export default function PortfolioHero() {
                     {/* Theme Toggle */}
                     <button
                         type="button"
-                        onClick={toggleTheme}
-                        className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            toggleTheme();
+                        }}
+                        className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto"
                         style={{ backgroundColor: isDark ? "hsl(0 0% 15%)" : "hsl(0 0% 90%)" }}
                         aria-label="Toggle theme"
                     >
@@ -237,8 +246,8 @@ export default function PortfolioHero() {
                         </div>
 
                         {/* Profile Picture */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                            <div className="w-[65px] h-[110px] sm:w-[90px] sm:h-[152px] md:w-[110px] md:h-[185px] lg:w-[129px] lg:h-[218px] rounded-full overflow-hidden shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer">
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
+                            <div className="w-[65px] h-[110px] sm:w-[90px] sm:h-[152px] md:w-[110px] md:h-[185px] lg:w-[129px] lg:h-[218px] rounded-full overflow-hidden shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer" onClick={(e) => e.stopPropagation()}>
                                 <img
                                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop"
                                     alt="Profile"
@@ -266,8 +275,9 @@ export default function PortfolioHero() {
                 {/* Scroll Indicator */}
                 <button
                     type="button"
-                    className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300"
+                    className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300 pointer-events-auto"
                     aria-label="Scroll down"
+                    onClick={(e) => e.stopPropagation()}
                 >
                     <ChevronDown className="w-5 h-5 md:w-8 md:h-8 text-neutral-500 hover:text-primary transition-colors duration-300" />
                 </button>
