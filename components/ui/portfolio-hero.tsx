@@ -124,13 +124,12 @@ export default function PortfolioHero() {
     };
 
     const menuItems = [
-        { label: "HOME", href: "#", highlight: true },
-        { label: "ABOUT", href: "#" },
-        { label: "PROJECTS", href: "#" },
-        { label: "EXPERIENCE", href: "#" },
-        { label: "EDUCATION", href: "#" },
-        { label: "WRITING", href: "#" },
-        { label: "CONTACT", href: "#" },
+        { label: "HOME", href: "/", highlight: true },
+        { label: "ABOUT ME", href: "/spatial?section=About%20Me" },
+        { label: "TECH STACK", href: "/spatial?section=Tools%20%26%20Tech%20Stack" },
+        { label: "SKILLS", href: "/spatial?section=Skills" },
+        { label: "CONTACT", href: "/spatial?section=Contact" },
+        { label: "SPATIAL VIEW", href: "/spatial" },
     ];
 
     return (
@@ -149,7 +148,7 @@ export default function PortfolioHero() {
                         <button
                             ref={buttonRef}
                             type="button"
-                            className="p-2 transition-colors duration-300 z-50 text-neutral-500 hover:text-black dark:hover:text-white"
+                            className="p-2 transition-colors duration-300 z-50 text-neutral-500 hover:text-primary"
                             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                         >
@@ -174,13 +173,13 @@ export default function PortfolioHero() {
                                         href={item.href}
                                         className="block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300"
                                         style={{
-                                            color: item.highlight ? "#C3E41D" : isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)",
+                                            color: item.highlight ? "var(--primary)" : isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)",
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.color = "#C3E41D";
+                                            e.currentTarget.style.color = "var(--primary)";
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.color = item.highlight ? "#C3E41D" : (isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)");
+                                            e.currentTarget.style.color = item.highlight ? "var(--primary)" : (isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)");
                                         }}
                                         onClick={() => setIsMenuOpen(false)}
                                     >
@@ -192,8 +191,8 @@ export default function PortfolioHero() {
                     </div>
 
                     {/* Signature */}
-                    <div className="text-4xl" style={{ color: isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)", fontFamily: "'Brush Script MT', 'Lucida Handwriting', cursive" }}>
-                        A
+                    <div className="text-4xl font-bold font-[family-name:var(--font-outfit)]" style={{ color: isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)" }}>
+                        I
                     </div>
 
                     {/* Theme Toggle */}
@@ -222,22 +221,22 @@ export default function PortfolioHero() {
                     <div className="relative text-center">
                         <div>
                             <BlurText
-                                text="ALEX"
+                                text="IAN N."
                                 delay={100}
                                 animateBy="letters"
                                 direction="top"
-                                className="font-bold text-[100px] sm:text-[140px] md:text-[180px] lg:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
-                                style={{ color: "#C3E41D", fontFamily: "'Fira Code', monospace" }}
+                                className="font-black text-[70px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
+                                style={{ color: "var(--primary)", fontFamily: "var(--font-outfit)" }}
                             />
                         </div>
                         <div>
                             <BlurText
-                                text="KANE"
+                                text="SILVA"
                                 delay={100}
                                 animateBy="letters"
                                 direction="top"
-                                className="font-bold text-[100px] sm:text-[140px] md:text-[180px] lg:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
-                                style={{ color: "#C3E41D", fontFamily: "'Fira Code', monospace" }}
+                                className="font-black text-[70px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
+                                style={{ color: "var(--primary)", fontFamily: "var(--font-outfit)" }}
                             />
                         </div>
 
@@ -245,7 +244,7 @@ export default function PortfolioHero() {
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                             <div className="w-[65px] h-[110px] sm:w-[90px] sm:h-[152px] md:w-[110px] md:h-[185px] lg:w-[129px] lg:h-[218px] rounded-full overflow-hidden shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer">
                                 <img
-                                    src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1000&auto=format&fit=crop"
+                                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop"
                                     alt="Profile"
                                     className="w-full h-full object-cover"
                                 />
@@ -262,8 +261,8 @@ export default function PortfolioHero() {
                             delay={150}
                             animateBy="words"
                             direction="top"
-                            className="text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center transition-colors duration-300 text-neutral-500 hover:text-black dark:hover:text-white"
-                            style={{ fontFamily: "'Antic', sans-serif" }}
+                            className="text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center transition-colors duration-300 text-neutral-500 hover:text-primary"
+                            style={{ fontFamily: "var(--font-inter)" }}
                         />
                     </div>
                 </div>
@@ -274,7 +273,7 @@ export default function PortfolioHero() {
                     className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300"
                     aria-label="Scroll down"
                 >
-                    <ChevronDown className="w-5 h-5 md:w-8 md:h-8 text-neutral-500 hover:text-black dark:hover:text-white transition-colors duration-300" />
+                    <ChevronDown className="w-5 h-5 md:w-8 md:h-8 text-neutral-500 hover:text-primary transition-colors duration-300" />
                 </button>
             </main>
         </div>

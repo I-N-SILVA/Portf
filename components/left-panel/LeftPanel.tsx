@@ -19,6 +19,17 @@ const contentComponents: { [key: string]: React.ComponentType } = {
 const LeftPanel = memo(function LeftPanel() {
   const [activeSection, setActiveSection] = useState("About Me");
 
+  // Sync section with URL query param
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get("section");
+      if (section && contentComponents[section]) {
+        setActiveSection(section);
+      }
+    }
+  }, []);
+
   const handleNavClick = useCallback((item: string) => {
     setActiveSection(item);
   }, []);
