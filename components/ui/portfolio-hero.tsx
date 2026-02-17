@@ -134,11 +134,7 @@ export default function PortfolioHero() {
 
     return (
         <div
-            className="min-h-screen text-foreground transition-colors"
-            style={{
-                backgroundColor: isDark ? "hsl(0 0% 0%)" : "hsl(0 0% 98%)",
-                color: isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)",
-            }}
+            className="min-h-screen text-foreground transition-colors bg-transparent"
         >
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6">

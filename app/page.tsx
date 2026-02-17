@@ -1,5 +1,6 @@
 import React from "react";
 import PortfolioHero from "@/components/ui/portfolio-hero";
+import TubesBackground from "@/components/ui/neon-flow";
 
 export default function LandingPage() {
   return (
@@ -8,9 +9,9 @@ export default function LandingPage() {
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@700&family=Antic&display=swap"
       />
-      <div className="w-full">
+      <TubesBackground className="w-full min-h-screen">
         <PortfolioHero />
-      </div>
+      </TubesBackground>
     </>
   );
 }

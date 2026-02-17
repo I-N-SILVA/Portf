@@ -3,13 +3,17 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState, useCallback, useRef, memo } from "react";
 import { useTheme } from "next-themes";
+import { usePathname } from "next/navigation";
 
 type CursorState = "default" | "hover" | "dragging" | "clickable";
 
 const CustomCursor = memo(function CustomCursor() {
+  const pathname = usePathname();
   const { theme } = useTheme();
   const [cursorState, setCursorState] = useState<CursorState>("default");
   const [isVisible, setIsVisible] = useState(false);
+
+  const isLandingPage = pathname === "/";
 
   // ... rest of state ...
 
@@ -82,7 +86,7 @@ const CustomCursor = memo(function CustomCursor() {
     };
   }, [cursorX, cursorY]);
 
-  if (!isVisible) return null;
+  if (!isVisible || isLandingPage) return null;
 
   const size = cursorState === "hover" ? 60 : cursorState === "dragging" ? 80 : cursorState === "clickable" ? 40 : 32;
   const dotSize = cursorState === "hover" ? 8 : cursorState === "dragging" ? 10 : cursorState === "clickable" ? 6 : 4;
