@@ -116,7 +116,9 @@ const config: Config = {
         semibold: '600',
         bold: '700',
       },
-      fontFamily: {
-        sans: ['Inter', 'SF Pro Display', 'Roboto', 'Segoe UI', 'system-ui', 'sans-serif'],
-        display: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'], // For headings
-      }
+    }
+  },
+  plugins: [],
+};
+
+export default config;
