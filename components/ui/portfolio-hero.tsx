@@ -9,7 +9,7 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
         return (
             <button
                 ref={ref}
-                className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${className}`}
+                className={`inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-coral-orange/[0.9] dark:bg-honey-gold-brighter dark:text-deep-cocoa-dark dark:hover:bg-honey-gold-brighter/[0.9] ${className}`}
                 {...props}
             >
                 {children}
@@ -144,7 +144,7 @@ export default function PortfolioHero() {
                         <button
                             ref={buttonRef}
                             type="button"
-                            className="p-2 transition-colors duration-300 z-50 text-neutral-500 hover:text-primary pointer-events-auto"
+                            className="p-2 transition-colors duration-300 z-50 text-foreground hover:text-accent pointer-events-auto"
                             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -161,25 +161,15 @@ export default function PortfolioHero() {
                         {isMenuOpen && (
                             <div
                                 ref={menuRef}
-                                className="absolute top-full left-0 w-[200px] md:w-[240px] border-none shadow-2xl mt-2 ml-4 p-4 rounded-lg z-[100]"
-                                style={{
-                                    backgroundColor: isDark ? "hsl(0 0% 0%)" : "hsl(0 0% 98%)",
-                                }}
+                                className="absolute top-full left-0 w-[200px] md:w-[240px] border-none shadow-standard mt-2 ml-4 p-4 rounded-md z-[100] bg-card"
                             >
                                 {menuItems.map((item) => (
                                     <a
                                         key={item.label}
                                         href={item.href}
-                                        className="block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300 pointer-events-auto"
-                                        style={{
-                                            color: item.highlight ? "var(--primary)" : isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)",
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.color = "var(--primary)";
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.color = item.highlight ? "var(--primary)" : (isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)");
-                                        }}
+                                        className={`block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300 pointer-events-auto ${
+                                            item.highlight ? 'text-primary' : 'text-foreground'
+                                        } hover:text-accent`}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setIsMenuOpen(false);
@@ -193,7 +183,7 @@ export default function PortfolioHero() {
                     </div>
 
                     {/* Signature */}
-                    <div className="text-4xl font-bold font-[family-name:var(--font-outfit)]" style={{ color: isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)" }}>
+                    <div className="text-4xl font-bold font-[family-name:var(--font-outfit)] text-foreground">
                         I
                     </div>
 
@@ -204,14 +194,12 @@ export default function PortfolioHero() {
                             e.stopPropagation();
                             toggleTheme();
                         }}
-                        className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto"
-                        style={{ backgroundColor: isDark ? "hsl(0 0% 15%)" : "hsl(0 0% 90%)" }}
+                        className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-muted dark:bg-secondary"
                         aria-label="Toggle theme"
                     >
                         <div
-                            className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300"
+                            className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-foreground dark:bg-primary-foreground"
                             style={{
-                                backgroundColor: isDark ? "hsl(0 0% 100%)" : "hsl(0 0% 10%)",
                                 transform: isDark ? "translateX(2rem)" : "translateX(0)",
                             }}
                         />
@@ -266,7 +254,7 @@ export default function PortfolioHero() {
                             delay={150}
                             animateBy="words"
                             direction="top"
-                            className="text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center transition-colors duration-300 text-neutral-500 hover:text-primary"
+                            className="text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center transition-colors duration-300 text-foreground hover:text-accent"
                             style={{ fontFamily: "var(--font-inter)" }}
                         />
                     </div>
@@ -279,7 +267,7 @@ export default function PortfolioHero() {
                     aria-label="Scroll down"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <ChevronDown className="w-5 h-5 md:w-8 md:h-8 text-neutral-500 hover:text-primary transition-colors duration-300" />
+                    <ChevronDown className="w-5 h-5 md:w-8 md:h-8 text-foreground hover:text-accent transition-colors duration-300" />
                 </button>
             </main>
         </div>

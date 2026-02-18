@@ -14,10 +14,10 @@ interface ProjectCardProps {
 
 const getBadgeStyles = (badge: string) => {
   const styles = {
-    LIVE: "bg-emerald-500/20 text-emerald-500 border-emerald-500/50 shadow-[0_0_10px_-2px_rgba(16,185,129,0.5)]",
-    WEB3: "bg-purple-500/20 text-purple-500 border-purple-500/50 shadow-[0_0_10px_-2px_rgba(168,85,247,0.5)]",
-    NEW: "bg-yellow-500/20 text-yellow-500 border-yellow-500/50 shadow-[0_0_10px_-2px_rgba(234,179,8,0.5)]",
-    MOBILE: "bg-orange-500/20 text-orange-500 border-orange-500/50 shadow-[0_0_10px_-2px_rgba(249,115,22,0.5)]",
+    LIVE: "bg-teal-green/20 text-teal-green border-teal-green/50 shadow-subtle",
+    WEB3: "bg-primary/20 text-primary border-primary/50 shadow-subtle", // Using primary as a distinct highlight
+    NEW: "bg-honey-gold/20 text-honey-gold border-honey-gold/50 shadow-subtle",
+    MOBILE: "bg-coral-orange/20 text-coral-orange border-coral-orange/50 shadow-subtle",
   };
   return styles[badge as keyof typeof styles] || "bg-secondary text-secondary-foreground border-border";
 };
@@ -79,7 +79,7 @@ const ProjectCard = memo(function ProjectCard({ project, rotation = 0, onExpand 
       >
         {/* FRONT FACE */}
         <div
-          className="absolute inset-0 rounded-2xl overflow-hidden bg-card border border-border/50 shadow-xl shadow-black/5 group-hover:shadow-2xl group-hover:shadow-primary/10 transition-shadow duration-500"
+          className="absolute inset-0 rounded-lg overflow-hidden bg-card border border-border/50 shadow-standard group-hover:shadow-elevated group-hover:shadow-primary/10 transition-shadow duration-500"
           style={{
             backfaceVisibility: "hidden",
             WebkitBackfaceVisibility: "hidden",

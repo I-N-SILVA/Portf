@@ -10,58 +10,113 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: "rgb(var(--border) / <alpha-value>)",
+        input: "rgb(var(--input) / <alpha-value>)",
+        ring: "rgb(var(--ring) / <alpha-value>)",
+        background: "rgb(var(--background) / <alpha-value>)",
+        foreground: "rgb(var(--foreground) / <alpha-value>)",
+
+        // IAMNSILVA Primary Colors
+        "dark-cocoa": "rgb(var(--color-primary-dark-cocoa) / <alpha-value>)",
+        "honey-gold": "rgb(var(--color-primary-honey-gold) / <alpha-value>)",
+        "warm-cream": "rgb(var(--color-background-warm-cream) / <alpha-value>)",
+
+        // IAMNSILVA Extended Palette (Light Mode)
+        "deep-brown": "rgb(var(--color-text-primary) / <alpha-value>)",
+        "warm-taupe": "rgb(var(--color-text-secondary) / <alpha-value>)",
+        "pale-beige": "rgb(var(--color-surface-pale-beige) / <alpha-value>)",
+        "soft-sand": "rgb(var(--color-border-soft-sand) / <alpha-value>)",
+        "coral-orange": "rgb(var(--color-accent-coral-orange) / <alpha-value>)",
+        "teal-green": "rgb(var(--color-accent-teal-green) / <alpha-value>)",
+
+        // IAMNSILVA Dark Mode Palette
+        "deep-cocoa-dark": "rgb(var(--color-background-deep-cocoa) / <alpha-value>)",
+        "dark-brown-surface": "rgb(var(--color-surface-dark-brown) / <alpha-value>)",
+        "warm-off-white": "rgb(var(--color-text-primary-dark) / <alpha-value>)",
+        "soft-taupe": "rgb(var(--color-text-secondary-dark) / <alpha-value>)",
+        "honey-gold-brighter": "rgb(var(--color-accent-honey-gold-brighter) / <alpha-value>)",
+        "cyan-teal": "rgb(var(--color-accent-cyan-teal) / <alpha-value>)",
+        "border-dark": "rgb(var(--color-border-dark) / <alpha-value>)",
+
+
         primary: {
-          DEFAULT: "var(--primary)",
-          foreground: "var(--primary-foreground)",
+          DEFAULT: "rgb(var(--primary) / <alpha-value>)",
+          foreground: "rgb(var(--primary-foreground) / <alpha-value>)",
         },
         secondary: {
-          DEFAULT: "var(--secondary)",
-          foreground: "var(--secondary-foreground)",
+          DEFAULT: "rgb(var(--secondary) / <alpha-value>)",
+          foreground: "rgb(var(--secondary-foreground) / <alpha-value>)",
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
-          foreground: "var(--destructive-foreground)",
+          DEFAULT: "rgb(var(--destructive) / <alpha-value>)",
+          foreground: "rgb(var(--destructive-foreground) / <alpha-value>)",
         },
         muted: {
-          DEFAULT: "var(--muted)",
-          foreground: "var(--muted-foreground)",
+          DEFAULT: "rgb(var(--muted) / <alpha-value>)",
+          foreground: "rgb(var(--muted-foreground) / <alpha-value>)",
         },
         accent: {
-          DEFAULT: "var(--accent)",
-          foreground: "var(--accent-foreground)",
+          DEFAULT: "rgb(var(--accent) / <alpha-value>)",
+          foreground: "rgb(var(--accent-foreground) / <alpha-value>)",
         },
         popover: {
-          DEFAULT: "var(--popover)",
-          foreground: "var(--popover-foreground)",
+          DEFAULT: "rgb(var(--popover) / <alpha-value>)",
+          foreground: "rgb(var(--popover-foreground) / <alpha-value>)",
         },
         card: {
-          DEFAULT: "var(--card)",
-          foreground: "var(--card-foreground)",
+          DEFAULT: "rgb(var(--card) / <alpha-value>)",
+          foreground: "rgb(var(--card-foreground) / <alpha-value>)",
         },
         sidebar: {
-          DEFAULT: 'var(--sidebar)',
-          foreground: 'var(--sidebar-foreground)',
-          primary: 'var(--sidebar-primary)',
-          'primary-foreground': 'var(--sidebar-primary-foreground)',
-          accent: 'var(--sidebar-accent)',
-          'accent-foreground': 'var(--sidebar-accent-foreground)',
-          border: 'var(--sidebar-border)',
-          ring: 'var(--sidebar-ring)',
+          DEFAULT: "rgb(var(--sidebar) / <alpha-value>)",
+          foreground: "rgb(var(--sidebar-foreground) / <alpha-value>)",
+          primary: "rgb(var(--sidebar-primary) / <alpha-value>)",
+          "primary-foreground": "rgb(var(--sidebar-primary-foreground) / <alpha-value>)",
+          accent: "rgb(var(--sidebar-accent) / <alpha-value>)",
+          "accent-foreground": "rgb(var(--sidebar-accent-foreground) / <alpha-value>)",
+          border: "rgb(var(--sidebar-border) / <alpha-value>)",
+          ring: "rgb(var(--sidebar-ring) / <alpha-value>)",
         },
       },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+      spacing: {
+        xs: "var(--spacing-xs)",
+        sm: "var(--spacing-sm)",
+        md: "var(--spacing-md)",
+        lg: "var(--spacing-lg)",
+        xl: "var(--spacing-xl)",
+        "2xl": "var(--spacing-2xl)",
       },
-    },
-  },
-  plugins: [],
-};
-
-export default config;
+      borderRadius: {
+        lg: "var(--radius-rounded)", // 12px
+        md: "var(--radius-standard)", // 8px
+        sm: "var(--radius-subtle)", // 4px
+        DEFAULT: "var(--radius-standard)",
+        sharp: "var(--radius-sharp)",
+        rounded: "var(--radius-rounded)",
+        full: "var(--radius-full)",
+      },
+      boxShadow: {
+        subtle: "var(--shadow-subtle)",
+        standard: "var(--shadow-standard)",
+        elevated: "var(--shadow-elevated)",
+      },
+      // Typography
+      fontSize: {
+        'h1': ['var(--text-h1)', { lineHeight: 'var(--line-height-h1)' }], // 48-64px
+        'h2': ['var(--text-h2)', { lineHeight: 'var(--line-height-h2)' }], // 32-40px
+        'h3': ['var(--text-h3)', { lineHeight: 'var(--line-height-h3)' }], // 24-28px
+        'body-lg': ['var(--text-body-lg)', { lineHeight: 'var(--line-height-body-lg)' }], // 18-20px
+        'body': ['var(--text-body)', { lineHeight: 'var(--line-height-body)' }], // 16px
+        'sm': ['var(--text-sm)', { lineHeight: 'var(--line-height-sm)' }], // 14px
+        'tiny': ['var(--text-tiny)', { lineHeight: 'var(--line-height-tiny)' }], // 12px
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+      },
+      fontFamily: {
+        sans: ['Inter', 'SF Pro Display', 'Roboto', 'Segoe UI', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'SF Pro Display', 'system-ui', 'sans-serif'], // For headings
+      }
