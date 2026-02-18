@@ -179,7 +179,7 @@ export default function ProjectPage({ params }: PageProps) {
                         >
                             <h2 className="text-3xl font-black mb-4 font-[family-name:var(--font-outfit)]">Interested in this project?</h2>
                             <p className="text-primary-foreground/80 mb-8 max-w-lg mx-auto">
-                                Let's discuss how we can implement similar solutions for your business or project.
+                                Let&apos;s discuss how we can implement similar solutions for your business or project.
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
                                 {project.link && (

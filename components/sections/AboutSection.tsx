@@ -44,7 +44,7 @@ export default function AboutSection() {
                                 href="#contact"
                                 className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold hover:scale-105 transition-transform"
                             >
-                                Let's Collab
+                                Let&apos;s Collab
                             </a>
                         </div>
 
