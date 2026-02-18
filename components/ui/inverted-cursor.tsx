@@ -12,33 +12,32 @@ export const Cursor: React.FC<CursorProps> = ({ size = 60 }) => {
     const previousPos = useRef({ x: -size, y: -size }); // start off-screen
 
     const [visible, setVisible] = useState(false);
-    const [position, setPosition] = useState({ x: -size, y: -size });
-
-    // Animation loop for smooth cursor follow
-    const animate = () => {
-        if (!cursorRef.current) return;
-
-        const currentX = previousPos.current.x;
-        const currentY = previousPos.current.y;
-        const targetX = position.x - size / 2;
-        const targetY = position.y - size / 2;
-
-        const deltaX = (targetX - currentX) * 0.2;
-        const deltaY = (targetY - currentY) * 0.2;
-
-        const newX = currentX + deltaX;
-        const newY = currentY + deltaY;
-
-        previousPos.current = { x: newX, y: newY };
-        cursorRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-
-        requestRef.current = requestAnimationFrame(animate);
-    };
+    const mousePos = useRef({ x: -size, y: -size });
 
     useEffect(() => {
+        const animate = () => {
+            if (!cursorRef.current) return;
+
+            const currentX = previousPos.current.x;
+            const currentY = previousPos.current.y;
+            const targetX = mousePos.current.x - size / 2;
+            const targetY = mousePos.current.y - size / 2;
+
+            const deltaX = (targetX - currentX) * 0.15;
+            const deltaY = (targetY - currentY) * 0.15;
+
+            const newX = currentX + deltaX;
+            const newY = currentY + deltaY;
+
+            previousPos.current = { x: newX, y: newY };
+            cursorRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+
+            requestRef.current = requestAnimationFrame(animate);
+        };
+
         const handleMouseMove = (e: MouseEvent) => {
             setVisible(true);
-            setPosition({ x: e.clientX, y: e.clientY });
+            mousePos.current = { x: e.clientX, y: e.clientY };
         };
 
         const handleMouseEnter = () => {
@@ -64,7 +63,7 @@ export const Cursor: React.FC<CursorProps> = ({ size = 60 }) => {
             if (requestRef.current) cancelAnimationFrame(requestRef.current);
             document.body.style.cursor = "auto"; // restore native cursor
         };
-    }, []);
+    }, [size]);
 
     return (
         <div
