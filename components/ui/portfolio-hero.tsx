@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 
 // Inline Button component
 const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
@@ -86,14 +87,58 @@ const BlurText: React.FC<BlurTextProps> = ({
     );
 };
 
+const BackgroundMesh = () => {
+    return (
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.4] dark:opacity-[0.6]">
+            {/* Animated Gradient Orbs */}
+            <motion.div
+                animate={{
+                    scale: [1, 1.2, 1],
+                    x: [0, 50, 0],
+                    y: [0, 30, 0]
+                }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[120px] rounded-full"
+            />
+            <motion.div
+                animate={{
+                    scale: [1.2, 1, 1.2],
+                    x: [0, -50, 0],
+                    y: [0, -40, 0]
+                }}
+                transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+                className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full"
+            />
+
+            {/* Mesh Grid */}
+            <div
+                className="absolute inset-0"
+                style={{
+                    backgroundImage: `radial-gradient(circle at 2px 2px, var(--border) 1px, transparent 0)`,
+                    backgroundSize: '40px 40px',
+                    maskImage: 'radial-gradient(ellipse 80% 50% at 50% 50%, black, transparent)',
+                    WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 50%, black, transparent)',
+                }}
+            />
+        </div>
+    );
+};
+
 export default function PortfolioHero() {
     const [isDark, setIsDark] = useState(true);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         document.documentElement.classList.add("dark");
+
+        const handleMouseMove = (e: MouseEvent) => {
+            setMousePos({ x: e.clientX, y: e.clientY });
+        };
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => window.removeEventListener("mousemove", handleMouseMove);
     }, []);
 
     useEffect(() => {
@@ -134,8 +179,21 @@ export default function PortfolioHero() {
 
     return (
         <div
-            className="min-h-screen text-foreground transition-colors bg-transparent"
+            className="min-h-screen text-foreground transition-colors bg-transparent relative"
         >
+            <BackgroundMesh />
+
+            {/* Spotlight that follows cursor */}
+            <motion.div
+                className="pointer-events-none fixed inset-0 z-10 transition-colors"
+                animate={{
+                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, var(--primary-5), transparent 80%)`,
+                }}
+                style={{
+                    // Explicitly inject a very low alpha primary color via CSS variable hack or just low opacity
+                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(var(--primary-rgb), 0.05), transparent 80%)`
+                } as any}
+            />
             {/* Header */}
             <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6">
                 <nav className="flex items-center justify-between max-w-screen-2xl mx-auto">
