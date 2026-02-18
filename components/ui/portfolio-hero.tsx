@@ -9,7 +9,7 @@ const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HT
         return (
             <button
                 ref={ref}
-                className={`inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-coral-orange/[0.9] dark:bg-honey-gold-brighter dark:text-deep-cocoa-dark dark:hover:bg-honey-gold-brighter/[0.9] ${className}`}
+                className={`inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-accent hover:text-white dark:bg-primary dark:text-deep-cocoa-dark dark:hover:bg-accent dark:hover:text-white ${className}`}
                 {...props}
             >
                 {children}
@@ -167,9 +167,8 @@ export default function PortfolioHero() {
                                     <a
                                         key={item.label}
                                         href={item.href}
-                                        className={`block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300 pointer-events-auto ${
-                                            item.highlight ? 'text-primary' : 'text-foreground'
-                                        } hover:text-accent`}
+                                        className={`block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300 pointer-events-auto ${item.highlight ? 'text-primary' : 'text-foreground'
+                                            } hover:text-accent`}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setIsMenuOpen(false);
@@ -182,9 +181,13 @@ export default function PortfolioHero() {
                         )}
                     </div>
 
-                    {/* Signature */}
-                    <div className="text-4xl font-bold font-[family-name:var(--font-outfit)] text-foreground">
-                        I
+                    {/* Signature / Logo */}
+                    <div className="flex items-center gap-2">
+                        <img
+                            src="/favicon-32x32.png"
+                            alt="Logo"
+                            className="w-10 h-10 object-contain"
+                        />
                     </div>
 
                     {/* Theme Toggle */}
@@ -233,13 +236,13 @@ export default function PortfolioHero() {
                             />
                         </div>
 
-                        {/* Profile Picture */}
+                        {/* Profile Picture / Logo replacement */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-background border border-border flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer" onClick={(e) => e.stopPropagation()}>
                                 <img
-                                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop"
-                                    alt="Profile"
-                                    className="w-full h-full object-cover"
+                                    src="/favicon-32x32.png"
+                                    alt="Profile Logo"
+                                    className="w-1/2 h-1/2 object-contain"
                                 />
                             </div>
                         </div>
