@@ -15,7 +15,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Interactive Portfolio - Considered Style",
-  description: "A modern, interactive portfolio featuring spatial design and bold typography",
+  description: "A modern, interactive portfolio featuring minimal design and bold typography",
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },

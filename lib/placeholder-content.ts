@@ -273,7 +273,8 @@ export const chatMessages = [
 // Navigation items
 export const navItems = [
   { label: "Home", href: "#hero" },
+  { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
+  { label: "Tools", href: "#tools" },
   { label: "Connect", href: "#contact" },
 ];

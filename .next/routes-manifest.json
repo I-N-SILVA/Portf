@@ -40,12 +40,6 @@
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
-    },
-    {
-      "page": "/spatial",
-      "regex": "^/spatial(?:/)?$",
-      "routeKeys": {},
-      "namedRegex": "^/spatial(?:/)?$"
     }
   ],
   "dataRoutes": [],

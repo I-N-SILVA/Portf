@@ -169,12 +169,11 @@ export default function PortfolioHero() {
     };
 
     const menuItems = [
-        { label: "HOME", href: "/", highlight: true },
-        { label: "ABOUT ME", href: "/spatial?section=About%20Me" },
-        { label: "TECH STACK", href: "/spatial?section=Tools%20%26%20Tech%20Stack" },
-        { label: "SKILLS", href: "/spatial?section=Skills" },
-        { label: "CONTACT", href: "/spatial?section=Contact" },
-        { label: "SPATIAL VIEW", href: "/spatial" },
+        { label: "HOME", href: "#hero", highlight: true },
+        { label: "ABOUT", href: "#about" },
+        { label: "PROJECTS", href: "#projects" },
+        { label: "TOOLS", href: "#tools" },
+        { label: "CONTACT", href: "#contact" },
     ];
 
     return (
