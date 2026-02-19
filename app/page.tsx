@@ -13,6 +13,8 @@ import { ScrollProgress } from "@/components/ui/scroll-progress";
 import DraggableWindow from "@/components/ui/DraggableWindow";
 import MagazineHeader from "@/components/ui/MagazineHeader";
 import BootSequence from "@/components/ui/BootSequence";
+import TextTicker from "@/components/ui/TextTicker";
+import EditorialSidenote from "@/components/ui/EditorialSidenote";
 
 export default function LandingPage() {
   const [mounted, setMounted] = useState(false);
@@ -44,11 +46,17 @@ export default function LandingPage() {
         <PortfolioHero />
       </section>
 
+      {/* Transition Zone - The Ticker */}
+      <div className="relative z-30 -mt-20 mb-20">
+        <TextTicker />
+      </div>
+
       {/* Desktop Workspace */}
       <div className="container mx-auto px-6 py-20 relative z-20 space-y-32">
 
         {/* About Section Window */}
-        <motion.section id="about">
+        <motion.section id="about" className="relative">
+          <EditorialSidenote note="IDENTITY_VAR :: FOUNDATION OF DISCIPLINE AND CODE." position="left" />
           <MagazineHeader title="The Profile" subtitle="01 / IDENTITY" variant="outline" className="ml-4" />
           <DraggableWindow title="System_Profile.exe" width="max-w-4xl" initialX={20} initialY={0}>
             <div className="bg-background/50 backdrop-blur-sm">
@@ -58,7 +66,8 @@ export default function LandingPage() {
         </motion.section>
 
         {/* Projects Section Window */}
-        <motion.section id="projects">
+        <motion.section id="projects" className="relative">
+          <EditorialSidenote note="ARCHIVE :: CURATED SELECTION OF AI & WEB AGENTS." position="right" />
           <div className="flex justify-end pr-4">
             <MagazineHeader title="Archive" subtitle="02 / WORKS" variant="outline" className="text-right" />
           </div>
@@ -70,7 +79,8 @@ export default function LandingPage() {
         </motion.section>
 
         {/* Tools Section Window */}
-        <motion.section id="tools">
+        <motion.section id="tools" className="relative">
+          <EditorialSidenote note="STACK :: MINIMALIST TOOLKIT FOR MAXIMUM IMPACT." position="left" className="top-1/4" />
           <MagazineHeader title="Tech Stack" subtitle="03 / STACK" variant="stamped" className="ml-8" />
           <DraggableWindow title="Toolkit.config" width="max-w-3xl" initialX={40} initialY={0}>
             <div className="bg-background/50 backdrop-blur-sm">
