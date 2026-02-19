@@ -17,19 +17,18 @@ const config: Config = {
         foreground: "rgb(var(--foreground) / <alpha-value>)",
 
         // IAMNSILVA Primary Colors
-        "dark-cocoa": "rgb(var(--color-primary-dark-cocoa) / <alpha-value>)",
-        "honey-gold": "rgb(var(--color-primary-honey-gold) / <alpha-value>)",
+        "dark-cocoa": "rgb(var(--color-text-primary) / <alpha-value>)",
+        "honey-gold": "rgb(var(--color-accent-honey-gold) / <alpha-value>)",
         "warm-cream": "rgb(var(--color-background-warm-cream) / <alpha-value>)",
 
-        // IAMNSILVA Extended Palette (Light Mode)
-        "deep-brown": "rgb(var(--color-text-primary) / <alpha-value>)",
+        // IAMNSILVA Extended Palette
         "warm-taupe": "rgb(var(--color-text-secondary) / <alpha-value>)",
         "pale-beige": "rgb(var(--color-surface-pale-beige) / <alpha-value>)",
         "soft-sand": "rgb(var(--color-border-soft-sand) / <alpha-value>)",
         "coral-orange": "rgb(var(--color-accent-coral-orange) / <alpha-value>)",
         "teal-green": "rgb(var(--color-accent-teal-green) / <alpha-value>)",
 
-        // IAMNSILVA Dark Mode Palette
+        // Dark Mode Aliases
         "deep-cocoa-dark": "rgb(var(--color-background-deep-cocoa) / <alpha-value>)",
         "dark-brown-surface": "rgb(var(--color-surface-dark-brown) / <alpha-value>)",
         "warm-off-white": "rgb(var(--color-text-primary-dark) / <alpha-value>)",
