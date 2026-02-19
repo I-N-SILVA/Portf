@@ -33,7 +33,6 @@ function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, sc
             ref={ref}
             href={item.href}
             onMouseMove={(e) => mouseX.set(e.pageY)}
-            onMouseLeave={() => mouseX.set(Infinity)}
             onClick={(e) => scrollToSection(e, item.href)}
             style={{ height: width }}
             className="group relative flex items-center justify-center w-12 rounded-full transition-colors duration-300"

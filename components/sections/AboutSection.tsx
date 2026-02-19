@@ -80,7 +80,7 @@ export default function AboutSection() {
                         <div className="relative z-10">
                             <User className="w-10 h-10 md:w-12 md:h-12 text-primary mb-6 md:mb-8" />
                             <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 leading-tight">
-                                {profileData.aboutLine}
+                                {profileData.tagline}
                             </h3>
                             <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
                                 {profileData.bio}

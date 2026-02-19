@@ -6,6 +6,7 @@ import { ArrowLeft, ExternalLink, Github, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Cursor from "@/components/ui/inverted-cursor";
+import Image from "next/image";
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -130,10 +131,12 @@ export default function ProjectPage({ params }: PageProps) {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.6 }}
                         >
-                            <img
+                            <Image
                                 src={project.bannerImage || project.image}
                                 alt={project.title}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                priority
                             />
                         </motion.div>
 
