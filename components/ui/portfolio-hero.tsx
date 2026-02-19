@@ -279,7 +279,7 @@ export default function PortfolioHero() {
                                 delay={100}
                                 animateBy="letters"
                                 direction="top"
-                                className="font-black text-[70px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
+                                className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
                                 style={{ color: "var(--primary)", fontFamily: "var(--font-outfit)" }}
                             />
                         </div>
@@ -289,7 +289,7 @@ export default function PortfolioHero() {
                                 delay={100}
                                 animateBy="letters"
                                 direction="top"
-                                className="font-black text-[70px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
+                                className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
                                 style={{ color: "var(--primary)", fontFamily: "var(--font-outfit)" }}
                             />
                         </div>

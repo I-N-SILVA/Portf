@@ -16,7 +16,7 @@ export default function ContactSection() {
                     Ready to Build Together?
                 </motion.h2>
                 <motion.p
-                    className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
+                    className="text-xl md:text-3xl lg:text-4xl text-muted-foreground max-w-2xl mx-auto mb-8 md:mb-10"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -34,16 +34,16 @@ export default function ContactSection() {
                 >
                     <a
                         href="mailto:contact@example.com"
-                        className="px-8 py-4 rounded-full bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all hover:-translate-y-1 shadow-lg shadow-primary/20"
+                        className="px-6 md:px-8 py-3 md:py-4 rounded-full bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all hover:-translate-y-1 shadow-lg shadow-primary/20 text-sm md:text-base"
                     >
                         Start a Conversation
                     </a>
-                    <div className="flex items-center justify-center gap-4">
+                    <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
                         {socialLinks.map((link) => (
                             <a
                                 key={link.name}
                                 href={link.url}
-                                className="p-4 rounded-full bg-card border border-border hover:border-primary transition-colors text-foreground"
+                                className="p-3 md:p-4 rounded-full bg-card border border-border hover:border-primary transition-colors text-foreground"
                                 aria-label={link.name}
                             >
                                 {/* Simple icon placeholder since we don't have lucide icons set up yet, using text for now or simple SVG */}

@@ -25,7 +25,7 @@ export default function SkillsSection() {
                     </h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-3 md:gap-4">
                     {skills.map((skillGroup, idx) => {
                         const Icon = icons[skillGroup.category] || Terminal;
 
@@ -38,7 +38,7 @@ export default function SkillsSection() {
                         return (
                             <motion.div
                                 key={skillGroup.category}
-                                className={`${colSpan} bg-card border border-border rounded-[24px] p-6 group hover:border-primary/40 transition-all duration-500 overflow-hidden relative`}
+                                className={`${colSpan} bg-card border border-border rounded-[20px] md:rounded-[24px] p-5 md:p-6 group hover:border-primary/40 transition-all duration-500 overflow-hidden relative`}
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
@@ -53,7 +53,7 @@ export default function SkillsSection() {
                                     </span>
                                 </div>
 
-                                <h4 className="text-xl font-black mb-4 tracking-tight font-[family-name:var(--font-outfit)] relative z-10">
+                                <h4 className="text-lg md:text-xl font-black mb-3 md:mb-4 tracking-tight font-[family-name:var(--font-outfit)] relative z-10">
                                     {skillGroup.category}
                                 </h4>
 

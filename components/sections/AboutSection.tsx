@@ -21,25 +21,25 @@ export default function AboutSection() {
                     </motion.div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 md:h-[600px]">
+                <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-3 md:gap-4 md:h-[600px]">
                     {/* Main Bio Card */}
                     <motion.div
-                        className="md:col-span-2 md:row-span-2 bg-card border border-border rounded-[32px] p-8 md:p-12 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 overflow-hidden relative"
+                        className="md:col-span-2 md:row-span-2 bg-card border border-border rounded-[24px] md:rounded-[32px] p-6 md:p-12 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 overflow-hidden relative"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
                     >
                         <div className="relative z-10">
                             <User className="w-8 h-8 text-primary mb-8" />
-                            <h4 className="text-3xl font-black mb-6 leading-tight tracking-tight font-[family-name:var(--font-outfit)]">
+                            <h4 className="text-2xl md:text-3xl font-black mb-4 md:mb-6 leading-tight tracking-tight font-[family-name:var(--font-outfit)]">
                                 {profileData.name}
                             </h4>
-                            <p className="text-xl text-muted-foreground leading-relaxed">
+                            <p className="text-base md:text-xl text-muted-foreground leading-relaxed">
                                 {profileData.bio}
                             </p>
                         </div>
 
-                        <div className="mt-12 flex flex-wrap gap-3 relative z-10">
+                        <div className="mt-8 md:mt-12 flex flex-wrap gap-3 relative z-10">
                             <a
                                 href="#contact"
                                 className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold hover:scale-105 transition-transform"
@@ -54,7 +54,7 @@ export default function AboutSection() {
 
                     {/* Location Card */}
                     <motion.div
-                        className="bg-secondary/30 border border-border rounded-[32px] p-8 flex flex-col justify-center items-center text-center group hover:bg-secondary/50 transition-colors"
+                        className="bg-secondary/30 border border-border rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-center items-center text-center group hover:bg-secondary/50 transition-colors"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -67,7 +67,7 @@ export default function AboutSection() {
 
                     {/* Credentials Card */}
                     <motion.div
-                        className="bg-card border border-border rounded-[32px] p-8 flex flex-col justify-center group hover:border-primary/30 transition-colors"
+                        className="bg-card border border-border rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-center group hover:border-primary/30 transition-colors"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -82,7 +82,7 @@ export default function AboutSection() {
 
                     {/* Status Card - Large Horizontal */}
                     <motion.div
-                        className="md:col-span-2 bg-primary text-primary-foreground rounded-[32px] p-8 md:p-10 flex items-center gap-6 relative overflow-hidden group"
+                        className="md:col-span-2 bg-primary text-primary-foreground rounded-[24px] md:rounded-[32px] p-6 md:p-10 flex items-center gap-4 md:gap-6 relative overflow-hidden group"
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -93,7 +93,7 @@ export default function AboutSection() {
                         </div>
                         <div className="relative z-10">
                             <h4 className="text-xs font-black uppercase tracking-[0.3em] opacity-80 mb-2">Current Focus</h4>
-                            <p className="text-xl md:text-2xl font-bold tracking-tight">
+                            <p className="text-lg md:text-2xl font-bold tracking-tight">
                                 {profileData.currentStatus}
                             </p>
                         </div>

@@ -33,7 +33,7 @@ export default function ProjectPage({ params }: PageProps) {
             <Cursor />
 
             {/* Navigation */}
-            <nav className="fixed top-0 w-full z-50 px-6 py-6 pointer-events-none">
+            <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 md:py-6 pointer-events-none">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <Link
                         href="/"
@@ -68,8 +68,8 @@ export default function ProjectPage({ params }: PageProps) {
                 </div>
             </nav>
 
-            <div className="max-w-7xl mx-auto px-6 pt-32 pb-24">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-32 pb-16 md:pb-24">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
 
                     {/* Sticky Sidebar - Metadata */}
                     <aside className="lg:col-span-4">
@@ -82,7 +82,7 @@ export default function ProjectPage({ params }: PageProps) {
                                 <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-4">
                                     {project.badge || "Project"}
                                 </span>
-                                <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tighter font-[family-name:var(--font-outfit)]">
+                                <h1 className="text-3xl md:text-5xl font-black leading-tight tracking-tighter font-[family-name:var(--font-outfit)]">
                                     {project.title}
                                 </h1>
                             </motion.div>
@@ -122,10 +122,10 @@ export default function ProjectPage({ params }: PageProps) {
                     </aside>
 
                     {/* Main Content - Description & Features */}
-                    <div className="lg:col-span-8 space-y-16">
+                    <div className="lg:col-span-8 space-y-10 md:space-y-16">
                         {/* Hero Image */}
                         <motion.div
-                            className="aspect-video rounded-3xl overflow-hidden bg-muted border border-border relative group"
+                            className="aspect-video rounded-2xl md:rounded-3xl overflow-hidden bg-muted border border-border relative group"
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.6 }}
@@ -143,14 +143,14 @@ export default function ProjectPage({ params }: PageProps) {
                             transition={{ duration: 0.6, delay: 0.2 }}
                             className="prose prose-invert max-w-none"
                         >
-                            <h2 className="text-3xl font-bold mb-6">Overview</h2>
-                            <p className="text-xl text-muted-foreground leading-relaxed mb-12">
+                            <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Overview</h2>
+                            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 md:mb-12">
                                 {project.fullDescription || project.description}
                             </p>
 
                             {project.features && project.features.length > 0 && (
                                 <>
-                                    <h2 className="text-3xl font-bold mb-8">Key Features</h2>
+                                    <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Key Features</h2>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {project.features.map((feature, idx) => (
                                             <motion.div
@@ -172,13 +172,13 @@ export default function ProjectPage({ params }: PageProps) {
 
                         {/* Bottom CTA */}
                         <motion.div
-                            className="p-12 rounded-[32px] bg-primary text-primary-foreground text-center"
+                            className="p-6 md:p-12 rounded-[24px] md:rounded-[32px] bg-primary text-primary-foreground text-center"
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <h2 className="text-3xl font-black mb-4 font-[family-name:var(--font-outfit)]">Interested in this project?</h2>
-                            <p className="text-primary-foreground/80 mb-8 max-w-lg mx-auto">
+                            <h2 className="text-xl md:text-3xl font-black mb-3 md:mb-4 font-[family-name:var(--font-outfit)]">Interested in this project?</h2>
+                            <p className="text-sm md:text-base text-primary-foreground/80 mb-6 md:mb-8 max-w-lg mx-auto">
                                 Let&apos;s discuss how we can implement similar solutions for your business or project.
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
@@ -187,14 +187,14 @@ export default function ProjectPage({ params }: PageProps) {
                                         href={project.link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="px-8 py-4 bg-background text-foreground rounded-full font-bold hover:opacity-90 transition-all flex items-center gap-2"
+                                        className="px-6 md:px-8 py-3 md:py-4 bg-background text-foreground rounded-full font-bold hover:opacity-90 transition-all flex items-center gap-2 text-sm md:text-base"
                                     >
                                         View Live Demo <ExternalLink className="w-4 h-4" />
                                     </a>
                                 )}
                                 <Link
                                     href="/#contact"
-                                    className="px-8 py-4 bg-primary-foreground text-primary rounded-full font-bold hover:opacity-90 transition-all"
+                                    className="px-6 md:px-8 py-3 md:py-4 bg-primary-foreground text-primary rounded-full font-bold hover:opacity-90 transition-all text-sm md:text-base"
                                 >
                                     Get in Touch
                                 </Link>
