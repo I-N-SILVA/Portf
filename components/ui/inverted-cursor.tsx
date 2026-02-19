@@ -1,81 +1,85 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
-interface CursorProps {
-    size?: number;
-}
+export const Cursor: React.FC = () => {
+    const [isHovered, setIsHovered] = useState(false);
+    const [isClicked, setIsClicked] = useState(false);
 
-export const Cursor: React.FC<CursorProps> = ({ size = 60 }) => {
-    const cursorRef = useRef<HTMLDivElement>(null);
-    const requestRef = useRef<number>(undefined);
-    const previousPos = useRef({ x: -size, y: -size }); // start off-screen
+    const mouseX = useMotionValue(-100);
+    const mouseY = useMotionValue(-100);
 
-    const [visible, setVisible] = useState(false);
-    const mousePos = useRef({ x: -size, y: -size });
+    // Smooth spring configuration
+    const springConfig = { damping: 25, stiffness: 250, mass: 0.5 };
+    const cursorX = useSpring(mouseX, springConfig);
+    const cursorY = useSpring(mouseY, springConfig);
 
     useEffect(() => {
-        const animate = () => {
-            if (!cursorRef.current) return;
-
-            const currentX = previousPos.current.x;
-            const currentY = previousPos.current.y;
-            const targetX = mousePos.current.x - size / 2;
-            const targetY = mousePos.current.y - size / 2;
-
-            const deltaX = (targetX - currentX) * 0.15;
-            const deltaY = (targetY - currentY) * 0.15;
-
-            const newX = currentX + deltaX;
-            const newY = currentY + deltaY;
-
-            previousPos.current = { x: newX, y: newY };
-            cursorRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
-
-            requestRef.current = requestAnimationFrame(animate);
-        };
-
         const handleMouseMove = (e: MouseEvent) => {
-            setVisible(true);
-            mousePos.current = { x: e.clientX, y: e.clientY };
+            mouseX.set(e.clientX);
+            mouseY.set(e.clientY);
         };
 
-        const handleMouseEnter = () => {
-            setVisible(true);
-        };
+        const handleMouseDown = () => setIsClicked(true);
+        const handleMouseUp = () => setIsClicked(false);
 
-        const handleMouseLeave = () => {
-            setVisible(false);
+        const handleMouseOver = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const isClickable =
+                target.closest('a') ||
+                target.closest('button') ||
+                target.closest('[role="button"]') ||
+                window.getComputedStyle(target).cursor === 'pointer';
+
+            setIsHovered(!!isClickable);
         };
 
         window.addEventListener("mousemove", handleMouseMove);
-        document.documentElement.addEventListener("mouseenter", handleMouseEnter);
-        document.documentElement.addEventListener("mouseleave", handleMouseLeave);
-
-        document.body.style.cursor = "none"; // hide native cursor
-
-        requestRef.current = requestAnimationFrame(animate);
+        window.addEventListener("mousedown", handleMouseDown);
+        window.addEventListener("mouseup", handleMouseUp);
+        window.addEventListener("mouseover", handleMouseOver);
 
         return () => {
             window.removeEventListener("mousemove", handleMouseMove);
-            document.documentElement.removeEventListener("mouseenter", handleMouseEnter);
-            document.documentElement.removeEventListener("mouseleave", handleMouseLeave);
-            if (requestRef.current) cancelAnimationFrame(requestRef.current);
-            document.body.style.cursor = "auto"; // restore native cursor
+            window.removeEventListener("mousedown", handleMouseDown);
+            window.removeEventListener("mouseup", handleMouseUp);
+            window.removeEventListener("mouseover", handleMouseOver);
         };
-    }, [size]);
+    }, [mouseX, mouseY]);
 
     return (
-        <div
-            ref={cursorRef}
-            className="fixed top-0 left-0 pointer-events-none rounded-full bg-white mix-blend-difference z-[9999] transition-opacity duration-300"
+        <motion.div
+            className="fixed top-0 left-0 pointer-events-none rounded-full bg-white mix-blend-difference z-[9999]"
             style={{
-                width: size,
-                height: size,
-                opacity: visible ? 1 : 0,
+                x: cursorX,
+                y: cursorY,
+                translateX: "-50%",
+                translateY: "-50%",
+                width: isHovered ? 80 : 24,
+                height: isHovered ? 80 : 24,
             }}
-            aria-hidden="true"
-        />
+            animate={{
+                scale: isClicked ? 0.8 : 1,
+                opacity: 1,
+            }}
+            transition={{
+                type: "spring",
+                damping: 20,
+                stiffness: 300,
+                mass: 0.5,
+                width: { duration: 0.3 },
+                height: { duration: 0.3 },
+            }}
+        >
+            {/* Inner dot for precision */}
+            <motion.div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full"
+                animate={{
+                    opacity: isHovered ? 0 : 1
+                }}
+            />
+        </motion.div>
     );
 };
 

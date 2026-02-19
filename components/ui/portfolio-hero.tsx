@@ -192,7 +192,7 @@ export default function PortfolioHero() {
                 }}
                 style={{
                     // Explicitly inject a very low alpha primary color via CSS variable hack or just low opacity
-                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(var(--primary-rgb), 0.05), transparent 80%)`
+                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(var(--primary), 0.05), transparent 80%)`
                 } as any}
             />
             {/* Header - Minimalist (Theme Toggle Only) */}

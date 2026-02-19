@@ -38,49 +38,52 @@
   }
 
   .dark {
-    /* IAMNSILVA Design System - Dark Mode Colors (Soft Pastel Overhaul) */
-    --color-background-soft-dark: 54 45 43;
-    /* #362D2B Soft Warm Cocoa */
-    --color-surface-muted-taupe: 74 62 59;
-    /* #4A3E3B Muted Taupe */
-    --color-text-logo-cream: 255 246 233;
-    /* #FFF6E9 Warm Cream from Logo */
-    --color-text-muted-pastel: 184 168 157;
+    /* IAMNSILVA Design System - Dark Mode Colors */
+    --color-background-deep-cocoa: 42 25 21;
+    /* #2A1915 */
+    --color-surface-dark-brown: 56 36 31;
+    /* #38241F */
+    --color-text-primary-dark: 255 246 233;
+    /* #FFF6E9 Warm Cream */
+    --color-text-secondary-dark: 184 168 157;
     /* #B8A89D Soft Taupe */
-    --color-accent-pastel-gold: 255 220 150;
-    /* #FFDC96 Softer Honey Gold */
-    --color-border-warm-subtle: 92 78 74;
-    /* #5C4E4A Subtle Warm Border */
+    --color-accent-honey-gold-brighter: 255 216 112;
+    /* #FFD870 */
+    --color-accent-cyan-teal: 53 199 190;
+    /* #35C7BE */
+    --color-border-dark: 74 56 41;
+    /* #4A3829 */
 
-    /* Generic semantic colors mapped to New Pastel Palette */
-    --background: var(--color-background-soft-dark);
-    --foreground: var(--color-text-logo-cream);
-    --card: var(--color-surface-muted-taupe);
-    --card-foreground: var(--color-text-logo-cream);
-    --popover: var(--color-background-soft-dark);
-    --popover-foreground: var(--color-text-logo-cream);
-    --primary: var(--color-accent-pastel-gold);
-    --primary-foreground: var(--color-background-soft-dark);
-    --secondary: var(--color-surface-muted-taupe);
-    --secondary-foreground: var(--color-text-logo-cream);
-    --muted: var(--color-surface-muted-taupe);
-    --muted-foreground: var(--color-text-muted-pastel);
-    --accent: 49 182 176;
-    --accent-foreground: var(--color-text-logo-cream);
-    --destructive: 255 122 92;
+    /* Generic semantic colors mapped to IAMNSILVA Palette */
+    --background: var(--color-background-deep-cocoa);
+    --foreground: var(--color-text-primary-dark);
+    --card: var(--color-surface-dark-brown);
+    --card-foreground: var(--color-text-primary-dark);
+    --popover: var(--color-background-deep-cocoa);
+    --popover-foreground: var(--color-text-primary-dark);
+    --primary: var(--color-accent-honey-gold-brighter);
+    --primary-foreground: var(--color-background-deep-cocoa);
+    --secondary: var(--color-surface-dark-brown);
+    --secondary-foreground: var(--color-text-primary-dark);
+    --muted: var(--color-surface-dark-brown);
+    --muted-foreground: var(--color-text-secondary-dark);
+    --accent: var(--color-accent-cyan-teal);
+    --accent-foreground: var(--color-text-primary-dark);
+    --destructive: 255 99 71;
+    /* Tomato */
     --destructive-foreground: 255 255 255;
-    --border: var(--color-border-warm-subtle);
-    --input: 42 35 34;
-    --ring: var(--color-accent-pastel-gold);
+    --border: var(--color-border-dark);
+    --input: 26 15 10;
+    --ring: var(--color-accent-honey-gold-brighter);
 
-    --sidebar: var(--color-background-soft-dark);
-    --sidebar-foreground: var(--color-text-logo-cream);
-    --sidebar-primary: var(--color-accent-pastel-gold);
-    --sidebar-primary-foreground: var(--color-background-soft-dark);
-    --sidebar-accent: var(--color-surface-muted-taupe);
-    --sidebar-accent-foreground: var(--color-text-logo-cream);
-    --sidebar-border: var(--color-border-warm-subtle);
-    --sidebar-ring: var(--color-accent-pastel-gold);
+    --sidebar: var(--color-background-deep-cocoa);
+    --sidebar-foreground: var(--color-text-primary-dark);
+    --sidebar-primary: var(--color-accent-honey-gold-brighter);
+    --sidebar-primary-foreground: var(--color-background-deep-cocoa);
+    --sidebar-accent: var(--color-surface-dark-brown);
+    --sidebar-accent-foreground: var(--color-text-primary-dark);
+    --sidebar-border: var(--color-border-dark);
+    --sidebar-ring: var(--color-accent-honey-gold-brighter);
   }
 
   /* Animated Grain Overlay */
