@@ -193,60 +193,9 @@ export default function PortfolioHero() {
                     background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(var(--primary-rgb), 0.05), transparent 80%)`
                 } as any}
             />
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6">
-                <nav className="flex items-center justify-between max-w-screen-2xl mx-auto">
-                    {/* Menu Button */}
-                    <div className="relative">
-                        <button
-                            ref={buttonRef}
-                            type="button"
-                            className="p-2 transition-colors duration-300 z-50 text-foreground hover:text-accent pointer-events-auto"
-                            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsMenuOpen(!isMenuOpen);
-                            }}
-                        >
-                            {isMenuOpen ? (
-                                <X className="w-8 h-8 transition-colors duration-300" strokeWidth={2} />
-                            ) : (
-                                <Menu className="w-8 h-8 transition-colors duration-300" strokeWidth={2} />
-                            )}
-                        </button>
-
-                        {isMenuOpen && (
-                            <div
-                                ref={menuRef}
-                                className="absolute top-full left-0 w-[200px] md:w-[240px] border-none shadow-standard mt-2 ml-4 p-4 rounded-md z-[100] bg-card"
-                            >
-                                {menuItems.map((item) => (
-                                    <a
-                                        key={item.label}
-                                        href={item.href}
-                                        className={`block text-lg md:text-xl font-bold tracking-tight py-1.5 px-2 cursor-pointer transition-colors duration-300 pointer-events-auto ${item.highlight ? 'text-primary' : 'text-foreground'
-                                            } hover:text-accent`}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsMenuOpen(false);
-                                        }}
-                                    >
-                                        {item.label}
-                                    </a>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Signature / Logo */}
-                    <div className="flex items-center gap-2">
-                        <img
-                            src="/favicon-32x32.png"
-                            alt="Logo"
-                            className="w-10 h-10 object-contain"
-                        />
-                    </div>
-
+            {/* Header - Minimalist (Theme Toggle Only) */}
+            <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 pointer-events-none">
+                <nav className="flex items-center justify-end max-w-screen-2xl mx-auto">
                     {/* Theme Toggle */}
                     <button
                         type="button"

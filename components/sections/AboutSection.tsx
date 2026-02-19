@@ -1,8 +1,60 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { profileData } from "@/lib/placeholder-content";
 import { User, MapPin, GraduationCap, Zap } from "lucide-react";
+import React from "react";
+
+function TiltCard({ children, className, colSpan = "" }: { children: React.ReactNode; className?: string; colSpan?: string }) {
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
+
+    const mouseXSpring = useSpring(x);
+    const mouseYSpring = useSpring(y);
+
+    const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
+    const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const xPct = mouseX / width - 0.5;
+        const yPct = mouseY / height - 0.5;
+        x.set(xPct);
+        y.set(yPct);
+    };
+
+    const handleMouseLeave = () => {
+        x.set(0);
+        y.set(0);
+    };
+
+    return (
+        <motion.div
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+                rotateX,
+                rotateY,
+                transformStyle: "preserve-3d",
+            }}
+            className={`${colSpan} perspective-1000`}
+        >
+            <div
+                className={className}
+                style={{
+                    transform: "translateZ(50px)",
+                    transformStyle: "preserve-3d",
+                }}
+            >
+                {children}
+            </div>
+        </motion.div>
+    );
+}
 
 export default function AboutSection() {
     return (
@@ -14,93 +66,68 @@ export default function AboutSection() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-sm font-black tracking-[0.2em] uppercase text-primary mb-2">Introduction</h2>
-                        <h3 className="text-4xl md:text-5xl font-black tracking-tighter font-[family-name:var(--font-outfit)]">
-                            Curiosity <span className="text-muted-foreground">Driven.</span>
-                        </h3>
+                        <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tighter">WHO IS IAN?</h2>
+                        <div className="h-1 w-20 bg-primary rounded-full" />
                     </motion.div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-3 md:gap-4 md:h-[600px]">
                     {/* Main Bio Card */}
-                    <motion.div
-                        className="md:col-span-2 md:row-span-2 bg-card border border-border rounded-[24px] md:rounded-[32px] p-6 md:p-12 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 overflow-hidden relative"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
+                    <TiltCard
+                        colSpan="md:col-span-2 md:row-span-2"
+                        className="h-full bg-card border border-border rounded-[24px] md:rounded-[32px] p-6 sm:p-8 md:p-12 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 overflow-hidden relative"
                     >
                         <div className="relative z-10">
-                            <User className="w-8 h-8 text-primary mb-8" />
-                            <h4 className="text-2xl md:text-3xl font-black mb-4 md:mb-6 leading-tight tracking-tight font-[family-name:var(--font-outfit)]">
-                                {profileData.name}
-                            </h4>
-                            <p className="text-base md:text-xl text-muted-foreground leading-relaxed">
+                            <User className="w-10 h-10 md:w-12 md:h-12 text-primary mb-6 md:mb-8" />
+                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 leading-tight">
+                                {profileData.aboutLine}
+                            </h3>
+                            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
                                 {profileData.bio}
                             </p>
                         </div>
-
-                        <div className="mt-8 md:mt-12 flex flex-wrap gap-3 relative z-10">
-                            <a
-                                href="#contact"
-                                className="px-6 py-3 bg-primary text-primary-foreground rounded-full font-bold hover:scale-105 transition-transform"
-                            >
-                                Let&apos;s Collab
-                            </a>
-                        </div>
-
-                        {/* Aesthetic Gradient */}
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] rounded-full group-hover:bg-primary/10 transition-colors" />
-                    </motion.div>
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
+                    </TiltCard>
 
                     {/* Location Card */}
-                    <motion.div
-                        className="bg-secondary/30 border border-border rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-center items-center text-center group hover:bg-secondary/50 transition-colors"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
+                    <TiltCard
+                        className="bg-card border border-border rounded-[24px] p-6 md:p-8 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 h-full"
                     >
-                        <MapPin className="w-8 h-8 text-primary mb-4 group-hover:bounce transition-transform" />
-                        <h4 className="text-sm font-bold opacity-50 uppercase tracking-widest mb-1">Based In</h4>
-                        <p className="text-lg font-bold">{profileData.location}</p>
-                    </motion.div>
-
-                    {/* Credentials Card */}
-                    <motion.div
-                        className="bg-card border border-border rounded-[24px] md:rounded-[32px] p-6 md:p-8 flex flex-col justify-center group hover:border-primary/30 transition-colors"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        <GraduationCap className="w-8 h-8 text-primary mb-4" />
-                        <h4 className="text-sm font-bold opacity-50 uppercase tracking-widest mb-2">Education</h4>
-                        <p className="text-sm font-medium leading-relaxed">
-                            {profileData.credentials}
-                        </p>
-                    </motion.div>
-
-                    {/* Status Card - Large Horizontal */}
-                    <motion.div
-                        className="md:col-span-2 bg-primary text-primary-foreground rounded-[24px] md:rounded-[32px] p-6 md:p-10 flex items-center gap-4 md:gap-6 relative overflow-hidden group"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        <div className="relative z-10 p-4 bg-background/20 rounded-2xl backdrop-blur-sm">
-                            <Zap className="w-8 h-8 fill-current" />
+                        <MapPin className="w-8 h-8 text-primary/70 group-hover:text-primary transition-colors" />
+                        <div>
+                            <p className="text-sm text-muted-foreground mb-1 uppercase tracking-widest font-bold">Location</p>
+                            <p className="text-xl md:text-2xl font-bold">{profileData.location}</p>
                         </div>
+                    </TiltCard>
+
+                    {/* Experience/Education Card */}
+                    <TiltCard
+                        className="bg-card border border-border rounded-[24px] p-6 md:p-8 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 h-full"
+                    >
+                        <GraduationCap className="w-8 h-8 text-primary/70 group-hover:text-primary transition-colors" />
+                        <div>
+                            <p className="text-sm text-muted-foreground mb-1 uppercase tracking-widest font-bold">Background</p>
+                            <p className="text-xl md:text-2xl font-bold">Econ & Design</p>
+                        </div>
+                    </TiltCard>
+
+                    {/* Quick Stats/Status Card */}
+                    <TiltCard
+                        colSpan="md:col-span-2"
+                        className="bg-card border border-border rounded-[24px] p-6 md:p-10 flex items-center justify-between group hover:border-primary/50 transition-colors duration-500 h-full overflow-hidden relative"
+                    >
                         <div className="relative z-10">
-                            <h4 className="text-xs font-black uppercase tracking-[0.3em] opacity-80 mb-2">Current Focus</h4>
-                            <p className="text-lg md:text-2xl font-bold tracking-tight">
-                                {profileData.currentStatus}
-                            </p>
+                            <p className="text-sm text-muted-foreground mb-2 uppercase tracking-widest font-bold">Current Focus</p>
+                            <h4 className="text-xl md:text-2xl font-bold flex items-center gap-3">
+                                <span className="relative flex h-3 w-3">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                </span>
+                                Building AI Products
+                            </h4>
                         </div>
-
-                        {/* Interactive Sparkle Effect */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                    </motion.div>
+                        <Zap className="w-16 h-16 md:w-24 md:h-24 text-primary/5 absolute right-4 top-1/2 -translate-y-1/2 group-hover:text-primary/10 transition-colors" />
+                    </TiltCard>
                 </div>
             </div>
         </section>
