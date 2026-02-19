@@ -14,6 +14,7 @@ const navItems = [
 ]
 
 function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, scrollToSection }: any) {
+    const ref = useRef<HTMLAnchorElement>(null)
     const mouseX = useMotionValue(Infinity)
     const Icon = item.icon
     const isActive = activeSection === item.href.replace("#", "")
@@ -25,8 +26,6 @@ function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, sc
 
     const widthSync = useTransform(distance, [-150, 0, 150], [48, 80, 48])
     const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 })
-
-    const ref = useRef<HTMLAnchorElement>(null)
 
     return (
         <motion.a
