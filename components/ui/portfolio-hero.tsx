@@ -204,7 +204,7 @@ export default function PortfolioHero() {
                             toggleTheme();
                         }}
                         className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-muted dark:bg-secondary"
-                        aria-label="Toggle theme"
+                        aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
                     >
                         {mounted && (
                             <div
@@ -244,32 +244,42 @@ export default function PortfolioHero() {
                             />
                         </div>
 
+                        {/* Tagline - Proper Distance Below Hero */}
+                        <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 lg:bottom-40 xl:bottom-44 left-1/2 -translate-x-1/2 w-full px-6 flex flex-col items-center gap-8">
+                            <div className="flex justify-center">
+                                <BlurText
+                                    text="Designing human experiences in code."
+                                    delay={150}
+                                    animateBy="words"
+                                    direction="top"
+                                    className="text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center transition-colors duration-300 text-foreground hover:text-accent"
+                                    style={{ fontFamily: "var(--font-inter)" }}
+                                />
+                            </div>
+
+                            <motion.button
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 1, duration: 0.8 }}
+                                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="px-8 py-4 bg-primary text-primary-foreground rounded-full font-black text-sm tracking-[0.2em] uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all group border border-primary-foreground/10"
+                            >
+                                See My Work
+                            </motion.button>
+                        </div>
+
                         {/* Profile Picture / Logo replacement */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
                             <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-background border border-border flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer" onClick={(e) => e.stopPropagation()}>
                                 <Image
-                                    src="/favicon-32x32.png"
+                                    src="/android-chrome-512x512.png"
                                     alt="Profile Logo"
-                                    width={64}
-                                    height={64}
-                                    className="w-1/2 h-1/2 object-contain"
+                                    width={128}
+                                    height={128}
+                                    className="w-3/4 h-3/4 object-contain opacity-90"
                                 />
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                {/* Tagline - Proper Distance Below Hero */}
-                <div className="absolute bottom-16 sm:bottom-20 md:bottom-24 lg:bottom-32 xl:bottom-36 left-1/2 -translate-x-1/2 w-full px-6">
-                    <div className="flex justify-center">
-                        <BlurText
-                            text="Designing human experiences in code."
-                            delay={150}
-                            animateBy="words"
-                            direction="top"
-                            className="text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center transition-colors duration-300 text-foreground hover:text-accent"
-                            style={{ fontFamily: "var(--font-inter)" }}
-                        />
                     </div>
                 </div>
 
@@ -278,7 +288,10 @@ export default function PortfolioHero() {
                     type="button"
                     className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300 pointer-events-auto"
                     aria-label="Scroll down"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
                 >
                     <ChevronDown className="w-5 h-5 md:w-8 md:h-8 text-foreground hover:text-accent transition-colors duration-300" />
                 </button>

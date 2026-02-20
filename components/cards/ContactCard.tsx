@@ -10,7 +10,7 @@ export default function ContactCard() {
   const [showCalendar, setShowCalendar] = useState(false);
 
   const handleContact = () => {
-    window.location.href = "mailto:ian@plyaz.com";
+    window.location.href = "mailto:iannogueira@proton.me";
   };
 
   return (
@@ -132,7 +132,7 @@ export default function ContactCard() {
                 {/* Button text */}
                 <div className="flex-1 text-left">
                   <div className="font-bold text-lg text-secondary-foreground">Send a Quick Email</div>
-                  <div className="text-sm text-muted-foreground">ian@plyaz.com</div>
+                  <div className="text-sm text-muted-foreground">iannogueira@proton.me</div>
                 </div>
 
                 <svg

@@ -6,6 +6,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 export const Cursor: React.FC = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [isClicked, setIsClicked] = useState(false);
+    const [hoverText, setHoverText] = useState("");
 
     const mouseX = useMotionValue(-100);
     const mouseY = useMotionValue(-100);
@@ -26,13 +27,19 @@ export const Cursor: React.FC = () => {
 
         const handleMouseOver = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            const isClickable =
-                target.closest('a') ||
-                target.closest('button') ||
-                target.closest('[role="button"]') ||
-                window.getComputedStyle(target).cursor === 'pointer';
+            const clickable = target.closest('a, button, [role="button"]');
 
-            setIsHovered(!!isClickable);
+            if (clickable) {
+                setIsHovered(true);
+                // Extract label or aria-label for cursor text
+                const label = clickable.getAttribute('aria-label') ||
+                    clickable.textContent?.trim().split('\n')[0].substring(0, 12) ||
+                    "";
+                setHoverText(label);
+            } else {
+                setIsHovered(false);
+                setHoverText("");
+            }
         };
 
         window.addEventListener("mousemove", handleMouseMove);
@@ -49,37 +56,63 @@ export const Cursor: React.FC = () => {
     }, [mouseX, mouseY]);
 
     return (
-        <motion.div
-            className="fixed top-0 left-0 pointer-events-none rounded-full bg-white mix-blend-difference z-[9999]"
-            style={{
-                x: cursorX,
-                y: cursorY,
-                translateX: "-50%",
-                translateY: "-50%",
-                width: isHovered ? 80 : 24,
-                height: isHovered ? 80 : 24,
-            }}
-            animate={{
-                scale: isClicked ? 0.8 : 1,
-                opacity: 1,
-            }}
-            transition={{
-                type: "spring",
-                damping: 20,
-                stiffness: 300,
-                mass: 0.5,
-                width: { duration: 0.3 },
-                height: { duration: 0.3 },
-            }}
-        >
-            {/* Inner dot for precision */}
+        <>
+            {/* Main Cursor */}
             <motion.div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full"
+                className="fixed top-0 left-0 pointer-events-none rounded-full bg-white mix-blend-difference z-[9999] flex items-center justify-center overflow-hidden"
+                style={{
+                    x: cursorX,
+                    y: cursorY,
+                    translateX: "-50%",
+                    translateY: "-50%",
+                    width: isHovered ? (hoverText ? 100 : 80) : 16,
+                    height: isHovered ? (hoverText ? 100 : 80) : 16,
+                }}
                 animate={{
-                    opacity: isHovered ? 0 : 1
+                    scale: isClicked ? 0.6 : 1,
+                    rotate: isHovered ? 15 : 0,
+                }}
+                transition={{
+                    type: "spring",
+                    damping: 30,
+                    stiffness: 400,
+                    mass: 0.5,
+                }}
+            >
+                {isHovered && hoverText && (
+                    <motion.span
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-[10px] font-black text-black uppercase tracking-tight text-center px-1"
+                    >
+                        {hoverText}
+                    </motion.span>
+                )}
+            </motion.div>
+
+            {/* Trailing Ring */}
+            <motion.div
+                className="fixed top-0 left-0 pointer-events-none rounded-full border border-primary/30 z-[9998]"
+                style={{
+                    x: cursorX,
+                    y: cursorY,
+                    translateX: "-50%",
+                    translateY: "-50%",
+                    width: isHovered ? 120 : 32,
+                    height: isHovered ? 120 : 32,
+                }}
+                animate={{
+                    opacity: isClicked ? 0 : 0.5,
+                    scale: isHovered ? 1.1 : 1,
+                }}
+                transition={{
+                    type: "spring",
+                    damping: 40,
+                    stiffness: 300,
+                    mass: 0.8,
                 }}
             />
-        </motion.div>
+        </>
     );
 };
 

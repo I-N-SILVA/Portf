@@ -19,6 +19,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
         >
             <Link
                 href={`/projects/${project.id}`}
+                aria-label={`View details for ${project.title}`}
                 className="group relative block bg-card rounded-2xl border border-border overflow-hidden hover:shadow-[0_0_30px_rgba(var(--primary),0.1)] transition-all duration-500 hover:-translate-y-2"
             >
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">

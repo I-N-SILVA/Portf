@@ -8,6 +8,7 @@ export interface Project {
   link?: string;
   github?: string;
   badge?: string;
+  category: string;
   // New fields for card back
   features?: string[];
   role?: string;
@@ -36,8 +37,9 @@ export const profileData = {
   bio: "Building intelligent systems and economic frameworks at the intersection of AI, Web3, and behavioral psychology. Specializing in rapid prototyping, automation workflows, and strategic product development. Transforming complex ideas into viable digital products.",
   location: "Building Remotely",
   avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&h=400&fit=crop",
-  credentials: "BA Economics | MSc Psychology | Arden University",
+  credentials: "BSc in Economics | Masters in Psychology",
   currentStatus: "Currently: Exploring AI Agents & MCP | £10K MRR Goal",
+  email: "iannogueira@proton.me",
 };
 
 // Projects data
@@ -46,7 +48,7 @@ export const projects: Project[] = [
     id: "8",
     title: "StockSnap Mobile Vehicle Stocktaking",
     description: "Mobile-first stocktaking web app designed for efficient inventory tracking, verification, and reporting in the field.",
-    image: "/stocksnap.png",
+    image: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?w=800&h=600&fit=crop",
     tags: ["Bolt.new", "React", "TypeScript", "Vite", "Tailwind CSS", "Supabase"],
     link: "https://stocksnap-mobile-veh-eie0.bolt.host/",
     badge: "FEATURED",
@@ -58,6 +60,7 @@ export const projects: Project[] = [
       "Location-based audit history tracking",
       "Search, filtering & access controls"
     ],
+    category: "AI",
     role: "Full-Stack Developer",
     duration: "Rapid Dev",
     teamSize: "Solo",
@@ -82,6 +85,7 @@ export const projects: Project[] = [
       "Statistics dashboard",
       "Terminal-style search capabilities"
     ],
+    category: "Creative",
     role: "Full-Stack Developer",
     duration: "3 months",
     teamSize: "Solo developer",
@@ -89,6 +93,7 @@ export const projects: Project[] = [
   {
     id: "2",
     title: "Multi-Platform Content Engine",
+    category: "AI",
     description: "AI-powered content creation and distribution system leveraging Claude API, GPT-4, and custom automation workflows",
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
     tags: ["Python", "Claude API", "Cursor", "Zapier", "Airtable"],
@@ -110,8 +115,9 @@ export const projects: Project[] = [
   {
     id: "3",
     title: "Promptuous",
+    category: "AI",
     description: "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
-    image: "/promptuous-preview.png",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
     tags: ["Next.js", "React", "TypeScript", "Vercel", "OCR"],
     link: "https://prompt-vaulty.vercel.app/",
     badge: "LIVE",
@@ -133,6 +139,7 @@ export const projects: Project[] = [
   {
     id: "4",
     title: "DeFi Analytics Hub",
+    category: "Web3",
     description: "Decentralized finance analytics and tokenomics research platform with smart contract analysis and on-chain data visualization",
     image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=600&fit=crop",
     tags: ["Solidity", "Web3.js", "React", "The Graph", "Ethers.js"],
@@ -169,6 +176,7 @@ export const projects: Project[] = [
       "Professional Content Management",
       "PDF download & Share functionality",
     ],
+    category: "Creative",
     role: "Full-Stack Developer",
     duration: "1 month",
     teamSize: "Solo developer",
@@ -189,6 +197,7 @@ export const projects: Project[] = [
       "Reflection journaling",
       "Community features",
     ],
+    category: "Creative",
     role: "Solo Developer",
     duration: "7 months",
     teamSize: "Solo developer",

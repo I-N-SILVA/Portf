@@ -33,7 +33,7 @@ export default function ContactSection() {
                     transition={{ delay: 0.2 }}
                 >
                     <a
-                        href="mailto:contact@example.com"
+                        href="mailto:iannogueira@proton.me"
                         className="px-6 md:px-8 py-3 md:py-4 rounded-full bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all hover:-translate-y-1 shadow-lg shadow-primary/20 text-sm md:text-base"
                     >
                         Start a Conversation

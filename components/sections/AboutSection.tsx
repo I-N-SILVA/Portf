@@ -4,6 +4,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { profileData } from "@/lib/placeholder-content";
 import { User, MapPin, GraduationCap, Zap } from "lucide-react";
 import React from "react";
+import Image from "next/image";
 
 function TiltCard({ children, className, colSpan = "" }: { children: React.ReactNode; className?: string; colSpan?: string }) {
     const x = useMotionValue(0);
@@ -85,8 +86,27 @@ export default function AboutSection() {
                             <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
                                 {profileData.bio}
                             </p>
+
+                            <div className="mt-8 flex items-center gap-4">
+                                <button className="px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-sm font-bold border border-primary/20 transition-all">
+                                    Download CV
+                                </button>
+                                <div className="text-xs text-muted-foreground italic font-medium">
+                                    Current Location: {profileData.location}
+                                </div>
+                            </div>
                         </div>
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
+
+                        {/* Avatar/Photo Placement */}
+                        <div className="absolute bottom-0 right-0 w-64 h-64 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Image
+                                src="/android-chrome-512x512.png"
+                                alt="Ian Portrait"
+                                width={512}
+                                height={512}
+                                className="object-cover grayscale"
+                            />
+                        </div>
                     </TiltCard>
 
                     {/* Location Card */}
@@ -107,7 +127,7 @@ export default function AboutSection() {
                         <GraduationCap className="w-8 h-8 text-primary/70 group-hover:text-primary transition-colors" />
                         <div>
                             <p className="text-sm text-muted-foreground mb-1 uppercase tracking-widest font-bold">Background</p>
-                            <p className="text-xl md:text-2xl font-bold">Econ & Design</p>
+                            <p className="text-xl md:text-2xl font-bold">Econ & Psychology</p>
                         </div>
                     </TiltCard>
 

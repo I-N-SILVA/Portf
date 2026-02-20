@@ -83,9 +83,20 @@ export default function LandingContent() {
                 <PortfolioHero />
             </section>
 
-            {/* Transition Zone - The Ticker */}
-            <div className="relative z-30 -mt-20 mb-20">
-                <TextTicker />
+            {/* Transition Zone - Tech Stack / Tools */}
+            <div className="relative z-30 -mt-20 mb-32">
+                <div className="container mx-auto px-6">
+                    <motion.section
+                        id="tools"
+                        className="relative"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                    >
+                        <MagazineHeader title="Toolkit" subtitle="03 / STACK" variant="stamped" className="ml-8" />
+                        <ToolsSection />
+                    </motion.section>
+                </div>
             </div>
 
             {/* Desktop Workspace */}
@@ -130,27 +141,6 @@ export default function LandingContent() {
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
                                     <ProjectsSection />
-                                </div>
-                            </DraggableWindow>
-                        </motion.section>
-                    )}
-                </AnimatePresence>
-
-                {/* Tools Section Window */}
-                <AnimatePresence>
-                    {visibleWindows.tools && (
-                        <motion.section id="tools" className="relative">
-                            <EditorialSidenote note="STACK :: MINIMALIST TOOLKIT FOR MAXIMUM IMPACT." position="left" className="top-1/4" />
-                            <MagazineHeader title="Tech Stack" subtitle="03 / STACK" variant="stamped" className="ml-8" />
-                            <DraggableWindow
-                                title="Toolkit.config"
-                                width="max-w-3xl"
-                                initialX={40}
-                                initialY={0}
-                                onClose={() => toggleWindow("tools", false)}
-                            >
-                                <div className="bg-background/50 backdrop-blur-sm">
-                                    <ToolsSection />
                                 </div>
                             </DraggableWindow>
                         </motion.section>
