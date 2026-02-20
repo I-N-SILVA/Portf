@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 // Inline Button component
 const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
@@ -127,14 +128,17 @@ const BackgroundMesh = () => {
 };
 
 export default function PortfolioHero() {
-    const [isDark, setIsDark] = useState(true);
+    const { theme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
+    const isDark = theme === "dark";
+
     useEffect(() => {
-        document.documentElement.classList.add("dark");
+        setMounted(true);
 
         const handleMouseMove = (e: MouseEvent) => {
             setMousePos({ x: e.clientX, y: e.clientY });
@@ -161,13 +165,7 @@ export default function PortfolioHero() {
     }, [isMenuOpen]);
 
     const toggleTheme = () => {
-        const newTheme = !isDark;
-        setIsDark(newTheme);
-        if (newTheme) {
-            document.documentElement.classList.add("dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-        }
+        setTheme(isDark ? "light" : "dark");
     };
 
     const menuItems = [
@@ -208,12 +206,14 @@ export default function PortfolioHero() {
                         className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-muted dark:bg-secondary"
                         aria-label="Toggle theme"
                     >
-                        <div
-                            className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-foreground dark:bg-primary-foreground"
-                            style={{
-                                transform: isDark ? "translateX(2rem)" : "translateX(0)",
-                            }}
-                        />
+                        {mounted && (
+                            <div
+                                className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-foreground dark:bg-primary-foreground"
+                                style={{
+                                    transform: isDark ? "translateX(2rem)" : "translateX(0)",
+                                }}
+                            />
+                        )}
                     </button>
                 </nav>
             </header>
