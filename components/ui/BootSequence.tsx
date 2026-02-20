@@ -3,18 +3,18 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const logLines = [
+    "IAMNSILVA OS V2.0.26",
+    "LOADING SYSTEM CORE...",
+    "INITIALIZING INTERFACE...",
+    "FETCHING DESIGN TOKENS...",
+    "APPLYING WARM CREAM PALETTE...",
+    "SYSTEM READY.",
+];
+
 export default function BootSequence() {
     const [isVisible, setIsVisible] = useState(true);
     const [progress, setProgress] = useState(0);
-
-    const logLines = [
-        "IAMNSILVA OS V2.0.26",
-        "LOADING SYSTEM CORE...",
-        "INITIALIZING INTERFACE...",
-        "FETCHING DESIGN TOKENS...",
-        "APPLYING WARM CREAM PALETTE...",
-        "SYSTEM READY.",
-    ];
 
     useEffect(() => {
         const timer = setInterval(() => {
