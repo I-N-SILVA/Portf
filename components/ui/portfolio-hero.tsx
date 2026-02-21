@@ -182,7 +182,7 @@ export default function PortfolioHero() {
                         className="max-w-md"
                     >
                         <p className="font-serif text-lg md:text-2xl italic text-foreground/80 leading-relaxed text-balance">
-                            "Designing human experiences in code, with a focus on modern aesthetics and interactive intelligence."
+                            &ldquo;Designing human experiences in code, with a focus on modern aesthetics and interactive intelligence.&rdquo;
                         </p>
                     </motion.div>
 
