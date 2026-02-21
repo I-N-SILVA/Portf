@@ -2,28 +2,27 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Instagram, Youtube, Twitter, Linkedin, Github } from "lucide-react";
+import { Instagram, Youtube, Linkedin, Github } from "lucide-react";
 import { socialLinks } from "@/lib/placeholder-content";
 
-// TikTok icon is often missing in standard Lucide sets, providing a simple SVG
-const TikTokIcon = ({ className }: { className?: string }) => (
+// Substack icon (SVG)
+const SubstackIcon = ({ className }: { className?: string }) => (
     <svg
         viewBox="0 0 24 24"
         fill="currentColor"
         className={className}
         stroke="none"
     >
-        <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.89-.6-4.13-1.47-.13 3.35-.11 6.71-.12 10.06-.03 2.1-.8 4.31-2.43 5.68-1.76 1.48-4.4 1.9-6.59 1.12-2.31-.83-4.13-2.96-4.52-5.41-.42-2.65.65-5.59 2.89-7.14 1.42-1 3.23-1.41 4.93-1.07V12.9c-1.34-.33-2.88-.1-3.92.83-1.03.92-1.43 2.44-1.12 3.78.36 1.5 1.77 2.66 3.29 2.62 1.55-.06 2.87-1.32 2.99-2.87.03-3.32.01-6.64.02-9.97a9.14 9.14 0 0 0-3.31-6.81l.01-4c2.44.22 4.7 1.58 5.76 3.79l.01-4.21c-.42-.09-.84-.17-1.26-.26a9.41 9.41 0 0 0-4.52.02V.02Z" />
+        <path d="M22.539 8.242H1.46V5.406h21.078v2.836zM1.46 10.812V24L12 18.11L22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.078V0z" />
     </svg>
 );
 
 const iconMap: Record<string, any> = {
     instagram: Instagram,
     youtube: Youtube,
-    twitter: Twitter,
     linkedin: Linkedin,
     github: Github,
-    tiktok: TikTokIcon,
+    substack: SubstackIcon,
 };
 
 export default function SocialSidebar() {

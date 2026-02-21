@@ -251,19 +251,14 @@ export const socialLinks: SocialLink[] = [
     icon: "instagram",
   },
   {
-    name: "TikTok",
+    name: "Substack",
     url: "#",
-    icon: "tiktok",
+    icon: "substack",
   },
   {
     name: "YouTube",
     url: "#",
     icon: "youtube",
-  },
-  {
-    name: "X",
-    url: "#",
-    icon: "twitter",
   },
   {
     name: "LinkedIn",

@@ -3,6 +3,7 @@
 import React, { useRef, useState } from "react";
 import { motion, useDragControls, AnimatePresence } from "framer-motion";
 import { Minus, Square, X, Maximize2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DraggableWindowProps {
     title: string;
@@ -55,10 +56,15 @@ export default function DraggableWindow({
             x: 0,
             y: 0,
             scale: 1,
-            width: isMobile ? "100vw" : "90vw",
-            height: "85vh",
+            width: isMobile ? "100vw" : "100vw",
+            height: "100vh",
             zIndex: 100,
-            transition: { type: "spring", stiffness: 300, damping: 25 }
+            transition: {
+                type: "spring",
+                stiffness: 400, // High elasticity
+                damping: 18,   // Lower damping for rubber-band effect
+                mass: 0.8
+            }
         },
         exit: {
             scale: 0.8,
@@ -92,34 +98,82 @@ export default function DraggableWindow({
                         animate={isMaximized ? "maximized" : isMinimized ? "minimized" : "normal"}
                         exit="exit"
                         whileDrag={{ scale: 1.02, zIndex: 50 }}
-                        className={`${isMaximized ? "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" : width} bg-card border-2 border-border rounded-xl shadow-[8px_8px_0px_0px_rgba(var(--color-text-primary),0.1)] overflow-hidden flex flex-col transition-shadow duration-300`}
+                        className={cn(
+                            "bg-card border-2 border-border overflow-hidden flex flex-col transition-all duration-300",
+                            isMaximized
+                                ? "fixed inset-0 z-[100] rounded-none border-none shadow-none"
+                                : cn("rounded-xl shadow-[8px_8px_0px_0px_rgba(var(--color-text-primary),0.1)]", width),
+                            className
+                        )}
+                        style={isMaximized ? { x: 0, y: 0, width: '100vw', height: '100vh' } : {}}
                     >
-                        {/* Title Bar */}
+                        {/* Morphed Title Bar / Dashboard Header */}
                         <div
                             onPointerDown={(e) => !isMaximized && dragControls.start(e)}
-                            className={`h-10 bg-primary/20 border-b-2 border-border flex items-center justify-between px-4 select-none ${isMaximized ? "cursor-default" : "cursor-grab active:cursor-grabbing"}`}
+                            className={cn(
+                                "flex items-center justify-between px-6 select-none transition-all duration-500 ease-in-out",
+                                isMaximized
+                                    ? "h-16 bg-background/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 px-8"
+                                    : "h-10 bg-primary/20 border-b-2 border-border cursor-grab active:cursor-grabbing"
+                            )}
                         >
-                            <div className="flex items-center gap-2">
-                                <div className={`w-2.5 h-2.5 rounded-full border ${isMaximized ? "bg-accent border-accent animate-pulse" : "bg-destructive/50 border-destructive"}`} />
-                                <span className="text-[10px] font-black tracking-widest uppercase opacity-60">
-                                    {title}
-                                </span>
+                            <div className="flex items-center gap-4">
+                                <div className={cn(
+                                    "rounded-full border transition-all duration-500",
+                                    isMaximized
+                                        ? "size-3 bg-green-500 border-green-400 shadow-[0_0_15px_rgba(34,197,94,0.5)]"
+                                        : "size-2.5 bg-destructive/50 border-destructive"
+                                )} />
+                                <div className="flex flex-col">
+                                    <span className={cn(
+                                        "font-black tracking-widest uppercase transition-all duration-500",
+                                        isMaximized ? "text-sm opacity-100" : "text-[10px] opacity-60"
+                                    )}>
+                                        {title}
+                                    </span>
+                                    {isMaximized && (
+                                        <span className="text-[8px] font-mono opacity-40 uppercase tracking-[0.2em] -mt-1">
+                                            System_Active_Session_v2.0
+                                        </span>
+                                    )}
+                                </div>
                             </div>
+
+                            {/* Center elements for Maximized Mode */}
+                            {isMaximized && (
+                                <div className="hidden md:flex items-center gap-8 ml-auto mr-12 h-full">
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-[9px] font-mono opacity-30 uppercase">Uptime</span>
+                                        <span className="text-[11px] font-mono text-primary animate-pulse">01:24:55:02</span>
+                                    </div>
+                                    <div className="h-6 w-px bg-white/10" />
+                                    <div className="flex flex-col items-center">
+                                        <span className="text-[9px] font-mono opacity-30 uppercase">Status</span>
+                                        <span className="text-[11px] font-mono text-cyan-400">OPTIMIZED</span>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setIsMinimized(!isMinimized)}
-                                    className="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-sm transition-colors"
+                                    className="p-1.5 hover:bg-white/5 rounded-full transition-colors group"
                                     aria-label="Minimize"
                                 >
-                                    <Minus className={`w-3.5 h-3.5 ${isMinimized ? "text-primary opacity-100" : "opacity-40"}`} />
+                                    <Minus className={cn(
+                                        "w-4 h-4 transition-all duration-300",
+                                        isMinimized ? "text-primary opacity-100 scale-110" : "opacity-40 group-hover:opacity-100"
+                                    )} />
                                 </button>
                                 <button
                                     onClick={() => setIsMaximized(!isMaximized)}
-                                    className="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-sm transition-colors"
+                                    className="p-1.5 hover:bg-white/5 rounded-full transition-colors group"
                                     aria-label="Toggle Maximize"
                                 >
-                                    {isMaximized ? <Maximize2 className="w-3.5 h-3.5 text-primary" /> : <Square className="w-3.5 h-3.5 opacity-40" />}
+                                    {isMaximized
+                                        ? <Maximize2 className="w-4 h-4 text-primary scale-110" />
+                                        : <Square className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:scale-110" />
+                                    }
                                 </button>
                                 <button
                                     onClick={() => {
@@ -128,10 +182,10 @@ export default function DraggableWindow({
                                             setTimeout(onClose, 300);
                                         }
                                     }}
-                                    className="p-1 hover:bg-destructive/20 hover:text-destructive rounded-sm transition-all"
+                                    className="p-1.5 hover:bg-destructive/20 hover:text-destructive rounded-full transition-all group"
                                     aria-label="Close"
                                 >
-                                    <X className="w-3.5 h-3.5 opacity-40 hover:opacity-100" />
+                                    <X className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:rotate-90" />
                                 </button>
                             </div>
                         </div>
