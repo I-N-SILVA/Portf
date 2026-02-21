@@ -115,6 +115,9 @@ const config: Config = {
         semibold: '600',
         bold: '700',
       },
+      fontFamily: {
+        serif: ["var(--font-playfair)", "serif"],
+      },
     }
   },
   plugins: [],

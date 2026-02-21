@@ -1,94 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-
-// Inline Button component
-const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-    ({ className = "", children, ...props }, ref) => {
-        return (
-            <button
-                ref={ref}
-                className={`inline-flex items-center justify-center rounded-md px-6 py-3 text-sm font-medium transition-colors bg-primary text-primary-foreground hover:bg-accent hover:text-white dark:bg-primary dark:text-deep-cocoa-dark dark:hover:bg-accent dark:hover:text-white ${className}`}
-                {...props}
-            >
-                {children}
-            </button>
-        );
-    }
-);
-Button.displayName = "Button";
-
-// BlurText animation component
-interface BlurTextProps {
-    text: string;
-    delay?: number;
-    animateBy?: "words" | "letters";
-    direction?: "top" | "bottom";
-    className?: string;
-    style?: React.CSSProperties;
-}
-
-const BlurText: React.FC<BlurTextProps> = ({
-    text,
-    delay = 50,
-    animateBy = "words",
-    direction = "top",
-    className = "",
-    style,
-}) => {
-    const [inView, setInView] = useState(false);
-    const ref = useRef<HTMLParagraphElement>(null);
-
-    useEffect(() => {
-        const currentRef = ref.current;
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setInView(true);
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        if (currentRef) {
-            observer.observe(currentRef);
-        }
-
-        return () => {
-            if (currentRef) {
-                observer.unobserve(currentRef);
-            }
-        };
-    }, []);
-
-    const segments = useMemo(() => {
-        return animateBy === "words" ? text.split(" ") : text.split("");
-    }, [text, animateBy]);
-
-    return (
-        <p ref={ref} className={`inline-flex flex-wrap ${className}`} style={style}>
-            {segments.map((segment, i) => (
-                <span
-                    key={i}
-                    style={{
-                        display: "inline-block",
-                        filter: inView ? "blur(0px)" : "blur(10px)",
-                        opacity: inView ? 1 : 0,
-                        transform: inView ? "translateY(0)" : `translateY(${direction === "top" ? "-20px" : "20px"})`,
-                        transition: `all 0.5s ease-out ${i * delay}ms`,
-                    }}
-                >
-                    {segment}
-                    {animateBy === "words" && i < segments.length - 1 ? "\u00A0" : ""}
-                </span>
-            ))}
-        </p>
-    );
-};
 
 const BackgroundMesh = () => {
     return (
@@ -219,81 +135,99 @@ export default function PortfolioHero() {
             </header>
 
             {/* Hero Section */}
-            <main className="relative min-h-screen flex flex-col">
-                {/* Centered Main Name - Always Perfectly Centered */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-4">
-                    <div className="relative text-center">
-                        <div>
-                            <BlurText
-                                text="IAN N."
-                                delay={100}
-                                animateBy="letters"
-                                direction="top"
-                                className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
-                                style={{ color: "var(--primary)", fontFamily: "var(--font-outfit)" }}
-                            />
-                        </div>
-                        <div>
-                            <BlurText
-                                text="SILVA"
-                                delay={100}
-                                animateBy="letters"
-                                direction="top"
-                                className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase justify-center whitespace-nowrap"
-                                style={{ color: "var(--primary)", fontFamily: "var(--font-outfit)" }}
-                            />
-                        </div>
+            <main className="relative min-h-[120vh] flex flex-col md:grid md:grid-cols-12 md:items-center px-6 md:px-12">
+                {/* Background Large Text (Left Side) - Editorial Style */}
+                <div className="absolute inset-y-0 left-0 w-1/2 flex items-center justify-start z-0 overflow-hidden pointer-events-none">
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 0.04, x: 0 }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className="select-none"
+                    >
+                        <h1 className="font-black text-[20vw] leading-[0.8] tracking-[-0.05em] uppercase text-foreground rotate-[-1deg]">
+                            IAN<br />SILVA
+                        </h1>
+                    </motion.div>
+                </div>
 
-                        {/* Tagline - Proper Distance Below Hero */}
-                        <div className="absolute bottom-24 sm:bottom-28 md:bottom-32 lg:bottom-40 xl:bottom-44 left-1/2 -translate-x-1/2 w-full px-6 flex flex-col items-center gap-8">
-                            <div className="flex justify-center">
-                                <BlurText
-                                    text="Designing human experiences in code."
-                                    delay={150}
-                                    animateBy="words"
-                                    direction="top"
-                                    className="text-[15px] sm:text-[18px] md:text-[20px] lg:text-[22px] text-center transition-colors duration-300 text-foreground hover:text-accent"
-                                    style={{ fontFamily: "var(--font-inter)" }}
-                                />
-                            </div>
-
-                            <motion.button
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 1, duration: 0.8 }}
-                                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                                className="px-8 py-4 bg-primary text-primary-foreground rounded-full font-black text-sm tracking-[0.2em] uppercase shadow-2xl hover:scale-105 active:scale-95 transition-all group border border-primary-foreground/10"
-                            >
-                                See My Work
-                            </motion.button>
-                        </div>
-
-                        {/* Profile Picture / Logo replacement */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
-                            <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-background border border-border flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer" onClick={(e) => e.stopPropagation()}>
-                                <Image
-                                    src="/android-chrome-512x512.png"
-                                    alt="Profile Logo"
-                                    width={128}
-                                    height={128}
-                                    className="w-3/4 h-3/4 object-contain opacity-90"
-                                />
-                            </div>
-                        </div>
+                {/* Right-aligned CTA Content Stack */}
+                <div className="relative z-20 mt-[20vh] md:mt-0 md:col-start-8 md:col-end-13 flex flex-col items-end text-right gap-12">
+                    {/* Vertically Stacked Hero Title */}
+                    <div className="flex flex-col items-end">
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                        >
+                            <h2 className="magazine-title text-[80px] sm:text-[100px] md:text-[120px] lg:text-[140px] xl:text-[160px] text-primary">
+                                IAN
+                            </h2>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+                        >
+                            <h2 className="magazine-title text-[80px] sm:text-[100px] md:text-[120px] lg:text-[140px] xl:text-[160px] text-primary -mt-8 md:-mt-12">
+                                SILVA
+                            </h2>
+                        </motion.div>
                     </div>
+
+                    {/* Editorial Subtext (Serif) */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                        className="max-w-md"
+                    >
+                        <p className="font-serif text-lg md:text-2xl italic text-foreground/80 leading-relaxed text-balance">
+                            "Designing human experiences in code, with a focus on modern aesthetics and interactive intelligence."
+                        </p>
+                    </motion.div>
+
+                    {/* Vertical / Stamped Button */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.5, delay: 0.5 }}
+                    >
+                        <button
+                            onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+                            className="relative px-12 py-6 overflow-hidden group border-2 border-primary text-primary font-black uppercase tracking-[0.3em] text-xs hover:bg-primary hover:text-background transition-all"
+                        >
+                            <span className="relative z-10">SEE MY WORK</span>
+                            <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                        </button>
+                    </motion.div>
+                </div>
+
+                {/* Profile Circle - Offset to break the symmetry */}
+                <div className="absolute top-[15%] left-[10%] md:top-[20%] md:left-[25%] z-10 pointer-events-auto">
+                    <motion.div
+                        initial={{ scale: 0, rotate: -20 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 100, delay: 0.6 }}
+                        className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden bg-background border border-border flex items-center justify-center shadow-2xl hover:scale-105 cursor-pointer"
+                    >
+                        <Image
+                            src="/android-chrome-512x512.png"
+                            alt="Profile"
+                            width={192}
+                            height={192}
+                            className="w-3/4 h-3/4 object-contain opacity-40 grayscale hover:grayscale-0 transition-all duration-500"
+                        />
+                    </motion.div>
                 </div>
 
                 {/* Scroll Indicator */}
                 <button
                     type="button"
-                    className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300 pointer-events-auto"
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300 pointer-events-auto z-30"
                     aria-label="Scroll down"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
+                    onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
                 >
-                    <ChevronDown className="w-5 h-5 md:w-8 md:h-8 text-foreground hover:text-accent transition-colors duration-300" />
+                    <ChevronDown className="w-8 h-8 text-foreground hover:text-primary transition-colors" />
                 </button>
             </main>
         </div>

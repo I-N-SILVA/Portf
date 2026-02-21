@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -11,6 +11,11 @@ const outfit = Outfit({
   subsets: ["latin"],
   weight: ["700", "800", "900"],
   variable: "--font-outfit",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
 });
 
 export const metadata: Metadata = {
@@ -44,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
+        className={`${inter.variable} ${outfit.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
       >
         <Providers>
           <CustomCursor />
