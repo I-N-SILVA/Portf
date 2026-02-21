@@ -135,89 +135,38 @@ export default function PortfolioHero() {
             </header>
 
             {/* Hero Section */}
-            <main className="relative min-h-[120vh] flex flex-col md:grid md:grid-cols-12 md:items-center px-6 md:px-12">
-                {/* Background Large Text (Left Side) - Editorial Style */}
-                <div className="absolute inset-y-0 left-0 w-1/2 flex items-center justify-start z-0 overflow-hidden pointer-events-none">
+            <main className="relative min-h-screen flex flex-col items-center justify-center">
+                <div className="relative text-center z-20">
                     <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 0.04, x: 0 }}
-                        transition={{ duration: 1.5, ease: "easeOut" }}
-                        className="select-none"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, ease: "easeOut" }}
                     >
-                        <h1 className="font-black text-[20vw] leading-[0.8] tracking-[-0.05em] uppercase text-foreground rotate-[-1deg]">
-                            IAN<br />SILVA
+                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-primary font-[family-name:var(--font-outfit)]">
+                            IAN N.
+                        </h1>
+                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-primary font-[family-name:var(--font-outfit)]">
+                            SILVA
                         </h1>
                     </motion.div>
-                </div>
 
-                {/* Right-aligned CTA Content Stack */}
-                <div className="relative z-20 mt-[20vh] md:mt-0 md:col-start-8 md:col-end-13 flex flex-col items-end text-right gap-12">
-                    {/* Vertically Stacked Hero Title */}
-                    <div className="flex flex-col items-end">
+                    {/* Profile Picture / Logo - Centered */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
                         <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 100, delay: 0.5 }}
+                            className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-background border border-border flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer"
                         >
-                            <h2 className="magazine-title text-[80px] sm:text-[100px] md:text-[120px] lg:text-[140px] xl:text-[160px] text-primary">
-                                IAN
-                            </h2>
-                        </motion.div>
-                        <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-                        >
-                            <h2 className="magazine-title text-[80px] sm:text-[100px] md:text-[120px] lg:text-[140px] xl:text-[160px] text-primary -mt-8 md:-mt-12">
-                                SILVA
-                            </h2>
+                            <Image
+                                src="/android-chrome-512x512.png"
+                                alt="Profile Logo"
+                                width={128}
+                                height={128}
+                                className="w-3/4 h-3/4 object-contain opacity-90"
+                            />
                         </motion.div>
                     </div>
-
-                    {/* Editorial Subtext (Serif) */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
-                        className="max-w-md"
-                    >
-                        <p className="font-serif text-lg md:text-2xl italic text-foreground/80 leading-relaxed text-balance">
-                            &ldquo;Designing human experiences in code, with a focus on modern aesthetics and interactive intelligence.&rdquo;
-                        </p>
-                    </motion.div>
-
-                    {/* Vertical / Stamped Button */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: 0.5 }}
-                    >
-                        <button
-                            onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                            className="relative px-12 py-6 overflow-hidden group border-2 border-primary text-primary font-black uppercase tracking-[0.3em] text-xs hover:bg-primary hover:text-background transition-all"
-                        >
-                            <span className="relative z-10">SEE MY WORK</span>
-                            <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
-                        </button>
-                    </motion.div>
-                </div>
-
-                {/* Profile Circle - Offset to break the symmetry */}
-                <div className="absolute top-[15%] left-[10%] md:top-[20%] md:left-[25%] z-10 pointer-events-auto">
-                    <motion.div
-                        initial={{ scale: 0, rotate: -20 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ type: "spring", stiffness: 100, delay: 0.6 }}
-                        className="w-32 h-32 md:w-48 md:h-48 rounded-full overflow-hidden bg-background border border-border flex items-center justify-center shadow-2xl hover:scale-105 cursor-pointer"
-                    >
-                        <Image
-                            src="/android-chrome-512x512.png"
-                            alt="Profile"
-                            width={192}
-                            height={192}
-                            className="w-3/4 h-3/4 object-contain opacity-40 grayscale hover:grayscale-0 transition-all duration-500"
-                        />
-                    </motion.div>
                 </div>
 
                 {/* Scroll Indicator */}

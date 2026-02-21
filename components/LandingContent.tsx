@@ -93,7 +93,6 @@ export default function LandingContent() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <MagazineHeader title="Toolkit" subtitle="03 / STACK" variant="stamped" className="ml-8" />
                         <ToolsSection />
                     </motion.section>
                 </div>
