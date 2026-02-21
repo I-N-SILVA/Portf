@@ -18,11 +18,18 @@ export default function ProjectsSection() {
         <section id="projects" className="py-24 bg-secondary/30">
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
-                    <div>
-                        <h2 className="text-3xl font-bold mb-4">Featured Projects</h2>
-                        <p className="text-muted-foreground max-w-xl">
-                            A collection of projects exploring AI, Web3, and modern web development.
-                        </p>
+                    <div className="flex flex-col mb-16">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="flex flex-col"
+                        >
+                            <span className="text-secondary-foreground/40 font-mono text-sm mb-2 tracking-widest uppercase">02 / WORKS</span>
+                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)]">
+                                THE<br />ARCHIVE
+                            </h2>
+                        </motion.div>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
@@ -31,8 +38,8 @@ export default function ProjectsSection() {
                                 key={cat}
                                 onClick={() => setFilter(cat)}
                                 className={`px-4 py-2 rounded-full text-xs font-black tracking-widest uppercase transition-all border ${filter === cat
-                                        ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
-                                        : "bg-background/50 text-muted-foreground border-border hover:border-primary/50"
+                                    ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
+                                    : "bg-background/50 text-muted-foreground border-border hover:border-primary/50"
                                     }`}
                             >
                                 {cat}

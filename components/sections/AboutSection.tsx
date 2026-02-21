@@ -61,14 +61,17 @@ export default function AboutSection() {
     return (
         <section id="about" className="py-24 relative overflow-hidden">
             <div className="container mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                <div className="flex flex-col mb-16">
                     <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
+                        className="flex flex-col"
                     >
-                        <h2 className="text-4xl md:text-5xl font-black mb-4 tracking-tighter">WHO IS IAN?</h2>
-                        <div className="h-1 w-20 bg-primary rounded-full" />
+                        <span className="text-secondary-foreground/40 font-mono text-sm mb-2 tracking-widest uppercase">01 / IDENTITY</span>
+                        <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)]">
+                            THE<br />PROFILE
+                        </h2>
                     </motion.div>
                 </div>
 

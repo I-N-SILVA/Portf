@@ -7,21 +7,20 @@ import Cursor from "@/components/ui/inverted-cursor";
 import AboutSection from "@/components/sections/AboutSection";
 import ProjectsSection from "@/components/sections/ProjectsSection";
 import ToolsSection from "@/components/sections/ToolsSection";
+import ExpertiseSection from "@/components/sections/ExpertiseSection";
 import ContactSection from "@/components/sections/ContactSection";
 import { FloatingDock, MobileDock } from "@/components/ui/floating-dock";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import DraggableWindow from "@/components/ui/DraggableWindow";
-import MagazineHeader from "@/components/ui/MagazineHeader";
 import BootSequence from "@/components/ui/BootSequence";
 import TextTicker from "@/components/ui/TextTicker";
-import EditorialSidenote from "@/components/ui/EditorialSidenote";
 
 export default function LandingContent() {
     const [mounted, setMounted] = useState(false);
     const [visibleWindows, setVisibleWindows] = useState({
         about: true,
         projects: true,
-        tools: true,
+        expertise: true,
         contact: true
     });
 
@@ -33,7 +32,7 @@ export default function LandingContent() {
         setVisibleWindows({
             about: true,
             projects: true,
-            tools: true,
+            expertise: true,
             contact: true
         });
     };
@@ -84,13 +83,13 @@ export default function LandingContent() {
             </section>
 
             {/* Transition Zone - Tech Stack / Tools */}
-            <div className="relative z-30 -mt-20 mb-32">
+            <div className="relative z-30 -mt-24 mb-20">
                 <div className="container mx-auto px-6">
                     <motion.section
                         id="tools"
                         className="relative"
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
                         viewport={{ once: true }}
                     >
                         <ToolsSection />
@@ -105,8 +104,6 @@ export default function LandingContent() {
                 <AnimatePresence>
                     {visibleWindows.about && (
                         <motion.section id="about" className="relative">
-                            <EditorialSidenote note="IDENTITY_VAR :: FOUNDATION OF DISCIPLINE AND CODE." position="left" />
-                            <MagazineHeader title="The Profile" subtitle="01 / IDENTITY" variant="outline" className="ml-4" />
                             <DraggableWindow
                                 title="System_Profile.exe"
                                 width="max-w-4xl"
@@ -126,10 +123,6 @@ export default function LandingContent() {
                 <AnimatePresence>
                     {visibleWindows.projects && (
                         <motion.section id="projects" className="relative">
-                            <EditorialSidenote note="ARCHIVE :: CURATED SELECTION OF AI & WEB AGENTS." position="right" />
-                            <div className="flex justify-end pr-4">
-                                <MagazineHeader title="Archive" subtitle="02 / WORKS" variant="outline" className="text-right" />
-                            </div>
                             <DraggableWindow
                                 title="Project_Manager.app"
                                 width="max-w-6xl"
@@ -146,12 +139,30 @@ export default function LandingContent() {
                     )}
                 </AnimatePresence>
 
+                {/* Expertise Section Window */}
+                <AnimatePresence>
+                    {visibleWindows.expertise && (
+                        <motion.section id="expertise" className="relative">
+                            <DraggableWindow
+                                title="Domains_Expertise.sys"
+                                width="max-w-5xl"
+                                initialX={0}
+                                initialY={0}
+                                onClose={() => toggleWindow("expertise", false)}
+                            >
+                                <div className="bg-background/50 backdrop-blur-sm">
+                                    <ExpertiseSection />
+                                </div>
+                            </DraggableWindow>
+                        </motion.section>
+                    )}
+                </AnimatePresence>
+
                 {/* Contact Section Window */}
                 <AnimatePresence>
                     {visibleWindows.contact && (
                         <motion.section id="contact" className="pb-40">
                             <div className="flex flex-col items-center">
-                                <MagazineHeader title="Connect" subtitle="04 / CONTACT" variant="default" className="text-center" />
                                 <DraggableWindow
                                     title="Messenger.vibe"
                                     width="max-w-2xl"
