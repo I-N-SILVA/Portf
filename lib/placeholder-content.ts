@@ -246,6 +246,31 @@ export const skills: Skill[] = [
 // Social links
 export const socialLinks: SocialLink[] = [
   {
+    name: "Instagram",
+    url: "#",
+    icon: "instagram",
+  },
+  {
+    name: "TikTok",
+    url: "#",
+    icon: "tiktok",
+  },
+  {
+    name: "YouTube",
+    url: "#",
+    icon: "youtube",
+  },
+  {
+    name: "X",
+    url: "#",
+    icon: "twitter",
+  },
+  {
+    name: "LinkedIn",
+    url: "#",
+    icon: "linkedin",
+  },
+  {
     name: "GitHub",
     url: "https://github.com/I-N-SILVA",
     icon: "github",
