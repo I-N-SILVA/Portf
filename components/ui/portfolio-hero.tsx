@@ -117,7 +117,7 @@ export default function PortfolioHero() {
                             toggleTheme();
                         }}
                         className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-card/80 backdrop-blur-md border border-sky-border/10 shadow-standard"
-                        aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+                        aria-label={mounted ? `Switch to ${isDark ? 'light' : 'dark'} mode` : "Switch Theme"}
                     >
                         {mounted && (
                             <div
