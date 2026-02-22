@@ -118,7 +118,7 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
                                 ))
                             ) : (
                                 <div className="p-8 text-center">
-                                    <p className="text-sky-text-secondary italic">No results found for "{query}"</p>
+                                    <p className="text-sky-text-secondary italic">No results found for &quot;{query}&quot;</p>
                                 </div>
                             )}
                         </div>
