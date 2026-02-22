@@ -4,45 +4,48 @@
 
 @layer base {
   :root {
-    /* IAMNSILVA Design System - Light Mode Colors (Warm Cream Base) */
-    --color-background-warm-cream: 255 246 233;
-    /* #FFF6E9 */
-    --color-text-primary: 42 25 21;
-    /* #2A1915 Deep Cocoa */
-    --color-text-secondary: 184 168 157;
-    /* #B8A89D Soft Taupe */
-    --color-accent-honey-gold: 255 216 112;
-    /* #FFD870 */
-    --color-accent-coral-orange: 255 127 80;
-    /* #FF7F50 */
-    --color-accent-teal-green: 53 199 190;
-    /* #35C7BE */
-    --color-surface-pale-beige: 245 238 226;
-    /* #F5EEE2 */
-    --color-border-soft-sand: 228 217 201;
-    /* #E4D9C9 */
+    /* Base Color Tokens (RGB for Tailwind Opacity Support) */
+    --color-bg-base: 247 247 250;
+    /* #F7F7FA */
+    --color-bg-elevated: 255 255 255;
+    /* #FFFFFF */
+    --color-text-primary: 34 37 43;
+    /* #22252B */
+    --color-text-muted: 106 111 122;
+    /* #6A6F7A */
+    --color-brand-primary: 30 59 113;
+    /* #1E3B71 */
+    --color-brand-soft: 137 207 240;
+    /* #89CFF0 */
+    --color-accent-gold: 232 196 104;
+    /* #E8C468 */
+    --color-border-subtle: 215 217 224;
+    /* #D7D9E0 */
+    --color-error: 224 87 77;
+    /* #E0574D */
 
-    --background: var(--color-background-warm-cream);
+    /* Semantic Mapping - Light Mode */
+    --background: var(--color-bg-base);
     --foreground: var(--color-text-primary);
-    --card: var(--color-surface-pale-beige);
+    --card: var(--color-bg-elevated);
     --card-foreground: var(--color-text-primary);
-    --popover: var(--color-background-warm-cream);
+    --popover: var(--color-bg-elevated);
     --popover-foreground: var(--color-text-primary);
-    --primary: var(--color-accent-honey-gold);
-    --primary-foreground: var(--color-text-primary);
-    --secondary: var(--color-surface-pale-beige);
+    --primary: var(--color-brand-primary);
+    --primary-foreground: 255 255 255;
+    --secondary: var(--color-bg-elevated);
     --secondary-foreground: var(--color-text-primary);
-    --muted: var(--color-surface-pale-beige);
-    --muted-foreground: var(--color-text-secondary);
-    --accent: var(--color-accent-teal-green);
-    --accent-foreground: var(--color-text-primary);
-    --destructive: 239 68 68;
+    --muted: var(--color-bg-base);
+    --muted-foreground: var(--color-text-muted);
+    --accent: var(--color-accent-gold);
+    --accent-foreground: var(--color-brand-primary);
+    --destructive: var(--color-error);
     --destructive-foreground: 255 255 255;
-    --border: var(--color-border-soft-sand);
-    --input: var(--color-border-soft-sand);
-    --ring: var(--color-accent-honey-gold);
+    --border: var(--color-border-subtle);
+    --input: var(--color-border-subtle);
+    --ring: var(--color-brand-primary);
 
-    /* Border Radius - Circular/Rounded Style */
+    /* Border Radius - Refinement */
     --radius-rounded: 12px;
     --radius-standard: 8px;
     --radius-subtle: 4px;
@@ -50,63 +53,66 @@
     --radius-full: 9999px;
     --radius: 0.5rem;
 
-    --sidebar-background: var(--color-surface-pale-beige);
+    --sidebar-background: var(--color-bg-elevated);
     --sidebar-foreground: var(--color-text-primary);
-    --sidebar-primary: var(--color-accent-honey-gold);
-    --sidebar-primary-foreground: var(--color-text-primary);
-    --sidebar-accent: var(--color-border-soft-sand);
-    --sidebar-accent-foreground: var(--color-text-primary);
-    --sidebar-border: var(--color-border-soft-sand);
-    --sidebar-ring: var(--color-accent-honey-gold);
+    --sidebar-primary: var(--color-brand-primary);
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: var(--color-bg-base);
+    --sidebar-accent-foreground: var(--color-brand-primary);
+    --sidebar-border: var(--color-border-subtle);
+    --sidebar-ring: var(--color-brand-primary);
   }
 
   .dark {
-    /* IAMNSILVA Design System - Dark Mode Colors (Deep Cocoa Base) */
-    --color-background-deep-cocoa: 42 25 21;
-    /* #2A1915 */
-    --color-surface-dark-brown: 56 36 31;
-    /* #38241F */
-    --color-text-primary-dark: 255 246 233;
-    /* #FFF6E9 Warm Cream */
-    --color-text-secondary-dark: 184 168 157;
-    /* #B8A89D Soft Taupe */
-    --color-accent-honey-gold-brighter: 255 216 112;
-    /* #FFD870 */
-    --color-accent-cyan-teal: 53 199 190;
-    /* #35C7BE */
-    --color-border-dark: 74 56 41;
-    /* #4A3829 */
+    /* Base Color Tokens - Dark (RGB) */
+    --color-bg-base: 5 7 18;
+    /* #050712 */
+    --color-bg-elevated: 14 18 32;
+    /* #0E1220 */
+    --color-text-primary: 245 246 250;
+    /* #F5F6FA */
+    --color-text-muted: 156 163 181;
+    /* #9CA3B5 */
+    --color-brand-primary: 30 59 113;
+    /* #1E3B71 */
+    --color-brand-soft: 137 207 240;
+    /* #89CFF0 */
+    --color-accent-gold: 232 196 104;
+    /* #E8C468 */
+    --color-border-subtle: 37 41 58;
+    /* #25293A */
+    --color-error: 248 113 113;
+    /* #F87171 */
 
-    /* Generic semantic colors mapped to IAMNSILVA Palette */
-    --background: var(--color-background-deep-cocoa);
-    --foreground: var(--color-text-primary-dark);
-    --card: var(--color-surface-dark-brown);
-    --card-foreground: var(--color-text-primary-dark);
-    --popover: var(--color-background-deep-cocoa);
-    --popover-foreground: var(--color-text-primary-dark);
-    --primary: var(--color-accent-honey-gold-brighter);
-    --primary-foreground: var(--color-background-deep-cocoa);
-    --secondary: var(--color-surface-dark-brown);
-    --secondary-foreground: var(--color-text-primary-dark);
-    --muted: var(--color-surface-dark-brown);
-    --muted-foreground: var(--color-text-secondary-dark);
-    --accent: var(--color-accent-cyan-teal);
-    --accent-foreground: var(--color-text-primary-dark);
-    --destructive: 255 99 71;
-    /* Tomato */
+    /* Semantic Mapping - Dark Mode */
+    --background: var(--color-bg-base);
+    --foreground: var(--color-text-primary);
+    --card: var(--color-bg-elevated);
+    --card-foreground: var(--color-text-primary);
+    --popover: var(--color-bg-elevated);
+    --popover-foreground: var(--color-text-primary);
+    --primary: var(--color-brand-primary);
+    --primary-foreground: 255 255 255;
+    --secondary: var(--color-bg-elevated);
+    --secondary-foreground: var(--color-text-primary);
+    --muted: var(--color-bg-elevated);
+    --muted-foreground: var(--color-text-muted);
+    --accent: var(--color-accent-gold);
+    --accent-foreground: var(--color-brand-primary);
+    --destructive: var(--color-error);
     --destructive-foreground: 255 255 255;
-    --border: var(--color-border-dark);
-    --input: 26 15 10;
-    --ring: var(--color-accent-honey-gold-brighter);
+    --border: var(--color-border-subtle);
+    --input: var(--color-border-subtle);
+    --ring: var(--color-brand-primary);
 
-    --sidebar: var(--color-background-deep-cocoa);
-    --sidebar-foreground: var(--color-text-primary-dark);
-    --sidebar-primary: var(--color-accent-honey-gold-brighter);
-    --sidebar-primary-foreground: var(--color-background-deep-cocoa);
-    --sidebar-accent: var(--color-surface-dark-brown);
-    --sidebar-accent-foreground: var(--color-text-primary-dark);
-    --sidebar-border: var(--color-border-dark);
-    --sidebar-ring: var(--color-accent-honey-gold-brighter);
+    --sidebar-background: var(--color-bg-elevated);
+    --sidebar-foreground: var(--color-text-primary);
+    --sidebar-primary: var(--color-brand-primary);
+    --sidebar-primary-foreground: 255 255 255;
+    --sidebar-accent: var(--color-bg-base);
+    --sidebar-accent-foreground: var(--color-brand-primary);
+    --sidebar-border: var(--color-border-subtle);
+    --sidebar-ring: var(--color-brand-primary);
   }
 
   /* Animated Grain & Scanline Overlays */

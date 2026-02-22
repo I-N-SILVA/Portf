@@ -16,26 +16,20 @@ const config: Config = {
         background: "rgb(var(--background) / <alpha-value>)",
         foreground: "rgb(var(--foreground) / <alpha-value>)",
 
-        // IAMNSILVA Primary Colors
-        "dark-cocoa": "rgb(var(--color-text-primary) / <alpha-value>)",
-        "honey-gold": "rgb(var(--color-accent-honey-gold) / <alpha-value>)",
-        "warm-cream": "rgb(var(--color-background-warm-cream) / <alpha-value>)",
+        // New Design System Tokens
+        "brand-primary": "rgb(var(--color-brand-primary) / <alpha-value>)",
+        "brand-soft": "rgb(var(--color-brand-soft) / <alpha-value>)",
+        "accent-gold": "rgb(var(--color-accent-gold) / <alpha-value>)",
+        "text-muted": "rgb(var(--color-text-muted) / <alpha-value>)",
+        "border-subtle": "rgb(var(--color-border-subtle) / <alpha-value>)",
 
-        // IAMNSILVA Extended Palette
-        "warm-taupe": "rgb(var(--color-text-secondary) / <alpha-value>)",
-        "pale-beige": "rgb(var(--color-surface-pale-beige) / <alpha-value>)",
-        "soft-sand": "rgb(var(--color-border-soft-sand) / <alpha-value>)",
-        "coral-orange": "rgb(var(--color-accent-coral-orange) / <alpha-value>)",
-        "teal-green": "rgb(var(--color-accent-teal-green) / <alpha-value>)",
-
-        // Dark Mode Aliases
-        "deep-cocoa-dark": "rgb(var(--color-background-deep-cocoa) / <alpha-value>)",
-        "dark-brown-surface": "rgb(var(--color-surface-dark-brown) / <alpha-value>)",
-        "warm-off-white": "rgb(var(--color-text-primary-dark) / <alpha-value>)",
-        "soft-taupe": "rgb(var(--color-text-secondary-dark) / <alpha-value>)",
-        "honey-gold-brighter": "rgb(var(--color-accent-honey-gold-brighter) / <alpha-value>)",
-        "cyan-teal": "rgb(var(--color-accent-cyan-teal) / <alpha-value>)",
-        "border-dark": "rgb(var(--color-border-dark) / <alpha-value>)",
+        // Compatibility Aliases (Map old names to new tokens where possible)
+        "dark-cocoa": "rgb(var(--color-brand-primary) / <alpha-value>)",
+        "honey-gold": "rgb(var(--color-accent-gold) / <alpha-value>)",
+        "warm-cream": "rgb(var(--color-bg-base) / <alpha-value>)",
+        "warm-taupe": "rgb(var(--color-text-muted) / <alpha-value>)",
+        "pale-beige": "rgb(var(--color-bg-elevated) / <alpha-value>)",
+        "soft-sand": "rgb(var(--color-border-subtle) / <alpha-value>)",
 
 
         primary: {
