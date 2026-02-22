@@ -83,7 +83,7 @@ export const Cursor: React.FC = () => {
                     <motion.span
                         initial={{ opacity: 0, scale: 0.5 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-[10px] font-black text-black uppercase tracking-tight text-center px-1"
+                        className="text-[10px] font-black text-black dark:text-sky-page uppercase tracking-[0.2em] text-center px-1 font-[family-name:var(--font-outfit)]"
                     >
                         {hoverText}
                     </motion.span>
@@ -92,7 +92,7 @@ export const Cursor: React.FC = () => {
 
             {/* Trailing Ring */}
             <motion.div
-                className="fixed top-0 left-0 pointer-events-none rounded-full border border-primary/30 z-[9998]"
+                className="fixed top-0 left-0 pointer-events-none rounded-full border border-sky-primary/30 dark:border-sky-primary/50 z-[9998] shadow-sky-glow dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]"
                 style={{
                     x: cursorX,
                     y: cursorY,
@@ -102,7 +102,7 @@ export const Cursor: React.FC = () => {
                     height: isHovered ? 120 : 32,
                 }}
                 animate={{
-                    opacity: isClicked ? 0 : 0.5,
+                    opacity: isClicked ? 0 : 0.6,
                     scale: isHovered ? 1.1 : 1,
                 }}
                 transition={{

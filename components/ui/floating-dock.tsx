@@ -45,15 +45,15 @@ function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, sc
             <span
                 className={cn(
                     "absolute inset-1 rounded-full transition-all duration-300 ease-out",
-                    hoveredIndex === index ? "bg-primary/20 scale-100 opacity-100" : "scale-75 opacity-0",
-                    isActive && "bg-primary/10 opacity-100 scale-100"
+                    hoveredIndex === index ? "bg-sky-primary/20 scale-100 opacity-100 shadow-sky-glow" : "scale-75 opacity-0",
+                    isActive && "bg-sky-primary/10 opacity-100 scale-100 shadow-sky-glow"
                 )}
             />
 
             <span
                 className={cn(
                     "relative z-10 transition-all duration-300 ease-out",
-                    hoveredIndex === index || isActive ? "text-primary scale-110" : "text-muted-foreground"
+                    hoveredIndex === index || isActive ? "text-sky-primary scale-110" : "text-sky-text-secondary opacity-60"
                 )}
             >
                 <Icon size={20} />
@@ -66,10 +66,10 @@ function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, sc
                         initial={{ opacity: 0, x: -10, scale: 0.95 }}
                         animate={{ opacity: 1, x: 10, scale: 1 }}
                         exit={{ opacity: 0, x: -10, scale: 0.95 }}
-                        className="absolute left-full ml-4 px-3 py-1.5 rounded-lg bg-card border border-border text-foreground text-[12px] font-bold tracking-tight whitespace-nowrap shadow-xl pointer-events-none"
+                        className="absolute left-full ml-4 px-3 py-1.5 rounded-card bg-card/90 backdrop-blur-md border border-sky-border/20 text-sky-text-primary text-[11px] font-bold tracking-[0.1em] uppercase whitespace-nowrap shadow-sky-glow pointer-events-none z-[110]"
                     >
                         {item.name}
-                        <span className="absolute left-[-4px] top-1/2 -translate-y-1/2 size-2 rotate-45 bg-card border-l border-b border-border" />
+                        <span className="absolute left-[-4px] top-1/2 -translate-y-1/2 size-2 rotate-45 bg-card/90 border-l border-b border-sky-border/20 shadow-[-2px_2px_4px_rgba(162,207,254,0.1)]" />
                     </motion.span>
                 )}
             </AnimatePresence>
@@ -78,7 +78,7 @@ function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, sc
             {isActive && (
                 <motion.span
                     layoutId="active-nav-indicator"
-                    className="absolute -left-1 w-1 h-4 rounded-full bg-primary"
+                    className="absolute -left-1 w-1 h-5 rounded-full bg-sky-primary shadow-sky-glow"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
             )}
@@ -119,7 +119,7 @@ export function FloatingDock() {
 
     return (
         <div className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[100] hidden md:block">
-            <div className="relative flex flex-col items-center gap-2 px-1.5 py-3 rounded-full bg-card/80 backdrop-blur-xl border border-border/50 shadow-2xl">
+            <div className="relative flex flex-col items-center gap-2 px-1.5 py-3 rounded-full bg-card/80 backdrop-blur-xl border border-sky-border/20 shadow-standard dark:shadow-elevated">
                 {navItems.map((item, index) => (
                     <NavIcon
                         key={item.name}
@@ -187,10 +187,10 @@ export function MobileDock() {
                             <span
                                 className={cn(
                                     "absolute inset-1 rounded-full transition-all duration-300",
-                                    isActive ? "bg-primary/10 scale-100" : "scale-50 opacity-0"
+                                    isActive ? "bg-sky-primary/10 scale-100 shadow-sky-glow" : "scale-50 opacity-0"
                                 )}
                             />
-                            <Icon size={20} className="relative z-10" />
+                            <Icon size={20} className={cn("relative z-10", isActive ? "text-sky-primary" : "text-sky-text-secondary opacity-60")} />
                         </a>
                     )
                 })}

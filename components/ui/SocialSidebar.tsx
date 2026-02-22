@@ -39,8 +39,12 @@ export default function SocialSidebar() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.5 + index * 0.1 }}
-                        whileHover={{ scale: 1.2, x: -2 }}
-                        className="text-sky-text-secondary/60 hover:text-sky-primary dark:hover:text-sky-primary transition-all duration-300 dark:hover:drop-shadow-[0_0_10px_rgba(162,207,254,0.8)]"
+                        whileHover={{
+                            scale: 1.15,
+                            x: -4,
+                            transition: { type: "spring", stiffness: 400, damping: 20 }
+                        }}
+                        className="text-sky-text-secondary/60 hover:text-sky-primary dark:hover:text-sky-primary transition-colors duration-300 dark:hover:drop-shadow-[0_0_12px_rgba(162,207,254,0.9)]"
                         aria-label={link.name}
                     >
                         <Icon className="w-5 h-5 md:w-6 md:h-6" />
