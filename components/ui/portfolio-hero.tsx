@@ -156,8 +156,8 @@ export default function PortfolioHero() {
                             className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-white/10 backdrop-blur-lg border border-sky-primary/30 flex items-center justify-center shadow-sky-glow transition-transform duration-300 hover:scale-110 cursor-pointer"
                         >
                             <Image
-                                src="/android-chrome-512x512.png"
-                                alt="Profile Logo"
+                                src="/logo.svg"
+                                alt="Ian N. Silva Logo"
                                 width={128}
                                 height={128}
                                 className="w-3/4 h-3/4 object-contain opacity-90 brightness-110"
