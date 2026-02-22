@@ -4,115 +4,113 @@
 
 @layer base {
   :root {
-    /* Retro Cloudy Sky Theme - RGB */
-    --color-bg-base: 253 251 247;
-    /* #FDFBF7 Warm Parchment/Cloud Base */
-    --color-bg-elevated: 255 255 255;
-    /* #FFFFFF */
-    --color-text-primary: 44 51 61;
-    /* #2C333D Deep Graphite */
-    --color-text-muted: 122 130 142;
-    /* #7A828E Muted Slate */
-    --color-brand-primary: 74 124 157;
-    /* #4A7C9D Vintage Blue */
-    --color-brand-soft: 217 233 240;
-    /* #D9E9F0 Pale Cloud Blue */
-    --color-accent-gold: 212 175 55;
-    /* #D4AF37 Aged Gold */
-    --color-border-subtle: 226 228 233;
-    /* #E2E4E9 */
+    /* Sky Light Theme - RGB */
+    --color-bg-page: 232 244 255;
+    /* #E8F4FF Light Sky */
+    --color-bg-surface: 162 207 254;
+    /* #A2CFFE Baby Blue */
+    --color-bg-surface-elevated: 255 255 255;
+    /* #FFFFFF White */
+    --color-text-primary: 19 48 68;
+    /* #133044 Dark Blue-Grey */
+    --color-text-secondary: 69 101 130;
+    /* #456582 Muted Blue-Grey */
+    --color-accent-primary: 135 206 235;
+    /* #87CEEB Stronger Sky Blue */
+    --color-accent-secondary: 255 229 160;
+    /* #FFE5A0 Aged Gold/Sunlight */
+    --color-border-subtle: 19 48 68;
+    /* Used with 0.1 opacity in mapping */
     --color-error: 211 47 47;
-    /* #D32F2F */
 
     /* Semantic Mapping - Light Mode */
-    --background: var(--color-bg-base);
+    --background: var(--color-bg-page);
     --foreground: var(--color-text-primary);
-    --card: var(--color-bg-elevated);
+    --card: var(--color-bg-surface-elevated);
     --card-foreground: var(--color-text-primary);
-    --popover: var(--color-bg-elevated);
+    --popover: var(--color-bg-surface-elevated);
     --popover-foreground: var(--color-text-primary);
-    --primary: var(--color-brand-primary);
+    --primary: var(--color-accent-primary);
     --primary-foreground: 255 255 255;
-    --secondary: var(--color-bg-elevated);
+    --secondary: var(--color-bg-surface);
     --secondary-foreground: var(--color-text-primary);
-    --muted: var(--color-bg-base);
-    --muted-foreground: var(--color-text-muted);
-    --accent: var(--color-accent-gold);
-    --accent-foreground: var(--color-brand-primary);
+    --muted: var(--color-bg-page);
+    --muted-foreground: var(--color-text-secondary);
+    --accent: var(--color-accent-secondary);
+    --accent-foreground: var(--color-text-primary);
     --destructive: var(--color-error);
     --destructive-foreground: 255 255 255;
     --border: var(--color-border-subtle);
     --input: var(--color-border-subtle);
-    --ring: var(--color-brand-primary);
+    --ring: var(--color-accent-primary);
 
     /* Border Radius - Refinement */
-    --radius-rounded: 12px;
-    --radius-standard: 8px;
-    --radius-subtle: 4px;
+    --radius-rounded: 20px;
+    --radius-standard: 16px;
+    --radius-subtle: 8px;
     --radius-sharp: 0px;
     --radius-full: 9999px;
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: var(--color-bg-elevated);
+    --sidebar-background: var(--color-bg-surface-elevated);
     --sidebar-foreground: var(--color-text-primary);
-    --sidebar-primary: var(--color-brand-primary);
+    --sidebar-primary: var(--color-accent-primary);
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: var(--color-bg-base);
-    --sidebar-accent-foreground: var(--color-brand-primary);
+    --sidebar-accent: var(--color-bg-page);
+    --sidebar-accent-foreground: var(--color-accent-primary);
     --sidebar-border: var(--color-border-subtle);
-    --sidebar-ring: var(--color-brand-primary);
+    --sidebar-ring: var(--color-accent-primary);
   }
 
   .dark {
-    /* Base Color Tokens - Dark (RGB) */
-    --color-bg-base: 5 8 20;
-    /* #050814 */
-    --color-bg-elevated: 15 22 38;
-    /* #0F1626 */
-    --color-text-primary: 235 240 245;
-    /* #EBF0F5 */
-    --color-text-muted: 140 150 165;
-    /* #8C96A5 */
-    --color-brand-primary: 93 138 168;
-    /* #5D8AA8 Air Force Blue (Retro) */
-    --color-brand-soft: 42 54 74;
-    /* #2A364A */
-    --color-accent-gold: 212 175 55;
-    /* #D4AF37 */
-    --color-border-subtle: 35 45 65;
-    /* #232D41 */
+    /* Night Sky Theme - RGB */
+    --color-bg-page: 5 8 22;
+    /* #050816 Deep Navy */
+    --color-bg-surface: 11 16 32;
+    /* #0B1020 Dark Panel */
+    --color-bg-surface-elevated: 17 24 39;
+    /* #111827 Dark Blue-Grey */
+    --color-text-primary: 229 240 255;
+    /* #E5F0FF Off-white Blue */
+    --color-text-secondary: 169 187 216;
+    /* #A9BBD8 Muted Blue */
+    --color-accent-primary: 162 207 254;
+    /* #A2CFFE Baby Blue Glow */
+    --color-accent-secondary: 75 132 216;
+    /* #4B84D8 Deeper Sky */
+    --color-border-subtle: 148 163 184;
+    /* Used with 0.25 opacity */
     --color-error: 229 115 115;
-    /* #E57373 */
 
     /* Semantic Mapping - Dark Mode */
-    --background: var(--color-bg-base);
+    --background: var(--color-bg-page);
     --foreground: var(--color-text-primary);
-    --card: var(--color-bg-elevated);
+    --card: var(--color-bg-surface);
     --card-foreground: var(--color-text-primary);
-    --popover: var(--color-bg-elevated);
+    --popover: var(--color-bg-surface);
     --popover-foreground: var(--color-text-primary);
-    --primary: var(--color-brand-primary);
-    --primary-foreground: 255 255 255;
-    --secondary: var(--color-bg-elevated);
+    --primary: var(--color-accent-primary);
+    --primary-foreground: 5 8 22;
+    --secondary: var(--color-bg-surface-elevated);
     --secondary-foreground: var(--color-text-primary);
-    --muted: var(--color-bg-elevated);
-    --muted-foreground: var(--color-text-muted);
-    --accent: var(--color-accent-gold);
-    --accent-foreground: var(--color-brand-primary);
+    --muted: var(--color-bg-surface);
+    --muted-foreground: var(--color-text-secondary);
+    --accent: var(--color-accent-secondary);
+    --accent-foreground: var(--color-text-primary);
     --destructive: var(--color-error);
     --destructive-foreground: 255 255 255;
     --border: var(--color-border-subtle);
     --input: var(--color-border-subtle);
-    --ring: var(--color-brand-primary);
+    --ring: var(--color-accent-primary);
 
-    --sidebar-background: var(--color-bg-elevated);
+    --sidebar-background: var(--color-bg-surface);
     --sidebar-foreground: var(--color-text-primary);
-    --sidebar-primary: var(--color-brand-primary);
-    --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: var(--color-bg-base);
-    --sidebar-accent-foreground: var(--color-brand-primary);
+    --sidebar-primary: var(--color-accent-primary);
+    --sidebar-primary-foreground: 5 8 22;
+    --sidebar-accent: var(--color-bg-page);
+    --sidebar-accent-foreground: var(--color-accent-primary);
     --sidebar-border: var(--color-border-subtle);
-    --sidebar-ring: var(--color-brand-primary);
+    --sidebar-ring: var(--color-accent-primary);
   }
 
   /* Animated Grain & Scanline Overlays */
@@ -192,8 +190,15 @@
   }
 
   body {
-    @apply bg-background text-foreground scroll-smooth antialiased;
+    @apply text-foreground scroll-smooth antialiased;
+    background: var(--sky-page-bg);
+    background-attachment: fixed;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  .dark body {
+    background: var(--night-page-bg);
+    background-attachment: fixed;
   }
 
   /* Magazine Typography Utilities */

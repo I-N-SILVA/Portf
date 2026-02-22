@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Bot, Layout, Terminal, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const domains = [
     {
@@ -54,22 +55,27 @@ export default function ExpertiseSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            className="group relative p-8 rounded-[32px] bg-card border border-border hover:border-primary/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5"
+                            className="group relative p-8 rounded-card bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/10 hover:border-sky-primary/30 transition-all duration-500 shadow-standard dark:shadow-elevated hover:-translate-y-1"
                         >
-                            <div className={`size-14 rounded-2xl ${domain.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500`}>
-                                <domain.icon className={`size-7 ${domain.color}`} />
+                            <div className={cn(
+                                "size-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500",
+                                index === 0 ? "bg-sky-primary/20 text-sky-primary" :
+                                    index === 1 ? "bg-sky-secondary/20 text-sky-secondary" :
+                                        "bg-sky-text-primary/10 text-sky-text-primary"
+                            )}>
+                                <domain.icon className="size-7" />
                             </div>
 
-                            <h3 className="text-2xl font-bold mb-4 tracking-tight group-hover:text-primary transition-colors">
+                            <h3 className="text-2xl font-bold mb-4 tracking-tight text-sky-text-primary group-hover:text-sky-primary transition-colors font-[family-name:var(--font-outfit)]">
                                 {domain.title}
                             </h3>
 
-                            <p className="text-muted-foreground leading-relaxed">
+                            <p className="text-sky-text-secondary leading-relaxed">
                                 {domain.description}
                             </p>
 
                             <div className="absolute top-6 right-8 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <Sparkles className="size-5 text-primary" />
+                                <Sparkles className="size-5 text-sky-primary" />
                             </div>
                         </motion.div>
                     ))}

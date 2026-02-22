@@ -15,7 +15,7 @@ export default function ProjectsSection() {
         : projects.filter(p => p.category === filter);
 
     return (
-        <section id="projects" className="py-24 bg-secondary/30">
+        <section id="projects" className="py-24 relative overflow-hidden">
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
                     <div className="flex flex-col mb-16">
@@ -25,8 +25,8 @@ export default function ProjectsSection() {
                             viewport={{ once: true }}
                             className="flex flex-col"
                         >
-                            <span className="text-secondary-foreground/40 font-mono text-sm mb-2 tracking-widest uppercase">02 / WORKS</span>
-                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)]">
+                            <span className="text-sky-text-secondary/40 font-mono text-sm mb-2 tracking-widest uppercase">02 / WORKS</span>
+                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)] text-sky-text-primary">
                                 THE<br />ARCHIVE
                             </h2>
                         </motion.div>
@@ -38,8 +38,8 @@ export default function ProjectsSection() {
                                 key={cat}
                                 onClick={() => setFilter(cat)}
                                 className={`px-4 py-2 rounded-full text-xs font-black tracking-widest uppercase transition-all border ${filter === cat
-                                    ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
-                                    : "bg-background/50 text-muted-foreground border-border hover:border-primary/50"
+                                    ? "bg-sky-primary text-white dark:text-sky-page border-sky-primary shadow-sky-glow scale-105"
+                                    : "bg-card/50 text-sky-text-secondary border-sky-border/20 hover:border-sky-primary/50"
                                     }`}
                             >
                                 {cat}

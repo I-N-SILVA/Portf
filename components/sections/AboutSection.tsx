@@ -79,29 +79,29 @@ export default function AboutSection() {
                     {/* Main Bio Card */}
                     <TiltCard
                         colSpan="md:col-span-2 md:row-span-2"
-                        className="h-full bg-card border border-border rounded-[24px] md:rounded-[32px] p-6 sm:p-8 md:p-12 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 overflow-hidden relative"
+                        className="h-full bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 sm:p-8 md:p-12 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 overflow-hidden relative shadow-standard dark:shadow-elevated"
                     >
                         <div className="relative z-10">
-                            <User className="w-10 h-10 md:w-12 md:h-12 text-primary mb-6 md:mb-8" />
-                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 leading-tight">
+                            <User className="w-10 h-10 md:w-12 md:h-12 text-sky-primary mb-6 md:mb-8 dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
+                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 leading-tight text-sky-text-primary font-[family-name:var(--font-outfit)]">
                                 {profileData.tagline}
                             </h3>
-                            <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
+                            <p className="text-base md:text-lg text-sky-text-secondary leading-relaxed max-w-md">
                                 {profileData.bio}
                             </p>
 
                             <div className="mt-8 flex items-center gap-4">
-                                <button className="px-6 py-3 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-sm font-bold border border-primary/20 transition-all">
+                                <button className="px-6 py-3 bg-sky-primary text-white dark:text-sky-page rounded-full text-sm font-bold shadow-sky-glow hover:scale-105 active:scale-95 transition-all">
                                     Download CV
                                 </button>
-                                <div className="text-xs text-muted-foreground italic font-medium">
+                                <div className="text-xs text-sky-text-secondary italic font-medium">
                                     Current Location: {profileData.location}
                                 </div>
                             </div>
                         </div>
 
                         {/* Avatar/Photo Placement */}
-                        <div className="absolute bottom-0 right-0 w-64 h-64 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <div className="absolute bottom-0 right-0 w-64 h-64 opacity-5 group-hover:opacity-10 transition-opacity">
                             <Image
                                 src="/android-chrome-512x512.png"
                                 alt="Ian Portrait"
@@ -114,42 +114,42 @@ export default function AboutSection() {
 
                     {/* Location Card */}
                     <TiltCard
-                        className="bg-card border border-border rounded-[24px] p-6 md:p-8 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 h-full"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full shadow-standard dark:shadow-elevated"
                     >
-                        <MapPin className="w-8 h-8 text-primary/70 group-hover:text-primary transition-colors" />
+                        <MapPin className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
                         <div>
-                            <p className="text-sm text-muted-foreground mb-1 uppercase tracking-widest font-bold">Location</p>
-                            <p className="text-xl md:text-2xl font-bold">{profileData.location}</p>
+                            <p className="text-sm text-sky-text-secondary mb-1 uppercase tracking-widest font-bold">Location</p>
+                            <p className="text-xl md:text-2xl font-bold text-sky-text-primary uppercase font-[family-name:var(--font-outfit)]">{profileData.location}</p>
                         </div>
                     </TiltCard>
 
                     {/* Experience/Education Card */}
                     <TiltCard
-                        className="bg-card border border-border rounded-[24px] p-6 md:p-8 flex flex-col justify-between group hover:border-primary/50 transition-colors duration-500 h-full"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full shadow-standard dark:shadow-elevated"
                     >
-                        <GraduationCap className="w-8 h-8 text-primary/70 group-hover:text-primary transition-colors" />
+                        <GraduationCap className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
                         <div>
-                            <p className="text-sm text-muted-foreground mb-1 uppercase tracking-widest font-bold">Background</p>
-                            <p className="text-xl md:text-2xl font-bold">Econ & Psychology</p>
+                            <p className="text-sm text-sky-text-secondary mb-1 uppercase tracking-widest font-bold">Background</p>
+                            <p className="text-xl md:text-2xl font-bold text-sky-text-primary uppercase font-[family-name:var(--font-outfit)]">Econ & Psychology</p>
                         </div>
                     </TiltCard>
 
                     {/* Quick Stats/Status Card */}
                     <TiltCard
                         colSpan="md:col-span-2"
-                        className="bg-card border border-border rounded-[24px] p-6 md:p-10 flex items-center justify-between group hover:border-primary/50 transition-colors duration-500 h-full overflow-hidden relative"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-10 flex items-center justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full overflow-hidden relative shadow-standard dark:shadow-elevated"
                     >
                         <div className="relative z-10">
-                            <p className="text-sm text-muted-foreground mb-2 uppercase tracking-widest font-bold">Current Focus</p>
-                            <h4 className="text-xl md:text-2xl font-bold flex items-center gap-3">
+                            <p className="text-sm text-sky-text-secondary mb-2 uppercase tracking-widest font-bold">Current Focus</p>
+                            <h4 className="text-xl md:text-2xl font-bold flex items-center gap-3 text-sky-text-primary uppercase font-[family-name:var(--font-outfit)]">
                                 <span className="relative flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-primary opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-primary"></span>
                                 </span>
                                 Building AI Products
                             </h4>
                         </div>
-                        <Zap className="w-16 h-16 md:w-24 md:h-24 text-primary/5 absolute right-4 top-1/2 -translate-y-1/2 group-hover:text-primary/10 transition-colors" />
+                        <Zap className="w-16 h-16 md:w-24 md:h-24 text-sky-primary/5 absolute right-4 top-1/2 -translate-y-1/2 group-hover:text-sky-primary/10 transition-colors" />
                     </TiltCard>
                 </div>
             </div>

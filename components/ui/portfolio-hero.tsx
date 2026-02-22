@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 
 const BackgroundMesh = () => {
     return (
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.4] dark:opacity-[0.6]">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.3] dark:opacity-[0.5]">
             {/* Animated Gradient Orbs */}
             <motion.div
                 animate={{
@@ -17,7 +17,7 @@ const BackgroundMesh = () => {
                     y: [0, 30, 0]
                 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 blur-[120px] rounded-full"
+                className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-sky-primary/30 blur-[120px] rounded-full"
             />
             <motion.div
                 animate={{
@@ -26,17 +26,18 @@ const BackgroundMesh = () => {
                     y: [0, -40, 0]
                 }}
                 transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary/10 blur-[100px] rounded-full"
+                className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-secondary/20 blur-[100px] rounded-full"
             />
 
             {/* Mesh Grid */}
             <div
                 className="absolute inset-0"
                 style={{
-                    backgroundImage: `radial-gradient(circle at 2px 2px, var(--border) 1px, transparent 0)`,
+                    backgroundImage: `radial-gradient(circle at 1px 1px, var(--sky-border) 0.5px, transparent 0)`,
                     backgroundSize: '40px 40px',
                     maskImage: 'radial-gradient(ellipse 80% 50% at 50% 50%, black, transparent)',
                     WebkitMaskImage: 'radial-gradient(ellipse 80% 50% at 50% 50%, black, transparent)',
+                    opacity: 0.1
                 }}
             />
         </div>
@@ -102,12 +103,8 @@ export default function PortfolioHero() {
             <motion.div
                 className="pointer-events-none fixed inset-0 z-10 transition-colors"
                 animate={{
-                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, var(--primary-5), transparent 80%)`,
+                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(135, 206, 235, 0.05), transparent 80%)`,
                 }}
-                style={{
-                    // Explicitly inject a very low alpha primary color via CSS variable hack or just low opacity
-                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(var(--primary), 0.05), transparent 80%)`
-                } as any}
             />
             {/* Header - Minimalist (Theme Toggle Only) */}
             <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 pointer-events-none">
@@ -119,12 +116,12 @@ export default function PortfolioHero() {
                             e.stopPropagation();
                             toggleTheme();
                         }}
-                        className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-muted dark:bg-secondary"
+                        className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-card/80 backdrop-blur-md border border-sky-border/10 shadow-standard"
                         aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
                     >
                         {mounted && (
                             <div
-                                className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-foreground dark:bg-primary-foreground"
+                                className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-sky-primary shadow-sky-glow"
                                 style={{
                                     transform: isDark ? "translateX(2rem)" : "translateX(0)",
                                 }}
@@ -142,10 +139,10 @@ export default function PortfolioHero() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: "easeOut" }}
                     >
-                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-primary font-[family-name:var(--font-outfit)]">
+                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-[family-name:var(--font-outfit)] dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
                             IAN N.
                         </h1>
-                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-primary font-[family-name:var(--font-outfit)]">
+                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-[family-name:var(--font-outfit)] dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
                             SILVA
                         </h1>
                     </motion.div>
@@ -156,14 +153,14 @@ export default function PortfolioHero() {
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ type: "spring", stiffness: 100, delay: 0.5 }}
-                            className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-background border border-border flex items-center justify-center shadow-2xl transition-transform duration-300 hover:scale-110 cursor-pointer"
+                            className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-white/10 backdrop-blur-lg border border-sky-primary/30 flex items-center justify-center shadow-sky-glow transition-transform duration-300 hover:scale-110 cursor-pointer"
                         >
                             <Image
                                 src="/android-chrome-512x512.png"
                                 alt="Profile Logo"
                                 width={128}
                                 height={128}
-                                className="w-3/4 h-3/4 object-contain opacity-90"
+                                className="w-3/4 h-3/4 object-contain opacity-90 brightness-110"
                             />
                         </motion.div>
                     </div>
@@ -172,11 +169,11 @@ export default function PortfolioHero() {
                 {/* Scroll Indicator */}
                 <button
                     type="button"
-                    className="absolute bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300 pointer-events-auto z-30"
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 transition-colors duration-300 pointer-events-auto z-30 group"
                     aria-label="Scroll down"
                     onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
                 >
-                    <ChevronDown className="w-8 h-8 text-foreground hover:text-primary transition-colors" />
+                    <ChevronDown className="w-8 h-8 text-sky-text-secondary group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.5)]" />
                 </button>
             </main>
         </div>

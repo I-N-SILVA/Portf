@@ -101,10 +101,10 @@ export default function DraggableWindow({
                         exit="exit"
                         whileDrag={{ scale: 1.02, zIndex: 50 }}
                         className={cn(
-                            "bg-card border-2 border-border overflow-hidden flex flex-col transition-all duration-300",
+                            "bg-card/90 backdrop-blur-sm border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col transition-all duration-300",
                             isMaximized
                                 ? "fixed inset-0 z-[100] rounded-none border-none shadow-none m-0"
-                                : cn("rounded-xl shadow-[8px_8px_0px_0px_rgba(var(--color-text-primary),0.1)]", width),
+                                : cn("rounded-card shadow-standard dark:shadow-elevated", width),
                             className
                         )}
                     >
@@ -114,21 +114,21 @@ export default function DraggableWindow({
                             className={cn(
                                 "flex items-center justify-between px-6 select-none transition-all duration-300 ease-in-out",
                                 isMaximized
-                                    ? "h-14 bg-background border-b border-border sticky top-0 z-50 px-8"
-                                    : "h-10 bg-brand-primary/10 border-b-2 border-border cursor-grab active:cursor-grabbing"
+                                    ? "h-14 bg-card border-b border-sky-border/10 sticky top-0 z-50 px-8"
+                                    : "h-10 bg-sky-primary/10 border-b border-sky-border/10 cursor-grab active:cursor-grabbing"
                             )}
                         >
                             <div className="flex items-center gap-4">
                                 <div className={cn(
                                     "rounded-full transition-all duration-500",
                                     isMaximized
-                                        ? "size-3 bg-brand-primary animate-pulse"
-                                        : "size-2.5 bg-brand-primary/40 border border-brand-primary/20"
+                                        ? "size-3 bg-sky-primary animate-pulse shadow-[0_0_10px_rgba(162,207,254,0.5)]"
+                                        : "size-2.5 bg-sky-primary/40 border border-sky-primary/20"
                                 )} />
                                 <div className="flex flex-col">
                                     <span className={cn(
-                                        "font-black tracking-widest uppercase transition-all duration-500",
-                                        isMaximized ? "text-sm text-brand-primary" : "text-[10px] opacity-60"
+                                        "font-black tracking-widest uppercase transition-all duration-500 font-[family-name:var(--font-outfit)]",
+                                        isMaximized ? "text-sm text-sky-primary" : "text-[10px] text-sky-text-secondary opacity-60"
                                     )}>
                                         {title}
                                     </span>
@@ -138,22 +138,22 @@ export default function DraggableWindow({
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setIsMinimized(!isMinimized)}
-                                    className="p-1.5 hover:bg-white/5 rounded-full transition-colors group"
+                                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
                                     aria-label="Minimize"
                                 >
                                     <Minus className={cn(
                                         "w-4 h-4 transition-all duration-300",
-                                        isMinimized ? "text-primary opacity-100 scale-110" : "opacity-40 group-hover:opacity-100"
+                                        isMinimized ? "text-sky-primary opacity-100 scale-110" : "text-sky-text-secondary opacity-40 group-hover:opacity-100"
                                     )} />
                                 </button>
                                 <button
                                     onClick={() => onMaximize?.()}
-                                    className="p-1.5 hover:bg-brand-primary/5 rounded-full transition-colors group"
+                                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
                                     aria-label="Toggle Maximize"
                                 >
                                     {isMaximized
-                                        ? <Maximize2 className="w-4 h-4 text-brand-primary scale-110" />
-                                        : <Square className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:scale-110" />
+                                        ? <Maximize2 className="w-4 h-4 text-sky-primary scale-110" />
+                                        : <Square className="w-4 h-4 text-sky-text-secondary opacity-40 group-hover:opacity-100 group-hover:scale-110" />
                                     }
                                 </button>
                                 <button

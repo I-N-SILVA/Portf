@@ -16,20 +16,22 @@ const config: Config = {
         background: "rgb(var(--background) / <alpha-value>)",
         foreground: "rgb(var(--foreground) / <alpha-value>)",
 
-        // New Design System Tokens
-        "brand-primary": "rgb(var(--color-brand-primary) / <alpha-value>)",
-        "brand-soft": "rgb(var(--color-brand-soft) / <alpha-value>)",
-        "accent-gold": "rgb(var(--color-accent-gold) / <alpha-value>)",
-        "text-muted": "rgb(var(--color-text-muted) / <alpha-value>)",
-        "border-subtle": "rgb(var(--color-border-subtle) / <alpha-value>)",
+        // New Sky-Night Design System Tokens
+        "sky-page": "rgb(var(--color-bg-page) / <alpha-value>)",
+        "sky-surface": "rgb(var(--color-bg-surface) / <alpha-value>)",
+        "sky-surface-elevated": "rgb(var(--color-bg-surface-elevated) / <alpha-value>)",
+        "sky-primary": "rgb(var(--color-accent-primary) / <alpha-value>)",
+        "sky-secondary": "rgb(var(--color-accent-secondary) / <alpha-value>)",
+        "sky-text-primary": "rgb(var(--color-text-primary) / <alpha-value>)",
+        "sky-text-secondary": "rgb(var(--color-text-secondary) / <alpha-value>)",
+        "sky-border": "rgb(var(--color-border-subtle) / <alpha-value>)",
 
-        // Compatibility Aliases (Map old names to new tokens where possible)
-        "dark-cocoa": "rgb(var(--color-brand-primary) / <alpha-value>)",
-        "honey-gold": "rgb(var(--color-accent-gold) / <alpha-value>)",
-        "warm-cream": "rgb(var(--color-bg-base) / <alpha-value>)",
-        "warm-taupe": "rgb(var(--color-text-muted) / <alpha-value>)",
-        "pale-beige": "rgb(var(--color-bg-elevated) / <alpha-value>)",
-        "soft-sand": "rgb(var(--color-border-subtle) / <alpha-value>)",
+        // Legacy Support / Aliases
+        "brand-primary": "rgb(var(--color-accent-primary) / <alpha-value>)",
+        "brand-soft": "rgb(var(--color-bg-surface) / <alpha-value>)",
+        "accent-gold": "rgb(var(--color-accent-secondary) / <alpha-value>)",
+        "text-muted": "rgb(var(--color-text-secondary) / <alpha-value>)",
+        "border-subtle": "rgb(var(--color-border-subtle) / <alpha-value>)",
 
 
         primary: {
@@ -80,18 +82,20 @@ const config: Config = {
         "2xl": "var(--spacing-2xl)",
       },
       borderRadius: {
-        lg: "var(--radius-rounded)", // 12px
-        md: "var(--radius-standard)", // 8px
-        sm: "var(--radius-subtle)", // 4px
-        DEFAULT: "var(--radius-standard)",
-        sharp: "var(--radius-sharp)",
-        rounded: "var(--radius-rounded)",
-        full: "var(--radius-full)",
+        lg: "20px",
+        md: "16px",
+        sm: "8px",
+        DEFAULT: "16px",
+        sharp: "0px",
+        rounded: "20px",
+        full: "9999px",
+        card: "20px",
       },
       boxShadow: {
-        subtle: "var(--shadow-subtle)",
-        standard: "var(--shadow-standard)",
-        elevated: "var(--shadow-elevated)",
+        subtle: "0 4px 12px rgba(0, 0, 0, 0.05)",
+        standard: "0 8px 30px rgba(0, 0, 0, 0.12)",
+        elevated: "0 24px 60px rgba(0, 0, 0, 0.75)",
+        "sky-glow": "0 0 20px rgba(162, 207, 254, 0.3)",
       },
       // Typography
       fontSize: {
@@ -111,6 +115,10 @@ const config: Config = {
       },
       fontFamily: {
         serif: ["var(--font-playfair)", "serif"],
+      },
+      backgroundImage: {
+        "sky-light-gradient": "linear-gradient(180deg, #E8F4FF 0%, #A2CFFE 40%, #FFFFFF 100%)",
+        "night-sky-gradient": "radial-gradient(circle at top, rgba(162,207,254,0.15) 0%, #050816 55%, #02030A 100%)",
       },
     }
   },
