@@ -121,11 +121,19 @@ export default function PortfolioHero() {
                     >
                         {mounted && (
                             <div
-                                className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-sky-primary shadow-sky-glow"
+                                className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-sky-primary shadow-sky-glow flex items-center justify-center overflow-hidden p-1.5"
                                 style={{
                                     transform: isDark ? "translateX(2rem)" : "translateX(0)",
                                 }}
-                            />
+                            >
+                                <Image
+                                    src="/logo.svg"
+                                    alt="Logo"
+                                    width={24}
+                                    height={24}
+                                    className="w-full h-full object-contain brightness-0 invert"
+                                />
+                            </div>
                         )}
                     </button>
                 </nav>

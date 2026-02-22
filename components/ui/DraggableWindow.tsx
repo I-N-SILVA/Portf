@@ -101,9 +101,9 @@ export default function DraggableWindow({
                         exit="exit"
                         whileDrag={{ scale: 1.02, zIndex: 50 }}
                         className={cn(
-                            "bg-card/90 backdrop-blur-sm border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col transition-all duration-300",
+                            "bg-card/90 backdrop-blur-md border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col transition-all duration-300",
                             isMaximized
-                                ? "fixed inset-0 z-[100] rounded-none border-none shadow-none m-0"
+                                ? "fixed !inset-0 !z-[999] rounded-none border-none shadow-none m-0 w-screen h-screen"
                                 : cn("rounded-card shadow-standard dark:shadow-elevated", width),
                             className
                         )}

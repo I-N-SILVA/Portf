@@ -140,14 +140,14 @@ export default function LandingContent() {
                             id="about"
                             className={cn(
                                 "relative transition-all duration-500",
-                                maximizedWindow === "about" ? "z-50" : "z-10",
+                                maximizedWindow === "about" ? "z-[200]" : "z-10",
                                 maximizedWindow && maximizedWindow !== "about" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
                             )}
                         >
                             <DraggableWindow
                                 title="System_Profile.exe"
                                 width="max-w-4xl"
-                                initialX={20}
+                                initialX={0}
                                 initialY={0}
                                 isMaximized={maximizedWindow === "about"}
                                 onMaximize={() => setMaximizedWindow(maximizedWindow === "about" ? null : "about")}
@@ -168,16 +168,15 @@ export default function LandingContent() {
                             id="projects"
                             className={cn(
                                 "relative transition-all duration-500",
-                                maximizedWindow === "projects" ? "z-50" : "z-10",
+                                maximizedWindow === "projects" ? "z-[200]" : "z-10",
                                 maximizedWindow && maximizedWindow !== "projects" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
                             )}
                         >
                             <DraggableWindow
                                 title="Project_Manager.app"
                                 width="max-w-6xl"
-                                initialX={-20}
+                                initialX={0}
                                 initialY={0}
-                                className="ml-auto"
                                 isMaximized={maximizedWindow === "projects"}
                                 onMaximize={() => setMaximizedWindow(maximizedWindow === "projects" ? null : "projects")}
                                 onClose={() => toggleWindow("projects", false)}
@@ -197,7 +196,7 @@ export default function LandingContent() {
                             id="expertise"
                             className={cn(
                                 "relative transition-all duration-500",
-                                maximizedWindow === "expertise" ? "z-50" : "z-10",
+                                maximizedWindow === "expertise" ? "z-[200]" : "z-10",
                                 maximizedWindow && maximizedWindow !== "expertise" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
                             )}
                         >
@@ -225,11 +224,11 @@ export default function LandingContent() {
                             id="contact"
                             className={cn(
                                 "pb-40 relative transition-all duration-500",
-                                maximizedWindow === "contact" ? "z-50" : "z-10",
+                                maximizedWindow === "contact" ? "z-[200]" : "z-10",
                                 maximizedWindow && maximizedWindow !== "contact" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
                             )}
                         >
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-start">
                                 <DraggableWindow
                                     title="Messenger.vibe"
                                     width="max-w-2xl"
