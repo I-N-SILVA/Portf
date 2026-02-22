@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useMousePosition } from "@/components/context/MouseContext";
 
 const BackgroundMesh = () => {
     return (
@@ -16,8 +17,9 @@ const BackgroundMesh = () => {
                     x: [0, 50, 0],
                     y: [0, 30, 0]
                 }}
+                style={{ willChange: "transform" }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-sky-primary/30 blur-[120px] rounded-full"
+                className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-sky-primary/30 blur-[60px] rounded-full"
             />
             <motion.div
                 animate={{
@@ -25,8 +27,9 @@ const BackgroundMesh = () => {
                     x: [0, -50, 0],
                     y: [0, -40, 0]
                 }}
+                style={{ willChange: "transform" }}
                 transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-secondary/20 blur-[100px] rounded-full"
+                className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-secondary/20 blur-[60px] rounded-full"
             />
 
             {/* Mesh Grid */}
@@ -48,7 +51,10 @@ export default function PortfolioHero() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+    // Use centralized mouse tracking
+    const { springX, springY } = useMousePosition();
+
     const menuRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -56,12 +62,6 @@ export default function PortfolioHero() {
 
     useEffect(() => {
         setMounted(true);
-
-        const handleMouseMove = (e: MouseEvent) => {
-            setMousePos({ x: e.clientX, y: e.clientY });
-        };
-        window.addEventListener("mousemove", handleMouseMove);
-        return () => window.removeEventListener("mousemove", handleMouseMove);
     }, []);
 
     useEffect(() => {
@@ -102,8 +102,12 @@ export default function PortfolioHero() {
             {/* Spotlight that follows cursor */}
             <motion.div
                 className="pointer-events-none fixed inset-0 z-10 transition-colors"
-                animate={{
-                    background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(135, 206, 235, 0.05), transparent 80%)`,
+                style={{
+                    background: useTransform(
+                        [springX, springY],
+                        ([x, y]) => `radial-gradient(600px circle at ${x}px ${y}px, rgba(135, 206, 235, 0.05), transparent 80%)`
+                    ),
+                    willChange: "background",
                 }}
             />
             {/* Header - Minimalist (Theme Toggle Only) */}

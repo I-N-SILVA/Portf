@@ -100,6 +100,7 @@ export default function DraggableWindow({
                         animate={isMaximized ? "maximized" : isMinimized ? "minimized" : "normal"}
                         exit="exit"
                         whileDrag={{ scale: 1.02, zIndex: 50 }}
+                        style={{ willChange: "transform, width, height, opacity" }}
                         className={cn(
                             "bg-card/90 backdrop-blur-md border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col transition-all duration-300",
                             isMaximized

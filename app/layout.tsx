@@ -23,10 +23,10 @@ export const metadata: Metadata = {
   description: "A modern, interactive portfolio featuring minimal design and bold typography",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
     apple: [
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
@@ -37,6 +37,10 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#dae9f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a2c3a" },
+  ],
 };
 
 import CustomCursor from "@/components/CustomCursor";

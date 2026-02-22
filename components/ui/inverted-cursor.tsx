@@ -1,27 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion } from "framer-motion";
+import { useMousePosition } from "@/components/context/MouseContext";
 
 export const Cursor: React.FC = () => {
     const [isHovered, setIsHovered] = useState(false);
     const [isClicked, setIsClicked] = useState(false);
     const [hoverText, setHoverText] = useState("");
 
-    const mouseX = useMotionValue(-100);
-    const mouseY = useMotionValue(-100);
-
-    // Smooth spring configuration
-    const springConfig = { damping: 25, stiffness: 250, mass: 0.5 };
-    const cursorX = useSpring(mouseX, springConfig);
-    const cursorY = useSpring(mouseY, springConfig);
+    const { mouseX, mouseY, springX: cursorX, springY: cursorY } = useMousePosition();
 
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            mouseX.set(e.clientX);
-            mouseY.set(e.clientY);
-        };
-
         const handleMouseDown = () => setIsClicked(true);
         const handleMouseUp = () => setIsClicked(false);
 
@@ -42,18 +32,16 @@ export const Cursor: React.FC = () => {
             }
         };
 
-        window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("mousedown", handleMouseDown);
         window.addEventListener("mouseup", handleMouseUp);
         window.addEventListener("mouseover", handleMouseOver);
 
         return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
             window.removeEventListener("mousedown", handleMouseDown);
             window.removeEventListener("mouseup", handleMouseUp);
             window.removeEventListener("mouseover", handleMouseOver);
         };
-    }, [mouseX, mouseY]);
+    }, []);
 
     return (
         <>
@@ -67,6 +55,7 @@ export const Cursor: React.FC = () => {
                     translateY: "-50%",
                     width: isHovered ? (hoverText ? 100 : 80) : 16,
                     height: isHovered ? (hoverText ? 100 : 80) : 16,
+                    willChange: "transform, width, height",
                 }}
                 animate={{
                     scale: isClicked ? 0.6 : 1,
@@ -100,6 +89,7 @@ export const Cursor: React.FC = () => {
                     translateY: "-50%",
                     width: isHovered ? 120 : 32,
                     height: isHovered ? 120 : 32,
+                    willChange: "transform, width, height, opacity",
                 }}
                 animate={{
                     opacity: isClicked ? 0 : 0.6,

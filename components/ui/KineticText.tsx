@@ -49,6 +49,8 @@ export const KineticText = ({ children, className, intensity = 1 }: KineticTextP
                 rotateY,
                 skewX,
                 transformStyle: "preserve-3d",
+                willChange: "transform",
+                backfaceVisibility: "hidden",
             }}
             className={className}
         >
