@@ -53,20 +53,19 @@ export default function DraggableWindow({
             height: "40px",
             scale: 0.98,
             opacity: 0.9,
-            transition: { type: "spring", stiffness: 400, damping: 30 }
+            transition: { type: "spring", stiffness: 300, damping: 30 }
         },
         maximized: {
             x: 0,
             y: 0,
             scale: 1,
-            width: isMobile ? "100vw" : "100vw",
+            width: "100vw",
             height: "100vh",
             zIndex: 100,
             transition: {
                 type: "spring",
-                stiffness: 400, // High elasticity
-                damping: 18,   // Lower damping for rubber-band effect
-                mass: 0.8
+                stiffness: 300,
+                damping: 30
             }
         },
         exit: {
@@ -114,48 +113,28 @@ export default function DraggableWindow({
                         <div
                             onPointerDown={(e) => !isMaximized && dragControls.start(e)}
                             className={cn(
-                                "flex items-center justify-between px-6 select-none transition-all duration-500 ease-in-out",
+                                "flex items-center justify-between px-6 select-none transition-all duration-300 ease-in-out",
                                 isMaximized
-                                    ? "h-16 bg-background/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50 px-8"
-                                    : "h-10 bg-primary/20 border-b-2 border-border cursor-grab active:cursor-grabbing"
+                                    ? "h-14 bg-background border-b border-border sticky top-0 z-50 px-8"
+                                    : "h-10 bg-brand-primary/10 border-b-2 border-border cursor-grab active:cursor-grabbing"
                             )}
                         >
                             <div className="flex items-center gap-4">
                                 <div className={cn(
-                                    "rounded-full border transition-all duration-500",
+                                    "rounded-full transition-all duration-500",
                                     isMaximized
-                                        ? "size-3 bg-green-500 border-green-400 shadow-[0_0_15px_rgba(34,197,94,0.5)]"
-                                        : "size-2.5 bg-destructive/50 border-destructive"
+                                        ? "size-3 bg-brand-primary animate-pulse"
+                                        : "size-2.5 bg-brand-primary/40 border border-brand-primary/20"
                                 )} />
                                 <div className="flex flex-col">
                                     <span className={cn(
                                         "font-black tracking-widest uppercase transition-all duration-500",
-                                        isMaximized ? "text-sm opacity-100" : "text-[10px] opacity-60"
+                                        isMaximized ? "text-sm text-brand-primary" : "text-[10px] opacity-60"
                                     )}>
                                         {title}
                                     </span>
-                                    {isMaximized && (
-                                        <span className="text-[8px] font-mono opacity-40 uppercase tracking-[0.2em] -mt-1">
-                                            System_Active_Session_v2.0
-                                        </span>
-                                    )}
                                 </div>
                             </div>
-
-                            {/* Center elements for Maximized Mode */}
-                            {isMaximized && (
-                                <div className="hidden md:flex items-center gap-8 ml-auto mr-12 h-full">
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-[9px] font-mono opacity-30 uppercase">Uptime</span>
-                                        <span className="text-[11px] font-mono text-primary animate-pulse">01:24:55:02</span>
-                                    </div>
-                                    <div className="h-6 w-px bg-white/10" />
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-[9px] font-mono opacity-30 uppercase">Status</span>
-                                        <span className="text-[11px] font-mono text-cyan-400">OPTIMIZED</span>
-                                    </div>
-                                </div>
-                            )}
 
                             <div className="flex items-center gap-3">
                                 <button
@@ -170,11 +149,11 @@ export default function DraggableWindow({
                                 </button>
                                 <button
                                     onClick={() => onMaximize?.()}
-                                    className="p-1.5 hover:bg-white/5 rounded-full transition-colors group"
+                                    className="p-1.5 hover:bg-brand-primary/5 rounded-full transition-colors group"
                                     aria-label="Toggle Maximize"
                                 >
                                     {isMaximized
-                                        ? <Maximize2 className="w-4 h-4 text-primary scale-110" />
+                                        ? <Maximize2 className="w-4 h-4 text-brand-primary scale-110" />
                                         : <Square className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:scale-110" />
                                     }
                                 </button>
