@@ -135,7 +135,8 @@ export default function LandingContent() {
                             id="about"
                             className={cn(
                                 "relative transition-all duration-500",
-                                maximizedWindow && maximizedWindow !== "about" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100 blur-0"
+                                maximizedWindow === "about" ? "z-50" : "z-10",
+                                maximizedWindow && maximizedWindow !== "about" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
                             )}
                         >
                             <DraggableWindow
@@ -162,7 +163,8 @@ export default function LandingContent() {
                             id="projects"
                             className={cn(
                                 "relative transition-all duration-500",
-                                maximizedWindow && maximizedWindow !== "projects" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100 blur-0"
+                                maximizedWindow === "projects" ? "z-50" : "z-10",
+                                maximizedWindow && maximizedWindow !== "projects" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
                             )}
                         >
                             <DraggableWindow
@@ -190,7 +192,8 @@ export default function LandingContent() {
                             id="expertise"
                             className={cn(
                                 "relative transition-all duration-500",
-                                maximizedWindow && maximizedWindow !== "expertise" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100 blur-0"
+                                maximizedWindow === "expertise" ? "z-50" : "z-10",
+                                maximizedWindow && maximizedWindow !== "expertise" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
                             )}
                         >
                             <DraggableWindow
@@ -213,7 +216,14 @@ export default function LandingContent() {
                 {/* Contact Section Window */}
                 <AnimatePresence>
                     {visibleWindows.contact && (
-                        <motion.section id="contact" className="pb-40">
+                        <motion.section
+                            id="contact"
+                            className={cn(
+                                "pb-40 relative transition-all duration-500",
+                                maximizedWindow === "contact" ? "z-50" : "z-10",
+                                maximizedWindow && maximizedWindow !== "contact" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100"
+                            )}
+                        >
                             <div className="flex flex-col items-center">
                                 <DraggableWindow
                                     title="Messenger.vibe"

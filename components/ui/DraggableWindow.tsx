@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { motion, useDragControls, AnimatePresence } from "framer-motion";
-import { Minus, Square, X, Maximize2 } from "lucide-react";
+import { Minus, Square, X, Maximize2, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DraggableWindowProps {
@@ -61,11 +61,11 @@ export default function DraggableWindow({
             scale: 1,
             width: "100vw",
             height: "100vh",
-            zIndex: 100,
+            zIndex: 150,
             transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 30
+                type: "tween",
+                duration: 0.4,
+                ease: "easeInOut"
             }
         },
         exit: {
@@ -149,10 +149,10 @@ export default function DraggableWindow({
                                 <button
                                     onClick={() => onMaximize?.()}
                                     className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
-                                    aria-label="Toggle Maximize"
+                                    aria-label={isMaximized ? "Exit Fullscreen" : "Maximize"}
                                 >
                                     {isMaximized
-                                        ? <Maximize2 className="w-4 h-4 text-sky-primary scale-110" />
+                                        ? <Minimize2 className="w-4 h-4 text-sky-primary scale-110" />
                                         : <Square className="w-4 h-4 text-sky-text-secondary opacity-40 group-hover:opacity-100 group-hover:scale-110" />
                                     }
                                 </button>
