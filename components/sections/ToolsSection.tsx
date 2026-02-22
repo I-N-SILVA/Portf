@@ -4,35 +4,35 @@ import { LogoCloud } from "@/components/ui/logo-cloud-3";
 
 const toolLogos = [
     {
-        src: "https://svgl.app/library/vercel_wordmark.svg",
+        src: "https://svgl.app/library/vercel.svg",
         alt: "Vercel",
     },
     {
-        src: "https://svgl.app/library/supabase_wordmark_light.svg",
+        src: "https://svgl.app/library/supabase.svg",
         alt: "Supabase",
     },
     {
-        src: "https://svgl.app/library/stripe_wordmark.svg",
+        src: "https://svgl.app/library/stripe.svg",
         alt: "Stripe",
     },
     {
-        src: "https://svgl.app/library/github_wordmark_light.svg",
+        src: "https://svgl.app/library/github-light.svg",
         alt: "GitHub",
     },
     {
-        src: "https://svgl.app/library/claude-ai-wordmark-icon_light.svg",
+        src: "https://svgl.app/library/claude.svg",
         alt: "Claude AI",
     },
     {
-        src: "https://svgl.app/library/cursor-wordmark-light.svg",
+        src: "https://svgl.app/library/cursor.svg",
         alt: "Cursor",
     },
     {
-        src: "https://svgl.app/library/notion_wordmark.svg",
+        src: "https://svgl.app/library/notion.svg",
         alt: "Notion",
     },
     {
-        src: "https://svgl.app/library/figma_wordmark.svg",
+        src: "https://svgl.app/library/figma.svg",
         alt: "Figma",
     },
 ];

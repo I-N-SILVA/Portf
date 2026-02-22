@@ -103,11 +103,10 @@ export default function DraggableWindow({
                         className={cn(
                             "bg-card border-2 border-border overflow-hidden flex flex-col transition-all duration-300",
                             isMaximized
-                                ? "fixed inset-0 z-[100] rounded-none border-none shadow-none"
+                                ? "fixed inset-0 z-[100] rounded-none border-none shadow-none m-0"
                                 : cn("rounded-xl shadow-[8px_8px_0px_0px_rgba(var(--color-text-primary),0.1)]", width),
                             className
                         )}
-                        style={isMaximized ? { x: 0, y: 0, width: '100vw', height: '100vh' } : {}}
                     >
                         {/* Morphed Title Bar / Dashboard Header */}
                         <div
