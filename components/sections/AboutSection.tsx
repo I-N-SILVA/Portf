@@ -5,6 +5,7 @@ import { profileData } from "@/lib/placeholder-content";
 import { User, MapPin, GraduationCap, Zap } from "lucide-react";
 import React from "react";
 import Image from "next/image";
+import { KineticText } from "@/components/ui/KineticText";
 
 function TiltCard({ children, className, colSpan = "" }: { children: React.ReactNode; className?: string; colSpan?: string }) {
     const x = useMotionValue(0);
@@ -69,9 +70,11 @@ export default function AboutSection() {
                         className="flex flex-col"
                     >
                         <span className="text-secondary-foreground/40 font-mono text-sm mb-2 tracking-widest uppercase">01 / IDENTITY</span>
-                        <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)]">
-                            THE<br />PROFILE
-                        </h2>
+                        <KineticText intensity={0.5}>
+                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)]">
+                                THE<br />PROFILE
+                            </h2>
+                        </KineticText>
                     </motion.div>
                 </div>
 
@@ -90,10 +93,7 @@ export default function AboutSection() {
                                 {profileData.bio}
                             </p>
 
-                            <div className="mt-8 flex items-center gap-4">
-                                <button className="px-6 py-3 bg-sky-primary text-white dark:text-sky-page rounded-full text-sm font-bold shadow-sky-glow hover:scale-105 active:scale-95 transition-all">
-                                    Download CV
-                                </button>
+                            <div className="mt-8">
                                 <div className="text-xs text-sky-text-secondary italic font-medium">
                                     Current Location: {profileData.location}
                                 </div>

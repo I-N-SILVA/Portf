@@ -4,6 +4,7 @@ import { useState } from "react";
 import { projects } from "@/lib/placeholder-content";
 import NewProjectCard from "@/components/cards/NewProjectCard";
 import { motion, AnimatePresence } from "framer-motion";
+import { KineticText } from "@/components/ui/KineticText";
 
 export default function ProjectsSection() {
     const [filter, setFilter] = useState("All");
@@ -26,9 +27,11 @@ export default function ProjectsSection() {
                             className="flex flex-col"
                         >
                             <span className="text-sky-text-secondary/40 font-mono text-sm mb-2 tracking-widest uppercase">02 / WORKS</span>
-                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)] text-sky-text-primary">
-                                THE<br />ARCHIVE
-                            </h2>
+                            <KineticText intensity={0.5}>
+                                <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)] text-sky-text-primary">
+                                    THE<br />ARCHIVE
+                                </h2>
+                            </KineticText>
                         </motion.div>
                     </div>
 

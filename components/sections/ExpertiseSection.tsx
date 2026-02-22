@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Bot, Layout, Terminal, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { KineticText } from "@/components/ui/KineticText";
 
 const domains = [
     {
@@ -41,9 +42,11 @@ export default function ExpertiseSection() {
                         className="flex flex-col"
                     >
                         <span className="text-secondary-foreground/40 font-mono text-sm mb-2 tracking-widest uppercase">03 / EXPERTISE</span>
-                        <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)]">
-                            CORE<br />DOMAINS
-                        </h2>
+                        <KineticText intensity={0.5}>
+                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)]">
+                                CORE<br />DOMAINS
+                            </h2>
+                        </KineticText>
                     </motion.div>
                 </div>
 
