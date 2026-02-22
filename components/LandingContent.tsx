@@ -99,8 +99,20 @@ export default function LandingContent() {
             </section>
 
             {/* Transition Zone - Tech Stack / Tools */}
-            <div className="relative z-30 -mt-24 mb-20">
+            <div className="relative z-30 -mt-24 mb-20 text-center">
                 <div className="container mx-auto px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                        className="mb-8"
+                    >
+                        <span className="font-[family-name:var(--font-outfit)] text-xs md:text-sm tracking-[0.4em] uppercase text-text-muted/60 flex items-center justify-center gap-4 before:h-px before:w-12 before:bg-border after:h-px after:w-12 after:bg-border">
+                            Build, ship, live.
+                        </span>
+                    </motion.div>
+
                     <motion.section
                         id="tools"
                         className="relative"

@@ -16,15 +16,15 @@ const toolLogos = [
         alt: "Stripe",
     },
     {
-        src: "https://svgl.app/library/github-light.svg",
+        src: "https://svgl.app/library/github_light.svg",
         alt: "GitHub",
     },
     {
-        src: "https://svgl.app/library/claude.svg",
+        src: "https://svgl.app/library/claude-ai-icon.svg",
         alt: "Claude AI",
     },
     {
-        src: "https://svgl.app/library/cursor.svg",
+        src: "https://svgl.app/library/cursor_light.svg",
         alt: "Cursor",
     },
     {
