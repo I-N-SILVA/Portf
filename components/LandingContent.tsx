@@ -15,6 +15,7 @@ import { ScrollProgress } from "@/components/ui/scroll-progress";
 import DraggableWindow from "@/components/ui/DraggableWindow";
 import BootSequence from "@/components/ui/BootSequence";
 import TextTicker from "@/components/ui/TextTicker";
+import { cn } from "@/lib/utils";
 
 export default function LandingContent() {
     const [mounted, setMounted] = useState(false);
@@ -24,6 +25,7 @@ export default function LandingContent() {
         expertise: true,
         contact: true
     });
+    const [maximizedWindow, setMaximizedWindow] = useState<string | null>(null);
 
     const toggleWindow = (id: keyof typeof visibleWindows, value: boolean) => {
         setVisibleWindows(prev => ({ ...prev, [id]: value }));
@@ -43,6 +45,18 @@ export default function LandingContent() {
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    // Scroll lock when a window is maximized
+    useEffect(() => {
+        if (maximizedWindow) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [maximizedWindow]);
 
     if (!mounted) {
         return (
@@ -105,12 +119,20 @@ export default function LandingContent() {
                 {/* About Section Window */}
                 <AnimatePresence>
                     {visibleWindows.about && (
-                        <motion.section id="about" className="relative">
+                        <motion.section
+                            id="about"
+                            className={cn(
+                                "relative transition-all duration-500",
+                                maximizedWindow && maximizedWindow !== "about" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100 blur-0"
+                            )}
+                        >
                             <DraggableWindow
                                 title="System_Profile.exe"
                                 width="max-w-4xl"
                                 initialX={20}
                                 initialY={0}
+                                isMaximized={maximizedWindow === "about"}
+                                onMaximize={() => setMaximizedWindow(maximizedWindow === "about" ? null : "about")}
                                 onClose={() => toggleWindow("about", false)}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
@@ -124,13 +146,21 @@ export default function LandingContent() {
                 {/* Projects Section Window */}
                 <AnimatePresence>
                     {visibleWindows.projects && (
-                        <motion.section id="projects" className="relative">
+                        <motion.section
+                            id="projects"
+                            className={cn(
+                                "relative transition-all duration-500",
+                                maximizedWindow && maximizedWindow !== "projects" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100 blur-0"
+                            )}
+                        >
                             <DraggableWindow
                                 title="Project_Manager.app"
                                 width="max-w-6xl"
                                 initialX={-20}
                                 initialY={0}
                                 className="ml-auto"
+                                isMaximized={maximizedWindow === "projects"}
+                                onMaximize={() => setMaximizedWindow(maximizedWindow === "projects" ? null : "projects")}
                                 onClose={() => toggleWindow("projects", false)}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
@@ -144,12 +174,20 @@ export default function LandingContent() {
                 {/* Expertise Section Window */}
                 <AnimatePresence>
                     {visibleWindows.expertise && (
-                        <motion.section id="expertise" className="relative">
+                        <motion.section
+                            id="expertise"
+                            className={cn(
+                                "relative transition-all duration-500",
+                                maximizedWindow && maximizedWindow !== "expertise" ? "opacity-20 blur-sm pointer-events-none scale-95" : "opacity-100 blur-0"
+                            )}
+                        >
                             <DraggableWindow
                                 title="Domains_Expertise.sys"
                                 width="max-w-5xl"
                                 initialX={0}
                                 initialY={0}
+                                isMaximized={maximizedWindow === "expertise"}
+                                onMaximize={() => setMaximizedWindow(maximizedWindow === "expertise" ? null : "expertise")}
                                 onClose={() => toggleWindow("expertise", false)}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
@@ -170,6 +208,8 @@ export default function LandingContent() {
                                     width="max-w-2xl"
                                     initialX={0}
                                     initialY={0}
+                                    isMaximized={maximizedWindow === "contact"}
+                                    onMaximize={() => setMaximizedWindow(maximizedWindow === "contact" ? null : "contact")}
                                     onClose={() => toggleWindow("contact", false)}
                                 >
                                     <div className="bg-background/80 backdrop-blur-md">

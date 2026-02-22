@@ -12,6 +12,8 @@ interface DraggableWindowProps {
     initialY?: number;
     width?: string;
     className?: string;
+    isMaximized?: boolean;
+    onMaximize?: () => void;
     onClose?: () => void;
 }
 
@@ -22,10 +24,11 @@ export default function DraggableWindow({
     initialY = 0,
     width = "w-full overflow-hidden",
     className = "",
+    isMaximized = false,
+    onMaximize,
     onClose,
 }: DraggableWindowProps) {
     const [isMinimized, setIsMinimized] = useState(false);
-    const [isMaximized, setIsMaximized] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
 
     const dragControls = useDragControls();
@@ -166,7 +169,7 @@ export default function DraggableWindow({
                                     )} />
                                 </button>
                                 <button
-                                    onClick={() => setIsMaximized(!isMaximized)}
+                                    onClick={() => onMaximize?.()}
                                     className="p-1.5 hover:bg-white/5 rounded-full transition-colors group"
                                     aria-label="Toggle Maximize"
                                 >
