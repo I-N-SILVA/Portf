@@ -9,28 +9,25 @@ import { useMousePosition } from "@/components/context/MouseContext";
 
 const BackgroundMesh = () => {
     return (
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.3] dark:opacity-[0.5]">
-            {/* Animated Gradient Orbs */}
-            <motion.div
-                animate={{
-                    scale: [1, 1.2, 1],
-                    x: [0, 50, 0],
-                    y: [0, 30, 0]
-                }}
-                style={{ willChange: "transform" }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-sky-primary/30 blur-[60px] rounded-full"
-            />
-            <motion.div
-                animate={{
-                    scale: [1.2, 1, 1.2],
-                    x: [0, -50, 0],
-                    y: [0, -40, 0]
-                }}
-                style={{ willChange: "transform" }}
-                transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-secondary/20 blur-[60px] rounded-full"
-            />
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.3] dark:opacity-[0.5] overflow-hidden">
+            {/* Animated Gradient Orbs - Using CSS for better performance */}
+            <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-sky-primary/20 blur-[60px] rounded-full animate-blob-1 will-change-transform" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-secondary/15 blur-[60px] rounded-full animate-blob-2 will-change-transform" />
+
+            <style jsx>{`
+                @keyframes blob-1 {
+                    0%, 100% { transform: scale(1) translate(0, 0); }
+                    33% { transform: scale(1.2) translate(50px, 30px); }
+                    66% { transform: scale(1.1) translate(20px, -20px); }
+                }
+                @keyframes blob-2 {
+                    0%, 100% { transform: scale(1.2) translate(0, 0); }
+                    33% { transform: scale(1) translate(-50px, -40px); }
+                    66% { transform: scale(1.1) translate(-20px, 20px); }
+                }
+                .animate-blob-1 { animation: blob-1 15s infinite linear; }
+                .animate-blob-2 { animation: blob-2 18s infinite linear; }
+            `}</style>
 
             {/* Mesh Grid */}
             <div
@@ -93,20 +90,22 @@ export default function PortfolioHero() {
         { label: "CONTACT", href: "#contact" },
     ];
 
+    // Spotlight that follows cursor - Moved hook call out of render
+    const spotlightBackground = useTransform(
+        [springX, springY],
+        ([x, y]) => `radial-gradient(600px circle at ${x}px ${y}px, rgba(135, 206, 235, 0.05), transparent 80%)`
+    );
+
     return (
         <div
             className="min-h-screen text-foreground transition-colors bg-transparent relative"
         >
             <BackgroundMesh />
 
-            {/* Spotlight that follows cursor */}
             <motion.div
                 className="pointer-events-none fixed inset-0 z-10 transition-colors"
                 style={{
-                    background: useTransform(
-                        [springX, springY],
-                        ([x, y]) => `radial-gradient(600px circle at ${x}px ${y}px, rgba(135, 206, 235, 0.05), transparent 80%)`
-                    ),
+                    background: spotlightBackground,
                     willChange: "background",
                 }}
             />

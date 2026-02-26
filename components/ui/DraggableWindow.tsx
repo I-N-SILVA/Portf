@@ -30,11 +30,17 @@ export default function DraggableWindow({
 }: DraggableWindowProps) {
     const [isMinimized, setIsMinimized] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
+    const [isMobile, setIsMobile] = useState(false);
 
     const dragControls = useDragControls();
     const constraintsRef = useRef(null);
 
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    React.useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     if (!isVisible) return null;
 
@@ -83,7 +89,7 @@ export default function DraggableWindow({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-background/60 backdrop-blur-md z-[90] pointer-events-none"
+                    className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[90] pointer-events-none"
                 />
             )}
 
@@ -102,7 +108,7 @@ export default function DraggableWindow({
                         whileDrag={{ scale: 1.02, zIndex: 50 }}
                         style={{ willChange: "transform, width, height, opacity" }}
                         className={cn(
-                            "bg-card/90 backdrop-blur-md border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col transition-all duration-300",
+                            "bg-card/90 backdrop-blur-sm border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col transition-all duration-300",
                             isMaximized
                                 ? "fixed !inset-0 !z-[999] rounded-none border-none shadow-none m-0 w-screen h-screen"
                                 : cn("rounded-card shadow-standard dark:shadow-elevated", width),

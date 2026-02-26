@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   ],
 };
 
-import CustomCursor from "@/components/CustomCursor";
 import { Providers } from "./providers";
 
 export default function RootLayout({
@@ -57,7 +56,6 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
       >
         <Providers>
-          <CustomCursor />
           {children}
         </Providers>
       </body>

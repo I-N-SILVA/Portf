@@ -86,8 +86,7 @@ function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, sc
     )
 }
 
-export function FloatingDock() {
-    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+function useActiveSection() {
     const [activeSection, setActiveSection] = useState("hero")
 
     useEffect(() => {
@@ -110,12 +109,19 @@ export function FloatingDock() {
         return () => observer.disconnect()
     }, [])
 
-    const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-        e.preventDefault()
-        const targetId = href.replace("#", "")
-        const elem = document.getElementById(targetId)
-        elem?.scrollIntoView({ behavior: "smooth" })
-    }
+    return activeSection
+}
+
+const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    const targetId = href.replace("#", "")
+    const elem = document.getElementById(targetId)
+    elem?.scrollIntoView({ behavior: "smooth" })
+}
+
+export function FloatingDock() {
+    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+    const activeSection = useActiveSection()
 
     return (
         <div className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-[100] hidden md:block">
@@ -137,34 +143,7 @@ export function FloatingDock() {
 }
 
 export function MobileDock() {
-    const [activeSection, setActiveSection] = useState("hero")
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setActiveSection(entry.target.id)
-                    }
-                })
-            },
-            { threshold: 0.5 }
-        )
-
-        navItems.forEach((item) => {
-            const element = document.getElementById(item.href.replace("#", ""))
-            if (element) observer.observe(element)
-        })
-
-        return () => observer.disconnect()
-    }, [])
-
-    const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-        e.preventDefault()
-        const targetId = href.replace("#", "")
-        const elem = document.getElementById(targetId)
-        elem?.scrollIntoView({ behavior: "smooth" })
-    }
+    const activeSection = useActiveSection()
 
     return (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] md:hidden">

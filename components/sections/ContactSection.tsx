@@ -1,62 +1,26 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { socialLinks } from "@/lib/placeholder-content";
+import ContactCard from "@/components/cards/ContactCard";
 
 export default function ContactSection() {
     return (
-        <section id="contact" className="py-24 bg-secondary/30">
-            <div className="container mx-auto px-6 text-center">
-                <motion.h2
-                    className="text-3xl md:text-4xl font-bold mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                >
-                    Ready to Build Together?
-                </motion.h2>
-                <motion.p
-                    className="text-xl md:text-3xl lg:text-4xl text-muted-foreground max-w-2xl mx-auto mb-8 md:mb-10"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.1 }}
-                >
-                    Let&apos;s build something at the intersection of AI, economics, and human behavior.
-                </motion.p>
-
+        <section className="py-12">
+            <div className="container mx-auto px-6">
                 <motion.div
-                    className="flex flex-col sm:flex-row justify-center gap-4"
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
                 >
-                    <a
-                        href="mailto:iannogueira@proton.me"
-                        className="px-6 md:px-8 py-3 md:py-4 rounded-full bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all hover:-translate-y-1 shadow-lg shadow-primary/20 text-sm md:text-base"
-                    >
-                        Start a Conversation
-                    </a>
-                    <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
-                        {socialLinks.map((link) => (
-                            <a
-                                key={link.name}
-                                href={link.url}
-                                className="p-3 md:p-4 rounded-full bg-card border border-border hover:border-primary transition-colors text-foreground"
-                                aria-label={link.name}
-                            >
-                                {/* Simple icon placeholder since we don't have lucide icons set up yet, using text for now or simple SVG */}
-                                <span className="font-semibold text-sm">{link.name}</span>
-                            </a>
-                        ))}
-                    </div>
+                    <ContactCard />
                 </motion.div>
 
-                <footer className="mt-24 pt-8 border-t border-border/50 text-muted-foreground text-sm">
+                <footer className="mt-24 pt-8 border-t border-border/50 text-muted-foreground text-sm text-center">
                     <p>© {new Date().getFullYear()} Ian N. Silva. All rights reserved.</p>
                 </footer>
             </div>
         </section>
     );
 }
+

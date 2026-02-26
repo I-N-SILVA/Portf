@@ -1,23 +1,32 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+// Components that should load immediately
 import PortfolioHero from "@/components/ui/portfolio-hero";
 import Cursor from "@/components/ui/inverted-cursor";
-import AboutSection from "@/components/sections/AboutSection";
-import ProjectsSection from "@/components/sections/ProjectsSection";
-import ToolsSection from "@/components/sections/ToolsSection";
-import ExpertiseSection from "@/components/sections/ExpertiseSection";
 import SocialSidebar from "@/components/ui/SocialSidebar";
-import ContactSection from "@/components/sections/ContactSection";
 import { FloatingDock, MobileDock } from "@/components/ui/floating-dock";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import DraggableWindow from "@/components/ui/DraggableWindow";
 import BootSequence from "@/components/ui/BootSequence";
 import TextTicker from "@/components/ui/TextTicker";
-import AmbientHorizon from "@/components/ui/AmbientHorizon";
+import ToolsSection from "@/components/sections/ToolsSection";
+import { AmbientHorizon } from "@/components/ui/AmbientHorizon";
 import CommandPalette from "@/components/ui/CommandPalette";
 import { cn } from "@/lib/utils";
+import { Suspense, lazy, useEffect, useState } from "react";
+
+// Lazy-loaded sections
+const AboutSection = lazy(() => import("@/components/sections/AboutSection"));
+const ProjectsSection = lazy(() => import("@/components/sections/ProjectsSection"));
+const ExpertiseSection = lazy(() => import("@/components/sections/ExpertiseSection"));
+const ContactSection = lazy(() => import("@/components/sections/ContactSection"));
+
+const SectionFallback = () => (
+    <div className="w-full h-[400px] flex items-center justify-center bg-background/5 border border-border/10 rounded-xl animate-pulse">
+        <div className="size-8 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+    </div>
+);
 
 export default function LandingContent() {
     const [mounted, setMounted] = useState(false);
@@ -47,6 +56,17 @@ export default function LandingContent() {
 
     useEffect(() => {
         setMounted(true);
+        // Preload lazy components to improve scroll speed
+        const preload = async () => {
+            const loaders = [
+                import("@/components/sections/AboutSection"),
+                import("@/components/sections/ProjectsSection"),
+                import("@/components/sections/ExpertiseSection"),
+                import("@/components/sections/ContactSection")
+            ];
+            await Promise.allSettled(loaders);
+        };
+        preload();
     }, []);
 
     // Scroll lock when a window is maximized
@@ -154,7 +174,9 @@ export default function LandingContent() {
                                 onClose={() => toggleWindow("about", false)}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
-                                    <AboutSection />
+                                    <Suspense fallback={<SectionFallback />}>
+                                        <AboutSection />
+                                    </Suspense>
                                 </div>
                             </DraggableWindow>
                         </motion.section>
@@ -181,8 +203,10 @@ export default function LandingContent() {
                                 onMaximize={() => setMaximizedWindow(maximizedWindow === "projects" ? null : "projects")}
                                 onClose={() => toggleWindow("projects", false)}
                             >
-                                <div className="bg-background/50 backdrop-blur-sm">
-                                    <ProjectsSection />
+                                <div className="size-full">
+                                    <Suspense fallback={<SectionFallback />}>
+                                        <ProjectsSection />
+                                    </Suspense>
                                 </div>
                             </DraggableWindow>
                         </motion.section>
@@ -210,7 +234,9 @@ export default function LandingContent() {
                                 onClose={() => toggleWindow("expertise", false)}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
-                                    <ExpertiseSection />
+                                    <Suspense fallback={<SectionFallback />}>
+                                        <ExpertiseSection />
+                                    </Suspense>
                                 </div>
                             </DraggableWindow>
                         </motion.section>
@@ -231,16 +257,16 @@ export default function LandingContent() {
                             <div className="flex flex-col items-start">
                                 <DraggableWindow
                                     title="Messenger.vibe"
-                                    width="max-w-2xl"
+                                    width="max-w-5xl"
                                     initialX={0}
                                     initialY={0}
                                     isMaximized={maximizedWindow === "contact"}
                                     onMaximize={() => setMaximizedWindow(maximizedWindow === "contact" ? null : "contact")}
                                     onClose={() => toggleWindow("contact", false)}
                                 >
-                                    <div className="bg-background/80 backdrop-blur-md">
+                                    <Suspense fallback={<SectionFallback />}>
                                         <ContactSection />
-                                    </div>
+                                    </Suspense>
                                 </DraggableWindow>
                             </div>
                         </motion.section>

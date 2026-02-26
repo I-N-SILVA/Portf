@@ -131,8 +131,8 @@
     animation: noise 8s steps(10) infinite;
   }
 
-  /* Paper Texture Overlay */
-  .paper-texture::before {
+  /* Paper Texture Overlay - Removed external dependency for performance */
+  /* .paper-texture::before {
     content: "";
     position: fixed;
     inset: 0;
@@ -141,7 +141,7 @@
     pointer-events: none;
     z-index: 1;
     mix-blend-mode: multiply;
-  }
+  } */
 
   @keyframes noise {
     0% {
