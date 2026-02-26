@@ -1,211 +1,209 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { contactCTA, socialLinks } from "@/lib/placeholder-content";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { useState, useRef, useEffect } from "react";
+import { socialLinks } from "@/lib/placeholder-content";
 import { cardVariants } from "@/lib/animations";
-import CalendarBooking from "@/components/CalendarBooking";
-import { Calendar, Mail, ArrowRight, MessageSquare, Globe, ArrowUpRight, Sparkles } from "lucide-react";
+import { Calendar, Mail, Globe, ArrowUpRight, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMousePosition } from "@/components/context/MouseContext";
 
-export default function ContactCard() {
-  const [showCalendar, setShowCalendar] = useState(false);
-
-  const handleEmail = () => {
-    window.location.href = "mailto:iannogueira@proton.me";
-  };
-
-  const actions = [
-    {
-      id: "calendar",
-      title: "Book a Coffee Chat",
-      description: "Pick a 30m slot on my calendar",
-      icon: Calendar,
-      color: "bg-sky-primary",
-      onClick: () => setShowCalendar(true)
-    },
-    {
-      id: "email",
-      title: "Send a Quick Memo",
-      description: "iannogueira@proton.me",
-      icon: Mail,
-      color: "bg-sky-secondary",
-      onClick: handleEmail
-    }
-  ];
+const LiquidMesh = ({ x, y }: { x: any, y: any }) => {
+  const meshX = useTransform(x, [0, 2000], [20, -20]);
+  const meshY = useTransform(y, [0, 1200], [20, -20]);
 
   return (
     <motion.div
-      className="bg-card/40 backdrop-blur-sm shadow-sky-glow rounded-card border border-sky-border/10 max-w-5xl relative overflow-hidden h-full"
+      className="absolute inset-0 z-0 opacity-40 mix-blend-screen pointer-events-none"
+      style={{ x: meshX, y: meshY }}
+    >
+      <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-primary/20 blur-[120px] rounded-full animate-pulse" />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-sky-secondary/15 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+    </motion.div>
+  );
+};
+
+const MagneticOrb = ({
+  icon: Icon,
+  label,
+  onClick,
+  mouseX,
+  mouseY
+}: {
+  icon: any,
+  label: string,
+  onClick: () => void,
+  mouseX: any,
+  mouseY: any
+}) => {
+  const orbRef = useRef<HTMLButtonElement>(null);
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const springConfig = { damping: 15, stiffness: 150 };
+  const springX = useSpring(x, springConfig);
+  const springY = useSpring(y, springConfig);
+
+  useEffect(() => {
+    const handleMouse = () => {
+      if (!orbRef.current) return;
+      const rect = orbRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const distance = Math.sqrt(
+        Math.pow(mouseX.get() - centerX, 2) + Math.pow(mouseY.get() - centerY, 2)
+      );
+
+      if (distance < 150) {
+        const angle = Math.atan2(mouseY.get() - centerY, mouseX.get() - centerX);
+        const attraction = (1 - distance / 150) * 30;
+        x.set(Math.cos(angle) * attraction);
+        y.set(Math.sin(angle) * attraction);
+      } else {
+        x.set(0);
+        y.set(0);
+      }
+    };
+
+    const unsubscribeX = mouseX.on("change", handleMouse);
+    const unsubscribeY = mouseY.on("change", handleMouse);
+
+    return () => {
+      unsubscribeX();
+      unsubscribeY();
+    };
+  }, [mouseX, mouseY, x, y]);
+
+  return (
+    <motion.button
+      ref={orbRef}
+      onTap={onClick}
+      style={{ x: springX, y: springY }}
+      whileHover={{ scale: 1.1 }}
+      className="group relative flex items-center justify-center p-8 rounded-full bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:border-sky-primary/40 transition-colors duration-500 shadow-standard"
+    >
+      <Icon className="size-8 text-sky-text-primary group-hover:text-sky-primary transition-colors" strokeWidth={1.5} />
+
+      {/* Label Tooltip */}
+      <div className="absolute -bottom-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-primary/80">{label}</span>
+      </div>
+
+      {/* Glow shadow */}
+      <div className="absolute inset-0 rounded-full bg-sky-primary/0 group-hover:bg-sky-primary/10 blur-xl transition-all duration-500" />
+    </motion.button>
+  );
+};
+
+export default function ContactCard() {
+  const { springX, springY } = useMousePosition();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  return (
+    <motion.div
+      className="relative w-full max-w-5xl mx-auto min-h-[600px] flex flex-col items-center justify-center p-12 overflow-hidden"
       variants={cardVariants}
     >
-      <AnimatePresence mode="wait">
-        {!showCalendar ? (
-          <motion.div
-            key="contact-intro"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            className="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-sky-border/10 h-full"
-          >
-            {/* Left Panel: Bold Typography */}
-            <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden group">
-              {/* Background Glow */}
-              <div className="absolute -top-20 -left-20 size-80 bg-sky-primary/10 blur-[100px] group-hover:bg-sky-primary/20 transition-colors duration-700" />
+      <LiquidMesh x={springX} y={springY} />
 
-              <div className="relative z-10">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="flex items-center gap-2 mb-6"
-                >
-                  <div className="size-2 rounded-full bg-sky-primary animate-pulse shadow-sky-glow" />
-                  <span className="text-[10px] font-mono font-black tracking-[0.3em] uppercase text-sky-primary/60">Let&apos;s Connect</span>
-                </motion.div>
+      {/* Typography Layer */}
+      <div className="relative z-10 text-center mb-24 pointer-events-none">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-6 flex items-center justify-center gap-4"
+        >
+          <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-sky-primary/40" />
+          <span className="text-[10px] font-black uppercase tracking-[0.6em] text-sky-primary/60">Ready to build</span>
+          <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-sky-primary/40" />
+        </motion.div>
 
-                <motion.h2
-                  className="text-7xl md:text-8xl font-black leading-[0.8] tracking-tighter uppercase font-[family-name:var(--font-outfit)] text-sky-text-primary mb-8"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  Let&apos;s <br />
-                  <span className="text-transparent border-t-4 border-sky-primary pt-2 bg-clip-text bg-gradient-to-r from-sky-primary to-sky-secondary">Connect.</span>
-                </motion.h2>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-6xl md:text-8xl font-black uppercase tracking-[0.2em] font-[family-name:var(--font-outfit)] text-sky-text-primary mb-4"
+        >
+          LET&apos;S <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">CONNECT</span>
+        </motion.h2>
 
-                <motion.p
-                  className="text-lg text-sky-text-secondary/80 max-w-xs leading-relaxed font-medium"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  Ready to turn ideas into reality? Level up with a 1:1 strategy session.
-                </motion.p>
-              </div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-[12px] font-mono font-bold uppercase tracking-widest text-sky-text-secondary/40"
+        >
+          {"// Secure stream established — choose an orb to proceed"}
+        </motion.p>
+      </div>
 
-              {/* Stats Badges */}
-              <motion.div
-                className="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-sky-border/10"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+      {/* Interactive Orbs */}
+      <div className="relative z-20 flex flex-wrap items-center justify-center gap-12 md:gap-24">
+        <MagneticOrb
+          icon={Calendar}
+          label="Book Session"
+          mouseX={springX}
+          mouseY={springY}
+          onClick={() => window.open("https://calendly.com", "_blank")}
+        />
+        <MagneticOrb
+          icon={Mail}
+          label="Direct Memo"
+          mouseX={springX}
+          mouseY={springY}
+          onClick={() => window.location.href = "mailto:iannogueira@proton.me"}
+        />
+        <MagneticOrb
+          icon={MessageSquare}
+          label="Direct Access"
+          mouseX={springX}
+          mouseY={springY}
+          onClick={() => { }}
+        />
+      </div>
+
+      {/* Minimal Footer */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="absolute bottom-12 left-0 right-0 px-12 flex justify-between items-end border-t border-white/5 pt-8 pointer-events-none"
+      >
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] font-black uppercase tracking-widest text-sky-text-secondary/20">Streams</span>
+          <div className="flex gap-4 pointer-events-auto">
+            {socialLinks.slice(0, 3).map((social) => (
+              <a
+                key={social.name}
+                href={social.url}
+                target="_blank"
+                className="text-[9px] font-black font-mono text-sky-text-secondary/40 hover:text-sky-primary transition-colors"
               >
-                {[
-                  { label: "Response", value: "~2h", color: "text-sky-primary" },
-                  { label: "Rate", value: "100%", color: "text-sky-secondary" },
-                  { label: "Status", value: "ONLINE", color: "text-green-400" }
-                ].map((stat, i) => (
-                  <div key={i} className="flex flex-col gap-1">
-                    <span className={cn("text-xl font-black font-mono", stat.color)}>{stat.value}</span>
-                    <span className="text-[9px] font-black uppercase tracking-[0.1em] text-sky-text-secondary/40">{stat.label}</span>
-                  </div>
-                ))}
-              </motion.div>
-            </div>
+                {social.name}
+              </a>
+            ))}
+          </div>
+        </div>
 
-            {/* Right Panel: Interactive Terminal */}
-            <div className="lg:w-1/2 p-4 lg:p-6 bg-sky-primary/[0.02] flex flex-col h-full min-h-[400px]">
-              <div className="flex-1 bg-black/40 backdrop-blur-xl rounded-xl border border-sky-border/10 overflow-hidden flex flex-col shadow-2xl">
-                {/* Terminal Header */}
-                <div className="bg-sky-border/10 px-4 py-2 flex items-center justify-between border-b border-sky-border/5">
-                  <div className="flex items-center gap-2">
-                    <div className="size-2.5 rounded-full bg-red-500/50" />
-                    <div className="size-2.5 rounded-full bg-orange-500/50" />
-                    <div className="size-2.5 rounded-full bg-green-500/50" />
-                  </div>
-                  <span className="text-[10px] font-mono text-sky-text-secondary/40 font-bold uppercase tracking-wider">ian_silva@terminal ~ v1.0.4</span>
-                </div>
+        <div className="flex flex-col items-end gap-2 text-right">
+          <div className="flex items-center gap-2">
+            <div className="size-1 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
+            <span className="text-[9px] font-mono font-bold text-sky-text-secondary/60">LIVE_HANDSHAKE_OK</span>
+          </div>
+          <span className="text-[8px] font-mono text-sky-text-secondary/20">EST: 2026.02.26.STREAM</span>
+        </div>
+      </motion.div>
 
-                {/* Terminal Content */}
-                <div className="flex-1 p-6 font-mono text-xs overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-sky-primary/20">
-                  <div className="space-y-1">
-                    <p className="text-sky-primary/60 font-bold">{"// SECURE ESTABLISHMENT COMPLETED"}</p>
-                    <p className="text-sky-text-secondary/80 leading-relaxed">
-                      Welcome to the direct stream. How would you like to proceed?
-                    </p>
-                  </div>
-
-                  <div className="grid gap-3 mt-6">
-                    {[
-                      {
-                        cmd: "book.session",
-                        desc: "Schedule a high-impact strategy call",
-                        icon: Calendar,
-                        action: () => window.open("https://calendly.com", "_blank")
-                      },
-                      {
-                        cmd: "send.memo",
-                        desc: "Direct encrypted email transmission",
-                        icon: Mail,
-                        action: () => window.location.href = "mailto:iannogueira@proton.me"
-                      },
-                      {
-                        cmd: "view.links",
-                        desc: "Access social channels and streams",
-                        icon: Globe,
-                        action: () => { }
-                      }
-                    ].map((item, i) => (
-                      <motion.button
-                        key={item.cmd}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.5 + i * 0.1 }}
-                        onClick={item.action}
-                        className="group flex flex-col p-4 rounded-lg bg-sky-primary/5 border border-sky-border/5 hover:border-sky-primary/30 hover:bg-sky-primary/10 transition-all text-left relative overflow-hidden"
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sky-primary font-black flex items-center gap-2">
-                            <item.icon size={12} />
-                            {item.cmd}
-                          </span>
-                          <span className="text-[9px] text-sky-text-secondary/20 group-hover:text-sky-text-secondary/40 transition-colors uppercase font-black">Ready_to_exec</span>
-                        </div>
-                        <p className="text-[11px] text-sky-text-secondary/60 font-medium">{item.desc}</p>
-
-                        {/* Hover bar */}
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-sky-primary/0 group-hover:bg-sky-primary transition-all duration-300" />
-                      </motion.button>
-                    ))}
-                  </div>
-
-                  <div className="mt-8 flex items-center gap-2">
-                    <span className="text-sky-primary font-black animate-pulse">{'>'}</span>
-                    <span className="w-2 h-4 bg-sky-primary/40 animate-[blink_1s_infinite]" />
-                    <style jsx>{`
-                      @keyframes blink {
-                        50% { opacity: 0; }
-                      }
-                    `}</style>
-                  </div>
-                </div>
-
-                {/* Terminal Footer */}
-                <div className="px-6 py-4 bg-sky-primary/[0.02] border-t border-sky-border/5 flex items-center justify-between">
-                  <div className="flex gap-4">
-                    {socialLinks.slice(0, 3).map((social) => (
-                      <a
-                        key={social.name}
-                        href={social.url}
-                        target="_blank"
-                        className="text-[9px] font-black font-mono text-sky-text-secondary/30 hover:text-sky-primary transition-colors uppercase tracking-widest"
-                      >
-                        {social.name}
-                      </a>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2 opacity-20">
-                    <div className="size-1 bg-sky-primary rounded-full animate-ping" />
-                    <span className="text-[8px] font-mono font-bold tracking-tighter">X-RAY_SCAN_OK</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <div /> // Fallback for unused showCalendar state
-        )}
-      </AnimatePresence>
+      {/* Background Decor */}
+      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-3xl m-4" />
     </motion.div>
   );
 }
