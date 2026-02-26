@@ -119,7 +119,7 @@ export default function ContactCard() {
                 {/* Terminal Content */}
                 <div className="flex-1 p-6 font-mono text-xs overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-sky-primary/20">
                   <div className="space-y-1">
-                    <p className="text-sky-primary/60 font-bold">// SECURE ESTABLISHMENT COMPLETED</p>
+                    <p className="text-sky-primary/60 font-bold">{"// SECURE ESTABLISHMENT COMPLETED"}</p>
                     <p className="text-sky-text-secondary/80 leading-relaxed">
                       Welcome to the direct stream. How would you like to proceed?
                     </p>

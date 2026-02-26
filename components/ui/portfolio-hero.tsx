@@ -2,15 +2,70 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useMousePosition } from "@/components/context/MouseContext";
 
-const BackgroundMesh = () => {
+const DispersionLetter = ({ char, index, x, y }: { char: string, index: number, x: any, y: any }) => {
+    const letterRef = useRef<HTMLSpanElement>(null);
+    const [distance, setDistance] = useState(0);
+
+    // Track distance from mouse to this specific letter
+    useEffect(() => {
+        const calculateDistance = () => {
+            if (!letterRef.current) return;
+            const rect = letterRef.current.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const dx = x.get() - centerX;
+            const dy = y.get() - centerY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            setDistance(dist);
+        };
+
+        const unsubscribeX = x.on("change", calculateDistance);
+        const unsubscribeY = y.on("change", calculateDistance);
+
+        return () => {
+            unsubscribeX();
+            unsubscribeY();
+        };
+    }, [x, y]);
+
+    // Calculate effect strengths based on distance (within 200px)
+    const active = distance < 200;
+    const strength = active ? (1 - distance / 200) : 0;
+
     return (
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.3] dark:opacity-[0.5] overflow-hidden">
-            {/* Animated Gradient Orbs - Using CSS for better performance */}
+        <motion.span
+            ref={letterRef}
+            className="inline-block relative transition-colors duration-300"
+            animate={{
+                y: strength * -20,
+                x: strength * (index % 2 === 0 ? 10 : -10),
+                scale: 1 + strength * 0.2,
+                color: active ? "var(--sky-primary)" : "var(--sky-text-primary)",
+                textShadow: active ? `0 0 ${strength * 20}px var(--sky-primary)` : "none",
+            }}
+            transition={{ type: "spring", stiffness: 150, damping: 15 }}
+        >
+            {char === " " ? "\u00A0" : char}
+        </motion.span>
+    );
+};
+
+const BackgroundMesh = ({ x, y }: { x: any, y: any }) => {
+    const meshX = useTransform(x, [0, 2000], [5, -5]);
+    const meshY = useTransform(y, [0, 1200], [5, -5]);
+
+    return (
+        <motion.div
+            className="absolute inset-0 z-0 pointer-events-none opacity-[0.3] dark:opacity-[0.5] overflow-hidden"
+            style={{ x: meshX, y: meshY }}
+        >
+            {/* Animated Gradient Orbs */}
             <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-sky-primary/20 blur-[60px] rounded-full animate-blob-1 will-change-transform" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-sky-secondary/15 blur-[60px] rounded-full animate-blob-2 will-change-transform" />
 
@@ -40,20 +95,16 @@ const BackgroundMesh = () => {
                     opacity: 0.1
                 }}
             />
-        </div>
+        </motion.div>
     );
 };
 
 export default function PortfolioHero() {
     const { theme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    // Use centralized mouse tracking
+    // Centralized mouse tracking
     const { springX, springY } = useMousePosition();
-
-    const menuRef = useRef<HTMLDivElement>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
 
     const isDark = theme === "dark";
 
@@ -61,46 +112,26 @@ export default function PortfolioHero() {
         setMounted(true);
     }, []);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                isMenuOpen &&
-                menuRef.current &&
-                buttonRef.current &&
-                !menuRef.current.contains(event.target as Node) &&
-                !buttonRef.current.contains(event.target as Node)
-            ) {
-                setIsMenuOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [isMenuOpen]);
-
     const toggleTheme = () => {
         setTheme(isDark ? "light" : "dark");
     };
 
-    const menuItems = [
-        { label: "HOME", href: "#hero", highlight: true },
-        { label: "ABOUT", href: "#about" },
-        { label: "PROJECTS", href: "#projects" },
-        { label: "TOOLS", href: "#tools" },
-        { label: "CONTACT", href: "#contact" },
-    ];
-
-    // Spotlight that follows cursor - Moved hook call out of render
+    // Spotlight transforms
     const spotlightBackground = useTransform(
         [springX, springY],
         ([x, y]) => `radial-gradient(600px circle at ${x}px ${y}px, rgba(135, 206, 235, 0.05), transparent 80%)`
     );
 
+    // Parallax for the logo (strongest)
+    const logoX = useTransform(springX, [0, 2000], [-30, 30]);
+    const logoY = useTransform(springY, [0, 1200], [-30, 30]);
+
+    const nameFirst = "IAN N.".split("");
+    const nameLast = "SILVA".split("");
+
     return (
-        <div
-            className="min-h-screen text-foreground transition-colors bg-transparent relative"
-        >
-            <BackgroundMesh />
+        <div className="min-h-screen text-foreground transition-colors bg-transparent relative overflow-hidden">
+            <BackgroundMesh x={springX} y={springY} />
 
             <motion.div
                 className="pointer-events-none fixed inset-0 z-10 transition-colors"
@@ -109,10 +140,10 @@ export default function PortfolioHero() {
                     willChange: "background",
                 }}
             />
-            {/* Header - Minimalist (Theme Toggle Only) */}
+
+            {/* Header - Minimalist */}
             <header className="fixed top-0 left-0 right-0 z-50 px-6 py-6 pointer-events-none">
                 <nav className="flex items-center justify-end max-w-screen-2xl mx-auto">
-                    {/* Theme Toggle */}
                     <button
                         type="button"
                         onClick={(e) => {
@@ -144,34 +175,41 @@ export default function PortfolioHero() {
 
             {/* Hero Section */}
             <main className="relative min-h-screen flex flex-col items-center justify-center">
-                <div className="relative text-center z-20">
+                <div className="relative text-center z-20 select-none">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: "easeOut" }}
+                        className="flex flex-col items-center justify-center"
                     >
-                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-[family-name:var(--font-outfit)] dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
-                            IAN N.
-                        </h1>
-                        <h1 className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-[family-name:var(--font-outfit)] dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
-                            SILVA
-                        </h1>
+                        {/* Dispersion Typography */}
+                        <div className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-[family-name:var(--font-outfit)] dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
+                            {nameFirst.map((char, i) => (
+                                <DispersionLetter key={`f-${i}`} char={char} index={i} x={springX} y={springY} />
+                            ))}
+                        </div>
+                        <div className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-[family-name:var(--font-outfit)] dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
+                            {nameLast.map((char, i) => (
+                                <DispersionLetter key={`l-${i}`} char={char} index={i} x={springX} y={springY} />
+                            ))}
+                        </div>
                     </motion.div>
 
-                    {/* Profile Picture / Logo - Centered */}
+                    {/* Profile Picture / Logo - Layered Parallax */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto">
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
+                            style={{ x: logoX, y: logoY }}
                             transition={{ type: "spring", stiffness: 100, delay: 0.5 }}
-                            className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-white/10 backdrop-blur-lg border border-sky-primary/30 flex items-center justify-center shadow-sky-glow transition-transform duration-300 hover:scale-110 cursor-pointer"
+                            className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-white/10 backdrop-blur-lg border border-sky-primary/30 flex items-center justify-center shadow-sky-glow transition-transform duration-300 hover:scale-110 cursor-pointer group"
                         >
                             <Image
                                 src="/logo.svg"
                                 alt="Ian N. Silva Logo"
                                 width={128}
                                 height={128}
-                                className="w-3/4 h-3/4 object-contain opacity-90 brightness-110"
+                                className="w-3/4 h-3/4 object-contain opacity-90 brightness-110 group-hover:rotate-12 transition-transform duration-500"
                             />
                         </motion.div>
                     </div>
