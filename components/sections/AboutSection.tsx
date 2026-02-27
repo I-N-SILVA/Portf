@@ -2,10 +2,11 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { profileData } from "@/lib/placeholder-content";
-import { User, MapPin, GraduationCap, Zap } from "lucide-react";
+import { User, MapPin, GraduationCap, Zap, Brain, TrendingUp, Code2, ArrowUpRight } from "lucide-react";
 import React from "react";
 import Image from "next/image";
 import { KineticText } from "@/components/ui/KineticText";
+import { cn } from "@/lib/utils";
 
 function TiltCard({ children, className, colSpan = "" }: { children: React.ReactNode; className?: string; colSpan?: string }) {
     const x = useMotionValue(0);
@@ -58,11 +59,18 @@ function TiltCard({ children, className, colSpan = "" }: { children: React.React
     );
 }
 
+const statItems = [
+    { value: "5+", label: "Years Building", icon: Code2 },
+    { value: "AI", label: "Current Focus", icon: Brain },
+    { value: "£10K", label: "MRR Target", icon: TrendingUp },
+];
+
 export default function AboutSection() {
     return (
-        <section id="about" className="py-24 relative overflow-hidden">
-            <div className="container mx-auto px-6">
-                <div className="flex flex-col mb-16">
+        <section id="about" className="py-16 md:py-24 relative overflow-hidden">
+            <div className="container mx-auto px-4 md:px-6">
+                {/* Section Header */}
+                <div className="flex flex-col mb-12 md:mb-16">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -78,30 +86,82 @@ export default function AboutSection() {
                     </motion.div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-3 md:gap-4 md:h-[600px]">
-                    {/* Main Bio Card */}
-                    <TiltCard
-                        colSpan="md:col-span-2 md:row-span-2"
-                        className="h-full bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 sm:p-8 md:p-12 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 overflow-hidden relative shadow-standard dark:shadow-elevated"
-                    >
-                        <div className="relative z-10">
-                            <User className="w-10 h-10 md:w-12 md:h-12 text-sky-primary mb-6 md:mb-8 dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
-                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 leading-tight text-sky-text-primary font-[family-name:var(--font-outfit)]">
-                                {profileData.tagline}
-                            </h3>
-                            <p className="text-base md:text-lg text-sky-text-secondary leading-relaxed max-w-md">
-                                {profileData.bio}
-                            </p>
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4">
 
-                            <div className="mt-8">
-                                <div className="text-xs text-sky-text-secondary italic font-medium">
-                                    Current Location: {profileData.location}
-                                </div>
+                    {/* Hero Bio Card — spans left 7 columns, full height */}
+                    <TiltCard
+                        colSpan="md:col-span-7 md:row-span-2"
+                        className="h-full min-h-[400px] md:min-h-[550px] bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-8 md:p-12 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 overflow-hidden relative shadow-standard dark:shadow-elevated"
+                    >
+                        {/* Ambient glow */}
+                        <div className="absolute -top-20 -left-20 size-80 bg-sky-primary/10 blur-[100px] group-hover:bg-sky-primary/20 transition-colors duration-700 pointer-events-none" />
+
+                        <div className="relative z-10 flex flex-col h-full">
+                            {/* Top: Badge + Name */}
+                            <div className="mb-auto">
+                                <motion.div
+                                    initial={{ opacity: 0, x: -10 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    className="flex items-center gap-3 mb-6"
+                                >
+                                    <div className="size-2 rounded-full bg-sky-primary animate-pulse shadow-[0_0_8px_rgba(162,207,254,0.5)]" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-sky-primary/60 font-mono">System Profile</span>
+                                </motion.div>
+
+                                <motion.h3
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.1 }}
+                                    className="text-4xl sm:text-5xl md:text-6xl font-black leading-[0.85] tracking-tight text-sky-text-primary font-[family-name:var(--font-outfit)] mb-6"
+                                >
+                                    {profileData.name}
+                                </motion.h3>
+
+                                <motion.p
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.2 }}
+                                    className="text-lg md:text-xl font-bold text-sky-primary/80 mb-6 uppercase tracking-wider"
+                                >
+                                    {profileData.tagline}
+                                </motion.p>
+
+                                <motion.p
+                                    initial={{ opacity: 0 }}
+                                    whileInView={{ opacity: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.3 }}
+                                    className="text-base md:text-lg text-sky-text-secondary/80 leading-relaxed max-w-lg"
+                                >
+                                    {profileData.bio}
+                                </motion.p>
                             </div>
+
+                            {/* Bottom: Stats Row */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.4 }}
+                                className="grid grid-cols-3 gap-4 pt-8 mt-8 border-t border-sky-border/10"
+                            >
+                                {statItems.map((stat) => (
+                                    <div key={stat.label} className="flex flex-col gap-1.5">
+                                        <div className="flex items-center gap-2">
+                                            <stat.icon className="size-4 text-sky-primary/60" strokeWidth={2} />
+                                            <span className="text-2xl md:text-3xl font-black font-mono text-sky-text-primary">{stat.value}</span>
+                                        </div>
+                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-sky-text-secondary/40">{stat.label}</span>
+                                    </div>
+                                ))}
+                            </motion.div>
                         </div>
 
-                        {/* Avatar/Photo Placement */}
-                        <div className="absolute bottom-0 right-0 w-64 h-64 opacity-5 group-hover:opacity-10 transition-opacity">
+                        {/* Watermark Logo */}
+                        <div className="absolute bottom-0 right-0 w-48 h-48 md:w-64 md:h-64 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none">
                             <Image
                                 src="/android-chrome-512x512.png"
                                 alt="Ian Portrait"
@@ -114,42 +174,52 @@ export default function AboutSection() {
 
                     {/* Location Card */}
                     <TiltCard
-                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full shadow-standard dark:shadow-elevated"
+                        colSpan="md:col-span-5"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[180px] shadow-standard dark:shadow-elevated relative overflow-hidden"
                     >
-                        <MapPin className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
-                        <div>
-                            <p className="text-sm text-sky-text-secondary mb-1 uppercase tracking-widest font-bold">Location</p>
-                            <p className="text-xl md:text-2xl font-bold text-sky-text-primary uppercase font-[family-name:var(--font-outfit)]">{profileData.location}</p>
+                        <div className="flex items-start justify-between">
+                            <MapPin className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
+                            <span className="text-[9px] font-black uppercase tracking-widest text-sky-text-secondary/20 font-mono">02</span>
                         </div>
+                        <div>
+                            <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Location</p>
+                            <p className="text-2xl md:text-3xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight">{profileData.location}</p>
+                        </div>
+                        {/* Decorative line */}
+                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-sky-primary/0 via-sky-primary/20 to-sky-primary/0 group-hover:via-sky-primary/50 transition-all duration-500" />
                     </TiltCard>
 
-                    {/* Experience/Education Card */}
+                    {/* Credentials Card */}
                     <TiltCard
-                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full shadow-standard dark:shadow-elevated"
+                        colSpan="md:col-span-2"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[180px] shadow-standard dark:shadow-elevated relative overflow-hidden"
                     >
                         <GraduationCap className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
                         <div>
-                            <p className="text-sm text-sky-text-secondary mb-1 uppercase tracking-widest font-bold">Background</p>
-                            <p className="text-xl md:text-2xl font-bold text-sky-text-primary uppercase font-[family-name:var(--font-outfit)]">Econ & Psychology</p>
+                            <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Background</p>
+                            <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight leading-tight">Econ &<br />Psychology</p>
                         </div>
+                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-sky-primary/0 via-sky-primary/20 to-sky-primary/0 group-hover:via-sky-primary/50 transition-all duration-500" />
                     </TiltCard>
 
-                    {/* Quick Stats/Status Card */}
+                    {/* Current Focus Card — spans right side bottom */}
                     <TiltCard
-                        colSpan="md:col-span-2"
-                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-10 flex items-center justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full overflow-hidden relative shadow-standard dark:shadow-elevated"
+                        colSpan="md:col-span-3"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[180px] overflow-hidden relative shadow-standard dark:shadow-elevated"
                     >
-                        <div className="relative z-10">
-                            <p className="text-sm text-sky-text-secondary mb-2 uppercase tracking-widest font-bold">Current Focus</p>
-                            <h4 className="text-xl md:text-2xl font-bold flex items-center gap-3 text-sky-text-primary uppercase font-[family-name:var(--font-outfit)]">
-                                <span className="relative flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-primary opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-primary"></span>
-                                </span>
-                                Building AI Products
-                            </h4>
+                        <div className="flex items-start justify-between">
+                            <Zap className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
+                            <span className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-400"></span>
+                            </span>
                         </div>
-                        <Zap className="w-16 h-16 md:w-24 md:h-24 text-sky-primary/5 absolute right-4 top-1/2 -translate-y-1/2 group-hover:text-sky-primary/10 transition-colors" />
+                        <div>
+                            <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Current Focus</p>
+                            <p className="text-xl md:text-2xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight">Building AI Products</p>
+                            <p className="text-[11px] text-sky-text-secondary/50 mt-2 font-mono font-bold">AI Agents • MCP • Automation</p>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-green-400/0 via-green-400/30 to-green-400/0 group-hover:via-green-400/60 transition-all duration-500" />
                     </TiltCard>
                 </div>
             </div>

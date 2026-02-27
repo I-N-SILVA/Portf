@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, useDragControls, AnimatePresence } from "framer-motion";
 import { Minus, Square, X, Maximize2, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -35,12 +36,22 @@ export default function DraggableWindow({
     const dragControls = useDragControls();
     const constraintsRef = useRef(null);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    // Lock body scroll when maximized
+    useEffect(() => {
+        if (isMaximized) {
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isMaximized]);
 
     if (!isVisible) return null;
 
@@ -62,12 +73,8 @@ export default function DraggableWindow({
             transition: { type: "spring", stiffness: 300, damping: 30 }
         },
         maximized: {
-            x: 0,
-            y: 0,
             scale: 1,
-            width: "100vw",
-            height: "100vh",
-            zIndex: 150,
+            opacity: 1,
             transition: {
                 type: "tween",
                 duration: 0.4,
@@ -82,122 +89,151 @@ export default function DraggableWindow({
         }
     };
 
-    return (
-        <div ref={constraintsRef} className={`relative ${isMaximized ? "z-[100]" : "z-10"} ${className}`}>
-            {isMaximized && (
+    const titleBar = (
+        <div
+            onPointerDown={(e) => !isMaximized && dragControls.start(e)}
+            className={cn(
+                "flex items-center justify-between px-6 select-none transition-all duration-300 ease-in-out shrink-0",
+                isMaximized
+                    ? "h-14 bg-card border-b border-sky-border/10 sticky top-0 z-50 px-8"
+                    : "h-10 bg-sky-primary/10 border-b border-sky-border/10 cursor-grab active:cursor-grabbing"
+            )}
+        >
+            <div className="flex items-center gap-4">
+                <div className={cn(
+                    "rounded-full transition-all duration-500",
+                    isMaximized
+                        ? "size-3 bg-sky-primary animate-pulse shadow-[0_0_10px_rgba(162,207,254,0.5)]"
+                        : "size-2.5 bg-sky-primary/40 border border-sky-primary/20"
+                )} />
+                <div className="flex flex-col">
+                    <span className={cn(
+                        "font-black tracking-widest uppercase transition-all duration-500 font-[family-name:var(--font-outfit)]",
+                        isMaximized ? "text-sm text-sky-primary" : "text-[10px] text-sky-text-secondary opacity-60"
+                    )}>
+                        {title}
+                    </span>
+                </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={() => setIsMinimized(!isMinimized)}
+                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
+                    aria-label="Minimize"
+                >
+                    <Minus className={cn(
+                        "w-4 h-4 transition-all duration-300",
+                        isMinimized ? "text-sky-primary opacity-100 scale-110" : "text-sky-text-secondary opacity-40 group-hover:opacity-100"
+                    )} />
+                </button>
+                <button
+                    onClick={() => onMaximize?.()}
+                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
+                    aria-label={isMaximized ? "Exit Fullscreen" : "Maximize"}
+                >
+                    {isMaximized
+                        ? <Minimize2 className="w-4 h-4 text-sky-primary scale-110" />
+                        : <Square className="w-4 h-4 text-sky-text-secondary opacity-40 group-hover:opacity-100 group-hover:scale-110" />
+                    }
+                </button>
+                <button
+                    onClick={() => {
+                        setIsVisible(false);
+                        if (onClose) {
+                            setTimeout(onClose, 300);
+                        }
+                    }}
+                    className="p-1.5 hover:bg-destructive/20 hover:text-destructive rounded-full transition-all group"
+                    aria-label="Close"
+                >
+                    <X className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:rotate-90" />
+                </button>
+            </div>
+        </div>
+    );
+
+    const content = (
+        <motion.div
+            initial={false}
+            animate={{
+                height: isMinimized ? 0 : "auto",
+                opacity: isMinimized ? 0 : 1
+            }}
+            className={cn(
+                "overflow-auto p-1 relative",
+                isMaximized ? "flex-1" : ""
+            )}
+        >
+            {/* Magazine Header Overlay (Subtle) */}
+            <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none select-none">
+                <span className="text-8xl font-black italic tracking-tighter uppercase font-[family-name:var(--font-outfit)]">
+                    {title.split('_')[0]}
+                </span>
+            </div>
+
+            <div className="relative z-10">
+                {children}
+            </div>
+        </motion.div>
+    );
+
+    // When maximized, render into a portal so the window breaks out of any parent constraints
+    if (isMaximized) {
+        return createPortal(
+            <>
+                {/* Backdrop */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-background/60 backdrop-blur-sm z-[90] pointer-events-none"
+                    className="fixed inset-0 bg-background/80 backdrop-blur-md z-[998]"
+                    onClick={() => onMaximize?.()}
                 />
-            )}
 
+                {/* Fullscreen Window */}
+                <motion.div
+                    variants={windowVariants}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate="maximized"
+                    exit="exit"
+                    style={{ willChange: "transform, opacity" }}
+                    className="fixed inset-0 z-[999] bg-card flex flex-col overflow-hidden"
+                >
+                    {titleBar}
+                    {content}
+                </motion.div>
+            </>,
+            document.body
+        );
+    }
+
+    // Normal (non-maximized) rendering
+    return (
+        <div ref={constraintsRef} className={`relative z-10 ${className}`}>
             <AnimatePresence>
                 {isVisible && (
                     <motion.div
-                        drag={!isMobile && !isMaximized && !isMinimized}
+                        drag={!isMobile && !isMinimized}
                         dragControls={dragControls}
                         dragMomentum={false}
                         dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
                         dragElastic={0}
                         variants={windowVariants}
                         initial={isMobile ? { x: 0, y: 0, opacity: 0, scale: 0.95 } : { x: initialX, y: initialY, opacity: 0, scale: 0.95 }}
-                        animate={isMaximized ? "maximized" : isMinimized ? "minimized" : "normal"}
+                        animate={isMinimized ? "minimized" : "normal"}
                         exit="exit"
                         whileDrag={{ scale: 1.02, zIndex: 50 }}
                         style={{ willChange: "transform, width, height, opacity" }}
                         className={cn(
                             "bg-card/90 backdrop-blur-sm border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col transition-all duration-300",
-                            isMaximized
-                                ? "fixed !inset-0 !z-[999] rounded-none border-none shadow-none m-0 w-screen h-screen"
-                                : cn("rounded-card shadow-standard dark:shadow-elevated", width),
+                            "rounded-card shadow-standard dark:shadow-elevated",
+                            width,
                             className
                         )}
                     >
-                        {/* Morphed Title Bar / Dashboard Header */}
-                        <div
-                            onPointerDown={(e) => !isMaximized && dragControls.start(e)}
-                            className={cn(
-                                "flex items-center justify-between px-6 select-none transition-all duration-300 ease-in-out",
-                                isMaximized
-                                    ? "h-14 bg-card border-b border-sky-border/10 sticky top-0 z-50 px-8"
-                                    : "h-10 bg-sky-primary/10 border-b border-sky-border/10 cursor-grab active:cursor-grabbing"
-                            )}
-                        >
-                            <div className="flex items-center gap-4">
-                                <div className={cn(
-                                    "rounded-full transition-all duration-500",
-                                    isMaximized
-                                        ? "size-3 bg-sky-primary animate-pulse shadow-[0_0_10px_rgba(162,207,254,0.5)]"
-                                        : "size-2.5 bg-sky-primary/40 border border-sky-primary/20"
-                                )} />
-                                <div className="flex flex-col">
-                                    <span className={cn(
-                                        "font-black tracking-widest uppercase transition-all duration-500 font-[family-name:var(--font-outfit)]",
-                                        isMaximized ? "text-sm text-sky-primary" : "text-[10px] text-sky-text-secondary opacity-60"
-                                    )}>
-                                        {title}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={() => setIsMinimized(!isMinimized)}
-                                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
-                                    aria-label="Minimize"
-                                >
-                                    <Minus className={cn(
-                                        "w-4 h-4 transition-all duration-300",
-                                        isMinimized ? "text-sky-primary opacity-100 scale-110" : "text-sky-text-secondary opacity-40 group-hover:opacity-100"
-                                    )} />
-                                </button>
-                                <button
-                                    onClick={() => onMaximize?.()}
-                                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
-                                    aria-label={isMaximized ? "Exit Fullscreen" : "Maximize"}
-                                >
-                                    {isMaximized
-                                        ? <Minimize2 className="w-4 h-4 text-sky-primary scale-110" />
-                                        : <Square className="w-4 h-4 text-sky-text-secondary opacity-40 group-hover:opacity-100 group-hover:scale-110" />
-                                    }
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        setIsVisible(false);
-                                        if (onClose) {
-                                            setTimeout(onClose, 300);
-                                        }
-                                    }}
-                                    className="p-1.5 hover:bg-destructive/20 hover:text-destructive rounded-full transition-all group"
-                                    aria-label="Close"
-                                >
-                                    <X className="w-4 h-4 opacity-40 group-hover:opacity-100 group-hover:rotate-90" />
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Content */}
-                        <motion.div
-                            initial={false}
-                            animate={{
-                                height: isMinimized ? 0 : "auto",
-                                opacity: isMinimized ? 0 : 1
-                            }}
-                            className="flex-1 overflow-auto p-1 relative"
-                        >
-                            {/* Magazine Header Overlay (Subtle) */}
-                            <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none select-none">
-                                <span className="text-8xl font-black italic tracking-tighter uppercase font-[family-name:var(--font-outfit)]">
-                                    {title.split('_')[0]}
-                                </span>
-                            </div>
-
-                            <div className="relative z-10">
-                                {children}
-                            </div>
-                        </motion.div>
+                        {titleBar}
+                        {content}
                     </motion.div>
                 )}
             </AnimatePresence>
