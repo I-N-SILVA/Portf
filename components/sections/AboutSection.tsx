@@ -7,10 +7,12 @@ import React from "react";
 import Image from "next/image";
 import { KineticText } from "@/components/ui/KineticText";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 function TiltCard({ children, className, colSpan = "" }: { children: React.ReactNode; className?: string; colSpan?: string }) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
+    const isMobile = useMediaQuery("(max-width: 768px)");
 
     const mouseXSpring = useSpring(x);
     const mouseYSpring = useSpring(y);
@@ -19,6 +21,7 @@ function TiltCard({ children, className, colSpan = "" }: { children: React.React
     const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (isMobile) return;
         const rect = e.currentTarget.getBoundingClientRect();
         const width = rect.width;
         const height = rect.height;
@@ -31,6 +34,7 @@ function TiltCard({ children, className, colSpan = "" }: { children: React.React
     };
 
     const handleMouseLeave = () => {
+        if (isMobile) return;
         x.set(0);
         y.set(0);
     };
@@ -40,8 +44,8 @@ function TiltCard({ children, className, colSpan = "" }: { children: React.React
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
             style={{
-                rotateX,
-                rotateY,
+                rotateX: isMobile ? 0 : rotateX,
+                rotateY: isMobile ? 0 : rotateY,
                 transformStyle: "preserve-3d",
             }}
             className={`${colSpan} perspective-1000`}
@@ -49,7 +53,7 @@ function TiltCard({ children, className, colSpan = "" }: { children: React.React
             <div
                 className={className}
                 style={{
-                    transform: "translateZ(50px)",
+                    transform: isMobile ? "none" : "translateZ(50px)",
                     transformStyle: "preserve-3d",
                 }}
             >
@@ -167,6 +171,7 @@ export default function AboutSection() {
                                 alt="Ian Portrait"
                                 width={512}
                                 height={512}
+                                loading="lazy"
                                 className="object-cover grayscale"
                             />
                         </div>

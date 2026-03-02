@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 import { motion, useDragControls, AnimatePresence } from "framer-motion";
 import { Minus, Square, X, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 interface DraggableWindowProps {
     title: string;
@@ -16,6 +18,11 @@ interface DraggableWindowProps {
     isMaximized?: boolean;
     onMaximize?: () => void;
     onClose?: () => void;
+    zIndex?: number;
+    isFocused?: boolean;
+    onFocus?: () => void;
+    isMinimized?: boolean;
+    onMinimize?: (minimized: boolean) => void;
 }
 
 export default function DraggableWindow({
@@ -28,10 +35,15 @@ export default function DraggableWindow({
     isMaximized = false,
     onMaximize,
     onClose,
+    zIndex = 10,
+    isFocused = false,
+    onFocus,
+    isMinimized = false,
+    onMinimize,
 }: DraggableWindowProps) {
-    const [isMinimized, setIsMinimized] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
     const [portalReady, setPortalReady] = useState(false);
+    const isMobile = useMediaQuery("(max-width: 768px)");
+    const { playSound } = useSoundEffects();
 
     const dragControls = useDragControls();
     const constraintsRef = useRef(null);
@@ -39,13 +51,6 @@ export default function DraggableWindow({
     // SSR-safe portal setup
     useEffect(() => {
         setPortalReady(true);
-    }, []);
-
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
-        return () => window.removeEventListener("resize", checkMobile);
     }, []);
 
     // Lock body scroll when maximized — unconditional cleanup on unmount
@@ -75,17 +80,19 @@ export default function DraggableWindow({
 
     // Close: cleanly un-maximize first, then tell parent to hide
     const handleClose = useCallback(() => {
+        playSound("close");
         // Force cleanup immediately — don't rely on effect
         document.body.style.overflow = "";
         document.body.style.touchAction = "";
         // Tell parent to close (parent handles both maximize reset + visibility)
         onClose?.();
-    }, [onClose]);
+    }, [onClose, playSound]);
 
     // Un-maximize (restore to inline position)
     const handleRestore = useCallback(() => {
+        playSound("maximize");
         onMaximize?.();
-    }, [onMaximize]);
+    }, [onMaximize, playSound]);
 
     const windowVariants = {
         normal: {
@@ -95,7 +102,7 @@ export default function DraggableWindow({
             width: "100%",
             height: "auto",
             opacity: 1,
-            zIndex: 10,
+            zIndex,
             transition: { type: "spring", stiffness: 300, damping: 30 },
         },
         minimized: {
@@ -114,7 +121,10 @@ export default function DraggableWindow({
     // ─── Title bar (shared between normal + maximized) ───
     const titleBar = (
         <div
-            onPointerDown={(e) => !isMaximized && !isMinimized && dragControls.start(e)}
+            onPointerDown={(e) => {
+                onFocus?.();
+                if (!isMaximized && !isMinimized) dragControls.start(e);
+            }}
             className={cn(
                 "flex items-center justify-between px-4 md:px-6 select-none shrink-0",
                 isMaximized
@@ -146,8 +156,10 @@ export default function DraggableWindow({
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
+                        onFocus?.();
                         if (isMaximized) return;
-                        setIsMinimized((prev) => !prev);
+                        playSound("minimize");
+                        onMinimize?.(!isMinimized);
                     }}
                     className={cn(
                         "p-1.5 rounded-full transition-colors group",
@@ -169,7 +181,12 @@ export default function DraggableWindow({
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
-                        if (isMinimized) setIsMinimized(false);
+                        onFocus?.();
+                        if (isMinimized) {
+                            playSound("minimize");
+                            onMinimize?.(false);
+                        }
+                        playSound("maximize");
                         isMaximized ? handleRestore() : onMaximize?.();
                     }}
                     className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
@@ -235,7 +252,10 @@ export default function DraggableWindow({
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25 }}
                     className="fixed inset-0 bg-background/80 backdrop-blur-md z-[998]"
-                    onClick={handleRestore}
+                    onClick={() => {
+                        playSound("maximize");
+                        handleRestore();
+                    }}
                 />
 
                 {/* Fullscreen window */}
@@ -275,6 +295,10 @@ export default function DraggableWindow({
                 initial={isMobile ? { x: 0, y: 0, opacity: 0, scale: 0.95 } : { x: initialX, y: initialY, opacity: 0, scale: 0.95 }}
                 animate={isMinimized ? "minimized" : "normal"}
                 whileDrag={{ scale: 1.02, zIndex: 50 }}
+                onPointerDown={() => {
+                    playSound("focus");
+                    onFocus?.();
+                }}
                 className={cn(
                     "bg-card/90 backdrop-blur-sm border border-sky-border/20 dark:border-sky-primary/25 overflow-hidden flex flex-col",
                     "rounded-card shadow-standard dark:shadow-elevated",

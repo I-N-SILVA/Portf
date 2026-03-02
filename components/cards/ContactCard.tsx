@@ -4,7 +4,7 @@ import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from
 import { useState, useRef, useEffect } from "react";
 import { socialLinks } from "@/lib/placeholder-content";
 import { cardVariants } from "@/lib/animations";
-import { Calendar, Mail, Globe, ArrowUpRight, MessageSquare } from "lucide-react";
+import { Terminal as TerminalIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMousePosition } from "@/components/context/MouseContext";
 
@@ -100,10 +100,68 @@ const MagneticOrb = ({
 export default function ContactCard() {
   const { springX, springY } = useMousePosition();
   const [mounted, setMounted] = useState(false);
+  const [input, setInput] = useState("");
+  const [history, setHistory] = useState<{ id: string; type: "input" | "output" | "system"; text: React.ReactNode }[]>([
+    { id: "init", type: "system", text: "IAN N. SILVA OS v2.4.9" },
+    { id: "init2", type: "system", text: "Type 'help' to see available commands." }
+  ]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [history]);
+
+  const handleCommand = (cmd: string) => {
+    const trimmed = cmd.trim().toLowerCase();
+    if (!trimmed) return;
+
+    setHistory((prev) => [...prev, { id: crypto.randomUUID(), type: "input", text: `guest@ins-os:~$ ${trimmed}` }]);
+
+    setTimeout(() => {
+      let output: React.ReactNode = "";
+      if (trimmed === "help") {
+        output = (
+          <div className="flex flex-col gap-1 text-sky-text-secondary">
+            <span>Available commands:</span>
+            <span className="text-sky-primary">book   <span className="text-sky-text-secondary/60">- Schedule a consultation session</span></span>
+            <span className="text-sky-primary">email  <span className="text-sky-text-secondary/60">- Initialize direct secure memo</span></span>
+            <span className="text-sky-primary">links  <span className="text-sky-text-secondary/60">- Display active comm channels</span></span>
+            <span className="text-sky-primary">clear  <span className="text-sky-text-secondary/60">- Clear terminal output</span></span>
+          </div>
+        );
+      } else if (trimmed === "book") {
+        output = <span className="text-green-400">Opening Calendly handshake protocol...</span>;
+        setTimeout(() => window.open("https://calendly.com", "_blank"), 800);
+      } else if (trimmed === "email") {
+        output = <span className="text-green-400">Initializing mail client...</span>;
+        setTimeout(() => window.location.href = "mailto:iannogueira@proton.me", 800);
+      } else if (trimmed === "links") {
+        output = (
+          <div className="flex flex-col gap-1">
+            {socialLinks.map(s => (
+              <a key={s.name} href={s.url} target="_blank" className="text-sky-primary hover:underline hover:text-sky-text-primary transition-colors">
+                [LINK] {s.name}
+              </a>
+            ))}
+          </div>
+        );
+      } else if (trimmed === "clear") {
+        setHistory([{ id: crypto.randomUUID(), type: "system", text: "IAN N. SILVA OS v2.4.9" }]);
+        return;
+      } else {
+        output = <span className="text-red-400">Command not found: {trimmed}</span>;
+      }
+
+      setHistory((prev) => [...prev, { id: crypto.randomUUID(), type: "output", text: output }]);
+    }, 150);
+  };
 
   if (!mounted) return null;
 
@@ -141,33 +199,69 @@ export default function ContactCard() {
           transition={{ delay: 0.4 }}
           className="text-[12px] font-mono font-bold uppercase tracking-widest text-sky-text-secondary/40"
         >
-          {"// Secure stream established — choose an orb to proceed"}
+          {"// Secure stream established — enter command to proceed"}
         </motion.p>
       </div>
 
-      {/* Interactive Orbs */}
-      <div className="relative z-20 flex flex-wrap items-center justify-center gap-12 md:gap-24">
-        <MagneticOrb
-          icon={Calendar}
-          label="Book Session"
-          mouseX={springX}
-          mouseY={springY}
-          onClick={() => window.open("https://calendly.com", "_blank")}
-        />
-        <MagneticOrb
-          icon={Mail}
-          label="Direct Memo"
-          mouseX={springX}
-          mouseY={springY}
-          onClick={() => window.location.href = "mailto:iannogueira@proton.me"}
-        />
-        <MagneticOrb
-          icon={MessageSquare}
-          label="Direct Access"
-          mouseX={springX}
-          mouseY={springY}
-          onClick={() => { }}
-        />
+      {/* Interactive Terminal */}
+      <div className="relative z-20 w-full max-w-2xl bg-black/40 backdrop-blur-md border border-sky-border/30 rounded-xl overflow-hidden shadow-2xl flex flex-col h-[300px]">
+        {/* Terminal Header */}
+        <div className="h-8 bg-black/60 border-b border-sky-border/20 flex items-center px-4 justify-between select-none">
+          <div className="flex items-center gap-2">
+            <TerminalIcon className="w-3.5 h-3.5 text-sky-primary/70" />
+            <span className="text-[10px] font-mono font-bold text-sky-text-secondary">guest@ins-os</span>
+          </div>
+          <div className="flex gap-1.5">
+            <div className="size-2 rounded-full bg-red-500/50" />
+            <div className="size-2 rounded-full bg-yellow-500/50" />
+            <div className="size-2 rounded-full bg-green-500/50" />
+          </div>
+        </div>
+
+        {/* Terminal Output */}
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-mono text-xs text-sky-text-secondary scrollbar-thin scrollbar-thumb-sky-primary/20"
+          onClick={() => inputRef.current?.focus()}
+        >
+          <AnimatePresence initial={false}>
+            {history.map((entry) => (
+              <motion.div
+                key={entry.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className={cn(
+                  "break-words",
+                  entry.type === "system" && "text-sky-primary/60 font-bold mb-2",
+                  entry.type === "input" && "text-sky-text-primary"
+                )}
+              >
+                {entry.text}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/* Terminal Input */}
+        <div className="bg-black/60 border-t border-sky-border/20 p-2 px-4 flex items-center gap-2">
+          <span className="text-sky-primary font-mono text-sm font-bold">guest@ins-os:~$</span>
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleCommand(input);
+                setInput("");
+              }
+            }}
+            spellCheck={false}
+            autoComplete="off"
+            className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-sky-text-primary caret-sky-primary placeholder:text-sky-text-secondary/30"
+            placeholder="Type a command..."
+          />
+        </div>
       </div>
 
       {/* Minimal Footer */}

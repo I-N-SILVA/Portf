@@ -13,6 +13,7 @@ import TextTicker from "@/components/ui/TextTicker";
 import ToolsSection from "@/components/sections/ToolsSection";
 import { AmbientHorizon } from "@/components/ui/AmbientHorizon";
 import CommandPalette from "@/components/ui/CommandPalette";
+import WindowTaskbar, { WindowId } from "@/components/ui/WindowTaskbar";
 import { cn } from "@/lib/utils";
 import { Suspense, lazy, useEffect, useState } from "react";
 
@@ -36,11 +37,37 @@ export default function LandingContent() {
         expertise: true,
         contact: true
     });
+    const [minimizedWindows, setMinimizedWindows] = useState({
+        about: false,
+        projects: false,
+        expertise: false,
+        contact: false
+    });
+    const [windowOrder, setWindowOrder] = useState<string[]>(['about', 'projects', 'expertise', 'contact']);
     const [maximizedWindow, setMaximizedWindow] = useState<string | null>(null);
     const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
+    const bringToFront = (id: string) => {
+        setWindowOrder(prev => {
+            const remaining = prev.filter(w => w !== id);
+            return [...remaining, id];
+        });
+    };
+
+    const toggleMinimize = (id: keyof typeof minimizedWindows, value?: boolean) => {
+        setMinimizedWindows(prev => {
+            const newValue = value !== undefined ? value : !prev[id];
+            if (!newValue) bringToFront(id);
+            return { ...prev, [id]: newValue };
+        });
+    };
+
     const toggleWindow = (id: keyof typeof visibleWindows, value: boolean) => {
         setVisibleWindows(prev => ({ ...prev, [id]: value }));
+        if (value) {
+            setMinimizedWindows(prev => ({ ...prev, [id]: false }));
+            bringToFront(id);
+        }
     };
 
     const restoreAllWindows = () => {
@@ -50,6 +77,13 @@ export default function LandingContent() {
             expertise: true,
             contact: true
         });
+        setMinimizedWindows({
+            about: false,
+            projects: false,
+            expertise: false,
+            contact: false
+        });
+        setWindowOrder(['about', 'projects', 'expertise', 'contact']);
     };
 
     const hasClosedWindows = Object.values(visibleWindows).some(v => !v);
@@ -68,6 +102,40 @@ export default function LandingContent() {
         };
         preload();
     }, []);
+
+    // Keyboard shortcuts for window management
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+            if ((e.metaKey || e.ctrlKey) && e.key === 'm') {
+                e.preventDefault();
+                const activeWindows = windowOrder.filter(id =>
+                    visibleWindows[id as keyof typeof visibleWindows] &&
+                    !minimizedWindows[id as keyof typeof minimizedWindows]
+                );
+                if (activeWindows.length > 0) {
+                    const topWindow = activeWindows[activeWindows.length - 1];
+                    toggleMinimize(topWindow as keyof typeof minimizedWindows, true);
+                }
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'w') {
+                // Browsers often override Cmd+W, but we try to prevent default and handle it.
+                e.preventDefault();
+                const activeWindows = windowOrder.filter(id =>
+                    visibleWindows[id as keyof typeof visibleWindows]
+                );
+                if (activeWindows.length > 0) {
+                    const topWindow = activeWindows[activeWindows.length - 1];
+                    if (maximizedWindow === topWindow) setMaximizedWindow(null);
+                    toggleWindow(topWindow as keyof typeof visibleWindows, false);
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [windowOrder, visibleWindows, minimizedWindows, maximizedWindow]);
 
     // Scroll lock when a window is maximized
     useEffect(() => {
@@ -102,21 +170,18 @@ export default function LandingContent() {
             <FloatingDock />
             <MobileDock />
 
-            {/* Global Restoration Toggle */}
-            <AnimatePresence>
-                {hasClosedWindows && (
-                    <motion.button
-                        initial={{ opacity: 0, scale: 0.8, x: 20 }}
-                        animate={{ opacity: 1, scale: 1, x: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, x: 20 }}
-                        onClick={restoreAllWindows}
-                        className="fixed right-6 bottom-24 md:bottom-8 z-[100] px-4 py-2 bg-primary text-primary-foreground rounded-full font-bold text-xs tracking-widest uppercase shadow-2xl hover:scale-105 active:scale-95 transition-transform flex items-center gap-2 group border border-primary-foreground/10"
-                    >
-                        <div className="size-2 rounded-full bg-primary-foreground animate-pulse" />
-                        Restore Workspace
-                    </motion.button>
-                )}
-            </AnimatePresence>
+            {/* Window Taskbar (Desktop) */}
+            <WindowTaskbar
+                visibleWindows={visibleWindows as Record<WindowId, boolean>}
+                minimizedWindows={minimizedWindows as Record<WindowId, boolean>}
+                focusedWindow={windowOrder[windowOrder.length - 1] || null}
+                onRestore={(id: WindowId) => {
+                    toggleWindow(id, true);
+                }}
+                onToggleMinimize={(id: WindowId) => {
+                    toggleMinimize(id);
+                }}
+            />
 
             {/* Hero Section - The Cover Story */}
             <section id="hero" className="relative z-10 pt-10">
@@ -169,8 +234,13 @@ export default function LandingContent() {
                                 width="max-w-4xl"
                                 initialX={0}
                                 initialY={0}
+                                zIndex={10 + windowOrder.indexOf('about')}
+                                isFocused={windowOrder[windowOrder.length - 1] === 'about'}
+                                onFocus={() => bringToFront('about')}
+                                isMinimized={minimizedWindows.about}
+                                onMinimize={(val) => toggleMinimize('about', val)}
                                 isMaximized={maximizedWindow === "about"}
-                                onMaximize={() => setMaximizedWindow(maximizedWindow === "about" ? null : "about")}
+                                onMaximize={() => { bringToFront('about'); setMaximizedWindow(maximizedWindow === "about" ? null : "about"); }}
                                 onClose={() => { setMaximizedWindow(null); toggleWindow("about", false); }}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
@@ -199,8 +269,13 @@ export default function LandingContent() {
                                 width="max-w-6xl"
                                 initialX={0}
                                 initialY={0}
+                                zIndex={10 + windowOrder.indexOf('projects')}
+                                isFocused={windowOrder[windowOrder.length - 1] === 'projects'}
+                                onFocus={() => bringToFront('projects')}
+                                isMinimized={minimizedWindows.projects}
+                                onMinimize={(val) => toggleMinimize('projects', val)}
                                 isMaximized={maximizedWindow === "projects"}
-                                onMaximize={() => setMaximizedWindow(maximizedWindow === "projects" ? null : "projects")}
+                                onMaximize={() => { bringToFront('projects'); setMaximizedWindow(maximizedWindow === "projects" ? null : "projects"); }}
                                 onClose={() => { setMaximizedWindow(null); toggleWindow("projects", false); }}
                             >
                                 <div className="size-full">
@@ -229,8 +304,13 @@ export default function LandingContent() {
                                 width="max-w-5xl"
                                 initialX={0}
                                 initialY={0}
+                                zIndex={10 + windowOrder.indexOf('expertise')}
+                                isFocused={windowOrder[windowOrder.length - 1] === 'expertise'}
+                                onFocus={() => bringToFront('expertise')}
+                                isMinimized={minimizedWindows.expertise}
+                                onMinimize={(val) => toggleMinimize('expertise', val)}
                                 isMaximized={maximizedWindow === "expertise"}
-                                onMaximize={() => setMaximizedWindow(maximizedWindow === "expertise" ? null : "expertise")}
+                                onMaximize={() => { bringToFront('expertise'); setMaximizedWindow(maximizedWindow === "expertise" ? null : "expertise"); }}
                                 onClose={() => { setMaximizedWindow(null); toggleWindow("expertise", false); }}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
@@ -260,8 +340,13 @@ export default function LandingContent() {
                                     width="max-w-5xl"
                                     initialX={0}
                                     initialY={0}
+                                    zIndex={10 + windowOrder.indexOf('contact')}
+                                    isFocused={windowOrder[windowOrder.length - 1] === 'contact'}
+                                    onFocus={() => bringToFront('contact')}
+                                    isMinimized={minimizedWindows.contact}
+                                    onMinimize={(val) => toggleMinimize('contact', val)}
                                     isMaximized={maximizedWindow === "contact"}
-                                    onMaximize={() => setMaximizedWindow(maximizedWindow === "contact" ? null : "contact")}
+                                    onMaximize={() => { bringToFront('contact'); setMaximizedWindow(maximizedWindow === "contact" ? null : "contact"); }}
                                     onClose={() => { setMaximizedWindow(null); toggleWindow("contact", false); }}
                                 >
                                     <Suspense fallback={<SectionFallback />}>

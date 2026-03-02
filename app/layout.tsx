@@ -37,6 +37,9 @@ export const metadata: Metadata = {
     ],
   },
   manifest: "/site.webmanifest",
+};
+
+export const viewport = {
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#dae9f0" },
     { media: "(prefers-color-scheme: dark)", color: "#1a2c3a" },
