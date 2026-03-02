@@ -13,7 +13,6 @@ import TextTicker from "@/components/ui/TextTicker";
 import ToolsSection from "@/components/sections/ToolsSection";
 import { AmbientHorizon } from "@/components/ui/AmbientHorizon";
 import CommandPalette from "@/components/ui/CommandPalette";
-import WindowTaskbar, { WindowId } from "@/components/ui/WindowTaskbar";
 import { cn } from "@/lib/utils";
 import { Suspense, lazy, useEffect, useState } from "react";
 
@@ -170,18 +169,29 @@ export default function LandingContent() {
             <FloatingDock />
             <MobileDock />
 
-            {/* Window Taskbar (Desktop) */}
-            <WindowTaskbar
-                visibleWindows={visibleWindows as Record<WindowId, boolean>}
-                minimizedWindows={minimizedWindows as Record<WindowId, boolean>}
-                focusedWindow={windowOrder[windowOrder.length - 1] || null}
-                onRestore={(id: WindowId) => {
-                    toggleWindow(id, true);
-                }}
-                onToggleMinimize={(id: WindowId) => {
-                    toggleMinimize(id);
-                }}
-            />
+            {/* Global Restoration Toggle */}
+            <AnimatePresence>
+                {hasClosedWindows && (
+                    <motion.button
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                        onClick={restoreAllWindows}
+                        className="fixed right-6 bottom-24 md:bottom-8 z-[100] px-4 py-2 bg-background/80 backdrop-blur-md border border-sky-border/30 dark:border-sky-primary/30 text-foreground rounded-full font-bold text-xs tracking-widest uppercase shadow-standard dark:shadow-elevated hover:bg-card hover:scale-105 active:scale-95 transition-all flex items-center gap-3 group"
+                    >
+                        <div className="flex items-center gap-2">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-primary opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-primary"></span>
+                            </span>
+                            Restore Workspace
+                        </div>
+                        <div className="bg-foreground/10 px-2 py-0.5 rounded-full text-[10px]">
+                            {Object.values(visibleWindows).filter(v => !v).length} Closed
+                        </div>
+                    </motion.button>
+                )}
+            </AnimatePresence>
 
             {/* Hero Section - The Cover Story */}
             <section id="hero" className="relative z-10 pt-10">
