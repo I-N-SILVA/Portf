@@ -172,10 +172,11 @@ export default function AboutSection() {
                         </div>
                     </TiltCard>
 
+                    {/* Right Column — stacks vertically in 5 cols */}
                     {/* Location Card */}
                     <TiltCard
                         colSpan="md:col-span-5"
-                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[180px] shadow-standard dark:shadow-elevated relative overflow-hidden"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[160px] shadow-standard dark:shadow-elevated relative overflow-hidden"
                     >
                         <div className="flex items-start justify-between">
                             <MapPin className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
@@ -185,41 +186,47 @@ export default function AboutSection() {
                             <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Location</p>
                             <p className="text-2xl md:text-3xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight">{profileData.location}</p>
                         </div>
-                        {/* Decorative line */}
                         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-sky-primary/0 via-sky-primary/20 to-sky-primary/0 group-hover:via-sky-primary/50 transition-all duration-500" />
                     </TiltCard>
 
-                    {/* Credentials Card */}
+                    {/* Background & Focus Card — combined into one wider card */}
                     <TiltCard
-                        colSpan="md:col-span-2"
-                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[180px] shadow-standard dark:shadow-elevated relative overflow-hidden"
+                        colSpan="md:col-span-5"
+                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[160px] shadow-standard dark:shadow-elevated relative overflow-hidden"
                     >
-                        <GraduationCap className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
-                        <div>
-                            <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Background</p>
-                            <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight leading-tight">Econ &<br />Psychology</p>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-sky-primary/0 via-sky-primary/20 to-sky-primary/0 group-hover:via-sky-primary/50 transition-all duration-500" />
-                    </TiltCard>
+                        <div className="flex flex-col sm:flex-row gap-6 h-full">
+                            {/* Credentials */}
+                            <div className="flex flex-col justify-between flex-1">
+                                <GraduationCap className="w-7 h-7 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)] mb-4" />
+                                <div>
+                                    <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Background</p>
+                                    <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight leading-tight">Economics & Psychology</p>
+                                </div>
+                            </div>
 
-                    {/* Current Focus Card — spans right side bottom */}
-                    <TiltCard
-                        colSpan="md:col-span-3"
-                        className="bg-card/90 backdrop-blur-sm border border-sky-border/10 dark:border-sky-primary/20 rounded-card p-6 md:p-8 flex flex-col justify-between group hover:border-sky-primary/50 transition-colors duration-500 h-full min-h-[180px] overflow-hidden relative shadow-standard dark:shadow-elevated"
-                    >
-                        <div className="flex items-start justify-between">
-                            <Zap className="w-8 h-8 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
-                            <span className="relative flex h-3 w-3">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-green-400"></span>
-                            </span>
+                            {/* Divider */}
+                            <div className="hidden sm:block w-px bg-sky-border/10 self-stretch" />
+                            <div className="block sm:hidden h-px bg-sky-border/10 w-full" />
+
+                            {/* Current Focus */}
+                            <div className="flex flex-col justify-between flex-1">
+                                <div className="flex items-center justify-between mb-4">
+                                    <Zap className="w-7 h-7 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)]" />
+                                    <span className="relative flex h-3 w-3">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-400"></span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Current Focus</p>
+                                    <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight">Building AI Products</p>
+                                    <p className="text-[11px] text-sky-text-secondary/50 mt-1 font-mono font-bold">AI Agents • MCP • Automation</p>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Current Focus</p>
-                            <p className="text-xl md:text-2xl font-black text-sky-text-primary uppercase font-[family-name:var(--font-outfit)] tracking-tight">Building AI Products</p>
-                            <p className="text-[11px] text-sky-text-secondary/50 mt-2 font-mono font-bold">AI Agents • MCP • Automation</p>
-                        </div>
-                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-green-400/0 via-green-400/30 to-green-400/0 group-hover:via-green-400/60 transition-all duration-500" />
+
+                        {/* Decorative gradient line */}
+                        <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-sky-primary/0 via-green-400/30 to-sky-primary/0 group-hover:via-green-400/60 transition-all duration-500" />
                     </TiltCard>
                 </div>
             </div>

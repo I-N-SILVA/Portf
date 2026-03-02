@@ -171,7 +171,7 @@ export default function LandingContent() {
                                 initialY={0}
                                 isMaximized={maximizedWindow === "about"}
                                 onMaximize={() => setMaximizedWindow(maximizedWindow === "about" ? null : "about")}
-                                onClose={() => toggleWindow("about", false)}
+                                onClose={() => { setMaximizedWindow(null); toggleWindow("about", false); }}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
                                     <Suspense fallback={<SectionFallback />}>
@@ -201,7 +201,7 @@ export default function LandingContent() {
                                 initialY={0}
                                 isMaximized={maximizedWindow === "projects"}
                                 onMaximize={() => setMaximizedWindow(maximizedWindow === "projects" ? null : "projects")}
-                                onClose={() => toggleWindow("projects", false)}
+                                onClose={() => { setMaximizedWindow(null); toggleWindow("projects", false); }}
                             >
                                 <div className="size-full">
                                     <Suspense fallback={<SectionFallback />}>
@@ -231,7 +231,7 @@ export default function LandingContent() {
                                 initialY={0}
                                 isMaximized={maximizedWindow === "expertise"}
                                 onMaximize={() => setMaximizedWindow(maximizedWindow === "expertise" ? null : "expertise")}
-                                onClose={() => toggleWindow("expertise", false)}
+                                onClose={() => { setMaximizedWindow(null); toggleWindow("expertise", false); }}
                             >
                                 <div className="bg-background/50 backdrop-blur-sm">
                                     <Suspense fallback={<SectionFallback />}>
@@ -262,7 +262,7 @@ export default function LandingContent() {
                                     initialY={0}
                                     isMaximized={maximizedWindow === "contact"}
                                     onMaximize={() => setMaximizedWindow(maximizedWindow === "contact" ? null : "contact")}
-                                    onClose={() => toggleWindow("contact", false)}
+                                    onClose={() => { setMaximizedWindow(null); toggleWindow("contact", false); }}
                                 >
                                     <Suspense fallback={<SectionFallback />}>
                                         <ContactSection />
