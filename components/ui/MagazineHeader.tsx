@@ -24,7 +24,7 @@ export default function MagazineHeader({
             )}
             <h2 className={`
                 text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] 
-                font-[family-name:var(--font-outfit)]
+                font-outfit
                 ${variant === "outline" ? "text-transparent stroke-2" : "text-foreground"}
                 ${variant === "stamped" ? "opacity-90 italic" : ""}
             `}

@@ -80,9 +80,11 @@ export function formatDateTime(date: Date, time: string): string {
   return `${formatDate(date)} at ${time}`;
 }
 
-// Validate email
+// Validate email — RFC 5321 simplified, requires real TLD (2+ chars)
 export function isValidEmail(email: string): boolean {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || email.length > 254) return false;
+  const regex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
   return regex.test(email);
 }
 

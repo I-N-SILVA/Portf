@@ -114,7 +114,10 @@ const config: Config = {
         bold: '700',
       },
       fontFamily: {
+        sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
         serif: ["var(--font-playfair)", "serif"],
+        outfit: ["var(--font-outfit)", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       backgroundImage: {
         "sky-light-gradient": "linear-gradient(180deg, #E8F4FF 0%, #A2CFFE 40%, #FFFFFF 100%)",

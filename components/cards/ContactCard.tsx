@@ -1,14 +1,14 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { socialLinks } from "@/lib/placeholder-content";
 import { cardVariants } from "@/lib/animations";
-import { Terminal as TerminalIcon } from "lucide-react";
+import { Terminal as TerminalIcon, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMousePosition } from "@/components/context/MouseContext";
 
-const LiquidMesh = ({ x, y }: { x: any, y: any }) => {
+const LiquidMesh = ({ x, y }: { x: MotionValue<number>; y: MotionValue<number> }) => {
   const meshX = useTransform(x, [0, 2000], [20, -20]);
   const meshY = useTransform(y, [0, 1200], [20, -20]);
 
@@ -18,29 +18,23 @@ const LiquidMesh = ({ x, y }: { x: any, y: any }) => {
       style={{ x: meshX, y: meshY }}
     >
       <div className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] bg-sky-primary/20 blur-[120px] rounded-full animate-pulse" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-sky-secondary/15 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+      <div className="absolute bottom-[-20%] right-[-10%] w-[70%] h-[70%] bg-sky-secondary/15 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: "2s" }} />
     </motion.div>
   );
 };
 
-const MagneticOrb = ({
-  icon: Icon,
-  label,
-  onClick,
-  mouseX,
-  mouseY
-}: {
-  icon: any,
-  label: string,
-  onClick: () => void,
-  mouseX: any,
-  mouseY: any
-}) => {
-  const orbRef = useRef<HTMLButtonElement>(null);
+interface MagneticOrbProps {
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
+}
 
+const MagneticOrb = ({ icon: Icon, label, onClick, mouseX, mouseY }: MagneticOrbProps) => {
+  const orbRef = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-
   const springConfig = { damping: 15, stiffness: 150 };
   const springX = useSpring(x, springConfig);
   const springY = useSpring(y, springConfig);
@@ -51,11 +45,9 @@ const MagneticOrb = ({
       const rect = orbRef.current.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
-
       const distance = Math.sqrt(
         Math.pow(mouseX.get() - centerX, 2) + Math.pow(mouseY.get() - centerY, 2)
       );
-
       if (distance < 150) {
         const angle = Math.atan2(mouseY.get() - centerY, mouseX.get() - centerX);
         const attraction = (1 - distance / 150) * 30;
@@ -66,14 +58,9 @@ const MagneticOrb = ({
         y.set(0);
       }
     };
-
-    const unsubscribeX = mouseX.on("change", handleMouse);
-    const unsubscribeY = mouseY.on("change", handleMouse);
-
-    return () => {
-      unsubscribeX();
-      unsubscribeY();
-    };
+    const unsubX = mouseX.on("change", handleMouse);
+    const unsubY = mouseY.on("change", handleMouse);
+    return () => { unsubX(); unsubY(); };
   }, [mouseX, mouseY, x, y]);
 
   return (
@@ -85,44 +72,45 @@ const MagneticOrb = ({
       className="group relative flex items-center justify-center p-8 rounded-full bg-white/5 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:border-sky-primary/40 transition-colors duration-500 shadow-standard"
     >
       <Icon className="size-8 text-sky-text-primary group-hover:text-sky-primary transition-colors" strokeWidth={1.5} />
-
-      {/* Label Tooltip */}
       <div className="absolute -bottom-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-sky-primary/80">{label}</span>
       </div>
-
-      {/* Glow shadow */}
       <div className="absolute inset-0 rounded-full bg-sky-primary/0 group-hover:bg-sky-primary/10 blur-xl transition-all duration-500" />
     </motion.button>
   );
 };
 
+/** Strip HTML-special characters from terminal input to prevent injection. */
+function sanitizeInput(raw: string): string {
+  return raw.replace(/[<>&"'`]/g, "");
+}
+
 export default function ContactCard() {
   const { springX, springY } = useMousePosition();
   const [mounted, setMounted] = useState(false);
   const [input, setInput] = useState("");
-  const [history, setHistory] = useState<{ id: string; type: "input" | "output" | "system"; text: React.ReactNode }[]>([
+  const [history, setHistory] = useState<
+    { id: string; type: "input" | "output" | "system"; text: React.ReactNode }[]
+  >([
     { id: "init", type: "system", text: "IAN N. SILVA OS v2.4.9" },
-    { id: "init2", type: "system", text: "Type 'help' to see available commands." }
+    { id: "init2", type: "system", text: "Type 'help' to see available commands." },
   ]);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => { setMounted(true); }, []);
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [history]);
 
   const handleCommand = (cmd: string) => {
-    const trimmed = cmd.trim().toLowerCase();
+    const trimmed = sanitizeInput(cmd.trim().toLowerCase());
     if (!trimmed) return;
 
-    setHistory((prev) => [...prev, { id: crypto.randomUUID(), type: "input", text: `guest@ins-os:~$ ${trimmed}` }]);
+    setHistory((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), type: "input", text: `guest@ins-os:~$ ${trimmed}` },
+    ]);
 
     setTimeout(() => {
       let output: React.ReactNode = "";
@@ -141,12 +129,12 @@ export default function ContactCard() {
         setTimeout(() => window.open("https://calendly.com", "_blank"), 800);
       } else if (trimmed === "email") {
         output = <span className="text-green-400">Initializing mail client...</span>;
-        setTimeout(() => window.location.href = "mailto:iannogueira@proton.me", 800);
+        setTimeout(() => { window.location.href = "mailto:iannogueira@proton.me"; }, 800);
       } else if (trimmed === "links") {
         output = (
           <div className="flex flex-col gap-1">
-            {socialLinks.map(s => (
-              <a key={s.name} href={s.url} target="_blank" className="text-sky-primary hover:underline hover:text-sky-text-primary transition-colors">
+            {socialLinks.map((s) => (
+              <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-sky-primary hover:underline hover:text-sky-text-primary transition-colors">
                 [LINK] {s.name}
               </a>
             ))}
@@ -158,7 +146,6 @@ export default function ContactCard() {
       } else {
         output = <span className="text-red-400">Command not found: {trimmed}</span>;
       }
-
       setHistory((prev) => [...prev, { id: crypto.randomUUID(), type: "output", text: output }]);
     }, 150);
   };
@@ -188,7 +175,7 @@ export default function ContactCard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-6xl md:text-8xl font-black uppercase tracking-[0.2em] font-[family-name:var(--font-outfit)] text-sky-text-primary mb-4"
+          className="text-6xl md:text-8xl font-black uppercase tracking-[0.2em] font-outfit text-sky-text-primary mb-4"
         >
           LET&apos;S <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">CONNECT</span>
         </motion.h2>
@@ -204,14 +191,18 @@ export default function ContactCard() {
       </div>
 
       {/* Interactive Terminal */}
-      <div className="relative z-20 w-full max-w-2xl bg-black/40 backdrop-blur-md border border-sky-border/30 rounded-xl overflow-hidden shadow-2xl flex flex-col h-[300px]">
+      <div
+        role="region"
+        aria-label="Interactive terminal"
+        className="relative z-20 w-full max-w-2xl bg-black/40 backdrop-blur-md border border-sky-border/30 rounded-xl overflow-hidden shadow-2xl flex flex-col h-[300px]"
+      >
         {/* Terminal Header */}
         <div className="h-8 bg-black/60 border-b border-sky-border/20 flex items-center px-4 justify-between select-none">
           <div className="flex items-center gap-2">
-            <TerminalIcon className="w-3.5 h-3.5 text-sky-primary/70" />
+            <TerminalIcon className="w-3.5 h-3.5 text-sky-primary/70" aria-hidden="true" />
             <span className="text-[10px] font-mono font-bold text-sky-text-secondary">guest@ins-os</span>
           </div>
-          <div className="flex gap-1.5">
+          <div className="flex gap-1.5" aria-hidden="true">
             <div className="size-2 rounded-full bg-red-500/50" />
             <div className="size-2 rounded-full bg-yellow-500/50" />
             <div className="size-2 rounded-full bg-green-500/50" />
@@ -221,30 +212,29 @@ export default function ContactCard() {
         {/* Terminal Output */}
         <div
           ref={scrollRef}
+          role="log"
+          aria-live="polite"
+          aria-label="Terminal output"
           className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-mono text-xs text-sky-text-secondary scrollbar-thin scrollbar-thumb-sky-primary/20"
           onClick={() => inputRef.current?.focus()}
         >
-          <AnimatePresence initial={false}>
-            {history.map((entry) => (
-              <motion.div
-                key={entry.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className={cn(
-                  "break-words",
-                  entry.type === "system" && "text-sky-primary/60 font-bold mb-2",
-                  entry.type === "input" && "text-sky-text-primary"
-                )}
-              >
-                {entry.text}
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {history.map((entry) => (
+            <div
+              key={entry.id}
+              className={cn(
+                "break-words",
+                entry.type === "system" && "text-sky-primary/60 font-bold mb-2",
+                entry.type === "input" && "text-sky-text-primary"
+              )}
+            >
+              {entry.text}
+            </div>
+          ))}
         </div>
 
         {/* Terminal Input */}
         <div className="bg-black/60 border-t border-sky-border/20 p-2 px-4 flex items-center gap-2">
-          <span className="text-sky-primary font-mono text-sm font-bold">guest@ins-os:~$</span>
+          <span className="text-sky-primary font-mono text-sm font-bold" aria-hidden="true">guest@ins-os:~$</span>
           <input
             ref={inputRef}
             type="text"
@@ -258,7 +248,8 @@ export default function ContactCard() {
             }}
             spellCheck={false}
             autoComplete="off"
-            className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-sky-text-primary caret-sky-primary placeholder:text-sky-text-secondary/30"
+            aria-label="Terminal command input"
+            className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-sky-text-primary caret-sky-primary placeholder:text-sky-text-secondary/30 focus:ring-0"
             placeholder="Type a command..."
           />
         </div>
@@ -279,6 +270,7 @@ export default function ContactCard() {
                 key={social.name}
                 href={social.url}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="text-[9px] font-black font-mono text-sky-text-secondary/40 hover:text-sky-primary transition-colors"
               >
                 {social.name}
@@ -289,7 +281,7 @@ export default function ContactCard() {
 
         <div className="flex flex-col items-end gap-2 text-right">
           <div className="flex items-center gap-2">
-            <div className="size-1 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.5)]" />
+            <div className="size-1 bg-green-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(74,222,128,0.5)]" aria-hidden="true" />
             <span className="text-[9px] font-mono font-bold text-sky-text-secondary/60">LIVE_HANDSHAKE_OK</span>
           </div>
           <span className="text-[8px] font-mono text-sky-text-secondary/20">EST: 2026.02.26.STREAM</span>
@@ -297,8 +289,7 @@ export default function ContactCard() {
       </motion.div>
 
       {/* Background Decor */}
-      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-3xl m-4" />
+      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-3xl m-4" aria-hidden="true" />
     </motion.div>
   );
 }
-

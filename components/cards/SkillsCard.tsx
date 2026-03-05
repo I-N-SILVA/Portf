@@ -159,7 +159,7 @@ export default function SkillsCard() {
               </svg>
             </motion.div>
 
-            <h2 className="text-4xl font-black text-white mb-3 font-[family-name:var(--font-outfit)]">
+            <h2 className="text-4xl font-black text-white mb-3 font-outfit">
               Skills & Tools
             </h2>
             <p className="text-gray-400 mb-6">
@@ -194,7 +194,7 @@ export default function SkillsCard() {
             {/* Header */}
             <div className="mb-8">
               <motion.h2
-                className="text-4xl font-black text-white mb-2 font-[family-name:var(--font-outfit)]"
+                className="text-4xl font-black text-white mb-2 font-outfit"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.3 }}

@@ -203,7 +203,7 @@
 
   /* Magazine Typography Utilities */
   .magazine-title {
-    @apply font-black tracking-tighter uppercase leading-[0.8] font-[family-name:var(--font-outfit)];
+    @apply font-black tracking-tighter uppercase leading-[0.8] font-outfit;
     text-shadow: 2px 2px 0px rgba(var(--primary), 0.2);
   }
 
@@ -227,5 +227,33 @@
 
   .glass-window {
     @apply bg-background/40 backdrop-blur-xl border border-white/10;
+  }
+}
+
+/* ─── Blob animations (shared across hero + contact card) ─────────────── */
+@keyframes blob-1 {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  33% { transform: scale(1.2) translate(50px, 30px); }
+  66% { transform: scale(1.1) translate(20px, -20px); }
+}
+@keyframes blob-2 {
+  0%, 100% { transform: scale(1.2) translate(0, 0); }
+  33% { transform: scale(1) translate(-50px, -40px); }
+  66% { transform: scale(1.1) translate(-20px, 20px); }
+}
+.animate-blob-1 { animation: blob-1 15s infinite linear; }
+.animate-blob-2 { animation: blob-2 18s infinite linear; }
+
+/* ─── Respect user motion preferences ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob-1,
+  .animate-blob-2 {
+    animation: none;
+  }
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

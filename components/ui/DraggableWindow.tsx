@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { motion, useDragControls, AnimatePresence } from "framer-motion";
+import { motion, useDragControls, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Minus, Square, X, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -43,6 +43,7 @@ export default function DraggableWindow({
 }: DraggableWindowProps) {
     const [portalReady, setPortalReady] = useState(false);
     const isMobile = useMediaQuery("(max-width: 768px)");
+    const prefersReducedMotion = useReducedMotion();
     const { playSound } = useSoundEffects();
 
     const dragControls = useDragControls();
@@ -103,18 +104,22 @@ export default function DraggableWindow({
             height: "auto",
             opacity: 1,
             zIndex,
-            transition: { type: "spring", stiffness: 300, damping: 30 },
+            transition: prefersReducedMotion
+                ? { duration: 0 }
+                : { type: "spring", stiffness: 300, damping: 30 },
         },
         minimized: {
-            scale: 0.98,
+            scale: prefersReducedMotion ? 1 : 0.98,
             opacity: 0.9,
-            transition: { type: "spring", stiffness: 300, damping: 30 },
+            transition: prefersReducedMotion
+                ? { duration: 0 }
+                : { type: "spring", stiffness: 300, damping: 30 },
         },
         exit: {
-            scale: 0.8,
+            scale: prefersReducedMotion ? 1 : 0.8,
             opacity: 0,
-            filter: "blur(10px)",
-            transition: { duration: 0.3 },
+            filter: prefersReducedMotion ? "none" : "blur(10px)",
+            transition: { duration: prefersReducedMotion ? 0.1 : 0.3 },
         },
     };
 
@@ -143,7 +148,7 @@ export default function DraggableWindow({
                 />
                 <span
                     className={cn(
-                        "font-black tracking-widest uppercase font-[family-name:var(--font-outfit)]",
+                        "font-black tracking-widest uppercase font-outfit",
                         isMaximized ? "text-sm text-sky-primary" : "text-[10px] text-sky-text-secondary opacity-60"
                     )}
                 >
@@ -229,7 +234,7 @@ export default function DraggableWindow({
                     <div className="p-1">
                         {/* Watermark */}
                         <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none select-none">
-                            <span className="text-8xl font-black italic tracking-tighter uppercase font-[family-name:var(--font-outfit)]">
+                            <span className="text-8xl font-black italic tracking-tighter uppercase font-outfit">
                                 {title.split("_")[0]}
                             </span>
                         </div>
@@ -270,7 +275,7 @@ export default function DraggableWindow({
                     {titleBar}
                     <div className="flex-1 overflow-y-auto p-1 relative">
                         <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none select-none">
-                            <span className="text-8xl font-black italic tracking-tighter uppercase font-[family-name:var(--font-outfit)]">
+                            <span className="text-8xl font-black italic tracking-tighter uppercase font-outfit">
                                 {title.split("_")[0]}
                             </span>
                         </div>

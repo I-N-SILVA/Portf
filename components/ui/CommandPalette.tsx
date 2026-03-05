@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Command, User, FolderKanban, Sparkles, Mail, Sun, Moon, RotateCcw } from "lucide-react";
+import { Search, Command, User, FolderKanban, Sparkles, Mail, Sun, Moon, type LucideIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -11,28 +11,42 @@ interface CommandPaletteProps {
     setIsOpen: (isOpen: boolean) => void;
 }
 
+interface Action {
+    id: string;
+    title: string;
+    icon: LucideIcon;
+    shortcut: string;
+    section?: string;
+    action?: () => void;
+}
+
 export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
     const [query, setQuery] = useState("");
     const { theme, setTheme } = useTheme();
 
-    const actions = [
+    const actions: Action[] = [
         { id: "about", title: "Jump to Profile", icon: User, shortcut: "G P", section: "about" },
         { id: "projects", title: "Browse Archive", icon: FolderKanban, shortcut: "G A", section: "projects" },
         { id: "expertise", title: "View Expertise", icon: Sparkles, shortcut: "G E", section: "expertise" },
         { id: "contact", title: "Send Message", icon: Mail, shortcut: "C O", section: "contact" },
-        { id: "theme", title: `Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`, icon: theme === "dark" ? Sun : Moon, shortcut: "T T", action: () => setTheme(theme === "dark" ? "light" : "dark") },
+        {
+            id: "theme",
+            title: `Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`,
+            icon: theme === "dark" ? Sun : Moon,
+            shortcut: "T T",
+            action: () => setTheme(theme === "dark" ? "light" : "dark"),
+        },
     ];
 
-    const filteredActions = actions.filter(action =>
-        action.title.toLowerCase().includes(query.toLowerCase())
+    const filteredActions = actions.filter((a) =>
+        a.title.toLowerCase().includes(query.toLowerCase())
     );
 
-    const handleAction = (action: any) => {
+    const handleAction = (action: Action) => {
         if (action.section) {
-            const element = document.getElementById(action.section);
-            element?.scrollIntoView({ behavior: "smooth" });
-        } else if (action.action) {
-            action.action();
+            document.getElementById(action.section)?.scrollIntoView({ behavior: "smooth" });
+        } else {
+            action.action?.();
         }
         setIsOpen(false);
         setQuery("");
@@ -44,11 +58,8 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
                 e.preventDefault();
                 setIsOpen(!isOpen);
             }
-            if (e.key === "Escape") {
-                setIsOpen(false);
-            }
+            if (e.key === "Escape") setIsOpen(false);
         };
-
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [isOpen, setIsOpen]);
@@ -56,7 +67,12 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[1000] flex items-start justify-center pt-[15vh] px-4">
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Command palette"
+                    className="fixed inset-0 z-[1000] flex items-start justify-center pt-[15vh] px-4"
+                >
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -75,11 +91,14 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
                     >
                         {/* Search Input */}
                         <div className="p-4 border-b border-sky-border/10 flex items-center gap-4">
-                            <Search className="size-5 text-sky-text-secondary" />
+                            <Search className="size-5 text-sky-text-secondary" aria-hidden="true" />
                             <input
                                 autoFocus
+                                role="searchbox"
+                                aria-label="Search commands and navigation"
+                                aria-controls="command-results"
                                 placeholder="What are you looking for?"
-                                className="w-full bg-transparent border-none outline-none text-sky-text-primary placeholder:text-sky-text-secondary/40 font-bold text-lg font-[family-name:var(--font-outfit)]"
+                                className="w-full bg-transparent border-none outline-none text-sky-text-primary placeholder:text-sky-text-secondary/40 font-bold text-lg font-outfit focus:ring-0"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={(e) => {
@@ -88,30 +107,37 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
                                     }
                                 }}
                             />
-                            <div className="flex items-center gap-1.5 px-2 py-1 bg-sky-primary/10 rounded-md border border-sky-primary/20">
+                            <div className="flex items-center gap-1.5 px-2 py-1 bg-sky-primary/10 rounded-md border border-sky-primary/20" aria-hidden="true">
                                 <Command className="size-3 text-sky-primary" />
                                 <span className="text-[10px] font-black font-mono text-sky-primary uppercase">K</span>
                             </div>
                         </div>
 
                         {/* Results List */}
-                        <div className="max-h-[400px] overflow-y-auto p-2">
+                        <div
+                            id="command-results"
+                            role="listbox"
+                            aria-label="Navigation options"
+                            className="max-h-[400px] overflow-y-auto p-2"
+                        >
                             {filteredActions.length > 0 ? (
                                 filteredActions.map((action) => (
                                     <button
                                         key={action.id}
+                                        role="option"
+                                        aria-selected="false"
                                         onClick={() => handleAction(action)}
                                         className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-sky-primary/10 group transition-colors text-left"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="size-10 rounded-xl bg-card border border-sky-border/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                            <div className="size-10 rounded-xl bg-card border border-sky-border/10 flex items-center justify-center group-hover:scale-110 transition-transform" aria-hidden="true">
                                                 <action.icon className="size-5 text-sky-text-secondary group-hover:text-sky-primary transition-colors" />
                                             </div>
-                                            <span className="text-sky-text-primary font-bold group-hover:translate-x-1 transition-transform font-[family-name:var(--font-outfit)]">
+                                            <span className="text-sky-text-primary font-bold group-hover:translate-x-1 transition-transform font-outfit">
                                                 {action.title}
                                             </span>
                                         </div>
-                                        <span className="text-[10px] font-mono font-black text-sky-text-secondary/40 group-hover:text-sky-primary/60 tracking-wider">
+                                        <span className="text-[10px] font-mono font-black text-sky-text-secondary/40 group-hover:text-sky-primary/60 tracking-wider" aria-label={`Shortcut: ${action.shortcut}`}>
                                             {action.shortcut}
                                         </span>
                                     </button>
@@ -125,7 +151,7 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
 
                         {/* Footer */}
                         <div className="p-4 bg-sky-primary/5 border-t border-sky-border/10 flex items-center justify-between text-[11px] font-bold tracking-widest uppercase text-sky-text-secondary/60 font-mono">
-                            <div className="flex gap-4">
+                            <div className="flex gap-4" aria-label="Keyboard hints">
                                 <span className="flex items-center gap-1"><span className="px-1 py-0.5 bg-card border border-sky-border/20 rounded">ENT</span> SELECT</span>
                                 <span className="flex items-center gap-1"><span className="px-1 py-0.5 bg-card border border-sky-border/20 rounded">ESC</span> CLOSE</span>
                             </div>

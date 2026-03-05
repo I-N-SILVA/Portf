@@ -73,7 +73,6 @@ export const projects: Project[] = [
     bannerImage: "/calendar-banner.png",
     tags: ["Next.js", "React", "TypeScript", "Custom CSS", "Vercel"],
     link: "https://calendar-app-three-omega.vercel.app/",
-    github: "#",
     badge: "LIVE",
     fullDescription: "This project showcases advanced frontend development with interactive calendar views and real-time event management. The application provides multiple calendar viewing modes including day, week, and month views with click-to-create event functionality. Users can schedule, organize, and execute events through an intuitive interface featuring keyboard shortcuts (CMD+K for search, SHIFT+CLICK for cycle modes) and quick-add event slots across all time periods. The system includes navigation controls for moving between time periods, a statistics dashboard, and search capabilities with a distinctive terminal-style aesthetic.",
     features: [
@@ -97,9 +96,7 @@ export const projects: Project[] = [
     description: "AI-powered content creation and distribution system leveraging Claude API, GPT-4, and custom automation workflows",
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop",
     tags: ["Python", "Claude API", "Cursor", "Zapier", "Airtable"],
-    link: "#",
-    github: "#",
-    badge: "LIVE",
+    badge: "PRIVATE",
     fullDescription: "Simultaneously publishes to LinkedIn, X/Twitter, Substack, TikTok, and Lemon8 with platform-optimized formatting. Automated content generation with SEO/AEO optimization and comprehensive analytics tracking.",
     features: [
       "Automated content generation with Claude",
@@ -143,8 +140,6 @@ export const projects: Project[] = [
     description: "Decentralized finance analytics and tokenomics research platform with smart contract analysis and on-chain data visualization",
     image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=600&fit=crop",
     tags: ["Solidity", "Web3.js", "React", "The Graph", "Ethers.js"],
-    link: "#",
-    github: "#",
     badge: "WEB3",
     fullDescription: "Web3 market intelligence tools for DeFi protocol analysis and tokenomics research. Provides deep insights into smart contract interactions, token flows, and decentralized market dynamics.",
     features: [
@@ -187,8 +182,7 @@ export const projects: Project[] = [
     description: "Personal development app integrating Eastern philosophy practices with habit tracking and reflection journaling",
     image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=600&fit=crop",
     tags: ["React Native", "Firebase", "Redux", "Notion API"],
-    link: "#",
-    badge: "MOBILE",
+    badge: "IN DEV",
     fullDescription: "Combines ancient wisdom with modern behavioral psychology. Integrates Zen Buddhism, Stoicism, and Sufism practices with daily habit tracking and mindfulness exercises.",
     features: [
       "Daily practice tracking",
@@ -243,26 +237,26 @@ export const skills: Skill[] = [
   },
 ];
 
-// Social links
+// Social links — replace "#" placeholders with real URLs before going live
 export const socialLinks: SocialLink[] = [
   {
     name: "Instagram",
-    url: "#",
+    url: "https://instagram.com",
     icon: "instagram",
   },
   {
     name: "Substack",
-    url: "#",
+    url: "https://substack.com",
     icon: "substack",
   },
   {
     name: "YouTube",
-    url: "#",
+    url: "https://youtube.com",
     icon: "youtube",
   },
   {
     name: "LinkedIn",
-    url: "#",
+    url: "https://linkedin.com/in/ian-n-silva",
     icon: "linkedin",
   },
   {

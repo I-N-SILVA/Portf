@@ -21,7 +21,7 @@ export default function TextTicker() {
             <InfiniteSlider gap={64} speed={40}>
                 {TICKER_ITEMS.map((item, i) => (
                     <div key={i} className="flex items-center gap-8">
-                        <span className="text-4xl md:text-6xl font-black tracking-[0.2em] uppercase opacity-20 font-[family-name:var(--font-outfit)]">
+                        <span className="text-4xl md:text-6xl font-black tracking-[0.2em] uppercase opacity-20 font-outfit">
                             {item}
                         </span>
                         <div className="w-2 h-2 rounded-full bg-primary/40" />
