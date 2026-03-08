@@ -12,6 +12,7 @@ import BootSequence from "@/components/ui/BootSequence";
 import TextTicker from "@/components/ui/TextTicker";
 import ToolsSection from "@/components/sections/ToolsSection";
 import { AmbientHorizon } from "@/components/ui/AmbientHorizon";
+import { AmbientClouds } from "@/components/ui/AmbientClouds";
 import CommandPalette from "@/components/ui/CommandPalette";
 import { cn } from "@/lib/utils";
 import { Suspense, lazy, useEffect, useState } from "react";
@@ -163,6 +164,7 @@ export default function LandingContent() {
         <main className="w-full min-h-screen bg-sky-light-gradient dark:bg-night-sky-gradient text-foreground relative selection:bg-sky-primary selection:text-primary-foreground overflow-x-hidden">
 
             <AmbientHorizon />
+            <AmbientClouds />
             <CommandPalette isOpen={isCommandPaletteOpen} setIsOpen={setIsCommandPaletteOpen} />
 
             <ScrollProgress />

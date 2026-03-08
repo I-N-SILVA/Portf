@@ -84,65 +84,82 @@ export default function ContactCard() {
         </motion.h2>
       </div>
 
-      {/* Footer Links & Actions */}
+      {/* Premium Terminal Menu */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-8 pt-12 border-t border-sky-900/10 dark:border-white/10"
+        className="relative z-10 w-full mt-4 lg:mt-12"
       >
-        {/* Direct Actions */}
-        <div className="flex flex-col gap-6">
-          <span className="font-mono text-xs font-bold uppercase tracking-widest text-sky-900/40 dark:text-sky-text-secondary/60">Initialize</span>
-
-          <a href="mailto:iannogueira@proton.me" className="group flex items-center justify-between py-4 border-b border-sky-900/10 dark:border-white/10 hover:border-sky-900/40 dark:hover:border-sky-primary/50 transition-colors">
-            <span className="text-xl md:text-2xl font-bold font-syne tracking-tight text-sky-900 dark:text-sky-text-primary">Send an Email</span>
-            <div className="size-10 rounded-full bg-sky-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-              <ArrowUpRight className="size-5" />
+        <div className="w-full bg-white/40 dark:bg-[#050816]/80 backdrop-blur-xl border border-sky-900/10 dark:border-sky-primary/20 rounded-2xl overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+          {/* Terminal Header */}
+          <div className="flex items-center px-4 py-3 border-b border-sky-900/10 dark:border-sky-primary/20 bg-white/20 dark:bg-white/5">
+            <div className="flex gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-400 border border-red-500/20" />
+              <div className="w-3 h-3 rounded-full bg-amber-400 border border-amber-500/20" />
+              <div className="w-3 h-3 rounded-full bg-green-400 border border-green-500/20" />
             </div>
-          </a>
-
-          <a href="https://calendly.com" target="_blank" rel="noopener noreferrer" className="group flex items-center justify-between py-4 border-b border-sky-900/10 dark:border-white/10 hover:border-sky-900/40 dark:hover:border-sky-primary/50 transition-colors">
-            <span className="text-xl md:text-2xl font-bold font-syne tracking-tight text-sky-900 dark:text-sky-text-primary">Book a Call</span>
-            <div className="size-10 rounded-full bg-sky-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-              <ArrowUpRight className="size-5" />
+            <div className="mx-auto flex flex-col items-center justify-center">
+              <span className="font-mono text-[10px] text-sky-900/50 dark:text-sky-text-secondary/60 uppercase tracking-[0.2em]">
+                connection_protocols
+              </span>
             </div>
-          </a>
-        </div>
+          </div>
 
-        {/* Social Streams */}
-        <div className="flex flex-col gap-6 lg:pl-12">
-          <span className="font-mono text-xs font-bold uppercase tracking-widest text-sky-900/40 dark:text-sky-text-secondary/60">Social Streams</span>
-          <div className="flex flex-col gap-3">
-            {socialLinks.map((social) => (
-              <a
-                key={social.name}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 group w-max"
-              >
-                <div className="size-2 rounded-full bg-sky-900/20 dark:bg-sky-primary/20 group-hover:bg-primary transition-colors" />
-                <span className="text-lg font-bold font-syne tracking-tight text-sky-900/70 dark:text-sky-text-secondary hover:text-sky-900 dark:hover:text-sky-primary transition-colors">
-                  {social.name}
-                </span>
-                {PLACEHOLDER_SOCIAL_URLS.includes(social.url as any) && (
-                  <AlertCircle className="w-4 h-4 text-yellow-500 opacity-50" />
-                )}
+          {/* Terminal Body */}
+          <div className="p-6 md:p-8 font-mono text-xs md:text-sm text-sky-900/80 dark:text-sky-text-secondary leading-relaxed overflow-x-auto">
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="text-sky-600 dark:text-sky-primary font-bold">guest@ins-system</span>
+              <span className="text-sky-900/40 dark:text-sky-text-secondary/40">~/contact</span>
+              <span className="text-sky-900 dark:text-sky-text-primary">$</span>
+              <span className="text-sky-900 dark:text-sky-text-primary">ls -la available_channels/</span>
+            </div>
+
+            <div className="flex flex-col gap-3 md:gap-4 ml-0 md:ml-4 whitespace-nowrap min-w-max">
+              <a href="mailto:iannogueira@proton.me" className="group flex items-center gap-4 hover:text-sky-600 dark:hover:text-sky-primary transition-colors">
+                <span className="text-sky-900/40 dark:text-sky-text-secondary/40 hidden md:inline">drwxr-xr-x</span>
+                <span className="text-sky-600 dark:text-sky-primary group-hover:underline decoration-sky-600/30 dark:decoration-sky-primary/30 underline-offset-4">.email</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline">&rarr; iannogueira@proton.me</span>
               </a>
-            ))}
+
+              <a href="https://calendly.com" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 hover:text-sky-600 dark:hover:text-sky-primary transition-colors">
+                <span className="text-sky-900/40 dark:text-sky-text-secondary/40 hidden md:inline">-rwxr-xr-x</span>
+                <span className="text-sky-600 dark:text-sky-primary group-hover:underline decoration-sky-600/30 dark:decoration-sky-primary/30 underline-offset-4">book_call.sh</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline">&rarr; open calendly</span>
+              </a>
+
+              <div className="mt-4 mb-2">
+                <span className="text-sky-900/40 dark:text-sky-text-secondary/40">total {socialLinks.length} (social streams)</span>
+              </div>
+
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-4 hover:text-sky-600 dark:hover:text-sky-secondary transition-colors"
+                >
+                  <span className="text-sky-900/40 dark:text-sky-text-secondary/40 hidden md:inline">lrwxr-xr-x</span>
+                  <span className="text-sky-500 dark:text-sky-secondary group-hover:underline decoration-sky-500/30 dark:decoration-sky-secondary/30 underline-offset-4">{social.name.toLowerCase()}</span>
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:flex items-center gap-2">
+                    &rarr; {social.url}
+                    {PLACEHOLDER_SOCIAL_URLS.includes(social.url as any) && (
+                      <AlertCircle className="w-3 h-3 text-amber-500" />
+                    )}
+                  </span>
+                </a>
+              ))}
+            </div>
+
+            <div className="mt-8 flex items-center gap-2">
+              <span className="text-sky-600 dark:text-sky-primary font-bold">guest@ins-system</span>
+              <span className="text-sky-900/40 dark:text-sky-text-secondary/40">~/contact</span>
+              <span className="text-sky-900 dark:text-sky-text-primary">$</span>
+              <span className="inline-block w-2.5 h-4 bg-sky-600 dark:bg-sky-primary/80 animate-pulse ml-1"></span>
+            </div>
           </div>
         </div>
-
-        {/* Aesthetic Decorative details */}
-        <div className="hidden lg:flex flex-col justify-end items-end pb-4">
-          <div className="text-right flex flex-col items-end gap-2">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-sky-900/40 dark:text-sky-text-secondary/40">Location</span>
-            <span className="text-sm font-bold font-syne tracking-tight text-sky-900 dark:text-sky-text-primary">Based in Earth</span>
-            <span className="text-[10px] font-mono text-sky-900/40 dark:text-sky-text-secondary/40 mt-4">SYS. VER 2.4.9</span>
-          </div>
-        </div>
-
       </motion.div>
     </motion.div>
   );
