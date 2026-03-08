@@ -55,7 +55,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
                     <h3 className="text-2xl font-black mb-3 tracking-tighter font-syne group-hover:text-sky-primary transition-colors text-sky-text-primary uppercase text-balance break-words">
                         {project.title}
                     </h3>
-                    <p className="text-sky-text-secondary mb-6 line-clamp-4 text-sm leading-relaxed">
+                    <p className="text-sky-text-secondary mb-6 text-sm leading-relaxed">
                         {project.description}
                     </p>
 

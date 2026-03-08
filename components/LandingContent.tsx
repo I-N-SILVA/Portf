@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 // Components that should load immediately
 import PortfolioHero from "@/components/ui/portfolio-hero";
 import Cursor from "@/components/ui/inverted-cursor";
-import SocialSidebar from "@/components/ui/SocialSidebar";
+
 import { FloatingDock, MobileDock } from "@/components/ui/floating-dock";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import DraggableWindow from "@/components/ui/DraggableWindow";
@@ -164,7 +164,7 @@ export default function LandingContent() {
 
             <AmbientHorizon />
             <CommandPalette isOpen={isCommandPaletteOpen} setIsOpen={setIsCommandPaletteOpen} />
-            <SocialSidebar />
+
             <ScrollProgress />
             <Cursor />
             <FloatingDock />

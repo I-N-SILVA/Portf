@@ -8,22 +8,22 @@ import { KineticText } from "@/components/ui/KineticText";
 
 const domains = [
     {
-        title: "AI Agents",
-        description: "Building autonomous systems that perceive, reason, and act to solve complex tasks using LLMs.",
+        title: "AI Autonomy",
+        description: "Building intelligent agents and workflows that perceive, reason, and execute complex operations autonomously.",
         icon: Bot,
         color: "text-blue-500",
         bg: "bg-blue-500/10"
     },
     {
-        title: "Product Design",
-        description: "Crafting intuitive, high-end user experiences with a focus on premium aesthetics and interaction.",
+        title: "Behavioral Design",
+        description: "Applying principles of behavioral economics to architect user experiences that naturally drive engagement and action.",
         icon: Layout,
         color: "text-purple-500",
         bg: "bg-purple-500/10"
     },
     {
-        title: "Full-Stack Dev",
-        description: "Engineering scalable, performant web applications using modern frameworks and cloud infrastructure.",
+        title: "Full-Stack Systems",
+        description: "Engineering robust, scalable web architectures that combine high-performance frontends with secure cloud infrastructures.",
         icon: Terminal,
         color: "text-emerald-500",
         bg: "bg-emerald-500/10"
