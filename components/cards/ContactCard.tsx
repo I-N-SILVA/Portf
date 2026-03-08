@@ -127,29 +127,6 @@ export default function ContactCard() {
                 <span className="text-sky-600 dark:text-sky-primary group-hover:underline decoration-sky-600/30 dark:decoration-sky-primary/30 underline-offset-4">book_call.sh</span>
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline">&rarr; open calendly</span>
               </a>
-
-              <div className="mt-4 mb-2">
-                <span className="text-sky-900/40 dark:text-sky-text-secondary/40">total {socialLinks.length} (social streams)</span>
-              </div>
-
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center gap-4 hover:text-sky-600 dark:hover:text-sky-secondary transition-colors"
-                >
-                  <span className="text-sky-900/40 dark:text-sky-text-secondary/40 hidden md:inline">lrwxr-xr-x</span>
-                  <span className="text-sky-500 dark:text-sky-secondary group-hover:underline decoration-sky-500/30 dark:decoration-sky-secondary/30 underline-offset-4">{social.name.toLowerCase()}</span>
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:flex items-center gap-2">
-                    &rarr; {social.url}
-                    {PLACEHOLDER_SOCIAL_URLS.includes(social.url as any) && (
-                      <AlertCircle className="w-3 h-3 text-amber-500" />
-                    )}
-                  </span>
-                </a>
-              ))}
             </div>
 
             <div className="mt-8 flex items-center gap-2">

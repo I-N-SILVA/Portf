@@ -10,6 +10,7 @@ import { ScrollProgress } from "@/components/ui/scroll-progress";
 import DraggableWindow from "@/components/ui/DraggableWindow";
 import BootSequence from "@/components/ui/BootSequence";
 import TextTicker from "@/components/ui/TextTicker";
+import SocialSidebar from "@/components/ui/SocialSidebar";
 import ToolsSection from "@/components/sections/ToolsSection";
 import { AmbientHorizon } from "@/components/ui/AmbientHorizon";
 import { AmbientClouds } from "@/components/ui/AmbientClouds";
@@ -166,6 +167,7 @@ export default function LandingContent() {
             <AmbientHorizon />
             <AmbientClouds />
             <CommandPalette isOpen={isCommandPaletteOpen} setIsOpen={setIsCommandPaletteOpen} />
+            <SocialSidebar />
 
             <ScrollProgress />
             <Cursor />
