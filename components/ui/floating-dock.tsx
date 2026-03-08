@@ -41,6 +41,7 @@ function NavIcon({ item, hoveredIndex, index, activeSection, setHoveredIndex, sc
                 mouseX.set(Infinity)
             }}
             aria-label={item.name}
+            whileHover={{ y: -3 }}
         >
             <span
                 className={cn(

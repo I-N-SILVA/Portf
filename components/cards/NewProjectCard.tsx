@@ -20,7 +20,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
             <Link
                 href={`/projects/${project.id}`}
                 aria-label={`View details for ${project.title}`}
-                className="group relative block bg-card/90 backdrop-blur-sm rounded-card border border-sky-border/10 dark:border-sky-primary/20 overflow-hidden shadow-standard dark:shadow-elevated hover:border-sky-primary/40 transition-all duration-500 hover:-translate-y-2"
+                className="group relative block bg-card/90 backdrop-blur-sm rounded-card border border-sky-border/10 dark:border-sky-primary/20 overflow-hidden shadow-standard dark:shadow-elevated hover:border-sky-primary/40 transition-all duration-500 hover:-translate-y-2 hover:scale-[1.01] hover:shadow-sky-glow"
             >
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-sky-page">
                     {project.image ? (
@@ -39,7 +39,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
                     {/* Overlay on hover */}
                     <div className="absolute inset-0 bg-sky-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                         <div className="px-6 py-3 bg-card/90 backdrop-blur-md rounded-full shadow-sky-glow transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2 border border-sky-primary/20">
-                            <span className="font-bold text-sm text-sky-primary uppercase tracking-widest ont-[family-name:var(--font-outfit)]">View Details</span>
+                            <span className="font-bold text-sm text-sky-primary uppercase tracking-widest font-outfit">View Details</span>
                             <ArrowUpRight className="w-4 h-4 text-sky-primary" />
                         </div>
                     </div>
