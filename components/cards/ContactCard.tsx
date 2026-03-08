@@ -137,8 +137,8 @@ export default function ContactCard() {
             {socialLinks.map((s) => (
               <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="text-sky-primary hover:underline hover:text-sky-text-primary transition-colors flex items-center gap-1">
                 [LINK] {s.name}
-                {PLACEHOLDER_SOCIAL_URLS.includes(s.url) && (
-                  <AlertCircle className="w-3 h-3 text-yellow-500" title="Placeholder link, not configured" />
+                {PLACEHOLDER_SOCIAL_URLS.includes(s.url as any) && (
+                  <AlertCircle className="w-3 h-3 text-yellow-500" />
                 )}
               </a>
             ))}
@@ -238,36 +238,36 @@ export default function ContactCard() {
 
         {/* Terminal Input */}
         <div className="bg-black/60 border-t border-sky-border/20 p-2 px-4 flex flex-col gap-2">
-            {input === "" && history.length <= 2 && ( // Only show hint if input is empty and no commands typed yet
-                <motion.p
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    className="font-mono text-xs text-sky-text-secondary/50 text-center"
-                >
-                    Available commands: <span className="text-sky-primary">book</span>, <span className="text-sky-primary">email</span>, <span className="text-sky-primary">links</span>, <span className="text-sky-primary">clear</span>
-                </motion.p>
-            )}
-            <div className="flex items-center gap-2">
-                <span className="text-sky-primary font-mono text-sm font-bold" aria-hidden="true">guest@ins-os:~$</span>
-                <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            handleCommand(input);
-                            setInput("");
-                        }
-                    }}
-                    spellCheck={false}
-                    autoComplete="off"
-                    aria-label="Terminal command input"
-                    className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-sky-text-primary caret-sky-primary placeholder:text-sky-text-secondary/70 focus:ring-0"
-                    placeholder="Type a command..."
-                />
-            </div>
+          {input === "" && history.length <= 2 && ( // Only show hint if input is empty and no commands typed yet
+            <motion.p
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 5 }}
+              className="font-mono text-xs text-sky-text-secondary/50 text-center"
+            >
+              Available commands: <span className="text-sky-primary">book</span>, <span className="text-sky-primary">email</span>, <span className="text-sky-primary">links</span>, <span className="text-sky-primary">clear</span>
+            </motion.p>
+          )}
+          <div className="flex items-center gap-2">
+            <span className="text-sky-primary font-mono text-sm font-bold" aria-hidden="true">guest@ins-os:~$</span>
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCommand(input);
+                  setInput("");
+                }
+              }}
+              spellCheck={false}
+              autoComplete="off"
+              aria-label="Terminal command input"
+              className="flex-1 bg-transparent border-none outline-none font-mono text-sm text-sky-text-primary caret-sky-primary placeholder:text-sky-text-secondary/70 focus:ring-0"
+              placeholder="Type a command..."
+            />
+          </div>
         </div>
       </div>
 
