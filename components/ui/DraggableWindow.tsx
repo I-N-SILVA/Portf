@@ -167,7 +167,7 @@ export default function DraggableWindow({
                         onMinimize?.(!isMinimized);
                     }}
                     className={cn(
-                        "p-1.5 rounded-full transition-colors group",
+                        "p-1.5 rounded-full transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary",
                         isMaximized ? "opacity-30 cursor-not-allowed" : "hover:bg-sky-primary/10"
                     )}
                     aria-label="Minimize"
@@ -194,7 +194,7 @@ export default function DraggableWindow({
                         playSound("maximize");
                         isMaximized ? handleRestore() : onMaximize?.();
                     }}
-                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group"
+                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary"
                     aria-label={isMaximized ? "Exit Fullscreen" : "Maximize"}
                 >
                     {isMaximized ? (
@@ -210,7 +210,7 @@ export default function DraggableWindow({
                         e.stopPropagation();
                         handleClose();
                     }}
-                    className="p-1.5 hover:bg-red-500/20 rounded-full transition-all group"
+                    className="p-1.5 hover:bg-red-500/20 rounded-full transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary"
                     aria-label="Close"
                 >
                     <X className="w-3.5 h-3.5 text-sky-text-secondary opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-colors" />

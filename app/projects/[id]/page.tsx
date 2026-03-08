@@ -60,9 +60,12 @@ export default function ProjectPage({ params }: PageProps) {
                                 href={project.link}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="p-2 bg-background/80 backdrop-blur-md rounded-full border border-border hover:text-primary transition-all underline"
+                                aria-label={`View Live Demo for ${project.title} (opens in new tab)`}
+                                className="p-2 bg-background/80 backdrop-blur-md rounded-full border border-border hover:text-primary transition-all group"
                             >
-                                <ExternalLink className="w-5 h-5" />
+                                <span className="block group-hover:scale-110 transition-transform">
+                                    <ExternalLink className="w-5 h-5" />
+                                </span>
                             </a>
                         )}
                     </div>
@@ -190,9 +193,10 @@ export default function ProjectPage({ params }: PageProps) {
                                         href={project.link}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="px-6 md:px-8 py-3 md:py-4 bg-background text-foreground rounded-full font-bold hover:opacity-90 transition-all flex items-center gap-2 text-sm md:text-base"
+                                        aria-label={`View Live Demo for ${project.title} (opens in new tab)`}
+                                        className="px-6 md:px-8 py-3 md:py-4 bg-background text-foreground rounded-full font-bold hover:opacity-90 transition-all flex items-center gap-2 text-sm md:text-base group"
                                     >
-                                        View Live Demo <ExternalLink className="w-4 h-4" />
+                                        View Live Demo <ExternalLink className="w-5 h-5 group-hover:translate-x-1 group-hover:scale-110 transition-transform" />
                                     </a>
                                 )}
                                 <Link

@@ -45,7 +45,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
                     </div>
 
                     {project.badge && (
-                        <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-card/80 backdrop-blur-md text-[10px] font-black tracking-widest uppercase border border-sky-border/20 shadow-sm z-10 text-sky-text-primary">
+                        <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-sky-primary text-white text-xs font-black tracking-widest uppercase border border-sky-border/20 shadow-sm z-10">
                             {project.badge}
                         </div>
                     )}
@@ -55,7 +55,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
                     <h3 className="text-2xl font-black mb-3 tracking-tighter font-outfit group-hover:text-sky-primary transition-colors text-sky-text-primary uppercase">
                         {project.title}
                     </h3>
-                    <p className="text-sky-text-secondary mb-6 line-clamp-2 text-sm leading-relaxed">
+                    <p className="text-sky-text-secondary mb-6 line-clamp-4 text-sm leading-relaxed">
                         {project.description}
                     </p>
 
