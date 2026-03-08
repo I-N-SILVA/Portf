@@ -127,13 +127,13 @@ export default function PortfolioHero() {
                     <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); toggleTheme(); }}
-                        className="relative w-16 h-8 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-card/80 backdrop-blur-md border border-sky-border/10 shadow-standard"
+                        className="relative w-20 h-11 rounded-full hover:opacity-80 transition-opacity pointer-events-auto bg-card/80 backdrop-blur-md border border-sky-border/10 shadow-standard flex items-center p-1"
                         aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} mode` : "Switch theme"}
                     >
                         {mounted && (
                             <div
-                                className="absolute top-1 left-1 w-6 h-6 rounded-full transition-transform duration-300 bg-sky-primary shadow-sky-glow flex items-center justify-center overflow-hidden p-1.5"
-                                style={{ transform: isDark ? "translateX(2rem)" : "translateX(0)" }}
+                                className="w-9 h-9 rounded-full transition-transform duration-300 bg-sky-primary shadow-sky-glow flex items-center justify-center overflow-hidden p-2"
+                                style={{ transform: isDark ? "translateX(2.25rem)" : "translateX(0)" }}
                             >
                                 <Image
                                     src="/logo.svg"

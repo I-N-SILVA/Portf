@@ -44,7 +44,7 @@ export default function SocialSidebar() {
                             x: -4,
                             transition: { type: "spring", stiffness: 400, damping: 20 }
                         }}
-                        className="text-sky-text-secondary/60 hover:text-sky-primary dark:hover:text-sky-primary transition-colors duration-300 dark:hover:drop-shadow-[0_0_12px_rgba(162,207,254,0.9)]"
+                        className="flex items-center justify-center w-11 h-11 text-sky-text-secondary/60 hover:text-sky-primary dark:hover:text-sky-primary transition-colors duration-300 dark:hover:drop-shadow-[0_0_12px_rgba(162,207,254,0.9)]"
                         aria-label={link.name}
                     >
                         <Icon className="w-5 h-5 md:w-6 md:h-6" />

@@ -226,7 +226,7 @@ export default function LandingContent() {
             </div>
 
             {/* Desktop Workspace */}
-            <div className="container mx-auto px-6 py-20 relative z-20 space-y-32">
+            <div className="container mx-auto px-4 sm:px-6 py-12 md:py-20 lg:py-24 relative z-20 space-y-16 md:space-y-24 lg:space-y-32">
 
                 {/* About Section Window */}
                 <AnimatePresence>

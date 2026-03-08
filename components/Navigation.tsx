@@ -67,12 +67,11 @@ export default function Navigation({ onConnectClick, onSkillsClick }: Navigation
                 <button
                   onClick={() => handleNavClick(item.href, item.label)}
                   className={`
-                    relative px-6 py-2 rounded-full font-semibold text-sm
+                    relative px-6 min-h-[44px] inline-flex items-center justify-center rounded-full font-semibold text-sm
                     transition-all duration-300
-                    ${
-                      isActive
-                        ? "text-white"
-                        : "text-gray-400 hover:text-white"
+                    ${isActive
+                      ? "text-white"
+                      : "text-gray-400 hover:text-white"
                     }
                   `}
                 >

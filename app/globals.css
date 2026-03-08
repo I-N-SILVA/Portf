@@ -44,6 +44,26 @@
     --input: var(--color-border-subtle);
     --ring: var(--color-accent-primary);
 
+    /* Typography Scale - Mobile First */
+    --text-h1: 3rem;
+    --line-height-h1: 1.1;
+    --text-h2: 2rem;
+    --line-height-h2: 1.2;
+    --text-h3: 1.5rem;
+    --line-height-h3: 1.3;
+    --text-body-lg: 1.125rem;
+    --line-height-body-lg: 1.5;
+    --text-body: 1rem;
+    --line-height-body: 1.6;
+    --text-sm: 0.875rem;
+    --line-height-sm: 1.5;
+    --text-tiny: 0.75rem;
+    --line-height-tiny: 1.4;
+
+    /* Spacing & Layout Tokens */
+    --section-gap: 4rem;
+    --section-padding: 2rem;
+
     /* Border Radius - Refinement */
     --radius-rounded: 20px;
     --radius-standard: 16px;

@@ -142,7 +142,7 @@ export default function DraggableWindow({
                     className={cn(
                         "rounded-full",
                         isMaximized
-                            ? "size-3 bg-sky-primary animate-pulse shadow-[0_0_10px_rgba(162,207,254,0.5)]"
+                            ? "size-3 bg-sky-primary shadow-[0_0_10px_rgba(162,207,254,0.5)]"
                             : "size-2.5 bg-sky-primary/40 border border-sky-primary/20"
                     )}
                 />
@@ -156,7 +156,7 @@ export default function DraggableWindow({
                 </span>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1 md:gap-1.5">
                 {/* Minimize (disabled when maximized) */}
                 <button
                     onClick={(e) => {
@@ -167,14 +167,14 @@ export default function DraggableWindow({
                         onMinimize?.(!isMinimized);
                     }}
                     className={cn(
-                        "p-1.5 rounded-full transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary",
+                        "w-11 h-11 md:w-8 md:h-8 flex items-center justify-center rounded-full transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary",
                         isMaximized ? "opacity-30 cursor-not-allowed" : "hover:bg-sky-primary/10"
                     )}
                     aria-label="Minimize"
                 >
                     <Minus
                         className={cn(
-                            "w-3.5 h-3.5 transition-all duration-300",
+                            "w-4 h-4 md:w-3.5 md:h-3.5 transition-all duration-300",
                             isMinimized
                                 ? "text-sky-primary opacity-100"
                                 : "text-sky-text-secondary opacity-40 group-hover:opacity-100"
@@ -194,13 +194,13 @@ export default function DraggableWindow({
                         playSound("maximize");
                         isMaximized ? handleRestore() : onMaximize?.();
                     }}
-                    className="p-1.5 hover:bg-sky-primary/10 rounded-full transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary"
+                    className="w-11 h-11 md:w-8 md:h-8 flex items-center justify-center hover:bg-sky-primary/10 rounded-full transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary"
                     aria-label={isMaximized ? "Exit Fullscreen" : "Maximize"}
                 >
                     {isMaximized ? (
-                        <Minimize2 className="w-3.5 h-3.5 text-sky-primary" />
+                        <Minimize2 className="w-4 h-4 md:w-3.5 md:h-3.5 text-sky-primary" />
                     ) : (
-                        <Square className="w-3.5 h-3.5 text-sky-text-secondary opacity-40 group-hover:opacity-100" />
+                        <Square className="w-4 h-4 md:w-3.5 md:h-3.5 text-sky-text-secondary opacity-40 group-hover:opacity-100" />
                     )}
                 </button>
 
@@ -210,10 +210,10 @@ export default function DraggableWindow({
                         e.stopPropagation();
                         handleClose();
                     }}
-                    className="p-1.5 hover:bg-red-500/20 rounded-full transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary"
+                    className="w-11 h-11 md:w-8 md:h-8 flex items-center justify-center hover:bg-red-500/20 rounded-full transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-primary"
                     aria-label="Close"
                 >
-                    <X className="w-3.5 h-3.5 text-sky-text-secondary opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-colors" />
+                    <X className="w-4 h-4 md:w-3.5 md:h-3.5 text-sky-text-secondary opacity-40 group-hover:opacity-100 group-hover:text-red-400 transition-colors" />
                 </button>
             </div>
         </div>

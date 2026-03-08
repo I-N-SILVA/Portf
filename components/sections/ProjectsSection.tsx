@@ -42,12 +42,12 @@ export default function ProjectsSection() {
                         </motion.div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 items-center"> {/* Added items-center for alignment */}
+                    <div className="flex flex-wrap gap-3 items-center mt-6 md:mt-0"> {/* Adjusted margin and gap for mobile */}
                         {categories.map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => { setFilter(cat); setProjectsToShow(ITEMS_PER_LOAD); }} // Reset projectsToShow on filter change
-                                className={`px-4 py-2 rounded-full text-xs font-black tracking-widest uppercase transition-all border ${filter === cat
+                                className={`px-5 py-2 min-h-[44px] rounded-full text-xs font-black tracking-widest uppercase transition-all border outline-none focus-visible:ring-2 focus-visible:ring-sky-primary ${filter === cat
                                     ? "bg-sky-primary text-white dark:text-sky-page border-sky-primary shadow-sky-glow scale-105"
                                     : "bg-card/50 text-sky-text-secondary border-sky-border/20 hover:border-sky-primary/50"
                                     }`}
@@ -60,7 +60,7 @@ export default function ProjectsSection() {
                             placeholder="Search tags..."
                             value={tagSearch}
                             onChange={(e) => { setTagSearch(e.target.value); setProjectsToShow(ITEMS_PER_LOAD); }} // Reset projectsToShow on search change
-                            className="ml-4 px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase border border-sky-border/20 bg-card/50 text-sky-text-primary placeholder-sky-text-secondary/60 focus:outline-none focus:border-sky-primary/50"
+                            className="px-5 py-2 min-h-[44px] w-full md:w-auto rounded-full text-xs font-bold tracking-widest uppercase border border-sky-border/20 bg-card/50 text-sky-text-primary placeholder-sky-text-secondary/60 focus:outline-none focus:border-sky-primary/50 focus-visible:ring-2 focus-visible:ring-sky-primary"
                         />
                     </div>
                 </div>
