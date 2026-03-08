@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit, Playfair_Display } from "next/font/google";
+import { Inter, Syne } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
 
@@ -9,16 +9,10 @@ const inter = Inter({
   display: "swap",
 });
 
-const outfit = Outfit({
+const syne = Syne({
   subsets: ["latin"],
-  weight: ["700", "800", "900"],
-  variable: "--font-outfit",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne",
   display: "swap",
 });
 
@@ -106,7 +100,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${outfit.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
+        className={`${inter.variable} ${syne.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
       >
         <Providers>{children}</Providers>
       </body>

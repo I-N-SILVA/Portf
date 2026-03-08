@@ -39,7 +39,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
                     {/* Overlay on hover */}
                     <div className="absolute inset-0 bg-sky-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                         <div className="px-6 py-3 bg-card/90 backdrop-blur-md rounded-full shadow-sky-glow transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 flex items-center gap-2 border border-sky-primary/20">
-                            <span className="font-bold text-sm text-sky-primary uppercase tracking-widest font-outfit">View Details</span>
+                            <span className="font-bold text-sm text-sky-primary uppercase tracking-widest font-syne">View Details</span>
                             <ArrowUpRight className="w-4 h-4 text-sky-primary" />
                         </div>
                     </div>
@@ -52,7 +52,7 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
                 </div>
 
                 <div className="p-8">
-                    <h3 className="text-2xl font-black mb-3 tracking-tighter font-outfit group-hover:text-sky-primary transition-colors text-sky-text-primary uppercase">
+                    <h3 className="text-2xl font-black mb-3 tracking-tighter font-syne group-hover:text-sky-primary transition-colors text-sky-text-primary uppercase">
                         {project.title}
                     </h3>
                     <p className="text-sky-text-secondary mb-6 line-clamp-4 text-sm leading-relaxed">

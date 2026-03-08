@@ -148,7 +148,7 @@ export default function DraggableWindow({
                 />
                 <span
                     className={cn(
-                        "font-black tracking-widest uppercase font-outfit",
+                        "font-black tracking-widest uppercase font-syne",
                         isMaximized ? "text-sm text-sky-primary" : "text-[10px] text-sky-text-secondary opacity-60"
                     )}
                 >
@@ -234,7 +234,7 @@ export default function DraggableWindow({
                     <div className="p-1">
                         {/* Watermark */}
                         <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none select-none">
-                            <span className="text-8xl font-black italic tracking-tighter uppercase font-outfit">
+                            <span className="text-8xl font-black italic tracking-tighter uppercase font-syne">
                                 {title.split("_")[0]}
                             </span>
                         </div>
@@ -275,7 +275,7 @@ export default function DraggableWindow({
                     {titleBar}
                     <div className="flex-1 overflow-y-auto p-1 relative">
                         <div className="absolute top-0 right-0 p-4 opacity-[0.03] pointer-events-none select-none">
-                            <span className="text-8xl font-black italic tracking-tighter uppercase font-outfit">
+                            <span className="text-8xl font-black italic tracking-tighter uppercase font-syne">
                                 {title.split("_")[0]}
                             </span>
                         </div>

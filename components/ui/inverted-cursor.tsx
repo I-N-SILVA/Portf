@@ -72,7 +72,7 @@ export const Cursor: React.FC = () => {
                     <motion.span
                         initial={{ opacity: 0, scale: 0.5 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="text-[10px] font-black text-black dark:text-sky-page uppercase tracking-[0.2em] text-center px-1 font-outfit"
+                        className="text-[10px] font-black text-black dark:text-sky-page uppercase tracking-[0.2em] text-center px-1 font-syne"
                     >
                         {hoverText}
                     </motion.span>

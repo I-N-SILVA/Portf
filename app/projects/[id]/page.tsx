@@ -86,7 +86,7 @@ export default function ProjectPage({ params }: PageProps) {
                                 <span className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-4">
                                     {project.badge || "Project"}
                                 </span>
-                                <h1 className="text-3xl md:text-5xl font-black leading-tight tracking-tighter font-outfit">
+                                <h1 className="text-3xl md:text-5xl font-black leading-tight tracking-tighter font-syne">
                                     {project.title}
                                 </h1>
                             </motion.div>
@@ -183,7 +183,7 @@ export default function ProjectPage({ params }: PageProps) {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <h2 className="text-xl md:text-3xl font-black mb-3 md:mb-4 font-outfit">Interested in this project?</h2>
+                            <h2 className="text-xl md:text-3xl font-black mb-3 md:mb-4 font-syne">Interested in this project?</h2>
                             <p className="text-sm md:text-base text-primary-foreground/80 mb-6 md:mb-8 max-w-lg mx-auto">
                                 Let&apos;s discuss how we can implement similar solutions for your business or project.
                             </p>

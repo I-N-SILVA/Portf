@@ -158,12 +158,12 @@ export default function PortfolioHero() {
                         transition={{ duration: 1, ease: "easeOut" }}
                         className="flex flex-col items-center justify-center"
                     >
-                        <div className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-outfit dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
+                        <div className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-syne dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
                             {nameFirst.map((char, i) => (
                                 <DispersionLetter key={`f-${i}`} char={char} index={i} x={springX} y={springY} />
                             ))}
                         </div>
-                        <div className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-outfit dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
+                        <div className="font-black text-[56px] sm:text-[100px] md:text-[140px] lg:text-[180px] xl:text-[210px] leading-[0.75] tracking-tighter uppercase text-sky-text-primary font-syne dark:drop-shadow-[0_0_15px_rgba(162,207,254,0.3)]">
                             {nameLast.map((char, i) => (
                                 <DispersionLetter key={`l-${i}`} char={char} index={i} x={springX} y={springY} />
                             ))}

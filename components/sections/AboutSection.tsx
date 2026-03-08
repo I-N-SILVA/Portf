@@ -85,7 +85,7 @@ export default function AboutSection() {
                     >
                         <span className="text-secondary-foreground/40 font-mono text-sm mb-2 tracking-widest uppercase">01 / IDENTITY</span>
                         <KineticText intensity={0.5}>
-                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-outfit">
+                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-syne">
                                 THE<br />PROFILE
                             </h2>
                         </KineticText>
@@ -120,7 +120,7 @@ export default function AboutSection() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: 0.1 }}
-                                    className="text-4xl sm:text-5xl md:text-6xl font-black leading-[0.85] tracking-tight text-sky-text-primary font-outfit mb-6"
+                                    className="text-4xl sm:text-5xl md:text-6xl font-black leading-[0.85] tracking-tight text-sky-text-primary font-syne mb-6"
                                 >
                                     {profileData.name}
                                 </motion.h3>
@@ -192,7 +192,7 @@ export default function AboutSection() {
                         </div>
                         <div>
                             <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Location</p>
-                            <p className="text-2xl md:text-3xl font-black text-sky-text-primary uppercase font-outfit tracking-tight">{profileData.location}</p>
+                            <p className="text-2xl md:text-3xl font-black text-sky-text-primary uppercase font-syne tracking-tight">{profileData.location}</p>
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-sky-primary/0 via-sky-primary/20 to-sky-primary/0 group-hover:via-sky-primary/50 transition-all duration-500" />
                     </TiltCard>
@@ -208,7 +208,7 @@ export default function AboutSection() {
                                 <GraduationCap className="w-7 h-7 text-sky-primary/70 group-hover:text-sky-primary transition-colors dark:drop-shadow-[0_0_8px_rgba(162,207,254,0.4)] mb-4" />
                                 <div>
                                     <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Background</p>
-                                    <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-outfit tracking-tight leading-tight">Economics & Psychology</p>
+                                    <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-syne tracking-tight leading-tight">Economics & Psychology</p>
                                 </div>
                             </div>
 
@@ -227,7 +227,7 @@ export default function AboutSection() {
                                 </div>
                                 <div>
                                     <p className="text-[10px] text-sky-text-secondary/50 mb-1 uppercase tracking-[0.3em] font-black">Current Focus</p>
-                                    <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-outfit tracking-tight">Building AI Products</p>
+                                    <p className="text-lg md:text-xl font-black text-sky-text-primary uppercase font-syne tracking-tight">Building AI Products</p>
                                     <p className="text-[11px] text-sky-text-secondary/50 mt-1 font-mono font-bold">AI Agents • MCP • Automation</p>
                                 </div>
                             </div>

@@ -115,8 +115,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
-        serif: ["var(--font-playfair)", "serif"],
-        outfit: ["var(--font-outfit)", "sans-serif"],
+        syne: ["var(--font-syne)", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       backgroundImage: {

@@ -98,7 +98,7 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
                                 aria-label="Search commands and navigation"
                                 aria-controls="command-results"
                                 placeholder="What are you looking for?"
-                                className="w-full bg-transparent border-none outline-none text-sky-text-primary placeholder:text-sky-text-secondary/40 font-bold text-lg font-outfit focus:ring-0"
+                                className="w-full bg-transparent border-none outline-none text-sky-text-primary placeholder:text-sky-text-secondary/40 font-bold text-lg font-syne focus:ring-0"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                                 onKeyDown={(e) => {
@@ -133,7 +133,7 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
                                             <div className="size-10 rounded-xl bg-card border border-sky-border/10 flex items-center justify-center group-hover:scale-110 transition-transform" aria-hidden="true">
                                                 <action.icon className="size-5 text-sky-text-secondary group-hover:text-sky-primary transition-colors" />
                                             </div>
-                                            <span className="text-sky-text-primary font-bold group-hover:translate-x-1 transition-transform font-outfit">
+                                            <span className="text-sky-text-primary font-bold group-hover:translate-x-1 transition-transform font-syne">
                                                 {action.title}
                                             </span>
                                         </div>

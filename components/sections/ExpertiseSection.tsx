@@ -43,7 +43,7 @@ export default function ExpertiseSection() {
                     >
                         <span className="text-secondary-foreground/40 font-mono text-sm mb-2 tracking-widest uppercase">03 / EXPERTISE</span>
                         <KineticText intensity={0.5}>
-                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-outfit">
+                            <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] font-syne">
                                 CORE<br />DOMAINS
                             </h2>
                         </KineticText>
@@ -69,7 +69,7 @@ export default function ExpertiseSection() {
                                 <domain.icon className="size-7" />
                             </div>
 
-                            <h3 className="text-2xl font-bold mb-4 tracking-tight text-sky-text-primary group-hover:text-sky-primary transition-colors font-outfit">
+                            <h3 className="text-2xl font-bold mb-4 tracking-tight text-sky-text-primary group-hover:text-sky-primary transition-colors font-syne">
                                 {domain.title}
                             </h3>
 

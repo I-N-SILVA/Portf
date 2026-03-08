@@ -11,7 +11,7 @@ export default function HeroCard() {
       <div className="relative">
         {/* First name line */}
         <motion.h1
-          className="text-[8rem] md:text-[12rem] lg:text-[15rem] font-black leading-none tracking-tighter text-gray-800 font-outfit"
+          className="text-[8rem] md:text-[12rem] lg:text-[15rem] font-black leading-none tracking-tighter text-gray-800 font-syne"
           variants={textRevealVariants}
           initial="hidden"
           animate="visible"
@@ -21,7 +21,7 @@ export default function HeroCard() {
 
         {/* Second name line */}
         <motion.h1
-          className="text-[8rem] md:text-[12rem] lg:text-[15rem] font-black leading-none tracking-tighter -mt-8 md:-mt-12 lg:-mt-16 text-gray-800 font-outfit"
+          className="text-[8rem] md:text-[12rem] lg:text-[15rem] font-black leading-none tracking-tighter -mt-8 md:-mt-12 lg:-mt-16 text-gray-800 font-syne"
           variants={textRevealVariants}
           initial="hidden"
           animate="visible"

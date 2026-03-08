@@ -209,7 +209,7 @@ export default function LandingContent() {
                         transition={{ duration: 0.8, delay: 0.2 }}
                         className="mb-8"
                     >
-                        <span className="font-outfit text-xs md:text-sm tracking-[0.4em] uppercase text-sky-text-primary flex items-center justify-center gap-4 before:h-px before:w-12 before:bg-sky-border/40 after:h-px after:w-12 after:bg-sky-border/40">                            Build, ship, live.
+                        <span className="font-syne text-xs md:text-sm tracking-[0.4em] uppercase text-sky-text-primary flex items-center justify-center gap-4 before:h-px before:w-12 before:bg-sky-border/40 after:h-px after:w-12 after:bg-sky-border/40">                            Build, ship, live.
                         </span>
                     </motion.div>
 
