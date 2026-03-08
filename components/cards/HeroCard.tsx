@@ -70,7 +70,7 @@ export default function HeroCard() {
 
       {/* Tagline */}
       <motion.p
-        className="mt-8 text-xl md:text-2xl text-lightGray max-w-lg"
+        className="mt-8 text-xl md:text-2xl text-lightGray max-w-lg text-balance"
         variants={textRevealVariants}
         initial="hidden"
         animate="visible"
