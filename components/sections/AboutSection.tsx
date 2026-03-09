@@ -2,8 +2,7 @@
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { profileData } from "@/lib/placeholder-content";
-import { PROFILE_STATS } from "@/lib/constants";
-import { MapPin, GraduationCap, Zap, Brain, TrendingUp, Code2 } from "lucide-react";
+import { MapPin, GraduationCap, Zap } from "lucide-react";
 import React from "react";
 import Image from "next/image";
 import { KineticText } from "@/components/ui/KineticText";
@@ -63,13 +62,6 @@ function TiltCard({ children, className, colSpan = "" }: { children: React.React
         </motion.div>
     );
 }
-
-const STAT_ICONS = { Code2, Brain, TrendingUp } as const;
-const statItems = [
-    { ...PROFILE_STATS[0], icon: STAT_ICONS.Code2 },
-    { ...PROFILE_STATS[1], icon: STAT_ICONS.Brain },
-    { ...PROFILE_STATS[2], icon: STAT_ICONS.TrendingUp },
-];
 
 export default function AboutSection() {
     return (
@@ -140,30 +132,11 @@ export default function AboutSection() {
                                     whileInView={{ opacity: 1 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: 0.3 }}
-                                    className="text-base md:text-lg text-sky-text-secondary/80 leading-relaxed max-w-lg"
+                                    className="text-lg md:text-xl text-sky-text-secondary/90 leading-relaxed max-w-xl font-medium"
                                 >
                                     {profileData.bio}
                                 </motion.p>
                             </div>
-
-                            {/* Bottom: Stats Row */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 10 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.4 }}
-                                className="grid grid-cols-3 gap-4 pt-8 mt-8 border-t border-sky-border/10"
-                            >
-                                {statItems.map((stat) => (
-                                    <div key={stat.label} className="flex flex-col gap-1.5">
-                                        <div className="flex items-center gap-2">
-                                            <stat.icon className="size-4 text-sky-primary/60" strokeWidth={2} />
-                                            <span className="text-2xl md:text-3xl font-black font-mono text-sky-text-primary">{stat.value}</span>
-                                        </div>
-                                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-sky-text-secondary/40">{stat.label}</span>
-                                    </div>
-                                ))}
-                            </motion.div>
                         </div>
 
                         {/* Watermark Logo */}
