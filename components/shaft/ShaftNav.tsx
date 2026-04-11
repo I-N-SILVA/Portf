@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import ShaftDecipher from "./ShaftDecipher";
 
 const chapters = [
   { id: "shaft-hero",     label: "OPENING",  num: "01" },
@@ -12,7 +13,11 @@ const chapters = [
   { id: "shaft-call",     label: "THE CALL", num: "05" },
 ];
 
-export default function ShaftNav({ visible }: { visible: boolean }) {
+interface ShaftNavProps {
+  visible: boolean;
+}
+
+export default function ShaftNav({ visible }: ShaftNavProps) {
   const [active, setActive]   = useState("shaft-hero");
   const [isLight, setIsLight] = useState(false);
   const { playSound } = useSoundEffects();
@@ -100,7 +105,7 @@ export default function ShaftNav({ visible }: { visible: boolean }) {
                 <button
                   key={ch.id}
                   onClick={() => scrollTo(ch.id)}
-                  className="relative flex items-center gap-2.5 pr-4 py-2.5"
+                  className="relative flex items-center gap-2.5 pr-4 py-2.5 group"
                   aria-label={`Go to ${ch.label}`}
                 >
                   <span
@@ -110,7 +115,7 @@ export default function ShaftNav({ visible }: { visible: boolean }) {
                       opacity: isActive ? 1 : 0.6,
                     }}
                   >
-                    {ch.num} {ch.label}
+                    {ch.num} <ShaftDecipher text={ch.label} />
                   </span>
                   {isActive && (
                     <motion.div
@@ -131,7 +136,7 @@ export default function ShaftNav({ visible }: { visible: boolean }) {
               style={{ color: "rgb(var(--shaft-muted))", opacity: 0.45 }}
               aria-label="Toggle theme"
             >
-              {isLight ? "[ DARK ]" : "[ LIGHT ]"}
+              {isLight ? <ShaftDecipher text="[ DARK ]" /> : <ShaftDecipher text="[ LIGHT ]" />}
             </button>
           </motion.nav>
         )}

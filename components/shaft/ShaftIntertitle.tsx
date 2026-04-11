@@ -8,62 +8,53 @@ interface ShaftIntertitleProps {
 }
 
 export default function ShaftIntertitle({ onComplete }: ShaftIntertitleProps) {
-  const [phase, setPhase] = useState<"hidden" | "visible" | "exit" | "done">("hidden");
+  const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    const t0 = setTimeout(() => setPhase("visible"), 60);
-    const t1 = setTimeout(() => setPhase("exit"), 1100);
-    const t2 = setTimeout(() => {
-      setPhase("done");
-      onComplete();
-    }, 1450);
-    return () => { clearTimeout(t0); clearTimeout(t1); clearTimeout(t2); };
-  }, [onComplete]);
-
-  if (phase === "done") return null;
+    // Stage the exit
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 1800);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <AnimatePresence>
-      {(phase === "hidden" || phase === "visible" || phase === "exit") && (
+    <AnimatePresence onExitComplete={onComplete}>
+      {isVisible && (
         <motion.div
-          className="fixed inset-0 z-[999] flex flex-col items-center justify-center select-none"
-          style={{ backgroundColor: "#080808" }}
+          key="intertitle-overlay"
           initial={{ opacity: 0 }}
-          animate={{ opacity: phase === "hidden" ? 0 : phase === "exit" ? 0 : 1 }}
-          transition={{ duration: 0.04 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="fixed inset-0 z-[150] flex flex-col items-center justify-center select-none"
+          style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
         >
           {/* Scanline overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px)",
-              zIndex: 1,
-            }}
-          />
+          <div className="absolute inset-0 pointer-events-none shaft-scanline opacity-20" />
 
           <div className="relative z-10 text-center px-8">
             {/* Top label */}
             <motion.div
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
               className="font-space-mono text-[9px] tracking-[0.55em] uppercase mb-10"
-              style={{ color: "rgb(196 151 58 / 0.7)" }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: phase === "visible" ? 1 : 0 }}
-              transition={{ duration: 0.04, delay: 0.05 }}
+              style={{ color: "rgb(var(--shaft-gold) / 0.7)" }}
             >
               PORTFOLIO · 2026
             </motion.div>
 
             {/* Name — the hero moment */}
             <motion.h1
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
               className="font-playfair font-black leading-[0.88] tracking-tighter"
               style={{
-                color: "rgb(240 234 214)",
+                color: "rgb(var(--shaft-cream))",
                 fontSize: "clamp(60px, 14vw, 180px)",
               }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: phase === "visible" ? 1 : 0 }}
-              transition={{ duration: 0.04 }}
             >
               IAN N.
               <br />
@@ -72,21 +63,23 @@ export default function ShaftIntertitle({ onComplete }: ShaftIntertitleProps) {
 
             {/* Crimson rule */}
             <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="mx-auto mt-8 mb-8 h-px origin-center"
               style={{
-                backgroundColor: "rgb(204 17 34)",
-                width: phase === "visible" ? "140px" : "0px",
-                transition: "width 0.35s ease-out 0.1s",
+                backgroundColor: "rgb(var(--shaft-crimson))",
+                width: "140px",
               }}
             />
 
             {/* Subtitle */}
             <motion.div
-              className="font-space-mono text-[9px] tracking-[0.45em] uppercase"
-              style={{ color: "rgb(100 100 100)" }}
               initial={{ opacity: 0 }}
-              animate={{ opacity: phase === "visible" ? 1 : 0 }}
-              transition={{ duration: 0.04, delay: 0.08 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.7 }}
+              className="font-space-mono text-[9px] tracking-[0.45em] uppercase"
+              style={{ color: "rgb(var(--shaft-muted))" }}
             >
               AI AUTOMATION ENGINEER
             </motion.div>

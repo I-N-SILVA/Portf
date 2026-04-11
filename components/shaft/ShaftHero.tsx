@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useRef, useEffect } from "react";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import ShaftDecipher from "./ShaftDecipher";
 
 export default function ShaftHero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -270,7 +271,7 @@ export default function ShaftHero() {
                 borderColor: "rgb(var(--shaft-crimson))",
               }}
             >
-              SCHEDULE A CALL
+              <ShaftDecipher text="SCHEDULE A CALL" />
             </span>
             <span
               className="font-space-mono text-[11px] px-4 py-3 transition-transform duration-150 group-hover:translate-x-1"
@@ -301,7 +302,7 @@ export default function ShaftHero() {
           className="font-space-mono text-[8px] tracking-[0.35em] uppercase"
           style={{ color: "rgb(var(--shaft-muted))" }}
         >
-          SCROLL
+          <ShaftDecipher text="SCROLL" />
         </span>
       </motion.button>
     </section>

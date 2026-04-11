@@ -12,7 +12,11 @@ const logLines = [
     "SYSTEM READY.",
 ];
 
-export default function BootSequence() {
+interface BootSequenceProps {
+  onComplete?: () => void;
+}
+
+export default function BootSequence({ onComplete }: BootSequenceProps) {
     const [isVisible, setIsVisible] = useState(true);
     const [progress, setProgress] = useState(0);
 
@@ -21,51 +25,56 @@ export default function BootSequence() {
             setProgress((prev) => {
                 if (prev >= logLines.length - 1) {
                     clearInterval(timer);
-                    setTimeout(() => setIsVisible(false), 800);
+                    // Slight delay after "SYSTEM READY" before fading out
+                    setTimeout(() => setIsVisible(false), 1200);
                     return prev;
                 }
                 return prev + 1;
             });
-        }, 300);
+        }, 250);
 
         return () => clearInterval(timer);
     }, []);
 
     return (
-        <AnimatePresence>
+        <AnimatePresence onExitComplete={onComplete}>
             {isVisible && (
                 <motion.div
+                    key="boot-sequence"
                     initial={{ opacity: 1 }}
-                    exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
-                    className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center p-8 text-foreground font-mono"
+                    exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+                    transition={{ duration: 0.6, ease: "easeInOut" }}
+                    className="fixed inset-0 z-[200] flex flex-col items-center justify-center p-8 font-mono"
+                    style={{ backgroundColor: "rgb(var(--shaft-bg))", color: "rgb(var(--shaft-cream))" }}
                 >
-                    <div className="w-full max-w-md">
-                        <div className="flex flex-col gap-1 mb-6">
+                    <div className="w-full max-w-md relative z-10">
+                        <div className="flex flex-col gap-1.5 mb-8 h-32">
                             {logLines.slice(0, progress + 1).map((line, i) => (
                                 <motion.p
                                     key={i}
-                                    initial={{ opacity: 0, x: -10 }}
+                                    initial={{ opacity: 0, x: -4 }}
                                     animate={{ opacity: 1, x: 0 }}
-                                    className="text-xs tracking-tight"
+                                    transition={{ duration: 0.1 }}
+                                    className="text-[10px] tracking-tight"
                                 >
-                                    <span className="text-primary mr-2">{">"}</span>
+                                    <span className="opacity-40 mr-3">{">"}</span>
                                     {line}
                                 </motion.p>
                             ))}
                         </div>
 
-                        <div className="w-full h-1 bg-secondary rounded-full overflow-hidden">
+                        <div className="w-full h-px bg-white/10 relative">
                             <motion.div
-                                className="h-full bg-primary"
+                                className="absolute inset-y-0 left-0 bg-white/60"
                                 initial={{ width: "0%" }}
                                 animate={{ width: `${(progress / (logLines.length - 1)) * 100}%` }}
+                                transition={{ duration: 0.2 }}
                             />
                         </div>
                     </div>
 
                     {/* Background Texture Overlay */}
-                    <div className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay noise-bg" />
+                    <div className="absolute inset-0 pointer-events-none opacity-10 shaft-scanline" />
                 </motion.div>
             )}
         </AnimatePresence>

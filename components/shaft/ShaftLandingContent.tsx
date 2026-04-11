@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ShaftIntertitle from "./ShaftIntertitle";
 import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
@@ -10,55 +11,72 @@ import ShaftArchive from "./ShaftArchive";
 import ShaftDomains from "./ShaftDomains";
 import ShaftCall from "./ShaftCall";
 import ShaftStatusStrip from "./ShaftStatusStrip";
+import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
 import BootSequence from "@/components/ui/BootSequence";
 import Cursor from "@/components/ui/inverted-cursor";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 export default function ShaftLandingContent() {
-  const [bootDone, setBootDone] = useState(false);
-  const [intertitleDone, setIntertitleDone] = useState(false);
+  const [stage, setStage] = useState<"boot" | "intertitle" | "main">("boot");
   const { playSound } = useSoundEffects();
 
-  // Handle chain: Boot -> Intertitle -> Content
-  useEffect(() => {
-    // Hide boot after 2.5s (matching BootSequence logic approx)
-    const timer = setTimeout(() => {
-      setBootDone(true);
-    }, 3200);
-    return () => clearTimeout(timer);
+  const handleBootComplete = useCallback(() => {
+    setStage("intertitle");
   }, []);
 
-  const onIntertitleComplete = useCallback(() => {
-    setIntertitleDone(true);
-    // Sensory: play a subtle hum/glitch when the system "locks in"
+  const handleIntertitleComplete = useCallback(() => {
+    setStage("main");
     setTimeout(() => playSound("hum"), 100);
   }, [playSound]);
 
   return (
     <>
-      {!bootDone && <BootSequence />}
+      <Cursor />
       
-      {bootDone && <ShaftIntertitle onComplete={onIntertitleComplete} />}
+      <AnimatePresence mode="wait">
+        {stage === "boot" && (
+          <BootSequence key="boot" onComplete={handleBootComplete} />
+        )}
+        
+        {stage === "intertitle" && (
+          <ShaftIntertitle key="intertitle" onComplete={handleIntertitleComplete} />
+        )}
+      </AnimatePresence>
 
-      <main
-        className="w-full min-h-screen overflow-x-hidden shaft-flicker"
-        style={{ 
-          backgroundColor: "rgb(var(--shaft-bg))",
-          opacity: intertitleDone ? 1 : 0,
-          transition: "opacity 0.8s ease-in"
-        }}
-      >
-        <Cursor />
-        <ShaftStatusStrip />
-        <ShaftNav visible={intertitleDone} />
+      {stage === "main" && (
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="w-full min-h-screen overflow-x-hidden shaft-flicker relative"
+          style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
+        >
+          <ShaftStatusStrip />
+          <ShaftNav visible={true} />
 
-        <ShaftHero />
-        <ShaftTicker />
-        <ShaftIdentity />
-        <ShaftArchive />
-        <ShaftDomains />
-        <ShaftCall />
-      </main>
+          <ShaftPerspectiveSection>
+            <ShaftHero />
+          </ShaftPerspectiveSection>
+
+          <ShaftTicker />
+
+          <ShaftPerspectiveSection>
+            <ShaftIdentity />
+          </ShaftPerspectiveSection>
+
+          <ShaftPerspectiveSection>
+            <ShaftArchive />
+          </ShaftPerspectiveSection>
+
+          <ShaftPerspectiveSection>
+            <ShaftDomains />
+          </ShaftPerspectiveSection>
+
+          <ShaftPerspectiveSection>
+            <ShaftCall />
+          </ShaftPerspectiveSection>
+        </motion.main>
+      )}
     </>
   );
 }
