@@ -1,0 +1,247 @@
+"use client";
+
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+
+export default function ShaftHero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const watermarkY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
+  const frameY     = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
+
+  const scrollToNext = () => {
+    document.getElementById("shaft-identity")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <section
+      ref={sectionRef}
+      id="shaft-hero"
+      className="relative min-h-screen flex items-center overflow-hidden"
+      style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
+    >
+      {/* ── Background geometry ── */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Large watermark number — parallax */}
+        <motion.div
+          className="absolute right-[4%] top-1/2 -translate-y-1/2 font-playfair font-black leading-none select-none"
+          style={{
+            fontSize: "clamp(160px, 28vw, 380px)",
+            color: "rgb(20 20 20)",
+            userSelect: "none",
+            y: watermarkY,
+          }}
+          aria-hidden="true"
+        >
+          01
+        </motion.div>
+
+        {/* Geometric frame group — parallax at half rate */}
+        <motion.div
+          className="absolute hidden md:contents"
+          style={{ y: frameY }}
+          aria-hidden="true"
+        >
+          {/* Rectangular frame */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.15, delay: 0.9 }}
+            className="absolute right-[8%] top-[18%] hidden md:block"
+            style={{
+              width: "16vw",
+              height: "48vh",
+              border: "1px solid rgb(var(--shaft-border))",
+            }}
+          />
+
+          {/* Accent diagonal slash */}
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 0.6 }}
+            transition={{ duration: 0.3, delay: 1.1 }}
+            className="absolute hidden md:block"
+            style={{
+              right: "7%",
+              top: "17.5%",
+              width: "18vw",
+              height: "1px",
+              backgroundColor: "rgb(var(--shaft-crimson))",
+              transform: "rotate(1.5deg)",
+              transformOrigin: "left center",
+            }}
+          />
+
+          {/* Thin horizontal rule at bottom of frame */}
+          <motion.div
+            initial={{ scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 0.4 }}
+            transition={{ duration: 0.35, delay: 1.15 }}
+            className="absolute hidden md:block"
+            style={{
+              right: "7%",
+              top: "67%",
+              width: "18vw",
+              height: "1px",
+              backgroundColor: "rgb(var(--shaft-border))",
+            }}
+          />
+        </motion.div>
+      </div>
+
+      {/* ── Scene marker — top right ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.1, delay: 0.35 }}
+        className="absolute top-8 right-8 font-space-mono text-[9px] tracking-[0.45em] uppercase"
+        style={{ color: "rgb(var(--shaft-muted))" }}
+      >
+        [ 01 / OPENING ]
+      </motion.div>
+
+      {/* ── Main content — left-biased ── */}
+      <div className="relative z-10 w-full px-8 md:px-16 lg:px-24">
+        <div style={{ maxWidth: "62%" }}>
+
+          {/* Pre-title annotation */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.1, delay: 0.15 }}
+            className="font-space-mono text-[9px] tracking-[0.4em] uppercase mb-6"
+            style={{ color: "rgb(var(--shaft-crimson))" }}
+          >
+            {"// PORTFOLIO"}
+          </motion.div>
+
+          {/* Name — staggered lines */}
+          <div className="overflow-hidden">
+            <motion.h1
+              className="font-playfair font-black leading-[0.83] tracking-tighter"
+              style={{
+                color: "rgb(var(--shaft-cream))",
+                fontSize: "clamp(72px, 13vw, 200px)",
+              }}
+              initial={{ y: "108%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.38, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              IAN N.
+            </motion.h1>
+          </div>
+
+          <div className="overflow-hidden" style={{ marginLeft: "3vw" }}>
+            <motion.h1
+              className="font-playfair font-black leading-[0.83] tracking-tighter"
+              style={{
+                color: "rgb(var(--shaft-cream))",
+                fontSize: "clamp(72px, 13vw, 200px)",
+              }}
+              initial={{ y: "108%", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.38, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            >
+              SILVA.
+            </motion.h1>
+          </div>
+
+          {/* Separator */}
+          <motion.div
+            className="h-px w-full mt-8 mb-6 origin-left"
+            style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.35, delay: 0.5 }}
+          />
+
+          {/* Tagline */}
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 0.6 }}
+            className="font-space-mono text-[10px] md:text-[12px] tracking-[0.35em] uppercase"
+            style={{ color: "rgb(var(--shaft-muted))" }}
+          >
+            AI Automation Engineer ·{" "}
+            <span style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+              Behavioral Economist
+            </span>
+          </motion.p>
+
+          {/* Episode marker */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2, delay: 0.8 }}
+            className="mt-8 flex items-center gap-3"
+          >
+            <div
+              className="w-1.5 h-1.5 shrink-0"
+              style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
+            />
+            <span
+              className="font-space-mono text-[9px] tracking-[0.25em] uppercase"
+              style={{ color: "rgb(var(--shaft-muted))" }}
+            >
+              Building at the intersection of AI & human behavior
+            </span>
+          </motion.div>
+
+          {/* Primary CTA — scroll to The Call */}
+          <motion.button
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: 1.0 }}
+            onClick={() => document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" })}
+            className="mt-10 group flex items-center gap-0 border transition-all duration-150"
+            style={{
+              borderColor: "rgb(var(--shaft-crimson))",
+              backgroundColor: "transparent",
+            }}
+            whileHover={{ backgroundColor: "rgb(204 17 34 / 0.08)" }}
+          >
+            <span
+              className="font-space-mono text-[9px] tracking-[0.45em] uppercase px-6 py-3 border-r"
+              style={{
+                color: "rgb(var(--shaft-cream))",
+                borderColor: "rgb(var(--shaft-crimson))",
+              }}
+            >
+              SCHEDULE A CALL
+            </span>
+            <span
+              className="font-space-mono text-[11px] px-4 py-3 transition-transform duration-150 group-hover:translate-x-1"
+              style={{ color: "rgb(var(--shaft-crimson))" }}
+            >
+              →
+            </span>
+          </motion.button>
+        </div>
+      </div>
+
+      {/* ── Scroll indicator ── */}
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2, delay: 1.2 }}
+        onClick={scrollToNext}
+        className="absolute bottom-8 left-8 md:left-16 lg:left-24 flex items-center gap-4 group"
+        aria-label="Scroll down"
+      >
+        <motion.div
+          animate={{ y: [0, 7, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="w-px h-10"
+          style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+        />
+        <span
+          className="font-space-mono text-[8px] tracking-[0.35em] uppercase"
+          style={{ color: "rgb(var(--shaft-muted))" }}
+        >
+          SCROLL
+        </span>
+      </motion.button>
+    </section>
+  );
+}

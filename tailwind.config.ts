@@ -26,6 +26,18 @@ const config: Config = {
         "sky-text-secondary": "rgb(var(--color-text-secondary) / <alpha-value>)",
         "sky-border": "rgb(var(--color-border-subtle) / <alpha-value>)",
 
+        // Shaft / Shinbo Design System
+        "shaft-bg": "rgb(var(--shaft-bg) / <alpha-value>)",
+        "shaft-surface": "rgb(var(--shaft-surface) / <alpha-value>)",
+        "shaft-surface-alt": "rgb(var(--shaft-surface-alt) / <alpha-value>)",
+        "shaft-cream": "rgb(var(--shaft-cream) / <alpha-value>)",
+        "shaft-cream-dim": "rgb(var(--shaft-cream-dim) / <alpha-value>)",
+        "shaft-crimson": "rgb(var(--shaft-crimson) / <alpha-value>)",
+        "shaft-gold": "rgb(var(--shaft-gold) / <alpha-value>)",
+        "shaft-muted": "rgb(var(--shaft-muted) / <alpha-value>)",
+        "shaft-border": "rgb(var(--shaft-border) / <alpha-value>)",
+        "shaft-white": "rgb(var(--shaft-white) / <alpha-value>)",
+
         // Legacy Support / Aliases
         "brand-primary": "rgb(var(--color-accent-primary) / <alpha-value>)",
         "brand-soft": "rgb(var(--color-bg-surface) / <alpha-value>)",
@@ -117,6 +129,8 @@ const config: Config = {
         sans: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
         syne: ["var(--font-syne)", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        playfair: ["var(--font-playfair)", "Georgia", "Times New Roman", "serif"],
+        "space-mono": ["var(--font-space-mono)", "Courier New", "monospace"],
       },
       backgroundImage: {
         "sky-light-gradient": "linear-gradient(180deg, #E8F4FF 0%, #A2CFFE 40%, #FFFFFF 100%)",

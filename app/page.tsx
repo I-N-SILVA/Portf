@@ -1,5 +1,5 @@
-import LandingContent from "@/components/LandingContent";
+import ShaftLandingContent from "@/components/shaft/ShaftLandingContent";
 
 export default function LandingPage() {
-  return <LandingContent />;
+  return <ShaftLandingContent />;
 }

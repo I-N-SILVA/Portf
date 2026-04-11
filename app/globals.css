@@ -2,6 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Shaft / Shinbo Design System ────────────────────────────────────── */
+:root {
+  --shaft-bg: 8 8 8;
+  --shaft-surface: 14 14 14;
+  --shaft-surface-alt: 20 20 20;
+  --shaft-cream: 240 234 214;
+  --shaft-cream-dim: 175 168 152;
+  --shaft-crimson: 204 17 34;
+  --shaft-gold: 196 151 58;
+  --shaft-muted: 100 100 100;
+  --shaft-border: 38 38 38;
+  --shaft-white: 245 245 240;
+}
+
+/* ─── Light Mode (parchment / archival document) ─────────────────────── */
+html[data-shaft-light] {
+  --shaft-bg: 248 244 234;
+  --shaft-surface: 240 234 220;
+  --shaft-surface-alt: 232 225 208;
+  --shaft-cream: 24 20 14;
+  --shaft-cream-dim: 72 64 52;
+  --shaft-crimson: 188 10 26;
+  --shaft-gold: 148 106 14;
+  --shaft-muted: 138 126 110;
+  --shaft-border: 198 188 168;
+  --shaft-white: 10 8 6;
+}
+
+/* ─── Ticker ──────────────────────────────────────────────────────────── */
+@keyframes shaft-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.333%); }
+}
+.shaft-ticker {
+  animation: shaft-ticker 28s linear infinite;
+  will-change: transform;
+}
+
+@keyframes shaft-flicker {
+  0%, 100% { opacity: 1; }
+  48% { opacity: 1; }
+  50% { opacity: 0.88; }
+  52% { opacity: 1; }
+  74% { opacity: 1; }
+  76% { opacity: 0.92; }
+  78% { opacity: 1; }
+}
+
+@keyframes shaft-text-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shaft-line-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.shaft-flicker {
+  animation: shaft-flicker 6s steps(1) infinite;
+}
+
+/* ─── Blob animations (shared across hero + contact card) ─────────────── */
+
 @layer base {
   :root {
     /* Sky Light Theme - RGB */

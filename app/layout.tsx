@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Syne } from "next/font/google";
+import { Inter, Syne, Playfair_Display, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
 
@@ -16,6 +16,20 @@ const syne = Syne({
   display: "swap",
 });
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-space-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.URL),
   title: SITE.TITLE,
@@ -27,9 +41,9 @@ export const metadata: Metadata = {
     siteName: SITE.NAME,
     images: [
       {
-        url: "/android-chrome-512x512.png",
-        width: 512,
-        height: 512,
+        url: "/brand-full.png",
+        width: 1024,
+        height: 1024,
         alt: `${SITE.NAME} — Portfolio`,
       },
     ],
@@ -40,19 +54,19 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.TITLE,
     description: SITE.DESCRIPTION,
-    images: ["/android-chrome-512x512.png"],
+    images: ["/brand-full.png"],
   },
   icons: {
     icon: [
-      { url: "/logo.svg", type: "image/svg+xml" },
+      { url: "/brand-avatar.png", type: "image/png" },
       { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
       { url: "/favicon.ico", sizes: "any" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     other: [
-      { rel: "icon", url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
-      { rel: "icon", url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+      { rel: "icon", url: "/brand-avatar.png", sizes: "192x192", type: "image/png" },
+      { rel: "icon", url: "/brand-avatar.png", sizes: "512x512", type: "image/png" },
     ],
   },
   manifest: "/site.webmanifest",
@@ -94,13 +108,15 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
+        {/* Anti-FOUC: apply saved shaft theme before first paint */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('shaft-theme')==='light'){document.documentElement.setAttribute('data-shaft-light','')}}catch(e){}` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body
-        className={`${inter.variable} ${syne.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
+        className={`${inter.variable} ${syne.variable} ${playfair.variable} ${spaceMono.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
       >
         <Providers>{children}</Providers>
       </body>

@@ -136,12 +136,12 @@ export default function PortfolioHero() {
                                 style={{ transform: isDark ? "translateX(2.25rem)" : "translateX(0)" }}
                             >
                                 <Image
-                                    src="/logo.svg"
+                                    src="/brand-icon.png"
                                     alt="Theme toggle"
                                     width={24}
                                     height={24}
                                     sizes="24px"
-                                    className="w-full h-full object-contain brightness-0 invert"
+                                    className="w-full h-full object-contain"
                                 />
                             </div>
                         )}
@@ -180,12 +180,12 @@ export default function PortfolioHero() {
                             className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden bg-white/10 backdrop-blur-lg border border-sky-primary/30 flex items-center justify-center shadow-sky-glow transition-transform duration-300 hover:scale-110 cursor-pointer group"
                         >
                             <Image
-                                src="/logo.svg"
+                                src="/brand-avatar.png"
                                 alt="Ian N. Silva"
                                 width={128}
                                 height={128}
                                 sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, (max-width: 1024px) 144px, 160px"
-                                className="w-3/4 h-3/4 object-contain opacity-90 brightness-110 group-hover:rotate-12 transition-transform duration-500"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             />
                         </motion.div>
                     </div>
