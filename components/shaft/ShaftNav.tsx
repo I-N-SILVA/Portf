@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 const chapters = [
   { id: "shaft-hero",     label: "OPENING",  num: "01" },
@@ -11,13 +12,10 @@ const chapters = [
   { id: "shaft-call",     label: "THE CALL", num: "05" },
 ];
 
-function scrollTo(id: string) {
-  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-}
-
 export default function ShaftNav({ visible }: { visible: boolean }) {
   const [active, setActive]   = useState("shaft-hero");
   const [isLight, setIsLight] = useState(false);
+  const { playSound } = useSoundEffects();
 
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 22, restDelta: 0.001 });
@@ -33,7 +31,11 @@ export default function ShaftNav({ visible }: { visible: boolean }) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => { if (e.isIntersecting) setActive(e.target.id); });
+        entries.forEach((e) => { 
+          if (e.isIntersecting) {
+            setActive(e.target.id);
+          }
+        });
       },
       { threshold: 0.35 }
     );
@@ -44,7 +46,13 @@ export default function ShaftNav({ visible }: { visible: boolean }) {
     return () => observer.disconnect();
   }, []);
 
+  const scrollTo = (id: string) => {
+    playSound("click");
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const toggleTheme = () => {
+    playSound("hum");
     const next = !isLight;
     setIsLight(next);
     try {

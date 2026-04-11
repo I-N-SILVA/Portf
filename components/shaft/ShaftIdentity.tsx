@@ -3,13 +3,14 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { profileData } from "@/lib/placeholder-content";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.25, delay, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.35, delay, ease: [0.22, 1, 0.36, 1] },
   }),
 };
 
@@ -22,6 +23,7 @@ const metaItems = [
 
 export default function ShaftIdentity() {
   const sectionRef = useRef<HTMLElement>(null);
+  const { playSound } = useSoundEffects();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
@@ -32,10 +34,12 @@ export default function ShaftIdentity() {
       className="relative min-h-screen flex flex-col justify-center overflow-hidden py-28"
       style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
     >
-      {/* Background watermark number — parallax */}
+      {/* Background watermark number — parallax + Glitch */}
       <motion.div
         aria-hidden="true"
-        className="absolute right-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none"
+        onViewportEnter={() => playSound("glitch")}
+        viewport={{ once: true, margin: "-100px" }}
+        className="absolute right-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none shaft-glitch"
         style={{
           fontSize: "clamp(120px, 22vw, 320px)",
           color: "rgb(8 8 8)",
@@ -79,7 +83,7 @@ export default function ShaftIdentity() {
       <div className="px-8 md:px-16 lg:px-24 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-28">
 
-          {/* ── Left: Monologue ── */}
+          {/* ── Left: Monologue with Kinetic Reveal ── */}
           <div>
             <motion.div
               custom={0}
@@ -93,7 +97,7 @@ export default function ShaftIdentity() {
               {"// 02"}
             </motion.div>
 
-            {/* Dialogue lines */}
+            {/* Kinetic Lines */}
             {[
               { text: "The question isn't", indent: false },
               { text: "what I build.",       indent: true  },
@@ -104,22 +108,23 @@ export default function ShaftIdentity() {
               line.text === "" ? (
                 <div key={i} className="h-8" />
               ) : (
-                <motion.p
-                  key={i}
-                  custom={0.06 + i * 0.07}
-                  variants={fadeUp}
-                  initial="hidden"
-                  whileInView="visible"
-                  viewport={{ once: true, margin: "-60px" }}
-                  className="font-playfair font-black leading-[1.0] tracking-tight"
-                  style={{
-                    fontSize: "clamp(28px, 4.5vw, 56px)",
-                    color: "rgb(var(--shaft-cream))",
-                    marginLeft: line.indent ? "1.8rem" : 0,
-                  }}
-                >
-                  {line.text}
-                </motion.p>
+                <div key={i} className="overflow-hidden">
+                  <motion.p
+                    custom={0.1 + i * 0.08}
+                    initial={{ y: "100%", opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true, margin: "-20px" }}
+                    transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    className="font-playfair font-black leading-[1.0] tracking-tight"
+                    style={{
+                      fontSize: "clamp(28px, 4.5vw, 56px)",
+                      color: "rgb(var(--shaft-cream))",
+                      marginLeft: line.indent ? "1.8rem" : 0,
+                    }}
+                  >
+                    {line.text}
+                  </motion.p>
+                </div>
               )
             )}
 
@@ -133,13 +138,13 @@ export default function ShaftIdentity() {
               style={{ backgroundColor: "rgb(var(--shaft-border))" }}
             />
 
-            {/* Bio */}
+            {/* Bio with slower reveal */}
             <motion.p
               custom={0.55}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-60px" }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.8, delay: 0.6 }}
               className="text-base leading-relaxed"
               style={{ color: "rgb(var(--shaft-cream-dim))" }}
             >

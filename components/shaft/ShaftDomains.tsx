@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const domains = [
   {
@@ -24,24 +25,30 @@ const domains = [
 ];
 
 export default function ShaftDomains() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
   return (
     <section
+      ref={sectionRef}
       id="shaft-domains"
       className="relative py-28 overflow-hidden"
       style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
     >
-      {/* Watermark */}
-      <div
+      {/* Watermark — parallax + Glitch */}
+      <motion.div
         aria-hidden="true"
-        className="absolute left-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none"
+        className="absolute left-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none shaft-glitch"
         style={{
           fontSize: "clamp(120px, 22vw, 320px)",
           color: "rgb(8 8 8)",
           lineHeight: 1,
+          y: watermarkY,
         }}
       >
         04
-      </div>
+      </motion.div>
 
       <div className="px-8 md:px-16 lg:px-24 relative z-10">
 
@@ -57,7 +64,14 @@ export default function ShaftDomains() {
           <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
             04 / CORE DOMAINS
           </span>
-          <div className="h-px flex-1" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
+          <motion.div
+            className="h-px flex-1 origin-left"
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+            style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+          />
         </motion.div>
 
         {/* Asymmetric panel grid */}
@@ -67,37 +81,53 @@ export default function ShaftDomains() {
         >
           {/* ── Large left panel (spans 2 cols) ── */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.4 }}
             className="lg:col-span-2 group relative overflow-hidden"
             style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
           >
             <div className="p-10 md:p-14 flex flex-col min-h-[320px] md:min-h-[380px] justify-between">
               <div>
-                {/* Number */}
-                <span
-                  className="font-playfair font-black leading-none block mb-6"
-                  style={{
-                    fontSize: "clamp(48px, 6vw, 80px)",
-                    color: "rgb(var(--shaft-border))",
-                  }}
-                >
-                  {domains[0].num}
-                </span>
+                {/* Number with kinetic reveal */}
+                <div className="overflow-hidden mb-6">
+                  <motion.span
+                    initial={{ y: "100%" }}
+                    whileInView={{ y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.1 }}
+                    className="font-playfair font-black leading-none block"
+                    style={{
+                      fontSize: "clamp(48px, 6vw, 80px)",
+                      color: "rgb(var(--shaft-border))",
+                    }}
+                  >
+                    {domains[0].num}
+                  </motion.span>
+                </div>
 
-                <h3
-                  className="font-playfair font-black leading-tight mb-5"
-                  style={{
-                    fontSize: "clamp(28px, 3.5vw, 48px)",
-                    color: "rgb(var(--shaft-cream))",
-                  }}
-                >
-                  {domains[0].title}
-                </h3>
+                <div className="overflow-hidden mb-5">
+                  <motion.h3
+                    initial={{ y: "100%" }}
+                    whileInView={{ y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.2 }}
+                    className="font-playfair font-black leading-tight"
+                    style={{
+                      fontSize: "clamp(28px, 3.5vw, 48px)",
+                      color: "rgb(var(--shaft-cream))",
+                    }}
+                  >
+                    {domains[0].title}
+                  </motion.h3>
+                </div>
 
-                <p
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
                   className="text-base leading-relaxed"
                   style={{
                     color: "rgb(var(--shaft-cream-dim))",
@@ -105,7 +135,7 @@ export default function ShaftDomains() {
                   }}
                 >
                   {domains[0].body}
-                </p>
+                </motion.p>
               </div>
 
               {/* Growing crimson accent line */}
@@ -115,14 +145,6 @@ export default function ShaftDomains() {
                   width: "40px",
                   backgroundColor: "rgb(var(--shaft-crimson))",
                   opacity: 0.5,
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.width = "90px";
-                  (e.currentTarget as HTMLDivElement).style.opacity = "1";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.width = "40px";
-                  (e.currentTarget as HTMLDivElement).style.opacity = "0.5";
                 }}
               />
             </div>
@@ -144,40 +166,56 @@ export default function ShaftDomains() {
             {domains.slice(1).map((domain, i) => (
               <motion.div
                 key={domain.num}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.2, delay: 0.1 + i * 0.1 }}
+                transition={{ duration: 0.4, delay: 0.1 + i * 0.1 }}
                 className="group relative p-8 flex flex-col justify-between"
                 style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
               >
                 <div>
-                  <span
-                    className="font-playfair font-black leading-none block mb-5"
-                    style={{
-                      fontSize: "clamp(28px, 3vw, 40px)",
-                      color: "rgb(var(--shaft-border))",
-                    }}
-                  >
-                    {domain.num}
-                  </span>
+                  <div className="overflow-hidden mb-5">
+                    <motion.span
+                      initial={{ y: "100%" }}
+                      whileInView={{ y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
+                      className="font-playfair font-black leading-none block"
+                      style={{
+                        fontSize: "clamp(28px, 3vw, 40px)",
+                        color: "rgb(var(--shaft-border))",
+                      }}
+                    >
+                      {domain.num}
+                    </motion.span>
+                  </div>
 
-                  <h3
-                    className="font-playfair font-black leading-tight mb-3"
-                    style={{
-                      fontSize: "clamp(16px, 1.6vw, 22px)",
-                      color: "rgb(var(--shaft-cream))",
-                    }}
-                  >
-                    {domain.title}
-                  </h3>
+                  <div className="overflow-hidden mb-3">
+                    <motion.h3
+                      initial={{ y: "100%" }}
+                      whileInView={{ y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
+                      className="font-playfair font-black leading-tight"
+                      style={{
+                        fontSize: "clamp(16px, 1.6vw, 22px)",
+                        color: "rgb(var(--shaft-cream))",
+                      }}
+                    >
+                      {domain.title}
+                    </motion.h3>
+                  </div>
 
-                  <p
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.5 + i * 0.1 }}
                     className="text-sm leading-relaxed"
                     style={{ color: "rgb(var(--shaft-cream-dim))" }}
                   >
                     {domain.body}
-                  </p>
+                  </motion.p>
                 </div>
 
                 {/* Accent */}

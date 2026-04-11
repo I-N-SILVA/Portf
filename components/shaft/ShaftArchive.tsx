@@ -52,7 +52,14 @@ export default function ShaftArchive() {
           <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
             03 / THE ARCHIVE
           </span>
-          <div className="h-px flex-1" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
+          <motion.div 
+            className="h-px flex-1 origin-left" 
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+            style={{ backgroundColor: "rgb(var(--shaft-border))" }} 
+          />
         </motion.div>
 
         {/* Category filters — text links, not pills */}

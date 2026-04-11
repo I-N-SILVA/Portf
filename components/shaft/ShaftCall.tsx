@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { useState, useRef } from "react";
 import CalendarBooking from "@/components/CalendarBooking";
 import { socialLinks } from "@/lib/placeholder-content";
 
@@ -23,9 +23,13 @@ const vpOpts = { once: true, margin: "-60px" };
 
 export default function ShaftCall() {
   const [showBooking, setShowBooking] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
+  const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
   return (
     <section
+      ref={sectionRef}
       id="shaft-call"
       className="relative overflow-hidden"
       style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
@@ -35,18 +39,19 @@ export default function ShaftCall() {
 
         {/* Background geometry */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Watermark */}
-          <div
+          {/* Watermark — parallax */}
+          <motion.div
             aria-hidden="true"
             className="absolute left-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none"
             style={{
               fontSize: "clamp(120px, 22vw, 320px)",
               color: "rgb(16 16 16)",
               lineHeight: 1,
+              y: watermarkY,
             }}
           >
             05
-          </div>
+          </motion.div>
 
           {/* Faint crimson horizontal stripe */}
           <div
@@ -67,7 +72,14 @@ export default function ShaftCall() {
           <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
             05 / THE CALL
           </span>
-          <div className="h-px flex-1" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
+          <motion.div 
+            className="h-px flex-1 origin-left" 
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={vpOpts}
+            transition={{ duration: 0.6, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+            style={{ backgroundColor: "rgb(var(--shaft-border))" }} 
+          />
         </motion.div>
 
         <div className="relative z-10">
@@ -230,7 +242,14 @@ export default function ShaftCall() {
                 >
                   SELECT A SLOT
                 </span>
-                <div className="h-px flex-1" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
+                <motion.div 
+                  className="h-px flex-1 origin-left" 
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={vpOpts}
+                  transition={{ duration: 0.6, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ backgroundColor: "rgb(var(--shaft-border))" }} 
+                />
               </div>
 
               <div className="max-w-4xl mx-auto">

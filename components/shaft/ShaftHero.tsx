@@ -1,15 +1,37 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { useRef, useEffect } from "react";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 export default function ShaftHero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const { playSound } = useSoundEffects();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  
+  // Vertical Parallax
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
   const frameY     = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
 
+  // Mouse Follow Parallax
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      mouseX.set((clientX / innerWidth - 0.5) * 20);
+      mouseY.set((clientY / innerHeight - 0.5) * 20);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
+
   const scrollToNext = () => {
+    playSound("click");
     document.getElementById("shaft-identity")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -20,16 +42,22 @@ export default function ShaftHero() {
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
     >
-      {/* ── Background geometry ── */}
+      {/* ── Background Overlays ── */}
+      <div className="shaft-scanline" />
+      <div className="shaft-vignette" />
+
+      {/* ── Background geometry & Video Window ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        
         {/* Large watermark number — parallax */}
         <motion.div
-          className="absolute right-[4%] top-1/2 -translate-y-1/2 font-playfair font-black leading-none select-none"
+          className="absolute right-[4%] top-1/2 -translate-y-1/2 font-playfair font-black leading-none select-none shaft-glitch"
           style={{
             fontSize: "clamp(160px, 28vw, 380px)",
             color: "rgb(20 20 20)",
             userSelect: "none",
             y: watermarkY,
+            x: useTransform(springX, (v) => v * -0.5),
           }}
           aria-hidden="true"
         >
@@ -38,11 +66,38 @@ export default function ShaftHero() {
 
         {/* Geometric frame group — parallax at half rate */}
         <motion.div
-          className="absolute hidden md:contents"
+          className="absolute inset-0 hidden md:block"
           style={{ y: frameY }}
           aria-hidden="true"
         >
-          {/* Rectangular frame */}
+          {/* Main Video "Window" Panel */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 0.25, scale: 1 }}
+            onAnimationComplete={() => playSound("shutter")}
+            transition={{ duration: 1.2, delay: 0.5 }}
+            className="absolute right-[10%] top-[20%] w-[35vw] h-[55vh] overflow-hidden border border-white/5"
+            style={{ 
+              x: useTransform(springX, (v) => v * 0.8),
+              y: useTransform(springY, (v) => v * 0.8),
+            }}
+          >
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 mix-blend-screen"
+            >
+              <source src="/videos/background.mp4" type="video/mp4" />
+              <source src="/videos/hero.mp4" type="video/mp4" />
+            </video>
+            
+            {/* Inner frame scanline specifically for the video */}
+            <div className="absolute inset-0 shaft-scanline opacity-20" />
+          </motion.div>
+
+          {/* Rectangular secondary frame */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -52,6 +107,8 @@ export default function ShaftHero() {
               width: "16vw",
               height: "48vh",
               border: "1px solid rgb(var(--shaft-border))",
+              x: springX,
+              y: springY,
             }}
           />
 
@@ -69,6 +126,7 @@ export default function ShaftHero() {
               backgroundColor: "rgb(var(--shaft-crimson))",
               transform: "rotate(1.5deg)",
               transformOrigin: "left center",
+              x: useTransform(springX, (v) => v * 1.2),
             }}
           />
 
@@ -84,6 +142,7 @@ export default function ShaftHero() {
               width: "18vw",
               height: "1px",
               backgroundColor: "rgb(var(--shaft-border))",
+              x: useTransform(springX, (v) => v * 0.9),
             }}
           />
         </motion.div>
@@ -94,7 +153,7 @@ export default function ShaftHero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.1, delay: 0.35 }}
-        className="absolute top-8 right-8 font-space-mono text-[9px] tracking-[0.45em] uppercase"
+        className="absolute top-8 right-8 font-space-mono text-[9px] tracking-[0.45em] uppercase z-20"
         style={{ color: "rgb(var(--shaft-muted))" }}
       >
         [ 01 / OPENING ]
@@ -193,8 +252,11 @@ export default function ShaftHero() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 1.0 }}
-            onClick={() => document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" })}
-            className="mt-10 group flex items-center gap-0 border transition-all duration-150"
+            onClick={() => {
+              playSound("click");
+              document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="mt-10 group flex items-center gap-0 border transition-all duration-150 relative z-20"
             style={{
               borderColor: "rgb(var(--shaft-crimson))",
               backgroundColor: "transparent",
@@ -226,7 +288,7 @@ export default function ShaftHero() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2, delay: 1.2 }}
         onClick={scrollToNext}
-        className="absolute bottom-8 left-8 md:left-16 lg:left-24 flex items-center gap-4 group"
+        className="absolute bottom-8 left-8 md:left-16 lg:left-24 flex items-center gap-4 group z-20"
         aria-label="Scroll down"
       >
         <motion.div
