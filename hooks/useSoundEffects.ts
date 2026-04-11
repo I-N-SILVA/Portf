@@ -13,7 +13,7 @@ export function useSoundEffects() {
             const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
             audioContextRef.current = new AudioContext();
         }
-        if (audioContextRef.current.state === "suspended") {
+        if (audioContextRef.current?.state === "suspended") {
             audioContextRef.current.resume();
         }
     }, []);
@@ -38,6 +38,7 @@ export function useSoundEffects() {
             }
 
             const ctx = audioContextRef.current;
+            if (!ctx) return;
             if (ctx.state === "suspended") ctx.resume();
 
             const osc = ctx.createOscillator();
