@@ -64,16 +64,6 @@ html[data-shaft-light] .shaft-paper-texture {
   will-change: transform;
 }
 
-@keyframes shaft-flicker {
-  0%, 100% { opacity: 1; }
-  48% { opacity: 1; }
-  50% { opacity: 0.88; }
-  52% { opacity: 1; }
-  74% { opacity: 1; }
-  76% { opacity: 0.92; }
-  78% { opacity: 1; }
-}
-
 @keyframes shaft-text-in {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -82,10 +72,6 @@ html[data-shaft-light] .shaft-paper-texture {
 @keyframes shaft-line-grow {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
-}
-
-.shaft-flicker {
-  animation: shaft-flicker 6s steps(1) infinite;
 }
 
 .shaft-scanline {
@@ -117,16 +103,14 @@ html[data-shaft-light] .shaft-paper-texture {
   z-index: 4;
 }
 
-@keyframes shaft-glitch {
-  0% { transform: translate(0); }
-  2% { transform: translate(-2px, 2px); }
-  4% { transform: translate(2px, -1px); }
-  6% { transform: translate(0); }
-  100% { transform: translate(0); }
+@keyframes shaft-drift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(2px, 1px); }
+  100% { transform: translate(0, 0); }
 }
 
 .shaft-glitch {
-  animation: shaft-glitch 4s infinite linear alternate-reverse;
+  animation: shaft-drift 12s infinite ease-in-out;
 }
 
 @keyframes shaft-status-pulse {

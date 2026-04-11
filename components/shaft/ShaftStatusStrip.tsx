@@ -1,15 +1,22 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export default function ShaftStatusStrip() {
   const [time, setTime] = useState("");
+  const [uptime, setUptime] = useState(0);
+  
+  // Random "Load" pulses for the diagnostic look
+  const [load, setLoad] = useState(42);
 
   useEffect(() => {
+    const start = Date.now();
     const update = () => {
       const now = new Date();
       setTime(now.toLocaleTimeString("en-GB", { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+      setUptime(Math.floor((Date.now() - start) / 1000));
+      setLoad(Math.floor(Math.random() * (65 - 38 + 1) + 38));
     };
     update();
     const interval = setInterval(update, 1000);
@@ -38,14 +45,42 @@ export default function ShaftStatusStrip() {
         </span>
       </div>
 
-      {/* Middle — Coordinate tracker (mock) */}
-      <div className="my-auto py-8">
+      {/* Middle — Diagnostics (The "Alive" part) */}
+      <div className="my-auto py-8 flex flex-col items-center gap-12">
+        <div className="flex flex-col items-center">
+            <span 
+                className="font-space-mono text-[6px] tracking-[0.3em] uppercase opacity-40 mb-2"
+                style={{ writingMode: "vertical-rl", color: "rgb(var(--shaft-muted))" }}
+            >
+                CORE_LOAD
+            </span>
+            <div className="w-1 h-12 bg-white/5 relative overflow-hidden">
+                <motion.div 
+                    animate={{ height: `${load}%` }}
+                    className="absolute bottom-0 left-0 right-0 bg-crimson"
+                    style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
+                />
+            </div>
+        </div>
+
         <span 
           className="font-space-mono text-[7px] tracking-[0.3em] uppercase opacity-40"
           style={{ writingMode: "vertical-rl", color: "rgb(var(--shaft-muted))" }}
         >
           LAT: 51.5074° N // LON: 0.1278° W
         </span>
+
+        <div className="flex flex-col items-center">
+            <span 
+                className="font-space-mono text-[6px] tracking-[0.3em] uppercase opacity-40 mb-2"
+                style={{ writingMode: "vertical-rl", color: "rgb(var(--shaft-muted))" }}
+            >
+                UPTIME
+            </span>
+            <span className="font-space-mono text-[7px] text-white/60">
+                {String(uptime).padStart(4, "0")}s
+            </span>
+        </div>
       </div>
 
       {/* Bottom — Clock */}

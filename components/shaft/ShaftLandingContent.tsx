@@ -49,7 +49,7 @@ export default function ShaftLandingContent() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="w-full min-h-screen overflow-x-hidden shaft-flicker relative"
+          className="w-full min-h-screen overflow-x-hidden relative"
           style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
         >
           <ShaftStatusStrip />
