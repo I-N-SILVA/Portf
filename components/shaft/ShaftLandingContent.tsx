@@ -32,6 +32,7 @@ export default function ShaftLandingContent() {
   return (
     <>
       <Cursor />
+      <div className="shaft-paper-texture" />
       
       <AnimatePresence mode="wait">
         {stage === "boot" && (
