@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Instagram, Youtube, Linkedin, Github, Mail, Newspaper, X } from "lucide-react";
 import { socialLinks } from "@/lib/placeholder-content";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import Image from "next/image";
 
 /* ─── Custom Substack Icon ───────────────────────────────────────────── */
 const SubstackIcon = ({ className }: { className?: string }) => (
@@ -32,23 +33,17 @@ export default function ShaftSocialDock() {
   };
 
   return (
-    <div className="fixed right-6 md:right-8 bottom-8 z-[100] flex flex-col items-end gap-3">
-      {/* ── Expanded social links ── */}
+    <div className="fixed left-6 md:left-8 bottom-8 z-[100] flex flex-col items-start gap-4">
+      {/* ── Expanded social links — flow upwards from dog ── */}
       <AnimatePresence>
         {expanded && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-px border overflow-hidden"
-            style={{
-              borderColor: "rgb(var(--shaft-border))",
-              backgroundColor: "rgb(var(--shaft-border))",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 1px rgba(204,17,34,0.3)",
-            }}
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="flex flex-col gap-2 mb-2"
           >
-            {socialLinks.map((link, i) => {
+            {[...socialLinks, { name: "Email", url: "mailto:iannogueira@proton.me", icon: "email" }].map((link, i) => {
               const Icon = iconMap[link.icon] || Mail;
               return (
                 <motion.a
@@ -56,195 +51,73 @@ export default function ShaftSocialDock() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, x: 20 }}
+                  initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.2 }}
-                  onMouseEnter={() => {
-                    setHoveredIndex(i);
-                    playSound("click");
-                  }}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                  className="group flex items-center gap-3 px-4 py-3 transition-all duration-150"
+                  transition={{ delay: i * 0.05 }}
+                  onMouseEnter={() => playSound("click")}
+                  className="group flex items-center gap-3 px-4 py-2 border backdrop-blur-md transition-all duration-200"
                   style={{
-                    backgroundColor:
-                      hoveredIndex === i
-                        ? "rgb(var(--shaft-surface-alt))"
-                        : "rgb(var(--shaft-bg))",
+                    backgroundColor: "rgb(var(--shaft-surface) / 0.8)",
+                    borderColor: "rgb(var(--shaft-border) / 0.5)",
+                  }}
+                  whileHover={{ 
+                    borderColor: "rgb(var(--shaft-crimson) / 0.8)", 
+                    x: 8,
+                    backgroundColor: "rgb(var(--shaft-surface))"
                   }}
                 >
-                  {/* Icon container */}
-                  <span
-                    className="flex h-7 w-7 items-center justify-center border shrink-0 transition-colors duration-150"
-                    style={{
-                      borderColor:
-                        hoveredIndex === i
-                          ? "rgb(var(--shaft-crimson))"
-                          : "rgb(var(--shaft-border))",
-                      color:
-                        hoveredIndex === i
-                          ? "rgb(var(--shaft-crimson))"
-                          : "rgb(var(--shaft-muted))",
-                    }}
-                  >
-                    <Icon className="h-3 w-3" />
-                  </span>
-
-                  {/* Label */}
-                  <span
-                    className="font-space-mono text-[8px] tracking-[0.35em] uppercase whitespace-nowrap transition-colors duration-150"
-                    style={{
-                      color:
-                        hoveredIndex === i
-                          ? "rgb(var(--shaft-cream))"
-                          : "rgb(var(--shaft-muted))",
-                    }}
-                  >
+                  <Icon className="h-3 w-3" style={{ color: "rgb(var(--shaft-crimson))" }} />
+                  <span className="font-space-mono text-[8px] tracking-[0.2em] uppercase text-white/70 group-hover:text-white">
                     {link.name}
-                  </span>
-
-                  {/* Arrow */}
-                  <span
-                    className="font-space-mono text-[9px] ml-auto transition-all duration-150 group-hover:translate-x-0.5"
-                    style={{
-                      color:
-                        hoveredIndex === i
-                          ? "rgb(var(--shaft-crimson))"
-                          : "rgb(var(--shaft-muted) / 0.3)",
-                    }}
-                  >
-                    →
                   </span>
                 </motion.a>
               );
             })}
-
-            {/* Email row */}
-            <motion.a
-              href="mailto:iannogueira@proton.me"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: socialLinks.length * 0.05, duration: 0.2 }}
-              onMouseEnter={() => {
-                setHoveredIndex(socialLinks.length);
-                playSound("click");
-              }}
-              onMouseLeave={() => setHoveredIndex(null)}
-              className="group flex items-center gap-3 px-4 py-3 transition-all duration-150"
-              style={{
-                backgroundColor:
-                  hoveredIndex === socialLinks.length
-                    ? "rgb(var(--shaft-surface-alt))"
-                    : "rgb(var(--shaft-bg))",
-              }}
-            >
-              <span
-                className="flex h-7 w-7 items-center justify-center border shrink-0 transition-colors duration-150"
-                style={{
-                  borderColor:
-                    hoveredIndex === socialLinks.length
-                      ? "rgb(var(--shaft-crimson))"
-                      : "rgb(var(--shaft-border))",
-                  color:
-                    hoveredIndex === socialLinks.length
-                      ? "rgb(var(--shaft-crimson))"
-                      : "rgb(var(--shaft-muted))",
-                }}
-              >
-                <Mail className="h-3 w-3" />
-              </span>
-              <span
-                className="font-space-mono text-[8px] tracking-[0.35em] uppercase whitespace-nowrap transition-colors duration-150"
-                style={{
-                  color:
-                    hoveredIndex === socialLinks.length
-                      ? "rgb(var(--shaft-cream))"
-                      : "rgb(var(--shaft-muted))",
-                }}
-              >
-                Email
-              </span>
-              <span
-                className="font-space-mono text-[9px] ml-auto transition-all duration-150 group-hover:translate-x-0.5"
-                style={{
-                  color:
-                    hoveredIndex === socialLinks.length
-                      ? "rgb(var(--shaft-crimson))"
-                      : "rgb(var(--shaft-muted) / 0.3)",
-                }}
-              >
-                →
-              </span>
-            </motion.a>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* ── Toggle FAB ── */}
+      {/* ── The Floating Dog Toggle ── */}
       <motion.button
         onClick={toggle}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="group relative flex items-center justify-center w-12 h-12 border transition-all duration-200"
-        style={{
-          borderColor: expanded
-            ? "rgb(var(--shaft-crimson))"
-            : "rgb(var(--shaft-border))",
-          backgroundColor: expanded
-            ? "rgb(204 17 34)"
-            : "rgb(var(--shaft-bg))",
-          boxShadow: expanded
-            ? "0 0 20px rgba(204,17,34,0.3), 0 8px 30px rgba(0,0,0,0.4)"
-            : "0 8px 30px rgba(0,0,0,0.4)",
+        className="relative group w-16 h-16 flex items-center justify-center rounded-full"
+        animate={{ 
+          y: [0, -6, 0],
+          rotate: expanded ? [0, 5, -5, 0] : 0
         }}
-        aria-label={expanded ? "Close social links" : "Open social links"}
+        transition={{ 
+          y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+          rotate: { duration: 0.4, repeat: 0 }
+        }}
+        onMouseEnter={() => playSound("hum")}
       >
-        <AnimatePresence mode="wait">
-          {expanded ? (
-            <motion.span
-              key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-            >
-              <X
-                className="h-4 w-4"
-                style={{ color: "rgb(var(--shaft-cream))" }}
-              />
-            </motion.span>
-          ) : (
-            <motion.span
-              key="open"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="flex flex-col items-center gap-[3px]"
-            >
-              {/* Minimal 3-dot pattern */}
-              <span
-                className="w-1 h-1"
-                style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-              />
-              <span
-                className="w-1 h-1"
-                style={{ backgroundColor: "rgb(var(--shaft-cream))" }}
-              />
-              <span
-                className="w-1 h-1"
-                style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-              />
-            </motion.span>
-          )}
-        </AnimatePresence>
+        {/* Holographic ring background */}
+        <div 
+          className="absolute inset-0 rounded-full border border-dashed animate-spin-slow opacity-20"
+          style={{ borderColor: "rgb(var(--shaft-crimson))" }}
+        />
+        
+        {/* Status text */}
+        <div className="absolute -top-6 left-0 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="font-space-mono text-[7px] tracking-widest text-crimson uppercase">
+            UNIT-01 // BIT-KO
+          </span>
+        </div>
 
-        {/* Subtle ping when collapsed */}
-        {!expanded && (
-          <span
-            className="absolute -top-0.5 -right-0.5 w-2 h-2 shaft-status-pulse"
-            style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
+        {/* The Dog Asset */}
+        <div className="relative w-14 h-14">
+          <Image
+            src="/floating-dog.png"
+            alt="Bit-Ko Robot Dog"
+            fill
+            className={`object-contain transition-all duration-300 ${expanded ? 'brightness-125' : 'grayscale group-hover:grayscale-0'}`}
           />
-        )}
+        </div>
+
+        {/* Transmission scanlines (only visible on hover) */}
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-10 pointer-events-none rounded-full overflow-hidden">
+          <div className="shaft-scanline h-full w-full" />
+        </div>
       </motion.button>
     </div>
   );

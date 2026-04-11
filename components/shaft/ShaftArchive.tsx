@@ -142,7 +142,7 @@ export default function ShaftArchive() {
                           : "rgb(var(--shaft-cream))",
                       }}
                     >
-                      {project.title}
+                      {t(`projects.${project.id}.title`)}
                     </h3>
                   </div>
 
@@ -208,7 +208,7 @@ export default function ShaftArchive() {
                         className="text-sm leading-relaxed mb-5"
                         style={{ color: "rgb(var(--shaft-cream-dim))" }}
                       >
-                        {project.fullDescription || project.description}
+                        {t(`projects.${project.id}.full`)}
                       </p>
 
                       {/* ── Cinematic project image ── */}

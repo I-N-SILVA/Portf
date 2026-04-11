@@ -30,6 +30,48 @@ function KineticName({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
+/* ─── HUD Shard Sub-component ─────────────────────────────────────── */
+function HUDShard({ img, top, left, size, delay, rot, index, springX, springY }: { 
+  img: string; top: string; left: string; size: string; delay: number; rot: number; index: number;
+  springX: any; springY: any;
+}) {
+  const x = useTransform(springX, (v: number) => v * (1 + index * 0.2));
+  const yParallax = useTransform(springY, (v: number) => v * (1 + index * 0.2));
+
+  return (
+    <motion.div
+      className="absolute overflow-hidden border border-white/10 grayscale blur-[1.5px] transition-all duration-1000"
+      style={{
+        top,
+        left,
+        width: size,
+        height: size,
+        x,
+        y: yParallax,
+        rotate: rot,
+      }}
+      animate={{
+        y: [0, -20, 0],
+        rotate: [rot, rot + 5, rot],
+      }}
+      transition={{
+        duration: 5 + index,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay,
+      }}
+    >
+      <Image
+        src={img}
+        alt="Shard"
+        fill
+        className="object-cover opacity-60"
+      />
+      <div className="absolute inset-0 shaft-scanline opacity-40" />
+    </motion.div>
+  );
+}
+
 export default function ShaftHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const { playSound } = useSoundEffects();
@@ -76,6 +118,24 @@ export default function ShaftHero() {
       {/* ── Background geometry & Portrait Window ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         
+        {/* ── HUD Shards (Floating Project Fragments) ── */}
+        <div className="absolute inset-0 opacity-20">
+          {[
+            { img: "/projects/ai-agents.png", top: "15%", left: "10%", size: "120px", delay: 0, rot: 15 },
+            { img: "/projects/calendar.png", top: "65%", left: "5%", size: "160px", delay: 1, rot: -10 },
+            { img: "/projects/defi-analytics.png", top: "25%", left: "80%", size: "140px", delay: 2, rot: 5 },
+            { img: "/projects/prompt-library.png", top: "75%", left: "75%", size: "110px", delay: 1.5, rot: -20 },
+          ].map((shard, i) => (
+            <HUDShard
+              key={i}
+              {...shard}
+              index={i}
+              springX={springX}
+              springY={springY}
+            />
+          ))}
+        </div>
+
         {/* Large watermark number — parallax */}
         <motion.div
           className="absolute right-[4%] top-1/2 -translate-y-1/2 font-playfair font-black leading-none select-none shaft-glitch"
