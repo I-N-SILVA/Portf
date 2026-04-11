@@ -77,25 +77,21 @@ export default function ShaftHero() {
           {/* Main Video "Window" Panel */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 0.25, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
             onAnimationComplete={() => playSound("shutter")}
             transition={{ duration: 1.2, delay: 0.5 }}
-            className="absolute right-[10%] top-[20%] w-[35vw] h-[55vh] overflow-hidden border border-white/5"
+            className="absolute right-[10%] top-[20%] w-[40vw] h-[65vh] group overflow-hidden border border-white/5"
             style={{ 
               x: useTransform(springX, (v) => v * 0.8),
               y: useTransform(springY, (v) => v * 0.8),
             }}
           >
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 mix-blend-screen"
-            >
-              <source src="/videos/background.mp4" type="video/mp4" />
-              <source src="/videos/hero.mp4" type="video/mp4" />
-            </video>
+            <Image
+              src="/hero-portrait.png"
+              alt="Hero"
+              fill
+              className="absolute inset-0 w-full h-full object-contain opacity-90 drop-shadow-2xl transition-all duration-1000 group-hover:scale-105"
+            />
             
             {/* Inner frame scanline specifically for the video */}
             <div className="absolute inset-0 shaft-scanline opacity-20" />
