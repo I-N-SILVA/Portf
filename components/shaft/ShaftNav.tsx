@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
-import { useTranslation, LOCALES } from "@/lib/i18n";
+import { useTranslation, LOCALES, type Locale } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 
 const chapters = [
@@ -74,16 +74,135 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
     } catch (_) {}
   };
 
-  const cycleLang = () => {
+  const selectLang = (code: Locale) => {
     playSound("click");
-    const idx = LOCALES.findIndex((l) => l.code === locale);
-    const next = LOCALES[(idx + 1) % LOCALES.length];
-    setLocale(next.code);
+    setLocale(code);
+    setLangOpen(false);
   };
 
   return (
     <>
-      {/* ── Desktop — right-side vertical chapter list ── */}
+      {/* ═══════════════════════════════════════════════════════════════
+          TOP-LEFT: Theme & Language Controls
+          Fixed top-left corner — always visible, prominent
+          ═══════════════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {visible && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, delay: 0.15 }}
+            className="fixed top-5 left-5 md:top-8 md:left-8 z-[101] flex items-center gap-2"
+          >
+            {/* Theme toggle — prominent pill button */}
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-2 px-3 py-1.5 border transition-all duration-200 hover:border-[rgb(var(--shaft-crimson))] group"
+              style={{
+                borderColor: "rgb(var(--shaft-border))",
+                backgroundColor: "rgb(var(--shaft-surface) / 0.7)",
+                backdropFilter: "blur(12px)",
+              }}
+              aria-label="Toggle theme"
+            >
+              {/* Sun/Moon icon */}
+              <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
+                {isLight ? "◐" : "◑"}
+              </span>
+              <span
+                className="font-space-mono text-[8px] tracking-[0.25em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-cream))]"
+                style={{ color: "rgb(var(--shaft-muted))" }}
+              >
+                {isLight ? "DARK" : "LIGHT"}
+              </span>
+            </button>
+
+            {/* Language selector — dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1.5 px-3 py-1.5 border transition-all duration-200 hover:border-[rgb(var(--shaft-crimson))] group"
+                style={{
+                  borderColor: langOpen ? "rgb(var(--shaft-crimson))" : "rgb(var(--shaft-border))",
+                  backgroundColor: "rgb(var(--shaft-surface) / 0.7)",
+                  backdropFilter: "blur(12px)",
+                }}
+                aria-label="Change language"
+              >
+                <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
+                  ⌐
+                </span>
+                <span
+                  className="font-space-mono text-[8px] tracking-[0.25em] uppercase font-bold"
+                  style={{ color: "rgb(var(--shaft-cream))" }}
+                >
+                  {locale.toUpperCase()}
+                </span>
+                <motion.span
+                  animate={{ rotate: langOpen ? 180 : 0 }}
+                  className="text-[7px]"
+                  style={{ color: "rgb(var(--shaft-muted))" }}
+                >
+                  ▾
+                </motion.span>
+              </button>
+
+              {/* Dropdown panel */}
+              <AnimatePresence>
+                {langOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4, scaleY: 0.9 }}
+                    animate={{ opacity: 1, y: 0, scaleY: 1 }}
+                    exit={{ opacity: 0, y: -4, scaleY: 0.9 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-full left-0 mt-1 origin-top border overflow-hidden"
+                    style={{
+                      borderColor: "rgb(var(--shaft-border))",
+                      backgroundColor: "rgb(var(--shaft-surface) / 0.95)",
+                      backdropFilter: "blur(20px)",
+                      minWidth: "120px",
+                    }}
+                  >
+                    {LOCALES.map((l) => (
+                      <button
+                        key={l.code}
+                        onClick={() => selectLang(l.code)}
+                        className="w-full flex items-center justify-between px-3 py-2 transition-all duration-100 hover:pl-4"
+                        style={{
+                          backgroundColor: locale === l.code ? "rgb(var(--shaft-crimson) / 0.15)" : "transparent",
+                          borderBottom: "1px solid rgb(var(--shaft-border) / 0.5)",
+                        }}
+                      >
+                        <span
+                          className="font-space-mono text-[8px] tracking-[0.2em] uppercase"
+                          style={{
+                            color: locale === l.code ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-muted))",
+                          }}
+                        >
+                          {l.label}
+                        </span>
+                        <span
+                          className="font-space-mono text-[7px] tracking-[0.15em]"
+                          style={{
+                            color: locale === l.code ? "rgb(var(--shaft-crimson))" : "rgb(var(--shaft-muted) / 0.5)",
+                          }}
+                        >
+                          {l.native}
+                        </span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          DESKTOP: Right-side vertical chapter list
+          ═══════════════════════════════════════════════════════════════ */}
       <AnimatePresence>
         {visible && (
           <motion.nav
@@ -99,7 +218,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               className="absolute right-0 top-2 bottom-2 w-px"
               style={{ backgroundColor: "rgb(var(--shaft-border))" }}
             />
-            {/* Scroll-progress fill — crimson line grows from top */}
+            {/* Scroll-progress fill */}
             <motion.div
               className="absolute right-0 top-2 bottom-2 w-px origin-top"
               style={{
@@ -138,31 +257,13 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                 </button>
               );
             })}
-
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="mt-5 pr-4 font-space-mono text-[7px] tracking-[0.28em] uppercase transition-opacity duration-100 hover:opacity-100"
-              style={{ color: "rgb(var(--shaft-muted))", opacity: 0.45 }}
-              aria-label="Toggle theme"
-            >
-              {isLight ? <ShaftDecipher text={t("nav.theme.dark")} /> : <ShaftDecipher text={t("nav.theme.light")} />}
-            </button>
-
-            {/* Language switcher — click to cycle */}
-            <button
-              onClick={cycleLang}
-              className="mt-2 pr-4 font-space-mono text-[7px] tracking-[0.28em] uppercase transition-opacity duration-100 hover:opacity-100"
-              style={{ color: "rgb(var(--shaft-gold))", opacity: 0.5 }}
-              aria-label="Change language"
-            >
-              <ShaftDecipher text={`[ ${locale.toUpperCase()} ]`} />
-            </button>
           </motion.nav>
         )}
       </AnimatePresence>
 
-      {/* ── Mobile — fixed bottom strip ── */}
+      {/* ═══════════════════════════════════════════════════════════════
+          MOBILE: Fixed bottom strip — chapter nav only
+          ═══════════════════════════════════════════════════════════════ */}
       <AnimatePresence>
         {visible && (
           <motion.div
@@ -170,10 +271,11 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.25, delay: 0.15 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex lg:hidden items-center gap-0"
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] flex lg:hidden items-center gap-0"
             style={{
-              backgroundColor: "rgb(var(--shaft-surface))",
+              backgroundColor: "rgb(var(--shaft-surface) / 0.9)",
               border: "1px solid rgb(var(--shaft-border))",
+              backdropFilter: "blur(16px)",
             }}
           >
             {chapters.map((ch) => {
@@ -199,34 +301,6 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                 </button>
               );
             })}
-            {/* Mobile theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="px-3 py-2.5 border-l transition-colors duration-100"
-              style={{ borderColor: "rgb(var(--shaft-border))" }}
-              aria-label="Toggle theme"
-            >
-              <span
-                className="font-space-mono text-[8px] tracking-[0.1em]"
-                style={{ color: "rgb(var(--shaft-muted))" }}
-              >
-                {isLight ? "D" : "L"}
-              </span>
-            </button>
-            {/* Mobile language toggle */}
-            <button
-              onClick={cycleLang}
-              className="px-3 py-2.5 border-l transition-colors duration-100"
-              style={{ borderColor: "rgb(var(--shaft-border))" }}
-              aria-label="Change language"
-            >
-              <span
-                className="font-space-mono text-[8px] tracking-[0.1em]"
-                style={{ color: "rgb(var(--shaft-gold))" }}
-              >
-                {locale.toUpperCase()}
-              </span>
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

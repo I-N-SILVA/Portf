@@ -7,6 +7,30 @@ import { useTranslation } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 import Image from "next/image";
 
+/* ─── Letter-by-letter stagger animation ─────────────────────────── */
+function KineticName({ text, delay = 0 }: { text: string; delay?: number }) {
+  return (
+    <span className="inline-flex" aria-label={text}>
+      {text.split("").map((char, i) => (
+        <motion.span
+          key={`${char}-${i}`}
+          initial={{ y: "110%", opacity: 0, rotateX: -90 }}
+          animate={{ y: 0, opacity: 1, rotateX: 0 }}
+          transition={{
+            duration: 0.55,
+            delay: delay + i * 0.04,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="inline-block will-change-transform"
+          style={{ transformOrigin: "bottom center" }}
+        >
+          {char === " " ? <span>&nbsp;</span> : char}
+        </motion.span>
+      ))}
+    </span>
+  );
+}
+
 export default function ShaftHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const { playSound } = useSoundEffects();
@@ -50,14 +74,14 @@ export default function ShaftHero() {
       <div className="shaft-scanline" />
       <div className="shaft-vignette" />
 
-      {/* ── Background geometry & Video Window ── */}
+      {/* ── Background geometry & Portrait Window ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         
         {/* Large watermark number — parallax */}
         <motion.div
           className="absolute right-[4%] top-1/2 -translate-y-1/2 font-playfair font-black leading-none select-none shaft-glitch"
           style={{
-            fontSize: "clamp(160px, 28vw, 380px)",
+            fontSize: "clamp(120px, 28vw, 380px)",
             color: "rgb(20 20 20)",
             userSelect: "none",
             y: watermarkY,
@@ -68,19 +92,19 @@ export default function ShaftHero() {
           01
         </motion.div>
 
-        {/* Geometric frame group — parallax at half rate */}
+        {/* ── Desktop portrait frame ── */}
         <motion.div
           className="absolute inset-0 hidden md:block"
           style={{ y: frameY }}
           aria-hidden="true"
         >
-          {/* Main Video "Window" Panel */}
+          {/* Main Portrait Panel */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             onAnimationComplete={() => playSound("shutter")}
             transition={{ duration: 1.2, delay: 0.5 }}
-            className="absolute right-[10%] top-[20%] w-[40vw] h-[65vh] group overflow-hidden border border-white/5"
+            className="absolute right-[8%] top-[12%] w-[38vw] h-[72vh] group overflow-hidden border border-white/5"
             style={{ 
               x: useTransform(springX, (v) => v * 0.8),
               y: useTransform(springY, (v) => v * 0.8),
@@ -88,13 +112,17 @@ export default function ShaftHero() {
           >
             <Image
               src="/hero-portrait.png"
-              alt="Hero"
+              alt="Ian N. Silva"
               fill
-              className="absolute inset-0 w-full h-full object-contain opacity-90 drop-shadow-2xl transition-all duration-1000 group-hover:scale-105"
+              priority
+              className="absolute inset-0 w-full h-full object-contain object-bottom opacity-90 drop-shadow-2xl transition-all duration-1000 group-hover:scale-105"
             />
-            
-            {/* Inner frame scanline specifically for the video */}
             <div className="absolute inset-0 shaft-scanline opacity-20" />
+            {/* Bottom gradient so portrait blends into bg */}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
+              style={{ background: "linear-gradient(to top, rgb(var(--shaft-bg)), transparent)" }}
+            />
           </motion.div>
 
           {/* Rectangular secondary frame */}
@@ -102,9 +130,9 @@ export default function ShaftHero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.15, delay: 0.9 }}
-            className="absolute right-[8%] top-[18%] hidden md:block"
+            className="absolute right-[6%] top-[10%] hidden md:block"
             style={{
-              width: "16vw",
+              width: "14vw",
               height: "48vh",
               border: "1px solid rgb(var(--shaft-border))",
               x: springX,
@@ -119,8 +147,8 @@ export default function ShaftHero() {
             transition={{ duration: 0.3, delay: 1.1 }}
             className="absolute hidden md:block"
             style={{
-              right: "7%",
-              top: "17.5%",
+              right: "5%",
+              top: "9%",
               width: "18vw",
               height: "1px",
               backgroundColor: "rgb(var(--shaft-crimson))",
@@ -130,21 +158,42 @@ export default function ShaftHero() {
             }}
           />
 
-          {/* Thin horizontal rule at bottom of frame */}
+          {/* Bottom horizontal rule */}
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 0.4 }}
             transition={{ duration: 0.35, delay: 1.15 }}
             className="absolute hidden md:block"
             style={{
-              right: "7%",
-              top: "67%",
+              right: "5%",
+              top: "75%",
               width: "18vw",
               height: "1px",
               backgroundColor: "rgb(var(--shaft-border))",
               x: useTransform(springX, (v) => v * 0.9),
             }}
           />
+        </motion.div>
+
+        {/* ── Mobile portrait — visible below md ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 0.35, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="absolute bottom-0 right-0 w-[75vw] h-[50vh] md:hidden"
+        >
+          <Image
+            src="/hero-portrait.png"
+            alt="Ian N. Silva"
+            fill
+            priority
+            className="object-contain object-bottom opacity-80"
+          />
+          <div
+            className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+            style={{ background: "linear-gradient(to top, rgb(var(--shaft-bg)), transparent)" }}
+          />
+          <div className="absolute inset-0 shaft-scanline opacity-10" />
         </motion.div>
       </div>
 
@@ -153,73 +202,67 @@ export default function ShaftHero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.1, delay: 0.35 }}
-        className="absolute top-8 right-8 font-space-mono text-[9px] tracking-[0.45em] uppercase z-20"
+        className="absolute top-6 right-6 md:top-8 md:right-8 font-space-mono text-[8px] md:text-[9px] tracking-[0.45em] uppercase z-20"
         style={{ color: "rgb(var(--shaft-muted))" }}
       >
         {t("hero.scene")}
       </motion.div>
 
       {/* ── Main content — left-biased ── */}
-      <div className="relative z-10 w-full px-8 md:px-16 lg:px-24">
-        <div style={{ maxWidth: "62%" }}>
+      <div className="relative z-10 w-full px-6 md:px-16 lg:px-24">
+        <div className="max-w-full md:max-w-[62%]">
 
           {/* Pre-title annotation */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.1, delay: 0.15 }}
-            className="font-space-mono text-[9px] tracking-[0.4em] uppercase mb-6"
+            className="font-space-mono text-[8px] md:text-[9px] tracking-[0.4em] uppercase mb-4 md:mb-6"
             style={{ color: "rgb(var(--shaft-crimson))" }}
           >
             {t("hero.pretitle")}
           </motion.div>
 
-          {/* Name — staggered lines */}
+          {/* Name — letter-by-letter kinetic reveal */}
           <div className="overflow-hidden">
-            <motion.h1
+            <h1
               className="font-playfair font-black leading-[0.83] tracking-tighter"
               style={{
                 color: "rgb(var(--shaft-cream))",
-                fontSize: "clamp(72px, 13vw, 200px)",
+                fontSize: "clamp(52px, 13vw, 200px)",
               }}
-              initial={{ y: "108%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.38, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             >
-              IAN N.
-            </motion.h1>
+              <KineticName text="IAN N." delay={0.1} />
+            </h1>
           </div>
 
           <div className="overflow-hidden" style={{ marginLeft: "3vw" }}>
-            <motion.h1
+            <h1
               className="font-playfair font-black leading-[0.83] tracking-tighter"
               style={{
                 color: "rgb(var(--shaft-cream))",
-                fontSize: "clamp(72px, 13vw, 200px)",
+                fontSize: "clamp(52px, 13vw, 200px)",
               }}
-              initial={{ y: "108%", opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.38, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             >
-              SILVA.
-            </motion.h1>
+              <KineticName text="SILVA." delay={0.35} />
+            </h1>
           </div>
 
-          {/* Separator */}
+          {/* Animated underline that traces under the name */}
           <motion.div
-            className="h-px w-full mt-8 mb-6 origin-left"
+            className="h-px w-full mt-6 md:mt-8 mb-4 md:mb-6 origin-left"
             style={{ backgroundColor: "rgb(var(--shaft-border))" }}
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: 0.35, delay: 0.5 }}
+            transition={{ duration: 0.35, delay: 0.7 }}
           />
 
           {/* Tagline */}
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: 0.6 }}
-            className="font-space-mono text-[10px] md:text-[12px] tracking-[0.35em] uppercase"
+            transition={{ duration: 0.25, delay: 0.8 }}
+            className="font-space-mono text-[9px] md:text-[12px] tracking-[0.25em] md:tracking-[0.35em] uppercase"
             style={{ color: "rgb(var(--shaft-muted))" }}
           >
             {t("hero.tagline")}{" "}
@@ -232,15 +275,15 @@ export default function ShaftHero() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.2, delay: 0.8 }}
-            className="mt-8 flex items-center gap-3"
+            transition={{ duration: 0.2, delay: 0.95 }}
+            className="mt-6 md:mt-8 flex items-center gap-3"
           >
             <div
               className="w-1.5 h-1.5 shrink-0"
               style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
             />
             <span
-              className="font-space-mono text-[9px] tracking-[0.25em] uppercase"
+              className="font-space-mono text-[8px] md:text-[9px] tracking-[0.2em] md:tracking-[0.25em] uppercase"
               style={{ color: "rgb(var(--shaft-muted))" }}
             >
               {t("hero.marker")}
@@ -251,12 +294,12 @@ export default function ShaftHero() {
           <motion.button
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: 1.0 }}
+            transition={{ duration: 0.25, delay: 1.1 }}
             onClick={() => {
               playSound("click");
               document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="mt-10 group flex items-center gap-0 border transition-all duration-150 relative z-20"
+            className="mt-8 md:mt-10 group flex items-center gap-0 border transition-all duration-150 relative z-20"
             style={{
               borderColor: "rgb(var(--shaft-crimson))",
               backgroundColor: "transparent",
@@ -264,7 +307,7 @@ export default function ShaftHero() {
             whileHover={{ backgroundColor: "rgb(204 17 34 / 0.08)" }}
           >
             <span
-              className="font-space-mono text-[9px] tracking-[0.45em] uppercase px-6 py-3 border-r"
+              className="font-space-mono text-[8px] md:text-[9px] tracking-[0.35em] md:tracking-[0.45em] uppercase px-4 md:px-6 py-2.5 md:py-3 border-r"
               style={{
                 color: "rgb(var(--shaft-cream))",
                 borderColor: "rgb(var(--shaft-crimson))",
@@ -273,7 +316,7 @@ export default function ShaftHero() {
               <ShaftDecipher text={t("hero.cta")} />
             </span>
             <span
-              className="font-space-mono text-[11px] px-4 py-3 transition-transform duration-150 group-hover:translate-x-1"
+              className="font-space-mono text-[11px] px-3 md:px-4 py-2.5 md:py-3 transition-transform duration-150 group-hover:translate-x-1"
               style={{ color: "rgb(var(--shaft-crimson))" }}
             >
               →
@@ -286,9 +329,9 @@ export default function ShaftHero() {
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.2, delay: 1.2 }}
+        transition={{ duration: 0.2, delay: 1.3 }}
         onClick={scrollToNext}
-        className="absolute bottom-8 left-8 md:left-16 lg:left-24 flex items-center gap-4 group z-20"
+        className="absolute bottom-6 md:bottom-8 left-6 md:left-16 lg:left-24 flex items-center gap-4 group z-20"
         aria-label="Scroll down"
       >
         <motion.div
@@ -298,7 +341,7 @@ export default function ShaftHero() {
           style={{ backgroundColor: "rgb(var(--shaft-border))" }}
         />
         <span
-          className="font-space-mono text-[8px] tracking-[0.35em] uppercase"
+          className="font-space-mono text-[7px] md:text-[8px] tracking-[0.35em] uppercase"
           style={{ color: "rgb(var(--shaft-muted))" }}
         >
           <ShaftDecipher text={t("hero.scroll")} />
