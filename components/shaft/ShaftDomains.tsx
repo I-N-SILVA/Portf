@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { useTranslation } from "@/lib/i18n";
 
 const domains = [
   {
@@ -26,8 +27,15 @@ const domains = [
 
 export default function ShaftDomains() {
   const sectionRef = useRef<HTMLElement>(null);
+  const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
+  const domains = [
+    { num: "I.", title: t("domains.1.title"), body: t("domains.1.body"), wide: true },
+    { num: "II.", title: t("domains.2.title"), body: t("domains.2.body"), wide: false },
+    { num: "III.", title: t("domains.3.title"), body: t("domains.3.body"), wide: false },
+  ];
 
   return (
     <section
@@ -62,7 +70,7 @@ export default function ShaftDomains() {
         >
           <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
           <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
-            04 / CORE DOMAINS
+            {t("domains.section")}
           </span>
           <motion.div
             className="h-px flex-1 origin-left"

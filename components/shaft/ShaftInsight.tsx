@@ -13,6 +13,7 @@ import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
 import { profileData, socialLinks } from "@/lib/placeholder-content";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useTranslation } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 
 /* ─── Types ──────────────────────────────────────────────────────────── */
@@ -91,6 +92,13 @@ const vpOpts = { once: true, margin: "-60px" as const };
 /* ─── Component ──────────────────────────────────────────────────────── */
 export default function ShaftInsight() {
   const { playSound } = useSoundEffects();
+  const { t } = useTranslation();
+
+  const highlights: Highlight[] = [
+    { title: t("insight.highlight1.title"), description: t("insight.highlight1.desc") },
+    { title: t("insight.highlight2.title"), description: t("insight.highlight2.desc") },
+    { title: t("insight.highlight3.title"), description: t("insight.highlight3.desc") },
+  ];
 
   return (
     <section
@@ -115,7 +123,7 @@ export default function ShaftInsight() {
             className="font-space-mono text-[8px] tracking-[0.55em] uppercase"
             style={{ color: "rgb(var(--shaft-gold))" }}
           >
-            <ShaftDecipher text="03 / INSIGHT" />
+            <ShaftDecipher text={t("insight.section")} />
           </span>
           <motion.div
             className="h-px flex-1 origin-left"
@@ -174,7 +182,7 @@ export default function ShaftInsight() {
                     backgroundColor: "rgb(var(--shaft-surface) / 0.55)",
                   }}
                 >
-                  Portfolio Insight
+                  {t("insight.badge")}
                 </span>
               </motion.div>
 
@@ -286,7 +294,7 @@ export default function ShaftInsight() {
                       borderColor: "rgb(var(--shaft-crimson))",
                     }}
                   >
-                    <ShaftDecipher text="VIEW CASE STUDIES" />
+                    <ShaftDecipher text={t("insight.cta")} />
                   </span>
                   <span
                     className="font-space-mono text-[11px] px-4 py-3 transition-transform duration-150 group-hover:translate-x-1"
@@ -364,8 +372,7 @@ export default function ShaftInsight() {
                     className="mt-4 max-w-sm text-sm leading-relaxed"
                     style={{ color: "rgb(var(--shaft-cream-dim))" }}
                   >
-                    Partnering with future-facing teams to build interfaces that
-                    feel cinematic yet effortless.
+                    {t("insight.subtitle")}
                   </motion.p>
                 </div>
 

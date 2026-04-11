@@ -17,6 +17,7 @@ import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
 import BootSequence from "@/components/ui/BootSequence";
 import Cursor from "@/components/ui/inverted-cursor";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { LocaleProvider } from "@/lib/i18n";
 
 export default function ShaftLandingContent() {
   const [stage, setStage] = useState<"boot" | "intertitle" | "main">("boot");
@@ -32,7 +33,7 @@ export default function ShaftLandingContent() {
   }, [playSound]);
 
   return (
-    <>
+    <LocaleProvider>
       <Cursor />
       <div className="shaft-paper-texture" />
       
@@ -85,6 +86,6 @@ export default function ShaftLandingContent() {
           </ShaftPerspectiveSection>
         </motion.main>
       )}
-    </>
+    </LocaleProvider>
   );
 }

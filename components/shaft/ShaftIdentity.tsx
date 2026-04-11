@@ -4,6 +4,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { profileData } from "@/lib/placeholder-content";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useTranslation } from "@/lib/i18n";
+import Image from "next/image";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
@@ -24,6 +26,7 @@ const metaItems = [
 export default function ShaftIdentity() {
   const sectionRef = useRef<HTMLElement>(null);
   const { playSound } = useSoundEffects();
+  const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
@@ -67,7 +70,7 @@ export default function ShaftIdentity() {
             className="font-space-mono text-[8px] tracking-[0.55em] uppercase"
             style={{ color: "rgb(var(--shaft-gold))" }}
           >
-            02 / IDENTITY
+            {t("identity.section")}
           </span>
           <motion.div
             className="h-px flex-1 origin-left"
@@ -94,16 +97,16 @@ export default function ShaftIdentity() {
               className="font-space-mono text-[10px] tracking-[0.35em] uppercase mb-10"
               style={{ color: "rgb(var(--shaft-crimson))" }}
             >
-              {"// 02"}
+              {t("identity.pretitle")}
             </motion.div>
 
             {/* Kinetic Lines */}
             {[
-              { text: "The question isn't", indent: false },
-              { text: "what I build.",       indent: true  },
+              { text: t("identity.line1"), indent: false },
+              { text: t("identity.line2"),       indent: true  },
               { text: "",                    indent: false },
-              { text: "It's what breaks",    indent: false },
-              { text: "without me.",         indent: true  },
+              { text: t("identity.line3"),    indent: false },
+              { text: t("identity.line4"),         indent: true  },
             ].map((line, i) =>
               line.text === "" ? (
                 <div key={i} className="h-8" />
@@ -154,6 +157,32 @@ export default function ShaftIdentity() {
 
           {/* ── Right: Metadata dossier ── */}
           <div className="flex flex-col gap-0">
+            {/* Profile avatar */}
+            <motion.div
+              custom={0.1}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              className="mb-8 relative"
+            >
+              <div
+                className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+                style={{ backgroundColor: "rgb(var(--shaft-crimson) / 0.12)" }}
+              />
+              <Image
+                src="/brand-avatar.png"
+                alt={profileData.name}
+                width={112}
+                height={112}
+                className="relative h-28 w-28 rounded-full border-2 object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                style={{
+                  borderColor: "rgb(var(--shaft-crimson) / 0.4)",
+                  boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
+                }}
+              />
+            </motion.div>
+
             {metaItems.map((item, i) => (
               <motion.div
                 key={item.label}
@@ -210,7 +239,7 @@ export default function ShaftIdentity() {
                 className="font-space-mono text-[9px] tracking-[0.3em] uppercase"
                 style={{ color: "rgb(var(--shaft-muted))" }}
               >
-                Available for collaboration
+                {t("identity.available")}
               </span>
             </motion.div>
           </div>

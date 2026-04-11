@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/lib/i18n";
 
 interface ShaftIntertitleProps {
   onComplete: () => void;
@@ -9,6 +10,7 @@ interface ShaftIntertitleProps {
 
 export default function ShaftIntertitle({ onComplete }: ShaftIntertitleProps) {
   const [isVisible, setIsVisible] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Stage the exit
@@ -42,7 +44,7 @@ export default function ShaftIntertitle({ onComplete }: ShaftIntertitleProps) {
               className="font-space-mono text-[9px] tracking-[0.55em] uppercase mb-10"
               style={{ color: "rgb(var(--shaft-gold) / 0.7)" }}
             >
-              PORTFOLIO · 2026
+              {t("intertitle.year")}
             </motion.div>
 
             {/* Name — the hero moment */}
@@ -81,7 +83,7 @@ export default function ShaftIntertitle({ onComplete }: ShaftIntertitleProps) {
               className="font-space-mono text-[9px] tracking-[0.45em] uppercase"
               style={{ color: "rgb(var(--shaft-muted))" }}
             >
-              AI AUTOMATION ENGINEER
+              {t("intertitle.subtitle")}
             </motion.div>
           </div>
         </motion.div>

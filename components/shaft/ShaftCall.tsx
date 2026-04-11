@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { useState, useRef } from "react";
 import CalendarBooking from "@/components/CalendarBooking";
 import { socialLinks } from "@/lib/placeholder-content";
+import { useTranslation } from "@/lib/i18n";
 
 // Minimal social icon labels for text-only rendering
 const SOCIAL_LABELS: Record<string, string> = {
@@ -24,6 +25,7 @@ const vpOpts = { once: true, margin: "-60px" };
 export default function ShaftCall() {
   const [showBooking, setShowBooking] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
@@ -70,7 +72,7 @@ export default function ShaftCall() {
         >
           <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
           <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
-            05 / THE CALL
+            {t("call.section")}
           </span>
           <motion.div 
             className="h-px flex-1 origin-left" 
@@ -95,7 +97,7 @@ export default function ShaftCall() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            SCHEDULE
+            {t("call.title1")}
           </motion.h2>
 
           {/* Crimson rule */}
@@ -120,7 +122,7 @@ export default function ShaftCall() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
-            THE CALL.
+            {t("call.title2")}
           </motion.h2>
 
           {/* Dialogue text — sparse, pause-heavy */}
@@ -132,9 +134,9 @@ export default function ShaftCall() {
             className="mt-12 space-y-1"
           >
             {[
-              { text: "30 minutes.", dim: true },
-              { text: "No pitch.",   dim: true },
-              { text: "Just a real conversation.", dim: false },
+              { text: t("call.line1"), dim: true },
+              { text: t("call.line2"),   dim: true },
+              { text: t("call.line3"), dim: false },
             ].map(({ text, dim }) => (
               <p
                 key={text}
@@ -170,7 +172,7 @@ export default function ShaftCall() {
                   borderColor: "rgb(var(--shaft-crimson))",
                 }}
               >
-                {showBooking ? "[ CLOSE BOOKING ]" : "[ BOOK A SESSION"}
+                {showBooking ? t("call.cta.close") : t("call.cta.open")}
               </span>
               <motion.span
                 animate={{ x: showBooking ? 0 : [0, 5, 0] }}
@@ -195,7 +197,7 @@ export default function ShaftCall() {
               className="font-space-mono text-[8px] tracking-[0.3em] uppercase"
               style={{ color: "rgb(var(--shaft-muted))" }}
             >
-              or reach directly —
+              {t("call.email.prefix")}
             </span>
             <a
               href="mailto:iannogueira@proton.me"
@@ -216,7 +218,7 @@ export default function ShaftCall() {
             className="font-playfair text-sm font-bold italic"
             style={{ color: "rgb(var(--shaft-muted))" }}
           >
-            FIN.
+            {t("call.fin")}
           </span>
         </div>
       </div>
@@ -240,7 +242,7 @@ export default function ShaftCall() {
                   className="font-space-mono text-[8px] tracking-[0.55em] uppercase"
                   style={{ color: "rgb(var(--shaft-gold))" }}
                 >
-                  SELECT A SLOT
+                  {t("call.calendar")}
                 </span>
                 <motion.div 
                   className="h-px flex-1 origin-left" 
@@ -271,7 +273,7 @@ export default function ShaftCall() {
             className="font-space-mono text-[8px] tracking-[0.35em] uppercase"
             style={{ color: "rgb(var(--shaft-muted))" }}
           >
-            © {new Date().getFullYear()} IAN N. SILVA — ALL RIGHTS RESERVED
+            © {new Date().getFullYear()} IAN N. SILVA — {t("call.copyright")}
           </span>
 
           {/* Social links as text */}

@@ -3,11 +3,14 @@
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { useRef, useEffect } from "react";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useTranslation } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
+import Image from "next/image";
 
 export default function ShaftHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const { playSound } = useSoundEffects();
+  const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
   
   // Vertical Parallax
@@ -157,7 +160,7 @@ export default function ShaftHero() {
         className="absolute top-8 right-8 font-space-mono text-[9px] tracking-[0.45em] uppercase z-20"
         style={{ color: "rgb(var(--shaft-muted))" }}
       >
-        [ 01 / OPENING ]
+        {t("hero.scene")}
       </motion.div>
 
       {/* ── Main content — left-biased ── */}
@@ -172,7 +175,7 @@ export default function ShaftHero() {
             className="font-space-mono text-[9px] tracking-[0.4em] uppercase mb-6"
             style={{ color: "rgb(var(--shaft-crimson))" }}
           >
-            {"// PORTFOLIO"}
+            {t("hero.pretitle")}
           </motion.div>
 
           {/* Name — staggered lines */}
@@ -223,9 +226,9 @@ export default function ShaftHero() {
             className="font-space-mono text-[10px] md:text-[12px] tracking-[0.35em] uppercase"
             style={{ color: "rgb(var(--shaft-muted))" }}
           >
-            AI Automation Engineer ·{" "}
+            {t("hero.tagline")}{" "}
             <span style={{ color: "rgb(var(--shaft-cream-dim))" }}>
-              Behavioral Economist
+              {t("hero.tagline2")}
             </span>
           </motion.p>
 
@@ -244,7 +247,7 @@ export default function ShaftHero() {
               className="font-space-mono text-[9px] tracking-[0.25em] uppercase"
               style={{ color: "rgb(var(--shaft-muted))" }}
             >
-              Building at the intersection of AI & human behavior
+              {t("hero.marker")}
             </span>
           </motion.div>
 
@@ -271,7 +274,7 @@ export default function ShaftHero() {
                 borderColor: "rgb(var(--shaft-crimson))",
               }}
             >
-              <ShaftDecipher text="SCHEDULE A CALL" />
+              <ShaftDecipher text={t("hero.cta")} />
             </span>
             <span
               className="font-space-mono text-[11px] px-4 py-3 transition-transform duration-150 group-hover:translate-x-1"
@@ -302,7 +305,7 @@ export default function ShaftHero() {
           className="font-space-mono text-[8px] tracking-[0.35em] uppercase"
           style={{ color: "rgb(var(--shaft-muted))" }}
         >
-          <ShaftDecipher text="SCROLL" />
+          <ShaftDecipher text={t("hero.scroll")} />
         </span>
       </motion.button>
     </section>

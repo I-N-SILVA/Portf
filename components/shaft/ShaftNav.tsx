@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useTranslation, LOCALES } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 
 const chapters = [
-  { id: "shaft-hero",     label: "OPENING",  num: "01" },
-  { id: "shaft-identity", label: "IDENTITY", num: "02" },
-  { id: "shaft-archive",  label: "ARCHIVE",  num: "03" },
-  { id: "shaft-domains",  label: "DOMAINS",  num: "04" },
-  { id: "shaft-call",     label: "THE CALL", num: "05" },
+  { id: "shaft-hero",     key: "nav.opening",  num: "01" },
+  { id: "shaft-identity", key: "nav.identity", num: "02" },
+  { id: "shaft-archive",  key: "nav.archive",  num: "03" },
+  { id: "shaft-domains",  key: "nav.domains",  num: "04" },
+  { id: "shaft-call",     key: "nav.call",     num: "05" },
 ];
 
 interface ShaftNavProps {
@@ -20,7 +21,9 @@ interface ShaftNavProps {
 export default function ShaftNav({ visible }: ShaftNavProps) {
   const [active, setActive]   = useState("shaft-hero");
   const [isLight, setIsLight] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const { playSound } = useSoundEffects();
+  const { locale, setLocale, t } = useTranslation();
 
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 22, restDelta: 0.001 });
@@ -71,6 +74,13 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
     } catch (_) {}
   };
 
+  const cycleLang = () => {
+    playSound("click");
+    const idx = LOCALES.findIndex((l) => l.code === locale);
+    const next = LOCALES[(idx + 1) % LOCALES.length];
+    setLocale(next.code);
+  };
+
   return (
     <>
       {/* ── Desktop — right-side vertical chapter list ── */}
@@ -106,7 +116,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                   key={ch.id}
                   onClick={() => scrollTo(ch.id)}
                   className="relative flex items-center gap-2.5 pr-4 py-2.5 group"
-                  aria-label={`Go to ${ch.label}`}
+                  aria-label={`Go to ${t(ch.key)}`}
                 >
                   <span
                     className="font-space-mono text-[8px] tracking-[0.3em] uppercase transition-all duration-100"
@@ -115,7 +125,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                       opacity: isActive ? 1 : 0.6,
                     }}
                   >
-                    {ch.num} <ShaftDecipher text={ch.label} />
+                    {ch.num} <ShaftDecipher text={t(ch.key)} />
                   </span>
                   {isActive && (
                     <motion.div
@@ -136,7 +146,17 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               style={{ color: "rgb(var(--shaft-muted))", opacity: 0.45 }}
               aria-label="Toggle theme"
             >
-              {isLight ? <ShaftDecipher text="[ DARK ]" /> : <ShaftDecipher text="[ LIGHT ]" />}
+              {isLight ? <ShaftDecipher text={t("nav.theme.dark")} /> : <ShaftDecipher text={t("nav.theme.light")} />}
+            </button>
+
+            {/* Language switcher — click to cycle */}
+            <button
+              onClick={cycleLang}
+              className="mt-2 pr-4 font-space-mono text-[7px] tracking-[0.28em] uppercase transition-opacity duration-100 hover:opacity-100"
+              style={{ color: "rgb(var(--shaft-gold))", opacity: 0.5 }}
+              aria-label="Change language"
+            >
+              <ShaftDecipher text={`[ ${locale.toUpperCase()} ]`} />
             </button>
           </motion.nav>
         )}
@@ -166,7 +186,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                   style={{
                     backgroundColor: isActive ? "rgb(var(--shaft-crimson))" : "transparent",
                   }}
-                  aria-label={ch.label}
+                  aria-label={t(ch.key)}
                 >
                   <span
                     className="font-space-mono text-[8px] tracking-[0.2em]"
@@ -191,6 +211,20 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                 style={{ color: "rgb(var(--shaft-muted))" }}
               >
                 {isLight ? "D" : "L"}
+              </span>
+            </button>
+            {/* Mobile language toggle */}
+            <button
+              onClick={cycleLang}
+              className="px-3 py-2.5 border-l transition-colors duration-100"
+              style={{ borderColor: "rgb(var(--shaft-border))" }}
+              aria-label="Change language"
+            >
+              <span
+                className="font-space-mono text-[8px] tracking-[0.1em]"
+                style={{ color: "rgb(var(--shaft-gold))" }}
+              >
+                {locale.toUpperCase()}
               </span>
             </button>
           </motion.div>

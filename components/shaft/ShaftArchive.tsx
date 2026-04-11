@@ -3,6 +3,19 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { projects } from "@/lib/placeholder-content";
+import { useTranslation } from "@/lib/i18n";
+import Image from "next/image";
+
+/* Map project IDs to generated images */
+const PROJECT_IMAGES: Record<string, string> = {
+  "8": "/projects/ai-agents.png",
+  "7": "/projects/calendar.png",
+  "2": "/projects/content-engine.png",
+  "3": "/projects/prompt-library.png",
+  "4": "/projects/defi-analytics.png",
+  "5": "/projects/ai-agents.png",
+  "6": "/projects/prompt-library.png",
+};
 
 const CATEGORIES = ["ALL", "AI", "WEB3", "CREATIVE"];
 
@@ -10,6 +23,7 @@ export default function ShaftArchive() {
   const [filter, setFilter]     = useState("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
@@ -50,7 +64,7 @@ export default function ShaftArchive() {
         >
           <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
           <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
-            03 / THE ARCHIVE
+            {t("archive.section")}
           </span>
           <motion.div 
             className="h-px flex-1 origin-left" 
@@ -197,6 +211,33 @@ export default function ShaftArchive() {
                         {project.fullDescription || project.description}
                       </p>
 
+                      {/* ── Cinematic project image ── */}
+                      {PROJECT_IMAGES[project.id] && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.98 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.4 }}
+                          className="relative overflow-hidden mb-6 group/img"
+                          style={{ maxHeight: "280px" }}
+                        >
+                          <Image
+                            src={PROJECT_IMAGES[project.id]}
+                            alt={project.title}
+                            width={800}
+                            height={400}
+                            className="w-full h-auto object-cover grayscale group-hover/img:grayscale-0 transition-all duration-700"
+                            style={{ opacity: 0.7 }}
+                          />
+                          {/* Scanline overlay */}
+                          <div className="absolute inset-0 shaft-scanline opacity-30 pointer-events-none" />
+                          {/* Gradient fade at bottom */}
+                          <div
+                            className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+                            style={{ background: "linear-gradient(to top, rgb(var(--shaft-bg)), transparent)" }}
+                          />
+                        </motion.div>
+                      )}
+
                       {project.features && project.features.length > 0 && (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mb-5">
                           {project.features.slice(0, 4).map((feat) => (
@@ -231,7 +272,7 @@ export default function ShaftArchive() {
                             }}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            VIEW PROJECT →
+                            {t("archive.viewProject")}
                           </a>
                         )}
                         {project.github && (
@@ -243,7 +284,7 @@ export default function ShaftArchive() {
                             style={{ color: "rgb(var(--shaft-muted))" }}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            SOURCE →
+                            {t("archive.source")}
                           </a>
                         )}
                         <span
