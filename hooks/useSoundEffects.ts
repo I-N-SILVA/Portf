@@ -4,126 +4,208 @@ import { useCallback, useRef, useEffect } from "react";
 
 type SoundType = "focus" | "close" | "maximize" | "minimize" | "click" | "shutter" | "hum" | "glitch";
 
+/* ─── helpers ─────────────────────────────────────────────────────── */
+function createFilter(ctx: AudioContext, type: BiquadFilterType, freq: number, q = 1) {
+  const f = ctx.createBiquadFilter();
+  f.type = type;
+  f.frequency.value = freq;
+  f.Q.value = q;
+  return f;
+}
+
+function noise(ctx: AudioContext, duration: number) {
+  const bufLen = Math.ceil(ctx.sampleRate * duration);
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  return src;
+}
+
 export function useSoundEffects() {
-    const audioContextRef = useRef<AudioContext | null>(null);
+  const ctxRef = useRef<AudioContext | null>(null);
 
-    // Initialize AudioContext on first interaction
-    const initAudio = useCallback(() => {
-        if (!audioContextRef.current) {
-            const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
-            audioContextRef.current = new AudioContext();
-        }
-        if (audioContextRef.current?.state === "suspended") {
-            audioContextRef.current.resume();
-        }
-    }, []);
+  const getCtx = useCallback(() => {
+    if (!ctxRef.current) {
+      const AC = (window as any).AudioContext || (window as any).webkitAudioContext;
+      ctxRef.current = new AC();
+    }
+    if (ctxRef.current?.state === "suspended") ctxRef.current.resume();
+    return ctxRef.current!;
+  }, []);
 
-    useEffect(() => {
-        const handleInteraction = () => initAudio();
-        window.addEventListener("pointerdown", handleInteraction, { once: true });
-        window.addEventListener("keydown", handleInteraction, { once: true });
-        return () => {
-            window.removeEventListener("pointerdown", handleInteraction);
-            window.removeEventListener("keydown", handleInteraction);
-        };
-    }, [initAudio]);
+  useEffect(() => {
+    const wake = () => getCtx();
+    window.addEventListener("pointerdown", wake, { once: true });
+    window.addEventListener("keydown", wake, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", wake);
+      window.removeEventListener("keydown", wake);
+    };
+  }, [getCtx]);
 
-    const playSound = useCallback((type: SoundType) => {
-        if (typeof window === "undefined") return;
+  const playSound = useCallback((type: SoundType) => {
+    if (typeof window === "undefined") return;
+    try {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.18, now);
+      master.connect(ctx.destination);
 
-        try {
-            if (!audioContextRef.current) {
-                const AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
-                audioContextRef.current = new AudioContext();
-            }
+      /* ── CLICK: crisp mechanical switch ──────────────────────────── */
+      if (type === "click" || type === "focus") {
+        // Transient noise burst (contact)
+        const click = noise(ctx, 0.003);
+        const clickFilter = createFilter(ctx, "bandpass", 4000, 0.5);
+        const clickGain = ctx.createGain();
+        clickGain.gain.setValueAtTime(0.6, now);
+        clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+        click.connect(clickFilter);
+        clickFilter.connect(clickGain);
+        clickGain.connect(master);
+        click.start(now);
+        click.stop(now + 0.015);
 
-            const ctx = audioContextRef.current;
-            if (!ctx) return;
-            if (ctx.state === "suspended") ctx.resume();
+        // Tonal body (low thunk)
+        const osc = ctx.createOscillator();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.06);
+        const oscGain = ctx.createGain();
+        oscGain.gain.setValueAtTime(0.35, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+        osc.connect(oscGain);
+        oscGain.connect(master);
+        osc.start(now);
+        osc.stop(now + 0.06);
+      }
 
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
+      /* ── SHUTTER: filmic camera snap ─────────────────────────────── */
+      else if (type === "shutter") {
+        // Mech thunk
+        const thunk = ctx.createOscillator();
+        thunk.type = "triangle";
+        thunk.frequency.setValueAtTime(150, now);
+        thunk.frequency.exponentialRampToValueAtTime(40, now + 0.08);
+        const thunkGain = ctx.createGain();
+        thunkGain.gain.setValueAtTime(0.5, now);
+        thunkGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        thunk.connect(thunkGain);
+        thunkGain.connect(master);
+        thunk.start(now);
+        thunk.stop(now + 0.08);
 
-            osc.connect(gain);
-            gain.connect(ctx.destination);
+        // Ratchet click at 0.04s
+        const ratch = noise(ctx, 0.018);
+        const ratchFilter = createFilter(ctx, "highpass", 3500, 1.5);
+        const ratchGain = ctx.createGain();
+        ratchGain.gain.setValueAtTime(0, now);
+        ratchGain.gain.setValueAtTime(0.7, now + 0.04);
+        ratchGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+        ratch.connect(ratchFilter);
+        ratchFilter.connect(ratchGain);
+        ratchGain.connect(master);
+        ratch.start(now + 0.04);
+        ratch.stop(now + 0.065);
+      }
 
-            const now = ctx.currentTime;
-            const maxVol = 0.05;
+      /* ── HUM: atmospheric low drone ──────────────────────────────── */
+      else if (type === "hum") {
+        // Sine fundamental
+        const fund = ctx.createOscillator();
+        fund.type = "sine";
+        fund.frequency.setValueAtTime(55, now);
+        fund.frequency.linearRampToValueAtTime(52, now + 0.4);
+        const fundGain = ctx.createGain();
+        fundGain.gain.setValueAtTime(0, now);
+        fundGain.gain.linearRampToValueAtTime(0.35, now + 0.08);
+        fundGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        fund.connect(fundGain);
+        fundGain.connect(master);
+        fund.start(now);
+        fund.stop(now + 0.45);
 
-            if (type === "focus" || type === "click") {
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
-                gain.gain.setValueAtTime(maxVol, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-                osc.start(now);
-                osc.stop(now + 0.05);
-            } else if (type === "close") {
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-                gain.gain.setValueAtTime(maxVol * 1.5, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            } else if (type === "shutter") {
-                // Dual tone for mechanical shutter feel
-                const osc2 = ctx.createOscillator();
-                osc2.type = "square";
-                osc2.frequency.setValueAtTime(120, now);
-                osc2.connect(gain);
-                
-                osc.type = "triangle";
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(200, now + 0.08);
-                
-                gain.gain.setValueAtTime(maxVol * 0.8, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-                
-                osc.start(now);
-                osc.stop(now + 0.08);
-                osc2.start(now);
-                osc2.stop(now + 0.08);
-            } else if (type === "hum") {
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(60, now);
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(maxVol * 0.5, now + 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            } else if (type === "glitch") {
-                osc.type = "sawtooth";
-                osc.frequency.setValueAtTime(100, now);
-                osc.frequency.setValueAtTime(800, now + 0.02);
-                osc.frequency.setValueAtTime(300, now + 0.04);
-                gain.gain.setValueAtTime(maxVol * 0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-                osc.start(now);
-                osc.stop(now + 0.06);
-            } else if (type === "maximize") {
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.15);
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(maxVol, now + 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-                osc.start(now);
-                osc.stop(now + 0.15);
-            } else if (type === "minimize") {
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
-                gain.gain.setValueAtTime(0, now);
-                gain.gain.linearRampToValueAtTime(maxVol, now + 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-                osc.start(now);
-                osc.stop(now + 0.15);
-            }
-        } catch (e) {
-            console.warn("Sound effect playback failed.");
-        }
-    }, []);
+        // 3rd harmonic shimmer
+        const harm = ctx.createOscillator();
+        harm.type = "sine";
+        harm.frequency.setValueAtTime(165, now);
+        const harmGain = ctx.createGain();
+        harmGain.gain.setValueAtTime(0, now);
+        harmGain.gain.linearRampToValueAtTime(0.12, now + 0.08);
+        harmGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        harm.connect(harmGain);
+        harmGain.connect(master);
+        harm.start(now);
+        harm.stop(now + 0.35);
+      }
 
-    return { playSound };
+      /* ── GLITCH: digital data corruption ────────────────────────── */
+      else if (type === "glitch") {
+        [0, 0.025, 0.05].forEach((offset, i) => {
+          const g = ctx.createOscillator();
+          g.type = "square";
+          g.frequency.setValueAtTime(1200 - i * 300, now + offset);
+          g.frequency.setValueAtTime(200 + i * 100, now + offset + 0.012);
+          const gGain = ctx.createGain();
+          gGain.gain.setValueAtTime(0.2, now + offset);
+          gGain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.025);
+          g.connect(gGain);
+          gGain.connect(master);
+          g.start(now + offset);
+          g.stop(now + offset + 0.025);
+        });
+
+        // White noise burst
+        const n = noise(ctx, 0.04);
+        const nf = createFilter(ctx, "bandpass", 3000, 2);
+        const ng = ctx.createGain();
+        ng.gain.setValueAtTime(0.15, now);
+        ng.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        n.connect(nf);
+        nf.connect(ng);
+        ng.connect(master);
+        n.start(now);
+        n.stop(now + 0.04);
+      }
+
+      /* ── MAXIMIZE: UI expand ─────────────────────────────────────── */
+      else if (type === "maximize") {
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(700, now + 0.12);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(0.25, now + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.connect(g);
+        g.connect(master);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }
+
+      /* ── MINIMIZE: UI collapse ───────────────────────────────────── */
+      else if (type === "minimize" || type === "close") {
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(220, now + 0.12);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, now);
+        g.gain.linearRampToValueAtTime(0.22, now + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        osc.connect(g);
+        g.connect(master);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }
+
+    } catch (e) {
+      // Silently fail — never crash the UI over audio
+    }
+  }, [getCtx]);
+
+  return { playSound };
 }

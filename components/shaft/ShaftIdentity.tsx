@@ -16,12 +16,6 @@ const fadeUp = {
   }),
 };
 
-const metaItems = [
-  { label: "BACKGROUND",    value: "BSc Economics · MSc Psychology",  accent: false },
-  { label: "LOCATION",      value: profileData.location,              accent: false },
-  { label: "CURRENT FOCUS", value: "AI Agents · MCP · Automation",    accent: false },
-  { label: "STATUS",        value: "Accepting new projects — Q4 2026", accent: true  },
-];
 
 export default function ShaftIdentity() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -29,6 +23,13 @@ export default function ShaftIdentity() {
   const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+
+  const metaItems = [
+    { label: t("identity.meta.background.label"), value: t("identity.meta.background.value"), accent: false },
+    { label: t("identity.meta.location.label"),   value: profileData.location,               accent: false },
+    { label: t("identity.meta.focus.label"),      value: t("identity.meta.focus.value"),     accent: false },
+    { label: t("identity.meta.status.label"),     value: t("identity.meta.status.value"),    accent: true  },
+  ];
 
   return (
     <section
@@ -151,7 +152,7 @@ export default function ShaftIdentity() {
               className="text-base leading-relaxed"
               style={{ color: "rgb(var(--shaft-cream-dim))" }}
             >
-              {profileData.bio}
+              {t("identity.bio")}
             </motion.p>
           </div>
 

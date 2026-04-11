@@ -7,7 +7,6 @@ import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
 import ShaftTicker from "./ShaftTicker";
 import ShaftIdentity from "./ShaftIdentity";
-import ShaftInsight from "./ShaftInsight";
 import ShaftArchive from "./ShaftArchive";
 import ShaftDomains from "./ShaftDomains";
 import ShaftCall from "./ShaftCall";
@@ -67,10 +66,6 @@ export default function ShaftLandingContent() {
 
           <ShaftPerspectiveSection>
             <ShaftIdentity />
-          </ShaftPerspectiveSection>
-
-          <ShaftPerspectiveSection>
-            <ShaftInsight />
           </ShaftPerspectiveSection>
 
           <ShaftPerspectiveSection>

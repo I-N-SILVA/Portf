@@ -27,6 +27,7 @@ export const zh: Record<string, string> = {
   "identity.meta.status.label": "状态",
   "identity.meta.status.value": "接受新项目 — 2026年Q4",
   "identity.available": "可进行合作",
+  "identity.bio": "在AI、Web3与行为心理学的交叉点构建智能系统和经济框架。专注于快速原型设计、自动化工作流程和战略性产品开发。",
 
   // ── Insight ──
   "insight.section": "03 / 洞察",

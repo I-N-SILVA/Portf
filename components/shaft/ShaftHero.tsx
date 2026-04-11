@@ -14,15 +14,14 @@ function KineticName({ text, delay = 0 }: { text: string; delay?: number }) {
       {text.split("").map((char, i) => (
         <motion.span
           key={`${char}-${i}`}
-          initial={{ y: "110%", opacity: 0, rotateX: -90 }}
-          animate={{ y: 0, opacity: 1, rotateX: 0 }}
+          initial={{ y: "100%", opacity: 0, skewX: -6 }}
+          animate={{ y: 0, opacity: 1, skewX: 0 }}
           transition={{
-            duration: 0.55,
-            delay: delay + i * 0.04,
+            duration: 0.5,
+            delay: delay + i * 0.05,
             ease: [0.22, 1, 0.36, 1],
           }}
           className="inline-block will-change-transform"
-          style={{ transformOrigin: "bottom center" }}
         >
           {char === " " ? <span>&nbsp;</span> : char}
         </motion.span>

@@ -27,6 +27,7 @@ export const pt: Record<string, string> = {
   "identity.meta.status.label": "STATUS",
   "identity.meta.status.value": "Aceitando novos projetos — Q4 2026",
   "identity.available": "Disponível para colaboração",
+  "identity.bio": "Construindo sistemas inteligentes e frameworks económicos na interseção de IA, Web3 e psicologia comportamental. Especializado em prototipagem rápida, automação de fluxos de trabalho e desenvolvimento estratégico de produtos.",
 
   // ── Insight ──
   "insight.section": "03 / PERSPETIVA",

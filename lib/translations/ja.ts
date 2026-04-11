@@ -27,6 +27,7 @@ export const ja: Record<string, string> = {
   "identity.meta.status.label": "ステータス",
   "identity.meta.status.value": "新規プロジェクト受付中 — 2026年Q4",
   "identity.available": "コラボレーション可能",
+  "identity.bio": "AI、Web3、行動心理学の交差点でインテリジェントシステムと経済的フレームワークを構築。ラピッドプロトタイピング、自動化ワークフロー、戦略的製品開発を専門とする。",
 
   // ── Insight ──
   "insight.section": "03 / インサイト",
