@@ -41,7 +41,7 @@ export default function ShaftIdentity() {
       {/* Background watermark number — parallax + Glitch */}
       <motion.div
         aria-hidden="true"
-        onViewportEnter={() => playSound("glitch")}
+        onViewportEnter={() => playSound("page")}
         viewport={{ once: true, margin: "-100px" }}
         className="absolute right-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none shaft-glitch"
         style={{

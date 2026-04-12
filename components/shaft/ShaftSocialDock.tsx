@@ -67,8 +67,11 @@ export default function ShaftSocialDock() {
                   }}
                 >
                   <Icon className="h-3 w-3" style={{ color: "rgb(var(--shaft-crimson))" }} />
-                  <span className="font-space-mono text-[8px] tracking-[0.2em] uppercase text-white/70 group-hover:text-white">
-                    {link.name}
+                  <span 
+                    className="font-space-mono text-[8px] tracking-[0.2em] uppercase transition-colors"
+                    style={{ color: "rgb(var(--shaft-muted))" }}
+                  >
+                    <span className="group-hover:text-[rgb(var(--shaft-cream))]">{link.name}</span>
                   </span>
                 </motion.a>
               );

@@ -99,40 +99,36 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
             className="fixed top-5 left-5 md:top-8 md:left-8 z-[101] flex items-center gap-2"
           >
             {/* Theme toggle — prominent pill button */}
-            <button
-              onClick={toggleTheme}
-              className="flex items-center gap-2 px-3 py-1.5 border transition-all duration-200 hover:border-[rgb(var(--shaft-crimson))] group"
-              style={{
-                borderColor: "rgb(var(--shaft-border))",
-                backgroundColor: "rgb(var(--shaft-surface) / 0.7)",
-                backdropFilter: "blur(12px)",
-              }}
-              aria-label="Toggle theme"
-            >
-              {/* Sun/Moon icon */}
-              <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
-                {isLight ? "◐" : "◑"}
-              </span>
-              <span
-                className="font-space-mono text-[8px] tracking-[0.25em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-cream))]"
-                style={{ color: "rgb(var(--shaft-muted))" }}
-              >
-                {isLight ? "DARK" : "LIGHT"}
-              </span>
-            </button>
-
-            {/* Language selector — dropdown */}
-            <div className="relative">
               <button
-                onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-1.5 px-3 py-1.5 border transition-all duration-200 hover:border-[rgb(var(--shaft-crimson))] group"
+                onClick={toggleTheme}
+                className="flex items-center gap-2 px-3 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
                 style={{
-                  borderColor: langOpen ? "rgb(var(--shaft-crimson))" : "rgb(var(--shaft-border))",
-                  backgroundColor: "rgb(var(--shaft-surface) / 0.7)",
-                  backdropFilter: "blur(12px)",
+                  backgroundColor: "transparent",
                 }}
-                aria-label="Change language"
+                aria-label="Toggle theme"
               >
+                {/* Sun/Moon icon */}
+                <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
+                  {isLight ? "◐" : "◑"}
+                </span>
+                <span
+                  className="font-space-mono text-[8px] tracking-[0.25em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
+                  style={{ color: "rgb(var(--shaft-muted))" }}
+                >
+                  {isLight ? "DARK" : "LIGHT"}
+                </span>
+              </button>
+
+              {/* Language selector — dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setLangOpen(!langOpen)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+                  style={{
+                    backgroundColor: "transparent",
+                  }}
+                  aria-label="Change language"
+                >
                 <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
                   ⌐
                 </span>

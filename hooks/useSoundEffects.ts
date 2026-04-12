@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useEffect } from "react";
 
-type SoundType = "focus" | "close" | "maximize" | "minimize" | "click" | "shutter" | "hum" | "glitch";
+type SoundType = "focus" | "close" | "maximize" | "minimize" | "click" | "shutter" | "hum" | "glitch" | "page";
 
 /* ─── helpers ─────────────────────────────────────────────────────── */
 function createFilter(ctx: AudioContext, type: BiquadFilterType, freq: number, q = 1) {
@@ -184,6 +184,31 @@ export function useSoundEffects() {
         g.connect(master);
         osc.start(now);
         osc.stop(now + 0.15);
+      }
+
+      /* ── PAGE: changing pages / rustling ────────────────────────── */
+      else if (type === "page") {
+        // First swish
+        const n1 = noise(ctx, 0.1);
+        const f1 = createFilter(ctx, "bandpass", 1500, 1.5);
+        f1.frequency.exponentialRampToValueAtTime(2500, now + 0.1);
+        const g1 = ctx.createGain();
+        g1.gain.setValueAtTime(0, now);
+        g1.gain.linearRampToValueAtTime(0.3, now + 0.02);
+        g1.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        n1.connect(f1); f1.connect(g1); g1.connect(master);
+        n1.start(now); n1.stop(now + 0.1);
+
+        // Second flap (slightly later and deeper)
+        const n2 = noise(ctx, 0.15);
+        const f2 = createFilter(ctx, "bandpass", 800, 2.0);
+        f2.frequency.exponentialRampToValueAtTime(1200, now + 0.18);
+        const g2 = ctx.createGain();
+        g2.gain.setValueAtTime(0, now + 0.04);
+        g2.gain.linearRampToValueAtTime(0.4, now + 0.06);
+        g2.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        n2.connect(f2); f2.connect(g2); g2.connect(master);
+        n2.start(now + 0.04); n2.stop(now + 0.18);
       }
 
       /* ── MINIMIZE: UI collapse ───────────────────────────────────── */
