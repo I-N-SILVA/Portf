@@ -51,11 +51,15 @@ export default function ShaftSocialDock() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  onMouseEnter={() => playSound("click")}
-                  className="group flex items-center gap-3 px-4 py-2 border backdrop-blur-md transition-all duration-200"
+                  initial={{ opacity: 0, x: -20, scale: 0.9 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  transition={{ delay: i * 0.05, type: "spring", stiffness: 260, damping: 20 }}
+                  onMouseEnter={() => {
+                    playSound("click");
+                    setHoveredIndex(i);
+                  }}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  className="group relative flex items-center gap-3 px-4 py-2 border backdrop-blur-md transition-all duration-200 overflow-hidden"
                   style={{
                     backgroundColor: "rgb(var(--shaft-surface) / 0.8)",
                     borderColor: "rgb(var(--shaft-border) / 0.5)",
@@ -66,9 +70,23 @@ export default function ShaftSocialDock() {
                     backgroundColor: "rgb(var(--shaft-surface))"
                   }}
                 >
-                  <Icon className="h-3 w-3" style={{ color: "rgb(var(--shaft-crimson))" }} />
+                  {/* Radar Ping Effect */}
+                  <AnimatePresence>
+                    {hoveredIndex === i && (
+                      <motion.div
+                        initial={{ scale: 0, opacity: 0.5 }}
+                        animate={{ scale: 4, opacity: 0 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.6, repeat: Infinity }}
+                        className="absolute inset-0 rounded-full bg-crimson pointer-events-none"
+                        style={{ backgroundColor: "rgb(var(--shaft-crimson) / 0.2)" }}
+                      />
+                    )}
+                  </AnimatePresence>
+
+                  <Icon className="h-3 w-3 relative z-10" style={{ color: "rgb(var(--shaft-crimson))" }} />
                   <span 
-                    className="font-space-mono text-[8px] tracking-[0.2em] uppercase transition-colors"
+                    className="font-space-mono text-[8px] tracking-[0.2em] uppercase transition-colors relative z-10"
                     style={{ color: "rgb(var(--shaft-muted))" }}
                   >
                     <span className="group-hover:text-[rgb(var(--shaft-cream))]">{link.name}</span>
