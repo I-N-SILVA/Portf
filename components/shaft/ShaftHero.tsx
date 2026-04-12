@@ -14,28 +14,30 @@ function TypewriterName({ text, delay = 0, showCursor = false }: { text: string;
       {text.split("").map((char, i) => (
         <motion.span
           key={`${char}-${i}`}
-          initial={{ opacity: 0, display: "none" }}
-          animate={{ opacity: 1, display: "inline-block" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{
             duration: 0.05,
             delay: delay + i * 0.12,
             ease: "easeOut",
           }}
-          className="inline-block will-change-transform"
+          className="inline-block will-change-opacity"
         >
           {char === " " ? <span>&nbsp;</span> : char}
         </motion.span>
       ))}
       <motion.span
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0, 1, 1, 0, 0] }}
+        animate={{ 
+          opacity: [0, 1, 1, 0, 0, 1, 1, 0],
+          display: ["inline-block", "inline-block", "inline-block", "inline-block", "inline-block", "inline-block", "inline-block", "none"]
+        }}
         transition={{
-          duration: 0.9,
-          repeat: Infinity,
-          times: [0, 0.1, 0.5, 0.6, 1]
+          duration: 1.5,
+          delay: delay + text.length * 0.12,
+          times: [0, 0.1, 0.4, 0.5, 0.6, 0.7, 0.9, 1]
         }}
         className={`inline-block w-[0.08em] h-[0.75em] bg-current ml-[0.05em] mb-[0.1em] ${!showCursor ? 'hidden' : ''}`}
-        style={{ opacity: 0.8 }}
       />
     </span>
   );
