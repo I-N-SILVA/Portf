@@ -7,25 +7,36 @@ import { useTranslation } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 import Image from "next/image";
 
-/* ─── Letter-by-letter stagger animation ─────────────────────────── */
-function KineticName({ text, delay = 0 }: { text: string; delay?: number }) {
+/* ─── Typewriter animation with blinking cursor ───────────────── */
+function TypewriterName({ text, delay = 0, showCursor = false }: { text: string; delay?: number; showCursor?: boolean }) {
   return (
-    <span className="inline-flex" aria-label={text}>
+    <span className="inline-flex items-end relative" aria-label={text}>
       {text.split("").map((char, i) => (
         <motion.span
           key={`${char}-${i}`}
-          initial={{ y: "100%", opacity: 0, skewX: -6 }}
-          animate={{ y: 0, opacity: 1, skewX: 0 }}
+          initial={{ opacity: 0, display: "none" }}
+          animate={{ opacity: 1, display: "inline-block" }}
           transition={{
-            duration: 0.5,
-            delay: delay + i * 0.05,
-            ease: [0.22, 1, 0.36, 1],
+            duration: 0.05,
+            delay: delay + i * 0.12,
+            ease: "easeOut",
           }}
           className="inline-block will-change-transform"
         >
           {char === " " ? <span>&nbsp;</span> : char}
         </motion.span>
       ))}
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 1, 0, 0] }}
+        transition={{
+          duration: 0.9,
+          repeat: Infinity,
+          times: [0, 0.1, 0.5, 0.6, 1]
+        }}
+        className={`inline-block w-[0.08em] h-[0.75em] bg-current ml-[0.05em] mb-[0.1em] ${!showCursor ? 'hidden' : ''}`}
+        style={{ opacity: 0.8 }}
+      />
     </span>
   );
 }
@@ -291,7 +302,7 @@ export default function ShaftHero() {
                 fontSize: "clamp(52px, 13vw, 200px)",
               }}
             >
-              <KineticName text="IAN N." delay={0.1} />
+            <TypewriterName text="IAN N." delay={0.1} />
             </h1>
           </div>
 
@@ -303,7 +314,7 @@ export default function ShaftHero() {
                 fontSize: "clamp(52px, 13vw, 200px)",
               }}
             >
-              <KineticName text="SILVA." delay={0.35} />
+              <TypewriterName text="SILVA." delay={1.0} showCursor={true} />
             </h1>
           </div>
 

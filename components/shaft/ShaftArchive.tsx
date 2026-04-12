@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { projects } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
 import Image from "next/image";
+import ShaftRedact from "./ShaftRedact";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
@@ -22,6 +23,7 @@ const CATEGORIES = ["ALL", "AI", "WEB3", "CREATIVE"];
 export default function ShaftArchive() {
   const [filter, setFilter]     = useState("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [hovered, setHovered]   = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
@@ -113,6 +115,8 @@ export default function ShaftArchive() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.2, delay: Math.min(index * 0.05, 0.25) }}
+              onMouseEnter={() => setHovered(project.id)}
+              onMouseLeave={() => setHovered(null)}
             >
               {/* Rule */}
               <div className="h-px" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
@@ -148,6 +152,13 @@ export default function ShaftArchive() {
 
                   {/* Right: badge + category + toggle */}
                   <div className="flex items-center gap-4 shrink-0">
+                    <div className="hidden lg:flex items-center gap-3 mr-4">
+                      <ShaftRedact
+                        text={project.role}
+                        className="text-[7px] tracking-[0.1em]"
+                        revealed={hovered === project.id || expanded === project.id}
+                      />
+                    </div>
                     {project.badge && (
                       <span
                         className="font-space-mono text-[7px] tracking-[0.3em] uppercase border px-2 py-0.5 hidden sm:inline"
@@ -287,12 +298,19 @@ export default function ShaftArchive() {
                             {t("archive.source")}
                           </a>
                         )}
-                        <span
-                          className="font-space-mono text-[8px] tracking-[0.2em] uppercase hidden sm:inline"
-                          style={{ color: "rgb(var(--shaft-muted))" }}
-                        >
-                          {project.role} · {project.duration}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <ShaftRedact
+                            text={project.role}
+                            className="text-[8px] tracking-[0.2em] uppercase"
+                            revealed={hovered === project.id || expanded === project.id}
+                          />
+                          <span style={{ color: "rgb(var(--shaft-muted))" }}>·</span>
+                          <ShaftRedact
+                            text={project.duration}
+                            className="text-[8px] tracking-[0.2em] uppercase"
+                            revealed={hovered === project.id || expanded === project.id}
+                          />
+                        </div>
                       </div>
                     </div>
                   </motion.div>
