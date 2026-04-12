@@ -42,13 +42,13 @@ export const en: Record<string, string> = {
   "insight.cta": "VIEW CASE STUDIES",
 
   // ── Archive ──
-  "archive.section": "05 / THE ARCHIVE",
+  "archive.section": "04 / THE ARCHIVE",
   "archive.filter.all": "ALL",
   "archive.viewProject": "VIEW PROJECT →",
   "archive.source": "SOURCE →",
 
   // ── Domains ──
-  "domains.section": "06 / CORE DOMAINS",
+  "domains.section": "05 / CORE DOMAINS",
   "domains.1.title": "AI AUTONOMY",
   "domains.1.body": "Building intelligent agents and workflows that perceive, reason, and execute complex operations autonomously. MCP integrations, multi-agent systems, LLM orchestration — the full stack.",
   "domains.2.title": "BEHAVIORAL DESIGN",
@@ -57,15 +57,15 @@ export const en: Record<string, string> = {
   "domains.3.body": "Engineering robust, scalable architectures — high-performance frontends, secure cloud infrastructure, clean APIs.",
 
   // ── The Call ──
-  "call.section": "07 / THE CALL",
+  "call.section": "06 / THE CALL",
   "call.title1": "SCHEDULE",
   "call.title2": "THE CALL.",
-  "call.line1": "We'll map your idea, constraints, and tools you already use.",
-  "call.line2": "I'll propose 1–2 concrete builds we could ship in the next 2–4 weeks, plus the smallest experiment you can run even if we don't work together.",
-  "call.line3": "If you walk away with more clarity and at least one sharp idea, that's a win.",
+  "call.line1": "30 minutes.",
+  "call.line2": "No pitch.",
+  "call.line3": "Just a real conversation.",
   "call.cta.open": "[ BOOK A SESSION",
   "call.cta.close": "[ CLOSE BOOKING ]",
-  "call.email.prefix": "Prefer async? Send a quick Loom or voice note and I'll reply with thoughts. Email: ",
+  "call.email.prefix": "or reach directly —",
   "call.calendar": "SELECT A SLOT",
   "call.fin": "FIN.",
   "call.copyright": "ALL RIGHTS RESERVED",
@@ -73,6 +73,7 @@ export const en: Record<string, string> = {
   // ── Nav ──
   "nav.opening": "OPENING",
   "nav.identity": "IDENTITY",
+  "nav.offers": "OFFERS",
   "nav.archive": "ARCHIVE",
   "nav.domains": "DOMAINS",
   "nav.call": "THE CALL",
@@ -103,17 +104,17 @@ export const en: Record<string, string> = {
   "projects.6.full": "Combines ancient wisdom with modern behavioral psychology. Integrates Zen Buddhism, Stoicism, and Sufism practices with daily habit tracking and mindfulness exercises.",
 
   // ── Offers ──
-  "offers.section": "04 / CAPABILITIES",
+  "offers.section": "03 / CAPABILITIES",
   "offers.title": "What I can build for you in 2–4 weeks.",
   "offers.subtitle": "Three focused offers:",
-  "offers.1.title": "AI‑POWERED AUTOMATIONS",
-  "offers.1.body1": "Hook your tools together (email, CRM, Notion, Airtable, Stripe, etc.) and let AI handle the repetitive work.",
-  "offers.1.body2": "Examples: lead‑qualification bots, content repurposing engines, internal research assistants, or data clean‑up workflows.",
+  "offers.1.title": "CLICK‑READY MVP PROTOTYPES",
+  "offers.1.body1": "Scrappy, working prototypes you can demo to users, investors, or your team.",
+  "offers.1.body2": "Ideal for: testing a product concept before a full build, validating demand, or getting alignment around what to build next.",
   "offers.2.title": "LANDING PAGES THAT CONVERT",
   "offers.2.body1": "Conversion‑focused landing pages for new products, waitlists, or beta launches, written and designed with clear stories and strong CTAs.",
   "offers.2.body2": "You get: copy, layout, implementation, and basic analytics wiring so you can see what's working.",
-  "offers.3.title": "CLICK‑READY MVP PROTOTYPES",
-  "offers.3.body1": "Scrappy, working prototypes you can demo to users, investors, or your team.",
-  "offers.3.body2": "Ideal for: testing a product concept before a full build, validating demand, or getting alignment around what to build next.",
+  "offers.3.title": "AI‑POWERED AUTOMATIONS",
+  "offers.3.body1": "Hook your tools together (email, CRM, Notion, Airtable, Stripe, etc.) and let AI handle the repetitive work.",
+  "offers.3.body2": "Examples: lead‑qualification bots, content repurposing engines, internal research assistants, or data clean‑up workflows.",
   "offers.cta": "Not sure what you need? Bring the messy idea. We'll figure out the smallest, most powerful thing we can build first.",
 };

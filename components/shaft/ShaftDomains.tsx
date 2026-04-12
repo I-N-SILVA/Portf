@@ -55,7 +55,7 @@ export default function ShaftDomains() {
           y: watermarkY,
         }}
       >
-        04
+        05
       </motion.div>
 
       <div className="px-8 md:px-16 lg:px-24 relative z-10">

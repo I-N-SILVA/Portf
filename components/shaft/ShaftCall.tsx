@@ -52,7 +52,7 @@ export default function ShaftCall() {
               y: watermarkY,
             }}
           >
-            05
+            06
           </motion.div>
 
           {/* Faint crimson horizontal stripe */}

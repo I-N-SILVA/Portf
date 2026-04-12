@@ -9,9 +9,10 @@ import ShaftDecipher from "./ShaftDecipher";
 const chapters = [
   { id: "shaft-hero",     key: "nav.opening",  num: "01" },
   { id: "shaft-identity", key: "nav.identity", num: "02" },
-  { id: "shaft-archive",  key: "nav.archive",  num: "03" },
-  { id: "shaft-domains",  key: "nav.domains",  num: "04" },
-  { id: "shaft-call",     key: "nav.call",     num: "05" },
+  { id: "shaft-offers",   key: "nav.offers",   num: "03" },
+  { id: "shaft-archive",  key: "nav.archive",  num: "04" },
+  { id: "shaft-domains",  key: "nav.domains",  num: "05" },
+  { id: "shaft-call",     key: "nav.call",     num: "06" },
 ];
 
 interface ShaftNavProps {
