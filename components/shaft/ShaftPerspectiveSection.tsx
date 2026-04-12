@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring, useVelocity } from "framer-motion";
-import { useRef, useMemo } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useRef } from "react";
 
 interface ShaftPerspectiveSectionProps {
   children: React.ReactNode;
@@ -9,23 +9,17 @@ interface ShaftPerspectiveSectionProps {
 
 export default function ShaftPerspectiveSection({ children }: ShaftPerspectiveSectionProps) {
   const ref = useRef<HTMLDivElement>(null);
-  
-  // Use a stable random value for Y rotation per section
-  const randomY = useMemo(() => (Math.random() - 0.5) * 8, []); // between -4 and 4 degrees
-
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
 
-  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [12, 0, -12]);
-  const rotateY = useTransform(scrollYProgress, [0, 0.5, 1], [randomY, 0, -randomY]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.96, 1, 0.96]);
-  const opacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [15, 0, -15]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
-  const springRotateX = useSpring(rotateX, { stiffness: 80, damping: 25 });
-  const springRotateY = useSpring(rotateY, { stiffness: 80, damping: 25 });
-  const springScale = useSpring(scale, { stiffness: 80, damping: 25 });
+  const springRotateX = useSpring(rotateX, { stiffness: 100, damping: 30 });
+  const springScale = useSpring(scale, { stiffness: 100, damping: 30 });
 
   return (
     <motion.div
@@ -33,12 +27,10 @@ export default function ShaftPerspectiveSection({ children }: ShaftPerspectiveSe
       style={{
         perspective: "1200px",
         rotateX: springRotateX,
-        rotateY: springRotateY,
         scale: springScale,
         opacity,
-        transformStyle: "preserve-3d"
       }}
-      className="relative w-full py-16"
+      className="relative w-full"
     >
       {children}
     </motion.div>

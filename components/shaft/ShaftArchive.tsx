@@ -6,7 +6,6 @@ import { projects } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
 import Image from "next/image";
 import ShaftRedact from "./ShaftRedact";
-import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
@@ -27,7 +26,6 @@ export default function ShaftArchive() {
   const [hovered, setHovered]   = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
-  const { playSound } = useSoundEffects();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
@@ -130,9 +128,6 @@ export default function ShaftArchive() {
                   const isExpanding = expanded !== project.id;
                   if (isExpanding) {
                     window.dispatchEvent(new CustomEvent("shaft-flash"));
-                    playSound("page");
-                  } else {
-                    playSound("close");
                   }
                   setExpanded(expanded === project.id ? null : project.id);
                 }}

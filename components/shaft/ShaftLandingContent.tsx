@@ -13,8 +13,6 @@ import ShaftCall from "./ShaftCall";
 import ShaftSocialDock from "./ShaftSocialDock";
 import ShaftStatusStrip from "./ShaftStatusStrip";
 import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
-import ShaftFloatingMeta from "./ShaftFloatingMeta";
-import FloatingShinboShadows from "./FloatingShinboShadows";
 import BootSequence from "@/components/ui/BootSequence";
 import Cursor from "@/components/ui/inverted-cursor";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
@@ -31,10 +29,6 @@ export default function ShaftLandingContent() {
   
   // Map high velocity to a glitch intensity
   const glitchOpacity = useTransform(smoothVelocity, [-3000, -1500, 0, 1500, 3000], [0.4, 0, 0, 0, 0.4]);
-
-  // Map high velocity to vignette strength
-  const vignetteStrength = useTransform(smoothVelocity, [-3000, 0, 3000], [0.3, 0.1, 0.3]);
-  const vignetteScale = useTransform(smoothVelocity, [-3000, 0, 3000], [0.95, 1, 0.95]);
 
   const handleBootComplete = useCallback(() => {
     setStage("intertitle");
@@ -61,18 +55,6 @@ export default function ShaftLandingContent() {
     <LocaleProvider>
       <Cursor />
       <div className="shaft-paper-texture" />
-      <ShaftFloatingMeta />
-      <FloatingShinboShadows />
-
-      {/* Dynamic Vignette — tied to scroll speed */}
-      <motion.div 
-        style={{ 
-          opacity: vignetteStrength,
-          scale: vignetteScale,
-          background: "radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 150%)"
-        }}
-        className="fixed inset-0 pointer-events-none z-[9998]"
-      />
 
       {/* Signal Interference / Glitch Overlay */}
       <motion.div 
