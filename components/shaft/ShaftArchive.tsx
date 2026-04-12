@@ -6,6 +6,7 @@ import { projects } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
 import Image from "next/image";
 import ShaftRedact from "./ShaftRedact";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
