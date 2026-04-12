@@ -35,7 +35,7 @@ export default function ShaftMobileCTA() {
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={handleBookClick}
-          className="fixed bottom-6 right-6 z-[105] md:hidden flex items-center justify-center rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.4)] backdrop-blur-md"
+          className="fixed bottom-24 right-6 z-[105] md:hidden flex items-center justify-center rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.4)] backdrop-blur-md"
           style={{
             backgroundColor: "rgb(var(--shaft-crimson))",
             color: "rgb(var(--shaft-cream))",
