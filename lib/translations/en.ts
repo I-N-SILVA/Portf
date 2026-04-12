@@ -1,13 +1,13 @@
 export const en: Record<string, string> = {
   // ── Intertitle ──
   "intertitle.year": "PORTFOLIO · 2026",
-  "intertitle.subtitle": "AI AUTOMATION ENGINEER",
+  "intertitle.subtitle": "AI CONSULTANT",
 
   // ── Hero ──
   "hero.pretitle": "// PORTFOLIO",
-  "hero.tagline": "AI Automation Engineer ·",
+  "hero.tagline": "AI Consultant ·",
   "hero.tagline2": "Behavioral Economist",
-  "hero.marker": "Building at the intersection of AI & human behavior",
+  "hero.marker": "I help founders and small teams turn vague ideas into working automations, landing pages, and MVPs you can test with real users in weeks, not months.",
   "hero.cta": "SCHEDULE A CALL",
   "hero.scroll": "SCROLL",
   "hero.scene": "[ 01 / OPENING ]",
@@ -17,15 +17,15 @@ export const en: Record<string, string> = {
   "identity.pretitle": "// 02",
   "identity.line1": "The question isn't",
   "identity.line2": "what I build.",
-  "identity.line3": "It's what breaks",
-  "identity.line4": "without me.",
+  "identity.line3": "It's what becomes",
+  "identity.line4": "possible when it exists.",
   "identity.meta.background.label": "BACKGROUND",
   "identity.meta.background.value": "BSc Economics · MSc Psychology",
   "identity.meta.location.label": "LOCATION",
   "identity.meta.focus.label": "CURRENT FOCUS",
-  "identity.meta.focus.value": "AI Agents · MCP · Automation",
+  "identity.meta.focus.value": "AI Agents · Automation Workflows · Conversion‑Driven MVPs",
   "identity.meta.status.label": "STATUS",
-  "identity.meta.status.value": "Accepting new projects — Q4 2026",
+  "identity.meta.status.value": "Accepting 1–2 new projects per month (remote)",
   "identity.available": "Available for collaboration",
   "identity.bio": "Building intelligent systems and economic frameworks at the intersection of AI, Web3, and behavioral psychology. Specializing in rapid prototyping, automation workflows, and strategic product development.",
 
@@ -42,13 +42,13 @@ export const en: Record<string, string> = {
   "insight.cta": "VIEW CASE STUDIES",
 
   // ── Archive ──
-  "archive.section": "03 / THE ARCHIVE",
+  "archive.section": "05 / THE ARCHIVE",
   "archive.filter.all": "ALL",
   "archive.viewProject": "VIEW PROJECT →",
   "archive.source": "SOURCE →",
 
   // ── Domains ──
-  "domains.section": "04 / CORE DOMAINS",
+  "domains.section": "06 / CORE DOMAINS",
   "domains.1.title": "AI AUTONOMY",
   "domains.1.body": "Building intelligent agents and workflows that perceive, reason, and execute complex operations autonomously. MCP integrations, multi-agent systems, LLM orchestration — the full stack.",
   "domains.2.title": "BEHAVIORAL DESIGN",
@@ -57,15 +57,15 @@ export const en: Record<string, string> = {
   "domains.3.body": "Engineering robust, scalable architectures — high-performance frontends, secure cloud infrastructure, clean APIs.",
 
   // ── The Call ──
-  "call.section": "05 / THE CALL",
+  "call.section": "07 / THE CALL",
   "call.title1": "SCHEDULE",
   "call.title2": "THE CALL.",
-  "call.line1": "30 minutes.",
-  "call.line2": "No pitch.",
-  "call.line3": "Just a real conversation.",
+  "call.line1": "We'll map your idea, constraints, and tools you already use.",
+  "call.line2": "I'll propose 1–2 concrete builds we could ship in the next 2–4 weeks, plus the smallest experiment you can run even if we don't work together.",
+  "call.line3": "If you walk away with more clarity and at least one sharp idea, that's a win.",
   "call.cta.open": "[ BOOK A SESSION",
   "call.cta.close": "[ CLOSE BOOKING ]",
-  "call.email.prefix": "or reach directly —",
+  "call.email.prefix": "Prefer async? Send a quick Loom or voice note and I'll reply with thoughts. Email: ",
   "call.calendar": "SELECT A SLOT",
   "call.fin": "FIN.",
   "call.copyright": "ALL RIGHTS RESERVED",
@@ -101,4 +101,19 @@ export const en: Record<string, string> = {
   "projects.6.title": "Mindful Path",
   "projects.6.desc": "Personal development app integrating Eastern philosophy practices with habit tracking and reflection journaling",
   "projects.6.full": "Combines ancient wisdom with modern behavioral psychology. Integrates Zen Buddhism, Stoicism, and Sufism practices with daily habit tracking and mindfulness exercises.",
+
+  // ── Offers ──
+  "offers.section": "04 / CAPABILITIES",
+  "offers.title": "What I can build for you in 2–4 weeks.",
+  "offers.subtitle": "Three focused offers:",
+  "offers.1.title": "AI‑POWERED AUTOMATIONS",
+  "offers.1.body1": "Hook your tools together (email, CRM, Notion, Airtable, Stripe, etc.) and let AI handle the repetitive work.",
+  "offers.1.body2": "Examples: lead‑qualification bots, content repurposing engines, internal research assistants, or data clean‑up workflows.",
+  "offers.2.title": "LANDING PAGES THAT CONVERT",
+  "offers.2.body1": "Conversion‑focused landing pages for new products, waitlists, or beta launches, written and designed with clear stories and strong CTAs.",
+  "offers.2.body2": "You get: copy, layout, implementation, and basic analytics wiring so you can see what's working.",
+  "offers.3.title": "CLICK‑READY MVP PROTOTYPES",
+  "offers.3.body1": "Scrappy, working prototypes you can demo to users, investors, or your team.",
+  "offers.3.body2": "Ideal for: testing a product concept before a full build, validating demand, or getting alignment around what to build next.",
+  "offers.cta": "Not sure what you need? Bring the messy idea. We'll figure out the smallest, most powerful thing we can build first.",
 };
