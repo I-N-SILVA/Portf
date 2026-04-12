@@ -12,6 +12,7 @@ import ShaftArchive from "./ShaftArchive";
 import ShaftDomains from "./ShaftDomains";
 import ShaftCall from "./ShaftCall";
 import ShaftSocialDock from "./ShaftSocialDock";
+import ShaftMobileCTA from "./ShaftMobileCTA";
 import ShaftStatusStrip from "./ShaftStatusStrip";
 import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
 import BootSequence from "@/components/ui/BootSequence";
@@ -102,6 +103,7 @@ export default function ShaftLandingContent() {
           <ShaftStatusStrip />
           <ShaftNav visible={true} />
           <ShaftSocialDock />
+          <ShaftMobileCTA />
 
           <ShaftPerspectiveSection>
             <ShaftHero />
