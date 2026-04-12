@@ -7,38 +7,40 @@ import { useTranslation } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 import Image from "next/image";
 
-/* ─── Typewriter animation with blinking cursor ───────────────── */
-function TypewriterName({ text, delay = 0, showCursor = false }: { text: string; delay?: number; showCursor?: boolean }) {
+/* ─── Effect 1: Cinematic Blur Reveal (Active) ─────────────────────────── */
+function CinematicBlurName({ text, delay = 0 }: { text: string; delay?: number }) {
   return (
-    <span className="inline-flex items-end relative" aria-label={text}>
+    <span className="inline-flex" aria-label={text}>
       {text.split("").map((char, i) => (
         <motion.span
           key={`${char}-${i}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            duration: 0.05,
-            delay: delay + i * 0.12,
-            ease: "easeOut",
-          }}
-          className="inline-block will-change-opacity"
+          initial={{ opacity: 0, filter: "blur(16px)", scale: 1.1, x: -10 }}
+          animate={{ opacity: 1, filter: "blur(0px)", scale: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: delay + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="inline-block will-change-transform"
         >
           {char === " " ? <span>&nbsp;</span> : char}
         </motion.span>
       ))}
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ 
-          opacity: [0, 1, 1, 0, 0, 1, 1, 0],
-          display: ["inline-block", "inline-block", "inline-block", "inline-block", "inline-block", "inline-block", "inline-block", "none"]
-        }}
-        transition={{
-          duration: 1.5,
-          delay: delay + text.length * 0.12,
-          times: [0, 0.1, 0.4, 0.5, 0.6, 0.7, 0.9, 1]
-        }}
-        className={`inline-block w-[0.08em] h-[0.75em] bg-current ml-[0.05em] mb-[0.1em] ${!showCursor ? 'hidden' : ''}`}
-      />
+    </span>
+  );
+}
+
+/* ─── Effect 2: Cyber Strike Reveal (Try me out!) ────────────────────── */
+function CyberStrikeName({ text, delay = 0 }: { text: string; delay?: number }) {
+  return (
+    <span className="inline-flex overflow-hidden" aria-label={text}>
+      {text.split("").map((char, i) => (
+        <motion.span
+          key={`${char}-${i}`}
+          initial={{ opacity: 0, y: "150%", rotateX: 60, color: "rgb(var(--shaft-crimson))" }}
+          animate={{ opacity: 1, y: 0, rotateX: 0, color: "inherit" }} 
+          transition={{ duration: 0.7, delay: delay + i * 0.06, ease: [0.25, 1, 0.5, 1] }}
+          className="inline-block origin-bottom will-change-transform"
+        >
+          {char === " " ? <span>&nbsp;</span> : char}
+        </motion.span>
+      ))}
     </span>
   );
 }
@@ -304,7 +306,7 @@ export default function ShaftHero() {
                 fontSize: "clamp(52px, 13vw, 200px)",
               }}
             >
-            <TypewriterName text="IAN N." delay={0.1} />
+            <CinematicBlurName text="IAN N." delay={0.1} />
             </h1>
           </div>
 
@@ -316,7 +318,7 @@ export default function ShaftHero() {
                 fontSize: "clamp(52px, 13vw, 200px)",
               }}
             >
-              <TypewriterName text="SILVA." delay={1.0} showCursor={true} />
+              <CinematicBlurName text="SILVA." delay={1.0} />
             </h1>
           </div>
 

@@ -56,11 +56,13 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
 
   const scrollTo = (id: string) => {
     playSound("click");
+    window.dispatchEvent(new CustomEvent("shaft-flash"));
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   const toggleTheme = () => {
     playSound("hum");
+    window.dispatchEvent(new CustomEvent("shaft-flash"));
     const next = !isLight;
     setIsLight(next);
     try {
@@ -76,6 +78,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
 
   const selectLang = (code: Locale) => {
     playSound("click");
+    window.dispatchEvent(new CustomEvent("shaft-flash"));
     setLocale(code);
     setLangOpen(false);
   };

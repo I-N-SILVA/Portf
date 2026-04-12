@@ -124,7 +124,13 @@ export default function ShaftArchive() {
               {/* Entry row */}
               <button
                 className="w-full text-left group py-5 focus:outline-none"
-                onClick={() => setExpanded(expanded === project.id ? null : project.id)}
+                onClick={() => {
+                  const isExpanding = expanded !== project.id;
+                  if (isExpanding) {
+                    window.dispatchEvent(new CustomEvent("shaft-flash"));
+                  }
+                  setExpanded(expanded === project.id ? null : project.id);
+                }}
                 aria-expanded={expanded === project.id}
               >
                 <div className="flex items-start justify-between gap-6">
