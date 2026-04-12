@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ShaftRedactProps {
-  text: string;
+  text?: string;
   className?: string;
   revealed?: boolean;
 }
 
 const CHARS = "ABCDEFGHIKLMNOPQRSTVXYZ0123456789!@#$%^&*()_+";
 
-export default function ShaftRedact({ text, className, revealed = false }: ShaftRedactProps) {
+export default function ShaftRedact({ text = "", className, revealed = false }: ShaftRedactProps) {
   const [displayText, setDisplayText] = useState(text);
   const [isRevealed, setIsRevealed] = useState(revealed);
 
