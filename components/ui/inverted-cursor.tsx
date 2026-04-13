@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 /**
@@ -16,21 +16,13 @@ export const Cursor: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [hoverText, setHoverText] = useState("");
-  const [isMobile, setIsMobile] = useState(true); // default true to avoid flash
+  const [isMobile, setIsMobile] = useState(true);
   const [isInViewport, setIsInViewport] = useState(true);
-  const rafRef = useRef<number | null>(null);
-  const lastPosRef = useRef({ x: 0, y: 0 });
 
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
-  const cursorX = useSpring(x, { stiffness: 400, damping: 30, mass: 0.5 });
-  const cursorY = useSpring(y, { stiffness: 400, damping: 30, mass: 0.5 });
-
-  const updateCursorPosition = useCallback(() => {
-    x.set(lastPosRef.current.x);
-    y.set(lastPosRef.current.y);
-    rafRef.current = null;
-  }, [x, y]);
+  const cursorX = useSpring(x, { stiffness: 300, damping: 28 });
+  const cursorY = useSpring(y, { stiffness: 300, damping: 28 });
 
   useEffect(() => {
     // Disable custom cursor on touch devices
@@ -42,10 +34,8 @@ export const Cursor: React.FC = () => {
     setIsMobile(false);
 
     const handleMouseMove = (e: MouseEvent) => {
-      lastPosRef.current = { x: e.clientX, y: e.clientY };
-      if (rafRef.current === null) {
-        rafRef.current = requestAnimationFrame(updateCursorPosition);
-      }
+      x.set(e.clientX);
+      y.set(e.clientY);
     };
 
     const handleMouseDown = () => setIsClicked(true);
@@ -70,10 +60,10 @@ export const Cursor: React.FC = () => {
     const handleMouseLeave = () => setIsInViewport(false);
     const handleMouseEnter = () => setIsInViewport(true);
 
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
-    document.addEventListener("mouseover", handleMouseOver, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver);
     document.documentElement.addEventListener("mouseleave", handleMouseLeave);
     document.documentElement.addEventListener("mouseenter", handleMouseEnter);
 
@@ -81,14 +71,11 @@ export const Cursor: React.FC = () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
-      document.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("mouseover", handleMouseOver);
       document.documentElement.removeEventListener("mouseleave", handleMouseLeave);
       document.documentElement.removeEventListener("mouseenter", handleMouseEnter);
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-      }
     };
-  }, [updateCursorPosition]);
+  }, [x, y]);
 
   if (isMobile) return null;
 
