@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
 /**
@@ -16,21 +16,36 @@ export const Cursor: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [hoverText, setHoverText] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(true); // default true to avoid flash
+  const [isInViewport, setIsInViewport] = useState(true);
+  const rafRef = useRef<number | null>(null);
+  const lastPosRef = useRef({ x: 0, y: 0 });
 
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const cursorX = useSpring(x, { stiffness: 300, damping: 28 });
-  const cursorY = useSpring(y, { stiffness: 300, damping: 28 });
+  const x = useMotionValue(-100);
+  const y = useMotionValue(-100);
+  const cursorX = useSpring(x, { stiffness: 400, damping: 30, mass: 0.5 });
+  const cursorY = useSpring(y, { stiffness: 400, damping: 30, mass: 0.5 });
+
+  const updateCursorPosition = useCallback(() => {
+    x.set(lastPosRef.current.x);
+    y.set(lastPosRef.current.y);
+    rafRef.current = null;
+  }, [x, y]);
 
   useEffect(() => {
     // Disable custom cursor on touch devices
-    const checkTouch = () => setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0);
-    checkTouch();
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice) {
+      setIsMobile(true);
+      return;
+    }
+    setIsMobile(false);
 
     const handleMouseMove = (e: MouseEvent) => {
-      x.set(e.clientX);
-      y.set(e.clientY);
+      lastPosRef.current = { x: e.clientX, y: e.clientY };
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(updateCursorPosition);
+      }
     };
 
     const handleMouseDown = () => setIsClicked(true);
@@ -38,7 +53,7 @@ export const Cursor: React.FC = () => {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const clickable = target.closest('a, button, [role="button"], input, textarea, select');
+      const clickable = target.closest('a, button, [role="button"], input, textarea, select, [data-draggable="true"]');
       if (clickable) {
         setIsHovered(true);
         const label = clickable.getAttribute('aria-label') ||
@@ -51,18 +66,29 @@ export const Cursor: React.FC = () => {
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    // Hide cursor when mouse leaves the viewport
+    const handleMouseLeave = () => setIsInViewport(false);
+    const handleMouseEnter = () => setIsInViewport(true);
+
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener("mouseover", handleMouseOver, { passive: true });
+    document.documentElement.addEventListener("mouseleave", handleMouseLeave);
+    document.documentElement.addEventListener("mouseenter", handleMouseEnter);
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseover", handleMouseOver);
+      document.documentElement.removeEventListener("mouseleave", handleMouseLeave);
+      document.documentElement.removeEventListener("mouseenter", handleMouseEnter);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
     };
-  }, [x, y]);
+  }, [updateCursorPosition]);
 
   if (isMobile) return null;
 
@@ -82,6 +108,8 @@ export const Cursor: React.FC = () => {
           width: ringSize,
           height: ringSize,
         }}
+        animate={{ opacity: isInViewport ? 1 : 0 }}
+        transition={{ duration: 0.15 }}
       >
         <motion.svg
           viewBox="0 0 100 100"
@@ -132,6 +160,7 @@ export const Cursor: React.FC = () => {
         }}
         animate={{
           scale: isClicked ? 0.75 : 1,
+          opacity: isInViewport ? 1 : 0,
         }}
         transition={{ type: "spring", damping: 25, stiffness: 500 }}
       >

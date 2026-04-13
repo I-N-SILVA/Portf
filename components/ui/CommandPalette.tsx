@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Command, User, FolderKanban, Sparkles, Mail, Sun, Moon, type LucideIcon } from "lucide-react";
+import { Search, Command, User, FolderKanban, Mail, Sun, Moon, type LucideIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +27,7 @@ export const CommandPalette = ({ isOpen, setIsOpen }: CommandPaletteProps) => {
     const actions: Action[] = [
         { id: "about", title: "Jump to Profile", icon: User, shortcut: "G P", section: "about" },
         { id: "projects", title: "Browse Archive", icon: FolderKanban, shortcut: "G A", section: "projects" },
-        { id: "expertise", title: "View Expertise", icon: Sparkles, shortcut: "G E", section: "expertise" },
+
         { id: "contact", title: "Send Message", icon: Mail, shortcut: "C O", section: "contact" },
         {
             id: "theme",

@@ -122,10 +122,10 @@ export default function ContactCard() {
                 <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline">&rarr; iannogueira@proton.me</span>
               </a>
 
-              <a href="https://calendly.com" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 hover:text-sky-600 dark:hover:text-sky-primary transition-colors">
+              <a href="https://calendly.com/iansilva-plyaz/30min" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-4 hover:text-sky-600 dark:hover:text-sky-primary transition-colors">
                 <span className="text-sky-900/40 dark:text-sky-text-secondary/40 hidden md:inline">-rwxr-xr-x</span>
                 <span className="text-sky-600 dark:text-sky-primary group-hover:underline decoration-sky-600/30 dark:decoration-sky-primary/30 underline-offset-4">book_call.sh</span>
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline">&rarr; open calendly</span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs hidden sm:inline">&rarr; schedule a 30min call</span>
               </a>
             </div>
 

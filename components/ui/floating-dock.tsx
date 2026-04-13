@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion"
-import { Home, User, FolderKanban, Sparkles, Mail } from "lucide-react"
+import { Home, User, FolderKanban, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navItems = [
     { name: "Home", href: "#hero", icon: Home },
     { name: "About", href: "#about", icon: User },
     { name: "Projects", href: "#projects", icon: FolderKanban },
-    { name: "Expertise", href: "#expertise", icon: Sparkles },
+
     { name: "Contact", href: "#contact", icon: Mail },
 ]
 

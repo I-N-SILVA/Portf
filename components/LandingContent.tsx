@@ -21,7 +21,7 @@ import { Suspense, lazy, useEffect, useState } from "react";
 // Lazy-loaded sections
 const AboutSection = lazy(() => import("@/components/sections/AboutSection"));
 const ProjectsSection = lazy(() => import("@/components/sections/ProjectsSection"));
-const ExpertiseSection = lazy(() => import("@/components/sections/ExpertiseSection"));
+
 const ContactSection = lazy(() => import("@/components/sections/ContactSection"));
 
 const SectionFallback = () => (
@@ -35,16 +35,14 @@ export default function LandingContent() {
     const [visibleWindows, setVisibleWindows] = useState({
         about: true,
         projects: true,
-        expertise: true,
         contact: true
     });
     const [minimizedWindows, setMinimizedWindows] = useState({
         about: false,
         projects: false,
-        expertise: false,
         contact: false
     });
-    const [windowOrder, setWindowOrder] = useState<string[]>(['about', 'projects', 'expertise', 'contact']);
+    const [windowOrder, setWindowOrder] = useState<string[]>(['about', 'projects', 'contact']);
     const [maximizedWindow, setMaximizedWindow] = useState<string | null>(null);
     const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
@@ -75,16 +73,14 @@ export default function LandingContent() {
         setVisibleWindows({
             about: true,
             projects: true,
-            expertise: true,
             contact: true
         });
         setMinimizedWindows({
             about: false,
             projects: false,
-            expertise: false,
             contact: false
         });
-        setWindowOrder(['about', 'projects', 'expertise', 'contact']);
+        setWindowOrder(['about', 'projects', 'contact']);
     };
 
     const hasClosedWindows = Object.values(visibleWindows).some(v => !v);
@@ -96,7 +92,6 @@ export default function LandingContent() {
             const loaders = [
                 import("@/components/sections/AboutSection"),
                 import("@/components/sections/ProjectsSection"),
-                import("@/components/sections/ExpertiseSection"),
                 import("@/components/sections/ContactSection")
             ];
             await Promise.allSettled(loaders);
@@ -302,40 +297,7 @@ export default function LandingContent() {
                     )}
                 </AnimatePresence>
 
-                {/* Expertise Section Window */}
-                <AnimatePresence>
-                    {visibleWindows.expertise && (
-                        <motion.section
-                            id="expertise"
-                            className={cn(
-                                "relative transition-all duration-500",
-                                maximizedWindow === "expertise" ? "z-[200]" : "z-10",
-                                maximizedWindow && maximizedWindow !== "expertise" ? "opacity-20 pointer-events-none scale-95" : "opacity-100"
-                            )}
-                        >
-                            <DraggableWindow
-                                title="Domains_Expertise.sys"
-                                width="max-w-5xl"
-                                initialX={0}
-                                initialY={0}
-                                zIndex={10 + windowOrder.indexOf('expertise')}
-                                isFocused={windowOrder[windowOrder.length - 1] === 'expertise'}
-                                onFocus={() => bringToFront('expertise')}
-                                isMinimized={minimizedWindows.expertise}
-                                onMinimize={(val) => toggleMinimize('expertise', val)}
-                                isMaximized={maximizedWindow === "expertise"}
-                                onMaximize={() => { bringToFront('expertise'); setMaximizedWindow(maximizedWindow === "expertise" ? null : "expertise"); }}
-                                onClose={() => { setMaximizedWindow(null); toggleWindow("expertise", false); }}
-                            >
-                                <div className="bg-background/50 backdrop-blur-sm">
-                                    <Suspense fallback={<SectionFallback />}>
-                                        <ExpertiseSection />
-                                    </Suspense>
-                                </div>
-                            </DraggableWindow>
-                        </motion.section>
-                    )}
-                </AnimatePresence>
+
 
                 {/* Contact Section Window */}
                 <AnimatePresence>

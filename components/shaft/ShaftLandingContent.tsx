@@ -9,7 +9,7 @@ import ShaftTicker from "./ShaftTicker";
 import ShaftIdentity from "./ShaftIdentity";
 import ShaftOffers from "./ShaftOffers";
 import ShaftArchive from "./ShaftArchive";
-import ShaftDomains from "./ShaftDomains";
+
 import ShaftCall from "./ShaftCall";
 import ShaftSocialDock from "./ShaftSocialDock";
 import ShaftMobileCTA from "./ShaftMobileCTA";
@@ -123,9 +123,7 @@ export default function ShaftLandingContent() {
             <ShaftArchive />
           </ShaftPerspectiveSection>
 
-          <ShaftPerspectiveSection>
-            <ShaftDomains />
-          </ShaftPerspectiveSection>
+
 
           <ShaftPerspectiveSection>
             <ShaftCall />

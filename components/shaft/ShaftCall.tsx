@@ -1,8 +1,8 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { useState, useRef } from "react";
-import CalendarBooking from "@/components/CalendarBooking";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+
 import { socialLinks } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
 
@@ -23,7 +23,6 @@ const fadeUp = (delay = 0) => ({
 const vpOpts = { once: true, margin: "-60px" };
 
 export default function ShaftCall() {
-  const [showBooking, setShowBooking] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
@@ -52,7 +51,7 @@ export default function ShaftCall() {
               y: watermarkY,
             }}
           >
-            06
+            05
           </motion.div>
 
           {/* Faint crimson horizontal stripe */}
@@ -156,33 +155,34 @@ export default function ShaftCall() {
             viewport={vpOpts}
             className="mt-12"
           >
-            <button
-              onClick={() => setShowBooking((v) => !v)}
-              className="group w-full flex items-center justify-between border transition-colors duration-150 focus:outline-none"
+            <a
+              href="https://calendly.com/iansilva-plyaz/30min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group w-full flex items-center justify-between border transition-colors duration-150 focus:outline-none hover:bg-[rgb(204_17_34)] "
               style={{
                 borderColor: "rgb(var(--shaft-crimson))",
-                backgroundColor: showBooking ? "rgb(204 17 34)" : "transparent",
+                backgroundColor: "transparent",
               }}
-              aria-expanded={showBooking}
             >
               <span
                 className="font-space-mono text-[10px] md:text-[11px] tracking-[0.5em] uppercase px-8 py-5 border-r transition-colors duration-150"
                 style={{
-                  color: showBooking ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-cream))",
+                  color: "rgb(var(--shaft-cream))",
                   borderColor: "rgb(var(--shaft-crimson))",
                 }}
               >
-                {showBooking ? t("call.cta.close") : t("call.cta.open")}
+                {t("call.cta.open")}
               </span>
               <motion.span
-                animate={{ x: showBooking ? 0 : [0, 5, 0] }}
-                transition={{ duration: 1.4, repeat: showBooking ? 0 : Infinity, ease: "easeInOut" }}
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
                 className="font-space-mono text-[13px] px-6 py-5"
-                style={{ color: showBooking ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-crimson))" }}
+                style={{ color: "rgb(var(--shaft-crimson))" }}
               >
-                {showBooking ? "×" : "→ ]"}
+                → ]
               </motion.span>
-            </button>
+            </a>
           </motion.div>
 
           {/* Email fallback */}
@@ -223,44 +223,7 @@ export default function ShaftCall() {
         </div>
       </div>
 
-      {/* ── Expandable calendar booking ── */}
-      <AnimatePresence initial={false}>
-        {showBooking && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
-            className="overflow-hidden"
-            style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
-          >
-            <div className="px-8 md:px-16 lg:px-24 py-16">
-              {/* Calendar intertitle */}
-              <div className="flex items-center gap-4 mb-10">
-                <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
-                <span
-                  className="font-space-mono text-[8px] tracking-[0.55em] uppercase"
-                  style={{ color: "rgb(var(--shaft-gold))" }}
-                >
-                  {t("call.calendar")}
-                </span>
-                <motion.div 
-                  className="h-px flex-1 origin-left" 
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={vpOpts}
-                  transition={{ duration: 0.6, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ backgroundColor: "rgb(var(--shaft-border))" }} 
-                />
-              </div>
 
-              <div className="max-w-4xl mx-auto">
-                <CalendarBooking />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── Footer / Credits ── */}
       <footer
