@@ -74,7 +74,7 @@ export const pt: Record<string, string> = {
   "nav.opening": "ABERTURA",
   "nav.identity": "IDENTIDADE",
   "nav.archive": "ARQUIVO",
-  "nav.domains": "DOMÍNIOS",
+
   "nav.call": "A CHAMADA",
   "nav.theme.dark": "[ ESCURO ]",
   "nav.theme.light": "[ CLARO ]",
@@ -92,13 +92,9 @@ export const pt: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "Plataforma de Gestão de Prompts IA - uma biblioteca completa para organizar, refinar e implementar prompts de forma eficiente.",
   "projects.3.full": "O Promptuous é um sistema de gestão de prompts projetado para profissionais de IA e criadores de conteúdo. Oferece um espaço de trabalho centralizado para armazenar, categorizar e iterar em prompts, garantindo performance otimizada e workflows de implementação sem falhas.",
-  "projects.4.title": "Hub de Analítica DeFi",
-  "projects.4.desc": "Plataforma de pesquisa de tokenomics e analítica de finanças descentralizadas com análise de smart contracts e visualização de dados on-chain.",
-  "projects.4.full": "Ferramentas de inteligência de mercado Web3 para análise de protocolos DeFi. Fornece insights profundos sobre interações de smart contracts, fluxos de tokens e dinâmicas de mercado descentralizado.",
+
   "projects.5.title": "Currículo Inspirado no Spotify",
   "projects.5.desc": "Uma plataforma de portfólio/currículo criativa e interativa que apresenta informações profissionais numa interface estilo Spotify.",
   "projects.5.full": "Este projeto demonstra a capacidade de criar soluções inovadoras que diferenciam candidatos em mercados competitivos, mantendo sofisticação técnica. Combina desenvolvimento web moderno com uma experiência de utilizador única e envolvente.",
-  "projects.6.title": "Mindful Path",
-  "projects.6.desc": "App de desenvolvimento pessoal que integra práticas de filosofia oriental com rastreamento de hábitos e diário de reflexão.",
-  "projects.6.full": "Combina sabedoria antiga com psicologia comportamental moderna. Integra Budismo Zen, Estoicismo e Sufismo com rastreamento diário de hábitos e exercícios de mindfulness.",
+
 };

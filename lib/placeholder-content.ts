@@ -133,26 +133,7 @@ export const projects: Project[] = [
     duration: "3 months",
     teamSize: "Solo developer",
   },
-  {
-    id: "4",
-    title: "DeFi Analytics Hub",
-    category: "Web3",
-    description: "Decentralized finance analytics and tokenomics research platform with smart contract analysis and on-chain data visualization",
-    image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&h=600&fit=crop",
-    tags: ["Solidity", "Web3.js", "React", "The Graph", "Ethers.js"],
-    badge: "WEB3",
-    fullDescription: "Web3 market intelligence tools for DeFi protocol analysis and tokenomics research. Provides deep insights into smart contract interactions, token flows, and decentralized market dynamics.",
-    features: [
-      "Smart contract interaction analysis",
-      "Token analytics and tracking",
-      "DeFi protocol integration",
-      "On-chain data visualization",
-      "Tokenomics modeling tools",
-    ],
-    role: "Blockchain Developer",
-    duration: "6 months",
-    teamSize: "Solo developer",
-  },
+
   {
     id: "5",
     title: "Spotify-Inspired CV Application",
@@ -176,26 +157,7 @@ export const projects: Project[] = [
     duration: "1 month",
     teamSize: "Solo developer",
   },
-  {
-    id: "6",
-    title: "Mindful Path",
-    description: "Personal development app integrating Eastern philosophy practices with habit tracking and reflection journaling",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=600&fit=crop",
-    tags: ["React Native", "Firebase", "Redux", "Notion API"],
-    badge: "IN DEV",
-    fullDescription: "Combines ancient wisdom with modern behavioral psychology. Integrates Zen Buddhism, Stoicism, and Sufism practices with daily habit tracking and mindfulness exercises.",
-    features: [
-      "Daily practice tracking",
-      "Philosophical text library",
-      "Meditation timer",
-      "Reflection journaling",
-      "Community features",
-    ],
-    category: "Creative",
-    role: "Solo Developer",
-    duration: "7 months",
-    teamSize: "Solo developer",
-  },
+
 ];
 
 // Skills data

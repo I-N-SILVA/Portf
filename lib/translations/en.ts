@@ -57,7 +57,7 @@ export const en: Record<string, string> = {
   "domains.3.body": "Engineering robust, scalable architectures — high-performance frontends, secure cloud infrastructure, clean APIs.",
 
   // ── The Call ──
-  "call.section": "06 / THE CALL",
+  "call.section": "05 / THE CALL",
   "call.title1": "SCHEDULE",
   "call.title2": "THE CALL.",
   "call.line1": "30 minutes.",
@@ -75,7 +75,7 @@ export const en: Record<string, string> = {
   "nav.identity": "IDENTITY",
   "nav.offers": "OFFERS",
   "nav.archive": "ARCHIVE",
-  "nav.domains": "DOMAINS",
+
   "nav.call": "THE CALL",
   "nav.theme.dark": "[ DARK ]",
   "nav.theme.light": "[ LIGHT ]",
@@ -93,15 +93,11 @@ export const en: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
   "projects.3.full": "Promptuous is a full-featured prompt library and management system designed for AI practitioners, developers, and content creators who need to organize, refine, and deploy AI prompts efficiently. The platform provides a centralized workspace for storing, categorizing, and iterating on prompts across different use cases, from creative applications to general-purpose workflows.",
-  "projects.4.title": "DeFi Analytics Hub",
-  "projects.4.desc": "Decentralized finance analytics and tokenomics research platform with smart contract analysis and on-chain data visualization",
-  "projects.4.full": "Web3 market intelligence tools for DeFi protocol analysis and tokenomics research. Provides deep insights into smart contract interactions, token flows, and decentralized market dynamics.",
+
   "projects.5.title": "Spotify-Inspired CV Application",
   "projects.5.desc": "A creative, interactive CV/portfolio platform that presents professional information in a Spotify-style interface.",
   "projects.5.full": "This project showcases your ability to create innovative solutions that differentiate candidates in competitive job markets while maintaining professional functionality and technical sophistication. It combines modern web development with a unique, engaging user experience that transforms traditional resumes into visually appealing, shareable applications.",
-  "projects.6.title": "Mindful Path",
-  "projects.6.desc": "Personal development app integrating Eastern philosophy practices with habit tracking and reflection journaling",
-  "projects.6.full": "Combines ancient wisdom with modern behavioral psychology. Integrates Zen Buddhism, Stoicism, and Sufism practices with daily habit tracking and mindfulness exercises.",
+
 
   // ── Offers ──
   "offers.section": "03 / CAPABILITIES",
