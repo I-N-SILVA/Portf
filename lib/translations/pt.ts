@@ -1,13 +1,13 @@
 export const pt: Record<string, string> = {
   // ── Intertitle ──
   "intertitle.year": "PORTFÓLIO · 2026",
-  "intertitle.subtitle": "ENGENHEIRO DE AUTOMAÇÃO IA",
+  "intertitle.subtitle": "CONSULTOR DE IA",
 
   // ── Hero ──
   "hero.pretitle": "// PORTFÓLIO",
-  "hero.tagline": "Engenheiro de Automação IA ·",
+  "hero.tagline": "Consultor de IA ·",
   "hero.tagline2": "Economista Comportamental",
-  "hero.marker": "Construindo na interseção de IA e comportamento humano",
+  "hero.marker": "Ajudo fundadores e pequenas equipas a transformar ideias vagas em automações funcionais, landing pages e MVPs que podem ser testados com utilizadores reais em semanas, não meses.",
   "hero.cta": "AGENDAR UMA CHAMADA",
   "hero.scroll": "ROLAR",
   "hero.scene": "[ 01 / ABERTURA ]",
@@ -17,15 +17,15 @@ export const pt: Record<string, string> = {
   "identity.pretitle": "// 02",
   "identity.line1": "A questão não é",
   "identity.line2": "o que eu construo.",
-  "identity.line3": "É o que quebra",
-  "identity.line4": "sem mim.",
+  "identity.line3": "É o que se torna",
+  "identity.line4": "possível quando existe.",
   "identity.meta.background.label": "FORMAÇÃO",
   "identity.meta.background.value": "BSc Economia · MSc Psicologia",
   "identity.meta.location.label": "LOCALIZAÇÃO",
   "identity.meta.focus.label": "FOCO ATUAL",
-  "identity.meta.focus.value": "Agentes IA · MCP · Automação",
+  "identity.meta.focus.value": "Agentes IA · Workflows de Automação · MVPs Focados em Conversão",
   "identity.meta.status.label": "STATUS",
-  "identity.meta.status.value": "Aceitando novos projetos — Q4 2026",
+  "identity.meta.status.value": "A aceitar 1–2 novos projetos por mês (remoto)",
   "identity.available": "Disponível para colaboração",
   "identity.bio": "Construindo sistemas inteligentes e frameworks económicos na interseção de IA, Web3 e psicologia comportamental. Especializado em prototipagem rápida, automação de fluxos de trabalho e desenvolvimento estratégico de produtos.",
 
@@ -42,19 +42,10 @@ export const pt: Record<string, string> = {
   "insight.cta": "VER ESTUDOS DE CASO",
 
   // ── Archive ──
-  "archive.section": "03 / O ARQUIVO",
+  "archive.section": "04 / O ARQUIVO",
   "archive.filter.all": "TODOS",
   "archive.viewProject": "VER PROJETO →",
   "archive.source": "CÓDIGO →",
-
-  // ── Domains ──
-  "domains.section": "04 / DOMÍNIOS PRINCIPAIS",
-  "domains.1.title": "AUTONOMIA IA",
-  "domains.1.body": "Construção de agentes inteligentes e fluxos de trabalho que percecionam, raciocinam e executam operações complexas de forma autónoma. Integrações MCP, sistemas multi-agente, orquestração de LLM — a stack completa.",
-  "domains.2.title": "DESIGN COMPORTAMENTAL",
-  "domains.2.body": "Aplicação de economia comportamental para arquitetar experiências de utilizador que impulsionam o engagement e a conversão naturalmente.",
-  "domains.3.title": "SISTEMAS FULL-STACK",
-  "domains.3.body": "Engenharia de arquiteturas robustas e escaláveis — frontends de alta performance, infraestrutura cloud segura, APIs limpas.",
 
   // ── The Call ──
   "call.section": "05 / A CHAMADA",
@@ -73,8 +64,8 @@ export const pt: Record<string, string> = {
   // ── Nav ──
   "nav.opening": "ABERTURA",
   "nav.identity": "IDENTIDADE",
+  "nav.offers": "OFERTAS",
   "nav.archive": "ARQUIVO",
-
   "nav.call": "A CHAMADA",
   "nav.theme.dark": "[ ESCURO ]",
   "nav.theme.light": "[ CLARO ]",
@@ -92,9 +83,22 @@ export const pt: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "Plataforma de Gestão de Prompts IA - uma biblioteca completa para organizar, refinar e implementar prompts de forma eficiente.",
   "projects.3.full": "O Promptuous é um sistema de gestão de prompts projetado para profissionais de IA e criadores de conteúdo. Oferece um espaço de trabalho centralizado para armazenar, categorizar e iterar em prompts, garantindo performance otimizada e workflows de implementação sem falhas.",
-
   "projects.5.title": "Currículo Inspirado no Spotify",
   "projects.5.desc": "Uma plataforma de portfólio/currículo criativa e interativa que apresenta informações profissionais numa interface estilo Spotify.",
   "projects.5.full": "Este projeto demonstra a capacidade de criar soluções inovadoras que diferenciam candidatos em mercados competitivos, mantendo sofisticação técnica. Combina desenvolvimento web moderno com uma experiência de utilizador única e envolvente.",
 
+  // ── Offers ──
+  "offers.section": "03 / CAPACIDADES",
+  "offers.title": "O que posso construir para você em 2–4 semanas.",
+  "offers.subtitle": "Três ofertas focadas:",
+  "offers.1.title": "PROTÓTIPOS MVP PRONTOS A TESTAR",
+  "offers.1.body1": "Protótipos funcionais e rápidos que você pode demonstrar a utilizadores, investidores ou à sua equipa.",
+  "offers.1.body2": "Ideal para: testar um conceito de produto antes de uma construção completa, validar a procura ou obter alinhamento sobre o que construir a seguir.",
+  "offers.2.title": "LANDING PAGES QUE CONVERTEM",
+  "offers.2.body1": "Landing pages focadas em conversão para novos produtos, listas de espera ou lançamentos beta, escritas e desenhadas com histórias claras e CTAs fortes.",
+  "offers.2.body2": "Você recebe: texto, layout, implementação e configuração básica de analítica para ver o que está a funcionar.",
+  "offers.3.title": "AUTOMAÇÕES ALIMENTADAS POR IA",
+  "offers.3.body1": "Conecte as suas ferramentas (email, CRM, Notion, Airtable, Stripe, etc.) e deixe a IA tratar do trabalho repetitivo.",
+  "offers.3.body2": "Exemplos: bots de qualificação de leads, motores de reaproveitamento de conteúdo, assistentes de pesquisa interna ou workflows de limpeza de dados.",
+  "offers.cta": "Não tem certeza do que precisa? Traga a ideia confusa. Vamos descobrir a coisa mais pequena e poderosa que podemos construir primeiro.",
 };

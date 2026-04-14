@@ -201,6 +201,7 @@ export const skills: Skill[] = [
 
 // Social links — replace "#" placeholders with real URLs before going live
 export const socialLinks: SocialLink[] = [
+  /*
   {
     name: "Instagram",
     url: "https://instagram.com",
@@ -216,6 +217,7 @@ export const socialLinks: SocialLink[] = [
     url: "https://youtube.com",
     icon: "youtube",
   },
+  */
   {
     name: "LinkedIn",
     url: "https://linkedin.com/in/ian-n-silva",

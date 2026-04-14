@@ -47,14 +47,7 @@ export const en: Record<string, string> = {
   "archive.viewProject": "VIEW PROJECT →",
   "archive.source": "SOURCE →",
 
-  // ── Domains ──
-  "domains.section": "05 / CORE DOMAINS",
-  "domains.1.title": "AI AUTONOMY",
-  "domains.1.body": "Building intelligent agents and workflows that perceive, reason, and execute complex operations autonomously. MCP integrations, multi-agent systems, LLM orchestration — the full stack.",
-  "domains.2.title": "BEHAVIORAL DESIGN",
-  "domains.2.body": "Applying behavioral economics to architect user experiences that naturally drive engagement and conversion.",
-  "domains.3.title": "FULL-STACK SYSTEMS",
-  "domains.3.body": "Engineering robust, scalable architectures — high-performance frontends, secure cloud infrastructure, clean APIs.",
+
 
   // ── The Call ──
   "call.section": "05 / THE CALL",
