@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Client } from "@/lib/supabase/types";
 
@@ -55,7 +56,12 @@ export default async function ClientsPage() {
               clients.map((c) => (
                 <tr key={c.id}>
                   <td>
-                    <div style={{ color: "var(--os-ink)" }}>{c.name}</div>
+                    <Link
+                      href={`/clients/${c.id}`}
+                      style={{ color: "var(--os-ink)", textDecoration: "none" }}
+                    >
+                      {c.name}
+                    </Link>
                     {c.company && (
                       <div
                         style={{

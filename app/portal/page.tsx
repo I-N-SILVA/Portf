@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSessionContext } from "@/lib/os/session";
+import { getClientProjects, summarise } from "@/lib/os/projects";
 import { ActivityBeacon } from "@/components/os/ActivityBeacon";
 import type { ClientModules } from "@/lib/supabase/types";
 
@@ -46,6 +47,10 @@ export default async function PortalDashboard() {
     (m) => modules[m],
   );
 
+  const projectSummary = modules.projects
+    ? summarise(await getClientProjects())
+    : null;
+
   return (
     <main className="os-stage">
       <ActivityBeacon eventType="login" />
@@ -63,19 +68,47 @@ export default async function PortalDashboard() {
       <div className="os-grid">
         {enabled.map((m) => {
           const meta = MODULE_META[m];
+          const flagged = m === "projects" && (projectSummary?.flagged ?? 0) > 0;
           return (
             <Link
               key={m}
               href={meta.href}
               className="os-win"
+              data-flagged={flagged}
               style={{ textDecoration: "none" }}
             >
               <div className="os-win-bar">
                 {meta.label}
+                {flagged && (
+                  <span className="badge">
+                    {projectSummary!.flagged} to review
+                  </span>
+                )}
                 <span className="chev">→</span>
               </div>
               <div className="os-win-body">
-                <p className="os-empty">{meta.empty}</p>
+                {m === "projects" && projectSummary && projectSummary.total > 0 ? (
+                  <>
+                    <div className="os-row">
+                      <span className="label">Active projects</span>
+                      <span className="val">{projectSummary.active}</span>
+                    </div>
+                    <div className="os-row">
+                      <span className="label">Awaiting you</span>
+                      <span
+                        className={`val ${projectSummary.flagged > 0 ? "accent" : ""}`}
+                      >
+                        {projectSummary.flagged}
+                      </span>
+                    </div>
+                    <p className="os-empty" style={{ marginTop: "auto" }}>
+                      {projectSummary.total} project
+                      {projectSummary.total === 1 ? "" : "s"} in total.
+                    </p>
+                  </>
+                ) : (
+                  <p className="os-empty">{meta.empty}</p>
+                )}
               </div>
             </Link>
           );

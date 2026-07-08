@@ -59,6 +59,21 @@ Users are invite-only (no self-serve signup). To bootstrap the first admin:
    `profiles.role` is the RLS source of truth; the `app_metadata` claim is the
    fast check middleware uses.
 
+## Projects (Phase 2)
+
+`projects` + `milestones` (`0002_projects.sql`). Admin manages projects and
+milestones from the client detail page (`/admin/clients/[id]`) and flags a
+milestone **ready for review**; the client sees it flagged and approves or
+requests changes from `/portal/projects/[id]` via the decipher-to-sign action.
+
+State transitions that matter run through SECURITY DEFINER functions so auth +
+activity logging are centralised and can't be bypassed:
+
+- `mark_milestone_ready(milestone_id)` — admin only; emits `milestone_ready`
+  (the 48h approval nudge in Phase 5 keys off this event).
+- `respond_to_milestone(milestone_id, approve, comment)` — the owning client
+  (or an admin); emits `milestone_approved` / `milestone_rejected`.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` — see the migration.
@@ -70,6 +85,7 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
 
 - **Phase 1 (this slice):** schema + RLS + roles, subdomain middleware, auth
   (login / magic link / invite / reset), empty-state dashboards, activity logging.
-- **Phase 2:** Projects (admin CRUD + client view/approve) — validates the
+- **Phase 2 (done):** Projects — admin create/manage projects + milestones,
+  mark ready for review; client view + approve/request-changes. Validates the
   per-module pattern.
 - **Phase 3+:** Billing (Stripe), Bookings, Engagement & Nudges, Messaging.

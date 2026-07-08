@@ -9,6 +9,19 @@
 export type UserRole = "admin" | "client";
 export type ClientStatus = "active" | "paused" | "churned";
 export type ClientTier = "project" | "subscription" | "hybrid";
+export type ProjectStatus =
+  | "not_started"
+  | "in_progress"
+  | "review"
+  | "approved"
+  | "complete";
+export type MilestoneStatus =
+  | "pending"
+  | "in_progress"
+  | "ready_for_review"
+  | "approved"
+  | "rejected"
+  | "complete";
 
 /** Per-client module toggles — services enabled without a redeploy. */
 export type ClientModules = {
@@ -59,6 +72,31 @@ export type AuditLogEntry = {
   created_at: string;
 }
 
+export type Project = {
+  id: string;
+  client_id: string;
+  name: string;
+  description: string | null;
+  status: ProjectStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Milestone = {
+  id: string;
+  project_id: string;
+  name: string;
+  description: string | null;
+  due_date: string | null;
+  position: number;
+  status: MilestoneStatus;
+  ready_at: string | null;
+  responded_at: string | null;
+  responded_by: string | null;
+  response_comment: string | null;
+  created_at: string;
+};
+
 type Row<T> = {
   Row: T;
   Insert: Partial<T>;
@@ -73,6 +111,8 @@ export interface Database {
       profiles: Row<Profile>;
       activity_events: Row<ActivityEvent>;
       audit_log: Row<AuditLogEntry>;
+      projects: Row<Project>;
+      milestones: Row<Milestone>;
     };
     Views: Record<string, never>;
     CompositeTypes: Record<string, never>;
@@ -84,6 +124,26 @@ export interface Database {
           p_event_type: string;
           p_client_id?: string | null;
           p_metadata?: Record<string, unknown>;
+        };
+        Returns: undefined;
+      };
+      log_admin_action: {
+        Args: {
+          p_action: string;
+          p_client_id: string;
+          p_detail?: Record<string, unknown>;
+        };
+        Returns: undefined;
+      };
+      mark_milestone_ready: {
+        Args: { p_milestone_id: string };
+        Returns: undefined;
+      };
+      respond_to_milestone: {
+        Args: {
+          p_milestone_id: string;
+          p_approve: boolean;
+          p_comment?: string | null;
         };
         Returns: undefined;
       };
