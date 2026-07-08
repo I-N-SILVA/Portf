@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { getStripe } from "@/lib/stripe/server";
+import type { Client } from "@/lib/supabase/types";
 
 export type ActionResult = { ok: boolean; error?: string };
 
@@ -68,6 +70,111 @@ export async function addMilestone(
 
   revalidatePath(`/clients/${clientId}`, "layout");
   return { ok: true };
+}
+
+/**
+ * Ensure the client has a Stripe customer, creating one on first use and
+ * storing the id back on the client record.
+ */
+async function ensureStripeCustomer(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  clientId: string,
+): Promise<string> {
+  const { data } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("id", clientId)
+    .maybeSingle();
+  const client = data as Client | null;
+  if (!client) throw new Error("Client not found.");
+  if (client.stripe_customer_id) return client.stripe_customer_id;
+
+  const customer = await getStripe().customers.create({
+    email: client.email,
+    name: client.company ?? client.name,
+    metadata: { client_id: clientId },
+  });
+  await supabase
+    .from("clients")
+    .update({ stripe_customer_id: customer.id })
+    .eq("id", clientId);
+  return customer.id;
+}
+
+/**
+ * Create and finalise a one-off invoice in Stripe, then mirror it into
+ * Supabase immediately (the webhook keeps it in sync thereafter). Amount is
+ * accepted in major units (e.g. pounds) and stored in minor units.
+ */
+export async function createInvoice(
+  clientId: string,
+  amountMajor: number,
+  description: string,
+  dueDays: number,
+): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorised." };
+  if (!Number.isFinite(amountMajor) || amountMajor <= 0) {
+    return { ok: false, error: "Enter a valid amount." };
+  }
+  if (!description.trim()) {
+    return { ok: false, error: "Add a description." };
+  }
+
+  const minor = Math.round(amountMajor * 100);
+
+  try {
+    const stripe = getStripe();
+    const customerId = await ensureStripeCustomer(supabase, clientId);
+
+    await stripe.invoiceItems.create({
+      customer: customerId,
+      amount: minor,
+      currency: "gbp",
+      description: description.trim(),
+    });
+
+    const invoice = await stripe.invoices.create({
+      customer: customerId,
+      collection_method: "send_invoice",
+      days_until_due: Math.max(1, Math.floor(dueDays) || 7),
+      description: description.trim(),
+    });
+
+    const finalised = invoice.id
+      ? await stripe.invoices.finalizeInvoice(invoice.id)
+      : invoice;
+
+    await supabase.from("invoices").upsert(
+      {
+        client_id: clientId,
+        stripe_invoice_id: finalised.id!,
+        number: finalised.number ?? null,
+        description: description.trim(),
+        amount: finalised.total ?? minor,
+        amount_paid: finalised.amount_paid ?? 0,
+        currency: finalised.currency ?? "gbp",
+        status: finalised.status ?? "open",
+        due_date: finalised.due_date
+          ? new Date(finalised.due_date * 1000).toISOString()
+          : null,
+        hosted_invoice_url: finalised.hosted_invoice_url ?? null,
+      },
+      { onConflict: "stripe_invoice_id" },
+    );
+
+    await supabase.rpc("log_admin_action", {
+      p_action: "invoice_created",
+      p_client_id: clientId,
+      p_detail: { amount: minor, description: description.trim() },
+    });
+
+    revalidatePath(`/clients/${clientId}`, "layout");
+    return { ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Stripe error.";
+    return { ok: false, error: message };
+  }
 }
 
 /** Flag a milestone ready for review — client sees it, 48h nudge clock starts. */

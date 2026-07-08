@@ -74,6 +74,33 @@ activity logging are centralised and can't be bypassed:
 - `respond_to_milestone(milestone_id, approve, comment)` — the owning client
   (or an admin); emits `milestone_approved` / `milestone_rejected`.
 
+## Billing (Phase 3)
+
+`subscriptions` + `invoices` (`0003_billing.sql`), plus `clients.stripe_customer_id`.
+Amounts are stored in minor units (pence).
+
+- **Sync direction:** Stripe → Supabase. The webhook at `/api/stripe/webhook`
+  verifies the signature and upserts subscriptions/invoices via the service
+  role, and emits an `invoice_paid` activity event. The admin dashboard reads
+  Supabase, never Stripe live.
+- **Admin** creates one-off invoices from the client detail page
+  (`createInvoice` — ensures a Stripe customer, finalises the invoice, mirrors
+  it back immediately). Subscriptions are created in Stripe / via Checkout and
+  flow in through the webhook.
+- **Client** sees plan + invoice history at `/portal/billing`, pays via the
+  Stripe-hosted invoice URL, and manages their payment method through the
+  Customer Portal (`/portal/billing/portal`).
+- **Overdue rule (spec 6.4):** an `open`/`uncollectible` invoice more than 3
+  days past due shows a badge on both the client dashboard and the admin views
+  (`isInvoiceOverdue` in `lib/os/billing.ts`).
+
+### Stripe setup
+
+1. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` (see `.env.example`).
+2. Add a webhook endpoint pointing at `https://<host>/api/stripe/webhook`,
+   subscribed to `customer.subscription.*` and `invoice.*` events.
+3. Local testing: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` — see the migration.
@@ -88,4 +115,7 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
 - **Phase 2 (done):** Projects — admin create/manage projects + milestones,
   mark ready for review; client view + approve/request-changes. Validates the
   per-module pattern.
-- **Phase 3+:** Billing (Stripe), Bookings, Engagement & Nudges, Messaging.
+- **Phase 3 (done):** Billing — Stripe subscriptions + invoices, webhook sync,
+  client plan/invoice views + Customer Portal, admin invoice creation, overdue
+  badges.
+- **Phase 4+:** Bookings, Engagement & Nudges, Messaging.

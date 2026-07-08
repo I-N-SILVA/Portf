@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { getSessionContext } from "@/lib/os/session";
 import { getClientProjects, summarise } from "@/lib/os/projects";
+import {
+  getClientBilling,
+  billingSummary,
+  formatMoney,
+} from "@/lib/os/billing";
 import { ActivityBeacon } from "@/components/os/ActivityBeacon";
 import type { ClientModules } from "@/lib/supabase/types";
 
@@ -51,6 +56,9 @@ export default async function PortalDashboard() {
     ? summarise(await getClientProjects())
     : null;
 
+  const billing = modules.billing ? await getClientBilling() : null;
+  const billingSum = billing ? billingSummary(billing.invoices) : null;
+
   return (
     <main className="os-stage">
       <ActivityBeacon eventType="login" />
@@ -68,7 +76,11 @@ export default async function PortalDashboard() {
       <div className="os-grid">
         {enabled.map((m) => {
           const meta = MODULE_META[m];
-          const flagged = m === "projects" && (projectSummary?.flagged ?? 0) > 0;
+          const billingOverdue =
+            m === "billing" && (billingSum?.overdueCount ?? 0) > 0;
+          const flagged =
+            (m === "projects" && (projectSummary?.flagged ?? 0) > 0) ||
+            billingOverdue;
           return (
             <Link
               key={m}
@@ -79,11 +91,10 @@ export default async function PortalDashboard() {
             >
               <div className="os-win-bar">
                 {meta.label}
-                {flagged && (
-                  <span className="badge">
-                    {projectSummary!.flagged} to review
-                  </span>
+                {m === "projects" && (projectSummary?.flagged ?? 0) > 0 && (
+                  <span className="badge">{projectSummary!.flagged} to review</span>
                 )}
+                {billingOverdue && <span className="badge">overdue</span>}
                 <span className="chev">→</span>
               </div>
               <div className="os-win-body">
@@ -104,6 +115,30 @@ export default async function PortalDashboard() {
                     <p className="os-empty" style={{ marginTop: "auto" }}>
                       {projectSummary.total} project
                       {projectSummary.total === 1 ? "" : "s"} in total.
+                    </p>
+                  </>
+                ) : m === "billing" && billing ? (
+                  <>
+                    <div className="os-row">
+                      <span className="label">Plan</span>
+                      <span className="val gold">
+                        {billing.subscription?.plan ??
+                          (billing.subscription ? "Subscription" : "Per project")}
+                      </span>
+                    </div>
+                    <div className="os-row">
+                      <span className="label">Overdue</span>
+                      <span
+                        className={`val ${billingSum!.overdueCount > 0 ? "accent" : ""}`}
+                      >
+                        {billingSum!.overdueCount > 0
+                          ? formatMoney(billingSum!.overdueAmount, billingSum!.currency)
+                          : "None"}
+                      </span>
+                    </div>
+                    <p className="os-empty" style={{ marginTop: "auto" }}>
+                      {billing.invoices.length} invoice
+                      {billing.invoices.length === 1 ? "" : "s"} on record.
                     </p>
                   </>
                 ) : (

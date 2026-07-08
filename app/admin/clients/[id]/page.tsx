@@ -3,6 +3,11 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getProjectsForClient, projectProgress } from "@/lib/os/projects";
 import {
+  getBillingForClient,
+  isInvoiceOverdue,
+  formatMoney,
+} from "@/lib/os/billing";
+import {
   MILESTONE_STATUS_LABEL,
   PROJECT_STATUS_LABEL,
   milestoneTone,
@@ -13,6 +18,7 @@ import {
   MarkReadyButton,
   NewProjectForm,
 } from "./ProjectAdmin";
+import { CreateInvoiceForm } from "./BillingAdmin";
 
 export const metadata = { title: "Client — Shaft OS Admin" };
 
@@ -41,6 +47,8 @@ export default async function AdminClientDetail({
 
   const c = client as Client;
   const projects = await getProjectsForClient(id);
+  const { subscription, invoices } = await getBillingForClient(id);
+  const now = Date.now();
 
   return (
     <main className="os-stage">
@@ -149,6 +157,96 @@ export default async function AdminClientDetail({
           ))}
         </div>
       )}
+
+      <div className="os-sec" style={{ marginTop: "44px" }}>
+        Billing
+        <span style={{ marginLeft: "auto", textTransform: "none" }}>
+          <CreateInvoiceForm clientId={id} />
+        </span>
+      </div>
+
+      {subscription && (
+        <div
+          className="os-tablewrap"
+          style={{ padding: "16px 18px", marginBottom: "18px" }}
+        >
+          <div className="os-ms-head">
+            <span className="os-ms-name">
+              {subscription.plan ?? "Subscription"}
+            </span>
+            <span className="os-note gold" style={{ fontSize: "10.5px" }}>
+              {subscription.status}
+            </span>
+          </div>
+          <div className="os-ms-meta">
+            {subscription.amount != null && (
+              <span>
+                {formatMoney(subscription.amount, subscription.currency ?? "gbp")}{" "}
+                / period
+              </span>
+            )}
+            <span>Renews {fmtDate(subscription.current_period_end)}</span>
+          </div>
+        </div>
+      )}
+
+      <div className="os-tablewrap">
+        <table className="os-table">
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {invoices.length === 0 ? (
+              <tr>
+                <td className="os-table-empty" colSpan={4}>
+                  No invoices yet.
+                </td>
+              </tr>
+            ) : (
+              invoices.map((inv) => {
+                const overdue = isInvoiceOverdue(inv, now);
+                return (
+                  <tr key={inv.id}>
+                    <td>
+                      <span style={{ color: "var(--os-ink)" }}>
+                        {inv.number ?? "—"}
+                      </span>
+                      {inv.description && (
+                        <div
+                          style={{
+                            color: "var(--os-muted)",
+                            fontSize: "10.5px",
+                            marginTop: "3px",
+                          }}
+                        >
+                          {inv.description}
+                        </div>
+                      )}
+                    </td>
+                    <td>{formatMoney(inv.amount, inv.currency)}</td>
+                    <td>
+                      <span
+                        className={`os-note ${overdue ? "accent" : "dim"}`}
+                        style={{ fontSize: "10.5px", textTransform: "capitalize" }}
+                      >
+                        {overdue ? "Overdue" : inv.status}
+                      </span>
+                    </td>
+                    <td style={{ color: "var(--os-muted)" }}>
+                      {fmtDate(inv.paid_at ?? inv.due_date ?? inv.created_at)}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 }

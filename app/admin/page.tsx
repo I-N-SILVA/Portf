@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { billingSummary, formatMoney } from "@/lib/os/billing";
+import type { Invoice } from "@/lib/supabase/types";
 
 export const metadata = { title: "Overview — Shaft OS Admin" };
 
@@ -6,16 +8,23 @@ export default async function AdminDashboard() {
   const supabase = await createClient();
 
   // Counts run through RLS (admin sees all). Missing tables/env → zeros.
-  const [{ count: activeCount }, { count: atRiskCount }] = await Promise.all([
-    supabase
-      .from("clients")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "active"),
-    supabase
-      .from("clients")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "churned"),
-  ]);
+  const [{ count: activeCount }, { count: atRiskCount }, { data: invoiceRows }] =
+    await Promise.all([
+      supabase
+        .from("clients")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active"),
+      supabase
+        .from("clients")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "churned"),
+      supabase
+        .from("invoices")
+        .select("*")
+        .in("status", ["open", "uncollectible"]),
+    ]);
+
+  const overdue = billingSummary((invoiceRows ?? []) as Invoice[]);
 
   return (
     <main className="os-stage">
@@ -38,7 +47,11 @@ export default async function AdminDashboard() {
           <div className="k">At risk</div>
         </div>
         <div className="os-stat">
-          <div className="n">£0</div>
+          <div className={`n ${overdue.overdueAmount > 0 ? "accent" : ""}`}>
+            {overdue.overdueAmount > 0
+              ? formatMoney(overdue.overdueAmount, overdue.currency)
+              : "£0"}
+          </div>
           <div className="k">Overdue</div>
         </div>
         <div className="os-stat">

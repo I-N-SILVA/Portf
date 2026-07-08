@@ -43,8 +43,40 @@ export type Client = {
   notes: string | null;
   custom_fields: Record<string, unknown>;
   modules: ClientModules;
+  stripe_customer_id: string | null;
   created_at: string;
 }
+
+export type Subscription = {
+  id: string;
+  client_id: string;
+  stripe_subscription_id: string;
+  plan: string | null;
+  status: string;
+  amount: number | null;
+  currency: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Invoice = {
+  id: string;
+  client_id: string;
+  stripe_invoice_id: string;
+  number: string | null;
+  description: string | null;
+  amount: number;
+  amount_paid: number;
+  currency: string;
+  status: string;
+  due_date: string | null;
+  paid_at: string | null;
+  hosted_invoice_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 export type Profile = {
   id: string;
@@ -113,6 +145,8 @@ export interface Database {
       audit_log: Row<AuditLogEntry>;
       projects: Row<Project>;
       milestones: Row<Milestone>;
+      subscriptions: Row<Subscription>;
+      invoices: Row<Invoice>;
     };
     Views: Record<string, never>;
     CompositeTypes: Record<string, never>;
