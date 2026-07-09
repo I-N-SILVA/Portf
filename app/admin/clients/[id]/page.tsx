@@ -7,6 +7,7 @@ import {
   isInvoiceOverdue,
   formatMoney,
 } from "@/lib/os/billing";
+import { getBookingsForClient, formatDateTime } from "@/lib/os/bookings";
 import {
   MILESTONE_STATUS_LABEL,
   PROJECT_STATUS_LABEL,
@@ -19,6 +20,7 @@ import {
   NewProjectForm,
 } from "./ProjectAdmin";
 import { CreateInvoiceForm } from "./BillingAdmin";
+import { BookingDecision } from "./BookingAdmin";
 
 export const metadata = { title: "Client — Shaft OS Admin" };
 
@@ -48,7 +50,16 @@ export default async function AdminClientDetail({
   const c = client as Client;
   const projects = await getProjectsForClient(id);
   const { subscription, invoices } = await getBillingForClient(id);
+  const bookings = await getBookingsForClient(id);
   const now = Date.now();
+
+  const bookingTone: Record<string, "gold" | "dim" | "accent"> = {
+    requested: "gold",
+    confirmed: "gold",
+    completed: "dim",
+    declined: "accent",
+    cancelled: "dim",
+  };
 
   return (
     <main className="os-stage">
@@ -247,6 +258,36 @@ export default async function AdminClientDetail({
           </tbody>
         </table>
       </div>
+
+      <div className="os-sec" style={{ marginTop: "44px" }}>
+        Bookings
+      </div>
+      {bookings.length === 0 ? (
+        <p className="os-empty">No bookings yet.</p>
+      ) : (
+        <ol className="os-timeline">
+          {bookings.map((b) => (
+            <li key={b.id} className="os-ms" data-flagged={b.status === "requested"}>
+              <div className="os-ms-head">
+                <span className="os-ms-name">{b.service_type}</span>
+                <span
+                  className={`os-note ${bookingTone[b.status] ?? "dim"}`}
+                  style={{ fontSize: "10.5px" }}
+                >
+                  {b.status === "requested" ? "Awaiting your response" : b.status}
+                </span>
+              </div>
+              <div className="os-ms-meta">
+                <span>{formatDateTime(b.start_time)}</span>
+                {b.notes && <span>“{b.notes}”</span>}
+              </div>
+              {b.status === "requested" && (
+                <BookingDecision clientId={id} bookingId={b.id} />
+              )}
+            </li>
+          ))}
+        </ol>
+      )}
     </main>
   );
 }

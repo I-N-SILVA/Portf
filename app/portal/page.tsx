@@ -6,6 +6,11 @@ import {
   billingSummary,
   formatMoney,
 } from "@/lib/os/billing";
+import {
+  getClientBookings,
+  summariseBookings,
+  formatDateTime,
+} from "@/lib/os/bookings";
 import { ActivityBeacon } from "@/components/os/ActivityBeacon";
 import type { ClientModules } from "@/lib/supabase/types";
 
@@ -58,6 +63,12 @@ export default async function PortalDashboard() {
 
   const billing = modules.billing ? await getClientBilling() : null;
   const billingSum = billing ? billingSummary(billing.invoices) : null;
+
+  const bookingSum = modules.bookings
+    ? summariseBookings([
+        ...(await getClientBookings()).upcoming,
+      ])
+    : null;
 
   return (
     <main className="os-stage">
@@ -115,6 +126,24 @@ export default async function PortalDashboard() {
                     <p className="os-empty" style={{ marginTop: "auto" }}>
                       {projectSummary.total} project
                       {projectSummary.total === 1 ? "" : "s"} in total.
+                    </p>
+                  </>
+                ) : m === "bookings" && bookingSum ? (
+                  <>
+                    <div className="os-row">
+                      <span className="label">Next session</span>
+                      <span className="val gold">
+                        {bookingSum.next
+                          ? formatDateTime(bookingSum.next.start_time)
+                          : "None"}
+                      </span>
+                    </div>
+                    <div className="os-row">
+                      <span className="label">Awaiting confirmation</span>
+                      <span className="val">{bookingSum.pending}</span>
+                    </div>
+                    <p className="os-empty" style={{ marginTop: "auto" }}>
+                      Request a session anytime.
                     </p>
                   </>
                 ) : m === "billing" && billing ? (

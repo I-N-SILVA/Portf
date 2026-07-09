@@ -22,6 +22,12 @@ export type MilestoneStatus =
   | "approved"
   | "rejected"
   | "complete";
+export type BookingStatus =
+  | "requested"
+  | "confirmed"
+  | "declined"
+  | "cancelled"
+  | "completed";
 
 /** Per-client module toggles — services enabled without a redeploy. */
 export type ClientModules = {
@@ -129,6 +135,29 @@ export type Milestone = {
   created_at: string;
 };
 
+export type Booking = {
+  id: string;
+  client_id: string;
+  service_type: string;
+  start_time: string;
+  end_time: string;
+  status: BookingStatus;
+  notes: string | null;
+  decline_reason: string | null;
+  requested_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AvailabilityWindow = {
+  id: string;
+  weekday: number; // 0 = Sunday
+  start_time: string; // "HH:MM:SS"
+  end_time: string;
+  active: boolean;
+  created_at: string;
+};
+
 type Row<T> = {
   Row: T;
   Insert: Partial<T>;
@@ -147,6 +176,8 @@ export interface Database {
       milestones: Row<Milestone>;
       subscriptions: Row<Subscription>;
       invoices: Row<Invoice>;
+      bookings: Row<Booking>;
+      availability_windows: Row<AvailabilityWindow>;
     };
     Views: Record<string, never>;
     CompositeTypes: Record<string, never>;
@@ -179,6 +210,26 @@ export interface Database {
           p_approve: boolean;
           p_comment?: string | null;
         };
+        Returns: undefined;
+      };
+      request_booking: {
+        Args: {
+          p_service_type: string;
+          p_start: string;
+          p_end: string;
+          p_notes?: string | null;
+          p_client_id?: string | null;
+        };
+        Returns: string;
+      };
+      reschedule_booking: {
+        Args: { p_id: string; p_start: string; p_end: string };
+        Returns: undefined;
+      };
+      cancel_booking: { Args: { p_id: string }; Returns: undefined };
+      confirm_booking: { Args: { p_id: string }; Returns: undefined };
+      decline_booking: {
+        Args: { p_id: string; p_reason?: string | null };
         Returns: undefined;
       };
     };

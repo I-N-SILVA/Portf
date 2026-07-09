@@ -177,6 +177,34 @@ export async function createInvoice(
   }
 }
 
+export async function confirmBooking(
+  clientId: string,
+  bookingId: string,
+): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorised." };
+  const { error } = await supabase.rpc("confirm_booking", { p_id: bookingId });
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/clients/${clientId}`, "layout");
+  return { ok: true };
+}
+
+export async function declineBooking(
+  clientId: string,
+  bookingId: string,
+  reason: string,
+): Promise<ActionResult> {
+  const { supabase, ok } = await requireAdmin();
+  if (!ok) return { ok: false, error: "Not authorised." };
+  const { error } = await supabase.rpc("decline_booking", {
+    p_id: bookingId,
+    p_reason: reason.trim() || null,
+  });
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/clients/${clientId}`, "layout");
+  return { ok: true };
+}
+
 /** Flag a milestone ready for review — client sees it, 48h nudge clock starts. */
 export async function markMilestoneReady(
   clientId: string,

@@ -101,6 +101,27 @@ Amounts are stored in minor units (pence).
    subscribed to `customer.subscription.*` and `invoice.*` events.
 3. Local testing: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
 
+## Bookings (Phase 4)
+
+`bookings` + `availability_windows` (`0004_bookings.sql`). The data model is
+provider-agnostic on purpose — an external scheduler can be dropped in without
+migrating.
+
+- **Client** requests a session at `/portal/bookings` (native form) and can
+  reschedule/cancel anything upcoming. All client mutations go through
+  SECURITY DEFINER functions (`request_booking`, `reschedule_booking`,
+  `cancel_booking`) so status can't be forged.
+- **Admin** confirms/declines requests from the client detail page
+  (`confirm_booking`, `decline_booking`) and sets business-wide availability
+  windows at `/admin/settings`.
+- Status changes emit activity events (`booking_requested`,
+  `booking_confirmed`, …) via a trigger, covering every path. The Phase 5 admin
+  nudge (booking unconfirmed 24h before start) reads `requested` bookings.
+- **External scheduler:** set `NEXT_PUBLIC_BOOKING_URL` to embed Cal.com /
+  TidyCal / similar on the bookings page instead of the native form. Syncing an
+  external tool's bookings back into the table is a per-provider webhook and is
+  left as a follow-up connector — the native flow is the source of truth today.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` — see the migration.
@@ -118,4 +139,6 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
 - **Phase 3 (done):** Billing — Stripe subscriptions + invoices, webhook sync,
   client plan/invoice views + Customer Portal, admin invoice creation, overdue
   badges.
-- **Phase 4+:** Bookings, Engagement & Nudges, Messaging.
+- **Phase 4 (done):** Bookings — native request/confirm/decline/reschedule,
+  admin availability, provider-agnostic model with optional external embed.
+- **Phase 5+:** Engagement & Nudges, Messaging.
