@@ -148,6 +148,21 @@ The spec suggests a Supabase Edge Function on pg_cron. This build uses Vercel
 Cron → a Next API route instead so the evaluator stays a single Node/TS module.
 To use pg_cron instead, schedule an hourly `pg_net` POST to the same route.
 
+## Messaging (Phase 6)
+
+`messages` + a per-client Storage bucket `attachments` (`0006_messaging.sql`).
+
+- Per-client thread over Supabase Realtime (`MessageThread`, shared by portal
+  and admin). Sends go through `send_message()` so `sender_is_admin` / sender
+  can't be forged; it also logs a `message_sent` event and notifies the other
+  side (feeding the notification bell).
+- Unread counts: client sees unread on the dashboard nav; admin sees unread per
+  client in the client list. `mark_thread_read()` clears the opposite side's
+  messages on open.
+- Attachments upload to `attachments/<client_id>/…`; RLS on `storage.objects`
+  restricts read/write to that client (or any admin). Links use short-lived
+  signed URLs.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` — see the migration.
@@ -170,4 +185,5 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
 - **Phase 5 (done):** Engagement & Nudges — scoring view, at-risk dashboard,
   no-code rule builder, hourly + on-demand evaluator, email + in-app delivery,
   notification bell.
-- **Phase 6:** Messaging & in-app notifications.
+- **Phase 6 (done):** Messaging — realtime per-client threads, attachments,
+  unread counts, notification bell.

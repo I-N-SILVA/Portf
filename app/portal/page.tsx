@@ -11,6 +11,7 @@ import {
   summariseBookings,
   formatDateTime,
 } from "@/lib/os/bookings";
+import { clientUnreadCount } from "@/lib/os/messages";
 import { ActivityBeacon } from "@/components/os/ActivityBeacon";
 import type { ClientModules } from "@/lib/supabase/types";
 
@@ -70,6 +71,8 @@ export default async function PortalDashboard() {
       ])
     : null;
 
+  const unread = modules.messaging ? await clientUnreadCount() : 0;
+
   return (
     <main className="os-stage">
       <ActivityBeacon eventType="login" />
@@ -89,9 +92,11 @@ export default async function PortalDashboard() {
           const meta = MODULE_META[m];
           const billingOverdue =
             m === "billing" && (billingSum?.overdueCount ?? 0) > 0;
+          const messagesUnread = m === "messaging" && unread > 0;
           const flagged =
             (m === "projects" && (projectSummary?.flagged ?? 0) > 0) ||
-            billingOverdue;
+            billingOverdue ||
+            messagesUnread;
           return (
             <Link
               key={m}
@@ -106,6 +111,7 @@ export default async function PortalDashboard() {
                   <span className="badge">{projectSummary!.flagged} to review</span>
                 )}
                 {billingOverdue && <span className="badge">overdue</span>}
+                {messagesUnread && <span className="badge">{unread} new</span>}
                 <span className="chev">→</span>
               </div>
               <div className="os-win-body">
@@ -168,6 +174,18 @@ export default async function PortalDashboard() {
                     <p className="os-empty" style={{ marginTop: "auto" }}>
                       {billing.invoices.length} invoice
                       {billing.invoices.length === 1 ? "" : "s"} on record.
+                    </p>
+                  </>
+                ) : m === "messaging" ? (
+                  <>
+                    <div className="os-row">
+                      <span className="label">Unread</span>
+                      <span className={`val ${unread > 0 ? "accent" : ""}`}>
+                        {unread > 0 ? unread : "None"}
+                      </span>
+                    </div>
+                    <p className="os-empty" style={{ marginTop: "auto" }}>
+                      A direct line to the team.
                     </p>
                   </>
                 ) : (

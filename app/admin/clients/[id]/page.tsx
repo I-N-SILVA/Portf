@@ -8,6 +8,8 @@ import {
   formatMoney,
 } from "@/lib/os/billing";
 import { getBookingsForClient, formatDateTime } from "@/lib/os/bookings";
+import { getThreadForClient } from "@/lib/os/messages";
+import { MessageThread } from "@/components/os/MessageThread";
 import {
   MILESTONE_STATUS_LABEL,
   PROJECT_STATUS_LABEL,
@@ -51,6 +53,7 @@ export default async function AdminClientDetail({
   const projects = await getProjectsForClient(id);
   const { subscription, invoices } = await getBillingForClient(id);
   const bookings = await getBookingsForClient(id);
+  const thread = await getThreadForClient(id);
   const now = Date.now();
 
   const bookingTone: Record<string, "gold" | "dim" | "accent"> = {
@@ -288,6 +291,11 @@ export default async function AdminClientDetail({
           ))}
         </ol>
       )}
+
+      <div className="os-sec" style={{ marginTop: "44px" }}>
+        Messages
+      </div>
+      <MessageThread clientId={id} initial={thread} viewerIsAdmin={true} />
     </main>
   );
 }

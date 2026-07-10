@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { adminUnreadByClient } from "@/lib/os/messages";
 import type { Client } from "@/lib/supabase/types";
 
 export const metadata = { title: "Clients — Shaft OS Admin" };
@@ -18,6 +19,7 @@ export default async function ClientsPage() {
     .order("created_at", { ascending: false });
 
   const clients = (data ?? []) as Client[];
+  const unread = await adminUnreadByClient();
 
   return (
     <main className="os-stage">
@@ -62,6 +64,11 @@ export default async function ClientsPage() {
                     >
                       {c.name}
                     </Link>
+                    {unread[c.id] > 0 && (
+                      <span className="badge" style={{ marginLeft: "8px" }}>
+                        {unread[c.id]} new
+                      </span>
+                    )}
                     {c.company && (
                       <div
                         style={{

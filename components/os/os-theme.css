@@ -269,10 +269,12 @@
   margin-left: auto;
   color: var(--os-muted);
 }
-.shaft-os .os-win-bar .badge {
+.shaft-os .os-win-bar .badge,
+.shaft-os .badge {
   font-size: 9.5px;
   letter-spacing: 0.08em;
   color: var(--os-accent);
+  text-transform: uppercase;
 }
 .shaft-os .os-win-body {
   padding: 4px 18px 20px;
@@ -630,6 +632,72 @@
   gap: 8px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+/* ─── messaging ────────────────────────────────────────────────────── */
+.shaft-os .os-thread {
+  border: 1px solid var(--os-border);
+  border-radius: 3px;
+  background: var(--os-surface);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.shaft-os .os-thread-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  max-height: 460px;
+  overflow-y: auto;
+}
+.shaft-os .os-bubble {
+  max-width: 76%;
+  align-self: flex-start;
+  background: var(--os-surface-alt);
+  border: 1px solid var(--os-border);
+  border-radius: 3px;
+  padding: 10px 13px;
+}
+.shaft-os .os-bubble.mine {
+  align-self: flex-end;
+  background: var(--os-bg);
+  border-color: var(--os-accent);
+}
+.shaft-os .os-bubble-body {
+  font-family: var(--os-sans);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--os-ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.shaft-os .os-bubble-file {
+  margin-top: 6px;
+  font-family: var(--os-mono);
+  font-size: 11px;
+  color: var(--os-accent);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.shaft-os .os-bubble-time {
+  font-size: 9.5px;
+  color: var(--os-muted);
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+.shaft-os .os-composer {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--os-border);
+  background: var(--os-surface-alt);
+}
+.shaft-os .os-composer .os-input {
+  flex: 1;
 }
 
 /* ─── notification bell ────────────────────────────────────────────── */

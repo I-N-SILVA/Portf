@@ -209,6 +209,18 @@ export type ClientEngagement = {
   at_risk: boolean;
 };
 
+export type Message = {
+  id: string;
+  client_id: string;
+  sender_id: string | null;
+  sender_is_admin: boolean;
+  body: string | null;
+  attachment_path: string | null;
+  attachment_name: string | null;
+  read_at: string | null;
+  created_at: string;
+};
+
 type Row<T> = {
   Row: T;
   Insert: Partial<T>;
@@ -234,6 +246,7 @@ export interface Database {
       engagement_rules: Row<EngagementRule>;
       nudge_log: Row<NudgeLogEntry>;
       notifications: Row<AppNotification>;
+      messages: Row<Message>;
     };
     Views: {
       client_engagement: View<ClientEngagement>;
@@ -290,6 +303,16 @@ export interface Database {
         Args: { p_id: string; p_reason?: string | null };
         Returns: undefined;
       };
+      send_message: {
+        Args: {
+          p_client_id: string;
+          p_body?: string | null;
+          p_attachment_path?: string | null;
+          p_attachment_name?: string | null;
+        };
+        Returns: string;
+      };
+      mark_thread_read: { Args: { p_client_id: string }; Returns: undefined };
     };
     Enums: {
       user_role: UserRole;
