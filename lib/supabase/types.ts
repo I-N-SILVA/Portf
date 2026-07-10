@@ -158,12 +158,65 @@ export type AvailabilityWindow = {
   created_at: string;
 };
 
+export type NudgeChannel = "in_app" | "email" | "both";
+export type NudgeConditionType =
+  | "no_login_days"
+  | "milestone_awaiting_hours"
+  | "invoice_unpaid_days"
+  | "booking_unconfirmed_hours";
+
+export type EngagementRule = {
+  id: string;
+  name: string;
+  description: string | null;
+  condition_type: NudgeConditionType;
+  threshold: number;
+  channel: NudgeChannel;
+  template: string | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type NudgeLogEntry = {
+  id: string;
+  rule_id: string | null;
+  client_id: string | null;
+  channel: string;
+  sent_at: string;
+  opened_at: string | null;
+  clicked_at: string | null;
+  outcome: "pending" | "resolved" | "ignored";
+  dedupe_key: string | null;
+};
+
+export type AppNotification = {
+  id: string;
+  recipient_id: string;
+  type: string;
+  payload: Record<string, unknown>;
+  read_at: string | null;
+  created_at: string;
+};
+
+export type ClientEngagement = {
+  client_id: string;
+  name: string;
+  status: ClientStatus;
+  last_active: string | null;
+  events_30d: number;
+  score: number;
+  at_risk: boolean;
+};
+
 type Row<T> = {
   Row: T;
   Insert: Partial<T>;
   Update: Partial<T>;
   Relationships: [];
 };
+
+type View<T> = { Row: T; Relationships: [] };
 
 export interface Database {
   public: {
@@ -178,8 +231,13 @@ export interface Database {
       invoices: Row<Invoice>;
       bookings: Row<Booking>;
       availability_windows: Row<AvailabilityWindow>;
+      engagement_rules: Row<EngagementRule>;
+      nudge_log: Row<NudgeLogEntry>;
+      notifications: Row<AppNotification>;
     };
-    Views: Record<string, never>;
+    Views: {
+      client_engagement: View<ClientEngagement>;
+    };
     CompositeTypes: Record<string, never>;
     Functions: {
       is_admin: { Args: Record<string, never>; Returns: boolean };

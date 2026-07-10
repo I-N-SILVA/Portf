@@ -122,6 +122,32 @@ migrating.
   external tool's bookings back into the table is a per-provider webhook and is
   left as a follow-up connector — the native flow is the source of truth today.
 
+## Engagement & Nudges (Phase 5)
+
+`engagement_rules` · `nudge_log` · `notifications` + a `client_engagement` view
+(`0005_engagement.sql`).
+
+- **Scoring:** `client_engagement` (security_invoker view) gives each client a
+  weighted recency/frequency score + an `at_risk` flag. Admin engagement
+  dashboard sorts at-risk first.
+- **Rules (no code):** admins build rules at `/admin/nudges` — condition
+  (no-login / milestone-awaiting / invoice-unpaid / booking-unconfirmed),
+  threshold, channel (in-app / email / both), template with `{{name}}`.
+- **Evaluator:** `lib/os/nudges/evaluate.ts` runs every active rule, dedupes
+  via `nudge_log.dedupe_key`, writes in-app notifications and sends email via
+  Resend. Called hourly by Vercel Cron (`/api/cron/nudges`, see `vercel.json`)
+  and on demand by the admin "Run evaluation now" button — one code path.
+- **In-app delivery:** `notifications` table + Supabase Realtime power the bell
+  in both apps (`NotificationBell`).
+- Acceptance (spec 6.7): create a rule in the UI and it fires within one
+  scheduler cycle (or immediately via Run now) when the condition is met.
+
+### Alternative scheduler
+
+The spec suggests a Supabase Edge Function on pg_cron. This build uses Vercel
+Cron → a Next API route instead so the evaluator stays a single Node/TS module.
+To use pg_cron instead, schedule an hourly `pg_net` POST to the same route.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` — see the migration.
@@ -141,4 +167,7 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
   badges.
 - **Phase 4 (done):** Bookings — native request/confirm/decline/reschedule,
   admin availability, provider-agnostic model with optional external embed.
-- **Phase 5+:** Engagement & Nudges, Messaging.
+- **Phase 5 (done):** Engagement & Nudges — scoring view, at-risk dashboard,
+  no-code rule builder, hourly + on-demand evaluator, email + in-app delivery,
+  notification bell.
+- **Phase 6:** Messaging & in-app notifications.

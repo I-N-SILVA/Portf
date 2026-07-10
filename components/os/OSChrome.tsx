@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { CommandPalette, type Command } from "./CommandPalette";
 import { SignOutButton } from "./SignOutButton";
+import { NotificationBell } from "./NotificationBell";
 
 export type NavItem = { label: string; href: string };
 
@@ -73,6 +74,7 @@ export function OSChrome({
           ))}
         </nav>
         <span className="os-clock">{clock}</span>
+        <NotificationBell />
         <button className="os-chip" onClick={() => setPalOpen(true)}>
           ⌘K
         </button>

@@ -571,6 +571,40 @@
   border-left: 2px solid var(--os-border);
 }
 
+/* ─── engagement: signal bars + score ──────────────────────────────── */
+.shaft-os .os-signal {
+  display: inline-flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 15px;
+}
+.shaft-os .os-signal i {
+  width: 3px;
+  background: var(--os-border);
+  display: block;
+}
+.shaft-os .os-signal i.on {
+  background: var(--os-gold);
+}
+.shaft-os .os-signal i:nth-child(1) { height: 4px; }
+.shaft-os .os-signal i:nth-child(2) { height: 7px; }
+.shaft-os .os-signal i:nth-child(3) { height: 10px; }
+.shaft-os .os-signal i:nth-child(4) { height: 13px; }
+.shaft-os .os-signal i:nth-child(5) { height: 15px; }
+.shaft-os .os-signal.risk i.on { background: var(--os-accent); }
+.shaft-os .score {
+  font-variant-numeric: tabular-nums;
+  color: var(--os-ink);
+  font-size: 13px;
+}
+.shaft-os .score small {
+  color: var(--os-muted);
+  font-size: 10px;
+}
+.shaft-os tr.at-risk td:first-child {
+  box-shadow: inset 2px 0 0 var(--os-accent);
+}
+
 /* ─── admin forms ──────────────────────────────────────────────────── */
 .shaft-os .os-form {
   display: flex;
@@ -596,6 +630,69 @@
   gap: 8px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+/* ─── notification bell ────────────────────────────────────────────── */
+.shaft-os .os-bell-wrap {
+  position: relative;
+}
+.shaft-os .os-bell {
+  position: relative;
+  font-size: 13px;
+  line-height: 1;
+}
+.shaft-os .os-bell-dot {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: var(--os-accent);
+  color: #fff;
+  font-size: 9px;
+  line-height: 15px;
+  text-align: center;
+  text-shadow: none;
+}
+.shaft-os .os-bell-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(320px, 80vw);
+  max-height: 380px;
+  overflow-y: auto;
+  background: var(--os-surface);
+  border: 1px solid var(--os-ink-dim);
+  border-radius: 4px;
+  box-shadow: 0 20px 60px rgba(24, 20, 14, 0.24);
+  z-index: 80;
+}
+.shaft-os .os-bell-item {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--os-border);
+}
+.shaft-os .os-bell-item:last-child {
+  border-bottom: none;
+}
+.shaft-os .os-bell-msg {
+  font-family: var(--os-sans);
+  font-size: 13px;
+  color: var(--os-ink);
+  line-height: 1.45;
+}
+.shaft-os .os-bell-time {
+  font-size: 10px;
+  color: var(--os-muted);
+  margin-top: 5px;
+  letter-spacing: 0.04em;
+}
+.shaft-os .os-bell-empty {
+  padding: 18px 14px;
+  font-family: var(--os-sans);
+  font-size: 12.5px;
+  color: var(--os-muted);
 }
 
 /* ─── command palette ──────────────────────────────────────────────── */
