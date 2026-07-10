@@ -117,10 +117,24 @@ migrating.
 - Status changes emit activity events (`booking_requested`,
   `booking_confirmed`, …) via a trigger, covering every path. The Phase 5 admin
   nudge (booking unconfirmed 24h before start) reads `requested` bookings.
-- **External scheduler:** set `NEXT_PUBLIC_BOOKING_URL` to embed Cal.com /
-  TidyCal / similar on the bookings page instead of the native form. Syncing an
-  external tool's bookings back into the table is a per-provider webhook and is
-  left as a follow-up connector — the native flow is the source of truth today.
+- **External scheduler:** set `NEXT_PUBLIC_BOOKING_URL` to embed your TidyCal
+  page (or Cal.com) on the bookings page instead of the native form.
+
+### TidyCal connector (`0007_tidycal.sql` + `/api/tidycal/webhook`)
+
+Bookings made in TidyCal sync back into the dashboard:
+
+1. Set `TIDYCAL_WEBHOOK_SECRET`.
+2. In TidyCal, add a webhook for booking created/cancelled pointing at
+   `https://<host>/api/tidycal/webhook?token=<TIDYCAL_WEBHOOK_SECRET>`.
+3. Bookings are matched to a client by the booking contact's **email** (must
+   match `clients.email`) and upserted idempotently (`external_source='tidycal'`,
+   `external_id`=TidyCal booking id), landing as `confirmed` (or `cancelled`).
+   Unmatched bookings are acknowledged and skipped.
+
+Optionally set `NEXT_PUBLIC_BOOKING_URL` to your TidyCal page so clients book
+inside the portal; the webhook then reflects those bookings back into their
+timeline, engagement events, and nudges.
 
 ## Engagement & Nudges (Phase 5)
 

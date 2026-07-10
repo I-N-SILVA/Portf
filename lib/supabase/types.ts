@@ -145,6 +145,8 @@ export type Booking = {
   notes: string | null;
   decline_reason: string | null;
   requested_by: string | null;
+  external_source: string | null;
+  external_id: string | null;
   created_at: string;
   updated_at: string;
 };
