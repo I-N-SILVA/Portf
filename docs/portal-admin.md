@@ -1,0 +1,203 @@
+# Client Portal & Admin — "Shaft OS"
+
+A modular client portal + internal admin dashboard, one Next.js codebase, one
+Supabase backend, served on two subdomains:
+
+- `portal.iamnsilva.me` — client app (`app/portal/*`)
+- `admin.iamnsilva.me` — admin ops console (`app/admin/*`)
+- `iamnsilva.me` — existing marketing site (untouched)
+
+Visual language: the **archival / parchment** variant of the site's Shaft design
+system (light `data-shaft-light` tokens) — warm parchment, ink-black type,
+Pilot-Pen-Blue accent, ochre gold, monospace-led with a serif masthead.
+
+## How routing works
+
+`middleware.ts` inspects the request hostname:
+
+| Host | Behaviour |
+|------|-----------|
+| `portal.*` | rewrite public path → `/portal/*`, require a session |
+| `admin.*` | rewrite → `/admin/*`, require a session **and** the `admin` role |
+| anything else | marketing site; `/portal` & `/admin` are blocked |
+
+Access is enforced twice: middleware (routing/role) **and** Postgres RLS
+(database). A client hitting a guessed `/admin` URL is stopped at both.
+
+### Local development
+
+Use the wildcard-localhost subdomains (browsers resolve `*.localhost` to
+127.0.0.1 automatically):
+
+- Client: http://portal.localhost:3000
+- Admin: http://admin.localhost:3000
+- Marketing: http://localhost:3000
+
+## Setup
+
+1. Copy env: `cp .env.example .env.local` and fill in the Supabase keys.
+2. Apply the schema: run `supabase/migrations/0001_foundation.sql` against your
+   project (Supabase SQL editor, `supabase db push`, or the MCP
+   `apply_migration` tool).
+3. Regenerate DB types (optional but recommended):
+   `npx supabase gen types typescript --project-id <ref> > lib/supabase/types.ts`
+4. `npm run dev`.
+
+## Creating the first admin
+
+Users are invite-only (no self-serve signup). To bootstrap the first admin:
+
+1. Create the auth user (Supabase dashboard → Authentication → Add user, or
+   invite by email).
+2. Set their role claim so middleware admits them to `admin.*`:
+   in the dashboard set **app_metadata** `{"role":"admin"}`.
+3. Insert their profile row (SQL editor):
+   ```sql
+   insert into public.profiles (id, role, full_name)
+   values ('<auth-user-uuid>', 'admin', 'Your Name');
+   ```
+   `profiles.role` is the RLS source of truth; the `app_metadata` claim is the
+   fast check middleware uses.
+
+## Projects (Phase 2)
+
+`projects` + `milestones` (`0002_projects.sql`). Admin manages projects and
+milestones from the client detail page (`/admin/clients/[id]`) and flags a
+milestone **ready for review**; the client sees it flagged and approves or
+requests changes from `/portal/projects/[id]` via the decipher-to-sign action.
+
+State transitions that matter run through SECURITY DEFINER functions so auth +
+activity logging are centralised and can't be bypassed:
+
+- `mark_milestone_ready(milestone_id)` — admin only; emits `milestone_ready`
+  (the 48h approval nudge in Phase 5 keys off this event).
+- `respond_to_milestone(milestone_id, approve, comment)` — the owning client
+  (or an admin); emits `milestone_approved` / `milestone_rejected`.
+
+## Billing (Phase 3)
+
+`subscriptions` + `invoices` (`0003_billing.sql`), plus `clients.stripe_customer_id`.
+Amounts are stored in minor units (pence).
+
+- **Sync direction:** Stripe → Supabase. The webhook at `/api/stripe/webhook`
+  verifies the signature and upserts subscriptions/invoices via the service
+  role, and emits an `invoice_paid` activity event. The admin dashboard reads
+  Supabase, never Stripe live.
+- **Admin** creates one-off invoices from the client detail page
+  (`createInvoice` — ensures a Stripe customer, finalises the invoice, mirrors
+  it back immediately). Subscriptions are created in Stripe / via Checkout and
+  flow in through the webhook.
+- **Client** sees plan + invoice history at `/portal/billing`, pays via the
+  Stripe-hosted invoice URL, and manages their payment method through the
+  Customer Portal (`/portal/billing/portal`).
+- **Overdue rule (spec 6.4):** an `open`/`uncollectible` invoice more than 3
+  days past due shows a badge on both the client dashboard and the admin views
+  (`isInvoiceOverdue` in `lib/os/billing.ts`).
+
+### Stripe setup
+
+1. Set `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` (see `.env.example`).
+2. Add a webhook endpoint pointing at `https://<host>/api/stripe/webhook`,
+   subscribed to `customer.subscription.*` and `invoice.*` events.
+3. Local testing: `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
+
+## Bookings (Phase 4)
+
+`bookings` + `availability_windows` (`0004_bookings.sql`). The data model is
+provider-agnostic on purpose — an external scheduler can be dropped in without
+migrating.
+
+- **Client** requests a session at `/portal/bookings` (native form) and can
+  reschedule/cancel anything upcoming. All client mutations go through
+  SECURITY DEFINER functions (`request_booking`, `reschedule_booking`,
+  `cancel_booking`) so status can't be forged.
+- **Admin** confirms/declines requests from the client detail page
+  (`confirm_booking`, `decline_booking`) and sets business-wide availability
+  windows at `/admin/settings`.
+- Status changes emit activity events (`booking_requested`,
+  `booking_confirmed`, …) via a trigger, covering every path. The Phase 5 admin
+  nudge (booking unconfirmed 24h before start) reads `requested` bookings.
+- **External scheduler:** set `NEXT_PUBLIC_BOOKING_URL` to embed your TidyCal
+  page (or Cal.com) on the bookings page instead of the native form.
+
+### TidyCal connector (`0007_tidycal.sql` + `/api/tidycal/webhook`)
+
+Bookings made in TidyCal sync back into the dashboard:
+
+1. Set `TIDYCAL_WEBHOOK_SECRET`.
+2. In TidyCal, add a webhook for booking created/cancelled pointing at
+   `https://<host>/api/tidycal/webhook?token=<TIDYCAL_WEBHOOK_SECRET>`.
+3. Bookings are matched to a client by the booking contact's **email** (must
+   match `clients.email`) and upserted idempotently (`external_source='tidycal'`,
+   `external_id`=TidyCal booking id), landing as `confirmed` (or `cancelled`).
+   Unmatched bookings are acknowledged and skipped.
+
+Optionally set `NEXT_PUBLIC_BOOKING_URL` to your TidyCal page so clients book
+inside the portal; the webhook then reflects those bookings back into their
+timeline, engagement events, and nudges.
+
+## Engagement & Nudges (Phase 5)
+
+`engagement_rules` · `nudge_log` · `notifications` + a `client_engagement` view
+(`0005_engagement.sql`).
+
+- **Scoring:** `client_engagement` (security_invoker view) gives each client a
+  weighted recency/frequency score + an `at_risk` flag. Admin engagement
+  dashboard sorts at-risk first.
+- **Rules (no code):** admins build rules at `/admin/nudges` — condition
+  (no-login / milestone-awaiting / invoice-unpaid / booking-unconfirmed),
+  threshold, channel (in-app / email / both), template with `{{name}}`.
+- **Evaluator:** `lib/os/nudges/evaluate.ts` runs every active rule, dedupes
+  via `nudge_log.dedupe_key`, writes in-app notifications and sends email via
+  Resend. Called hourly by Vercel Cron (`/api/cron/nudges`, see `vercel.json`)
+  and on demand by the admin "Run evaluation now" button — one code path.
+- **In-app delivery:** `notifications` table + Supabase Realtime power the bell
+  in both apps (`NotificationBell`).
+- Acceptance (spec 6.7): create a rule in the UI and it fires within one
+  scheduler cycle (or immediately via Run now) when the condition is met.
+
+### Alternative scheduler
+
+The spec suggests a Supabase Edge Function on pg_cron. This build uses Vercel
+Cron → a Next API route instead so the evaluator stays a single Node/TS module.
+To use pg_cron instead, schedule an hourly `pg_net` POST to the same route.
+
+## Messaging (Phase 6)
+
+`messages` + a per-client Storage bucket `attachments` (`0006_messaging.sql`).
+
+- Per-client thread over Supabase Realtime (`MessageThread`, shared by portal
+  and admin). Sends go through `send_message()` so `sender_is_admin` / sender
+  can't be forged; it also logs a `message_sent` event and notifies the other
+  side (feeding the notification bell).
+- Unread counts: client sees unread on the dashboard nav; admin sees unread per
+  client in the client list. `mark_thread_read()` clears the opposite side's
+  messages on open.
+- Attachments upload to `attachments/<client_id>/…`; RLS on `storage.objects`
+  restricts read/write to that client (or any admin). Links use short-lived
+  signed URLs.
+
+## Data model (Phase 1)
+
+`clients` · `profiles` · `activity_events` · `audit_log` — see the migration.
+Every client-scoped table carries `client_id` and an RLS policy limiting
+clients to their own rows; admins are unrestricted. `activity_events` is
+populated from day one (login beacon) so the Phase 5 nudge engine has history.
+
+## Build phases
+
+- **Phase 1 (this slice):** schema + RLS + roles, subdomain middleware, auth
+  (login / magic link / invite / reset), empty-state dashboards, activity logging.
+- **Phase 2 (done):** Projects — admin create/manage projects + milestones,
+  mark ready for review; client view + approve/request-changes. Validates the
+  per-module pattern.
+- **Phase 3 (done):** Billing — Stripe subscriptions + invoices, webhook sync,
+  client plan/invoice views + Customer Portal, admin invoice creation, overdue
+  badges.
+- **Phase 4 (done):** Bookings — native request/confirm/decline/reschedule,
+  admin availability, provider-agnostic model with optional external embed.
+- **Phase 5 (done):** Engagement & Nudges — scoring view, at-risk dashboard,
+  no-code rule builder, hourly + on-demand evaluator, email + in-app delivery,
+  notification bell.
+- **Phase 6 (done):** Messaging — realtime per-client threads, attachments,
+  unread counts, notification bell.
