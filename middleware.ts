@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Hostnames whose first label serves the client-facing studio view.
-// e.g. clients.iansilva.dev and work.iansilva.dev both map to app/clients.
+// e.g. clients.iamnsilva.me and work.iamnsilva.me both map to app/clients.
 const CLIENT_SUBDOMAINS = ["clients", "work"];
 
 export function middleware(request: NextRequest) {

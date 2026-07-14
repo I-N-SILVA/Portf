@@ -10,8 +10,8 @@ export const CLIENT_SITE = {
   DESCRIPTION:
     "I design and ship AI automation systems and web products for businesses — from first prototype to production. See the work, the process, and the results.",
   EMAIL: "iannogueira@proton.me",
-  MAIN_SITE_URL: "https://iansilva.dev",
-  BOOKING_URL: "https://iansilva.dev/#contact",
+  MAIN_SITE_URL: "https://iamnsilva.me",
+  BOOKING_URL: "https://iamnsilva.me/#contact",
 } as const;
 
 export interface CaseStudyMetric {
@@ -123,7 +123,7 @@ export function getCaseStudyProject(cs: CaseStudy): Project | undefined {
 }
 
 // ─── Pitch rooms ─────────────────────────────────────────────────────────
-// Personalized pages at /p/<slug> (clients.iansilva.dev/p/acme): a curated
+// Personalized pages at /p/<slug> (clients.iamnsilva.me/p/acme): a curated
 // selection of case studies with a note written for one prospect.
 // Add a room per proposal you send. These pages are noindexed.
 
