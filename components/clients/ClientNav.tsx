@@ -14,19 +14,21 @@ export default function ClientNav() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-6">
-          <Link
-            href="/clients#work"
-            className="hidden text-sm text-stone-600 transition-colors hover:text-stone-900 sm:block"
-          >
-            Work
-          </Link>
-          <Link
-            href="/clients#process"
-            className="hidden text-sm text-stone-600 transition-colors hover:text-stone-900 sm:block"
-          >
-            Process
-          </Link>
+        <div className="flex items-center gap-4 sm:gap-6">
+          {[
+            ["Services", "/clients#services"],
+            ["Work", "/clients#work"],
+            ["Process", "/clients#process"],
+            ["FAQ", "/clients#faq"],
+          ].map(([label, href]) => (
+            <Link
+              key={href}
+              href={href}
+              className="hidden text-sm text-stone-600 transition-colors hover:text-stone-900 min-[480px]:block"
+            >
+              {label}
+            </Link>
+          ))}
           <a
             href={`mailto:${CLIENT_SITE.EMAIL}`}
             className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-stone-50 transition-colors hover:bg-stone-700"

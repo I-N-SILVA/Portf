@@ -13,7 +13,31 @@ export const metadata: Metadata = {
     description: CLIENT_SITE.DESCRIPTION,
     siteName: CLIENT_SITE.NAME,
     type: "website",
+    images: [
+      {
+        url: "/brand-full.png",
+        width: 1024,
+        height: 1024,
+        alt: CLIENT_SITE.NAME,
+      },
+    ],
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: CLIENT_SITE.NAME,
+  description: CLIENT_SITE.DESCRIPTION,
+  url: `${CLIENT_SITE.MAIN_SITE_URL}/clients`,
+  email: CLIENT_SITE.EMAIL,
+  founder: { "@type": "Person", name: "Ian N. Silva" },
+  areaServed: "Worldwide",
+  serviceType: [
+    "AI Automation",
+    "Internal Tools & Dashboards",
+    "MVP & Product Development",
+  ],
 };
 
 export default function ClientStudioLayout({
@@ -21,6 +45,10 @@ export default function ClientStudioLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased selection:bg-stone-900 selection:text-stone-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ClientNav />
       {children}
       <footer className="border-t border-stone-800 bg-stone-900 px-6 py-8">

@@ -1,6 +1,13 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { caseStudies } from "@/lib/client-content";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import {
+  AVAILABILITY,
+  caseStudies,
+  faqs,
+  services,
+  studioAbout,
+} from "@/lib/client-content";
 import CaseStudyCard from "@/components/clients/CaseStudyCard";
 import ContactCTA from "@/components/clients/ContactCTA";
 import Reveal from "@/components/clients/Reveal";
@@ -29,9 +36,15 @@ export default function ClientStudioPage() {
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-6 pb-20 pt-20 md:pb-28 md:pt-32">
         <Reveal>
-          <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-            AI Automation & Product Studio
-          </p>
+          <div className="flex flex-wrap items-center gap-4">
+            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+              AI Automation & Product Studio
+            </p>
+            <span className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+              {AVAILABILITY}
+            </span>
+          </div>
           <h1 className="mt-5 max-w-4xl font-playfair text-4xl font-bold leading-[1.1] tracking-tight md:text-6xl">
             I build the systems that give your team its hours back.
           </h1>
@@ -58,8 +71,46 @@ export default function ClientStudioPage() {
         </Reveal>
       </section>
 
+      {/* Services */}
+      <section id="services" className="border-t border-stone-200 bg-white">
+        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <Reveal>
+            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+              Services
+            </p>
+            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
+              What I can do for you
+            </h2>
+          </Reveal>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {services.map((service, i) => (
+              <Reveal key={service.title} delay={i * 0.1}>
+                <div className="flex h-full flex-col rounded-2xl border border-stone-200 bg-stone-50 p-8">
+                  <h3 className="font-playfair text-xl font-bold">
+                    {service.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-stone-600">
+                    {service.body}
+                  </p>
+                  <ul className="mt-6 space-y-2.5 border-t border-stone-200 pt-6">
+                    {service.deliverables.map((item) => (
+                      <li key={item} className="flex items-start gap-2.5">
+                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-stone-400" />
+                        <span className="text-xs leading-relaxed text-stone-600">
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Case studies */}
-      <section id="work" className="border-t border-stone-200 bg-white">
+      <section id="work" className="border-t border-stone-200">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
             <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
@@ -78,7 +129,7 @@ export default function ClientStudioPage() {
       </section>
 
       {/* Process */}
-      <section id="process" className="border-t border-stone-200">
+      <section id="process" className="border-t border-stone-200 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
             <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
@@ -91,7 +142,7 @@ export default function ClientStudioPage() {
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {PROCESS_STEPS.map((item, i) => (
               <Reveal key={item.step} delay={i * 0.1}>
-                <div className="h-full rounded-2xl border border-stone-200 bg-white p-8">
+                <div className="h-full rounded-2xl border border-stone-200 bg-stone-50 p-8">
                   <span className="font-space-mono text-sm text-stone-400">
                     {item.step}
                   </span>
@@ -102,6 +153,70 @@ export default function ClientStudioPage() {
                     {item.body}
                   </p>
                 </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="border-t border-stone-200">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-[280px_1fr] md:py-28">
+          <Reveal>
+            <div className="relative mx-auto aspect-square w-56 overflow-hidden rounded-2xl border border-stone-200 bg-stone-900 md:w-full">
+              <Image
+                src={studioAbout.portrait}
+                alt="Portrait of Ian N. Silva"
+                fill
+                sizes="280px"
+                className="object-cover"
+              />
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+              About
+            </p>
+            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
+              {studioAbout.heading}
+            </h2>
+            {studioAbout.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="mt-5 max-w-2xl leading-relaxed text-stone-600"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="border-t border-stone-200 bg-white">
+        <div className="mx-auto max-w-4xl px-6 py-20 md:py-28">
+          <Reveal>
+            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+              FAQ
+            </p>
+            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
+              The questions everyone asks
+            </h2>
+          </Reveal>
+          <div className="mt-10 divide-y divide-stone-200 border-y border-stone-200">
+            {faqs.map((faq, i) => (
+              <Reveal key={faq.question} delay={i * 0.05}>
+                <details className="group py-5">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-medium text-stone-900 [&::-webkit-details-marker]:hidden">
+                    {faq.question}
+                    <span className="shrink-0 text-stone-400 transition-transform duration-200 group-open:rotate-45">
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-stone-600">
+                    {faq.answer}
+                  </p>
+                </details>
               </Reveal>
             ))}
           </div>

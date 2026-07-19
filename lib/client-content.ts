@@ -14,6 +14,95 @@ export const CLIENT_SITE = {
   BOOKING_URL: "https://iamnsilva.me/#contact",
 } as const;
 
+// Shown as a status pill in the hero — keep it current.
+export const AVAILABILITY = "Taking on new projects";
+
+export interface Service {
+  title: string;
+  body: string;
+  deliverables: string[];
+}
+
+export const services: Service[] = [
+  {
+    title: "AI Automation",
+    body: "The repetitive work your team does every week — reporting, content operations, data entry, triage — turned into systems that run themselves.",
+    deliverables: [
+      "Workflow audit & automation roadmap",
+      "Claude / LLM-powered pipelines",
+      "Integrations with your existing tools",
+      "Monitoring so you know it keeps working",
+    ],
+  },
+  {
+    title: "Internal Tools & Dashboards",
+    body: "Purpose-built software for the workflows spreadsheets can't handle — capture in the field, see it aggregated live, act on exceptions.",
+    deliverables: [
+      "Mobile-first web apps, no install",
+      "Live dashboards & one-click exports",
+      "Role-based access for your team",
+      "Deployed on your infrastructure",
+    ],
+  },
+  {
+    title: "MVP & Product Builds",
+    body: "An idea taken to a working product fast — designed, built, and shipped so you can put it in front of real users instead of a pitch deck.",
+    deliverables: [
+      "Working prototype in days",
+      "Full-stack production build",
+      "Modern, maintainable stack",
+      "Documentation & clean handover",
+    ],
+  },
+];
+
+export interface Faq {
+  question: string;
+  answer: string;
+}
+
+export const faqs: Faq[] = [
+  {
+    question: "How does pricing work?",
+    answer:
+      "Fixed-scope quotes, agreed before work starts. After a short discovery call I'll send a written proposal with the scope, timeline, and price — no hourly meters running, no surprises. Small automations start small; product builds are quoted per milestone.",
+  },
+  {
+    question: "How fast will I see something working?",
+    answer:
+      "Days, not months. My process is built around getting a working prototype in front of you in the first week, then iterating against your real workflow. Production builds typically run a few weeks depending on scope.",
+  },
+  {
+    question: "Who owns the code and the IP?",
+    answer:
+      "You do — completely. Everything ships to your accounts and your infrastructure, with documentation your team (or any future developer) can pick up. No lock-in, no proprietary black boxes.",
+  },
+  {
+    question: "What happens after launch?",
+    answer:
+      "Every project includes a handover period for fixes and adjustments. After that you can run it yourself, or keep me on a light retainer for iteration — your choice, never a requirement.",
+  },
+  {
+    question: "How do we communicate during a project?",
+    answer:
+      "Async-first: regular written updates with links to the work in progress, plus a weekly call if you want one. You'll always know what's done, what's next, and what I need from you.",
+  },
+  {
+    question: "What if my problem doesn't fit a category above?",
+    answer:
+      "Tell me anyway. The first call is free and diagnostic — if I'm not the right person for it, I'll say so and point you somewhere better.",
+  },
+];
+
+export const studioAbout = {
+  heading: "The person behind the work",
+  paragraphs: [
+    "I'm Ian — an AI automation engineer and full-stack developer with a BSc in Economics and a Masters in Psychology. That mix matters: I don't just build systems that work technically, I build them around how your team actually behaves.",
+    "I work solo, which means the person you talk to on the first call is the person designing, building, and shipping your project. No account managers, no hand-offs, no telephone game.",
+  ],
+  portrait: "/hero-portrait.png",
+} as const;
+
 export interface CaseStudyMetric {
   value: string;
   label: string;
