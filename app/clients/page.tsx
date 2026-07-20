@@ -8,6 +8,7 @@ import {
   services,
   studioAbout,
 } from "@/lib/client-content";
+import AboutVideo from "@/components/clients/AboutVideo";
 import CaseStudyCard from "@/components/clients/CaseStudyCard";
 import ContactSection from "@/components/clients/ContactSection";
 import Reveal from "@/components/clients/Reveal";
@@ -190,6 +191,17 @@ export default function ClientStudioPage() {
             ))}
           </Reveal>
         </div>
+
+        {studioAbout.videoUrl && (
+          <div className="mx-auto max-w-4xl px-6 pb-20 md:pb-28">
+            <Reveal>
+              <AboutVideo
+                url={studioAbout.videoUrl}
+                label={studioAbout.videoLabel}
+              />
+            </Reveal>
+          </div>
+        )}
       </section>
 
       {/* FAQ */}

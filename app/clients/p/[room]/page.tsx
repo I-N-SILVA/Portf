@@ -91,6 +91,9 @@ export default async function PitchRoomPage({ params }: PageProps) {
       <ContactCTA
         heading={`Ready when you are, ${pitch.clientName.split(" ")[0]}.`}
         subheading="Grab a slot and we'll turn this into a concrete scope — or just reply by email with questions."
+        contactHref={`/clients?company=${encodeURIComponent(
+          pitch.clientName,
+        )}&ref=${encodeURIComponent(pitch.slug)}#contact`}
       />
     </main>
   );

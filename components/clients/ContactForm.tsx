@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { CONTACT_FORM, CLIENT_SITE } from "@/lib/client-content";
 
@@ -13,6 +13,16 @@ const encode = (data: Record<string, string>) =>
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
+  // Prefill from the URL — pitch rooms link here as
+  // /clients?company=Acme&ref=acme#contact so the form arrives personalized.
+  const [company, setCompany] = useState("");
+  const [ref, setRef] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCompany(params.get("company") ?? "");
+    setRef(params.get("ref") ?? "");
+  }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -79,6 +89,8 @@ export default function ContactForm() {
     >
       {/* Netlify plumbing */}
       <input type="hidden" name="form-name" value={CONTACT_FORM.NAME} />
+      {/* Attribution: which pitch room / link this lead came from */}
+      <input type="hidden" name="ref" value={ref} />
       <p className="hidden">
         <label>
           Don&apos;t fill this out if you&apos;re human:{" "}
@@ -119,6 +131,8 @@ export default function ContactForm() {
             type="text"
             name="company"
             autoComplete="organization"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
             className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
           />
         </label>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ClientNavLinks from "@/components/clients/ClientNavLinks";
 
 export default function ClientNav() {
   return (
@@ -14,20 +15,7 @@ export default function ClientNav() {
         </Link>
 
         <div className="flex items-center gap-4 sm:gap-6">
-          {[
-            ["Services", "/clients#services"],
-            ["Work", "/clients#work"],
-            ["Process", "/clients#process"],
-            ["FAQ", "/clients#faq"],
-          ].map(([label, href]) => (
-            <Link
-              key={href}
-              href={href}
-              className="hidden text-sm text-stone-600 transition-colors hover:text-stone-900 min-[480px]:block"
-            >
-              {label}
-            </Link>
-          ))}
+          <ClientNavLinks />
           <Link
             href="/clients#contact"
             className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-stone-50 transition-colors hover:bg-stone-700"

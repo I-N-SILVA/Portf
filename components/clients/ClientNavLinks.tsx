@@ -1,0 +1,62 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const LINKS: [label: string, id: string][] = [
+  ["Services", "services"],
+  ["Work", "work"],
+  ["Process", "process"],
+  ["FAQ", "faq"],
+];
+
+export default function ClientNavLinks() {
+  const pathname = usePathname();
+  const onLanding = pathname === "/clients";
+  const [active, setActive] = useState("");
+
+  useEffect(() => {
+    if (!onLanding) return;
+
+    const sections = LINKS.map(([, id]) => document.getElementById(id)).filter(
+      (el): el is HTMLElement => el !== null,
+    );
+
+    // Treat the section crossing the middle third of the viewport as active.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [onLanding]);
+
+  return (
+    <>
+      {LINKS.map(([label, id]) => {
+        const isActive = onLanding && active === id;
+        return (
+          <Link
+            key={id}
+            href={`/clients#${id}`}
+            aria-current={isActive ? "true" : undefined}
+            className={`hidden text-sm transition-colors min-[480px]:block ${
+              isActive
+                ? "font-medium text-stone-900"
+                : "text-stone-600 hover:text-stone-900"
+            }`}
+          >
+            {label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
