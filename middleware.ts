@@ -14,10 +14,10 @@ export function middleware(request: NextRequest) {
 
   const url = request.nextUrl.clone();
 
-  // Keep subdomain URLs clean: clients.domain/clients/work/x → clients.domain/work/x
+  // /clients-prefixed paths (all internal links use them) are served as-is —
+  // no redirect, so client-side navigations and #anchors never bounce.
   if (url.pathname === "/clients" || url.pathname.startsWith("/clients/")) {
-    url.pathname = url.pathname.slice("/clients".length) || "/";
-    return NextResponse.redirect(url);
+    return NextResponse.next();
   }
 
   // Serve the client studio routes from the subdomain root.

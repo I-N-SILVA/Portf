@@ -72,7 +72,7 @@ export default function ClientStudioPage() {
       </section>
 
       {/* Services */}
-      <section id="services" className="border-t border-stone-200 bg-white">
+      <section id="services" className="scroll-mt-16 border-t border-stone-200 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
             <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
@@ -110,7 +110,7 @@ export default function ClientStudioPage() {
       </section>
 
       {/* Case studies */}
-      <section id="work" className="border-t border-stone-200">
+      <section id="work" className="scroll-mt-16 border-t border-stone-200">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
             <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
@@ -129,7 +129,7 @@ export default function ClientStudioPage() {
       </section>
 
       {/* Process */}
-      <section id="process" className="border-t border-stone-200 bg-white">
+      <section id="process" className="scroll-mt-16 border-t border-stone-200 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
             <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
@@ -160,7 +160,7 @@ export default function ClientStudioPage() {
       </section>
 
       {/* About */}
-      <section id="about" className="border-t border-stone-200">
+      <section id="about" className="scroll-mt-16 border-t border-stone-200">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-[280px_1fr] md:py-28">
           <Reveal>
             <div className="relative mx-auto aspect-square w-56 overflow-hidden rounded-2xl border border-stone-200 bg-stone-900 md:w-full">
@@ -193,7 +193,7 @@ export default function ClientStudioPage() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="border-t border-stone-200 bg-white">
+      <section id="faq" className="scroll-mt-16 border-t border-stone-200 bg-white">
         <div className="mx-auto max-w-4xl px-6 py-20 md:py-28">
           <Reveal>
             <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
@@ -206,14 +206,14 @@ export default function ClientStudioPage() {
           <div className="mt-10 divide-y divide-stone-200 border-y border-stone-200">
             {faqs.map((faq, i) => (
               <Reveal key={faq.question} delay={i * 0.05}>
-                <details className="group py-5">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-medium text-stone-900 [&::-webkit-details-marker]:hidden">
+                <details className="group">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left font-medium text-stone-900 transition-colors hover:text-stone-600 [&::-webkit-details-marker]:hidden">
                     {faq.question}
                     <span className="shrink-0 text-stone-400 transition-transform duration-200 group-open:rotate-45">
                       +
                     </span>
                   </summary>
-                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-stone-600">
+                  <p className="max-w-3xl pb-5 text-sm leading-relaxed text-stone-600">
                     {faq.answer}
                   </p>
                 </details>

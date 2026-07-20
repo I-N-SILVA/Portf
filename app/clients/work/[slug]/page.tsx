@@ -60,7 +60,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
         </Reveal>
 
         <Reveal delay={0.1} className="mt-10">
-          <div className="relative aspect-[21/9] overflow-hidden rounded-2xl border border-stone-200 bg-stone-100">
+          <div className="relative aspect-video overflow-hidden rounded-2xl border border-stone-200 bg-stone-100 md:aspect-[21/9]">
             <Image
               src={project.bannerImage ?? project.image}
               alt={project.title}

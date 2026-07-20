@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Play } from "lucide-react";
+import { ExternalLink, Loader2, Play } from "lucide-react";
 
 interface DemoFrameProps {
   url: string;
@@ -11,7 +11,8 @@ interface DemoFrameProps {
 // Embeds the real deployed app behind a click-to-load frame so the case
 // study page stays fast and the iframe only mounts on intent.
 export default function DemoFrame({ url, title }: DemoFrameProps) {
-  const [loaded, setLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [ready, setReady] = useState(false);
 
   return (
     <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
@@ -34,17 +35,28 @@ export default function DemoFrame({ url, title }: DemoFrameProps) {
         </a>
       </div>
 
-      {loaded ? (
-        <iframe
-          src={url}
-          title={`Live demo — ${title}`}
-          className="h-[560px] w-full bg-white"
-          loading="lazy"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-        />
+      {mounted ? (
+        <div className="relative">
+          {!ready && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-stone-50">
+              <Loader2 className="h-6 w-6 animate-spin text-stone-400" />
+              <span className="text-xs text-stone-500">
+                Loading the live app…
+              </span>
+            </div>
+          )}
+          <iframe
+            src={url}
+            title={`Live demo — ${title}`}
+            onLoad={() => setReady(true)}
+            className="h-[420px] w-full bg-white md:h-[560px]"
+            loading="lazy"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          />
+        </div>
       ) : (
         <button
-          onClick={() => setLoaded(true)}
+          onClick={() => setMounted(true)}
           className="group flex h-[320px] w-full flex-col items-center justify-center gap-3 bg-stone-50 transition-colors hover:bg-stone-100 md:h-[420px]"
         >
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-900 text-stone-50 transition-transform group-hover:scale-105">
