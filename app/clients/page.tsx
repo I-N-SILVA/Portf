@@ -9,7 +9,7 @@ import {
   studioAbout,
 } from "@/lib/client-content";
 import CaseStudyCard from "@/components/clients/CaseStudyCard";
-import ContactCTA from "@/components/clients/ContactCTA";
+import ContactSection from "@/components/clients/ContactSection";
 import Reveal from "@/components/clients/Reveal";
 
 const PROCESS_STEPS = [
@@ -223,7 +223,7 @@ export default function ClientStudioPage() {
         </div>
       </section>
 
-      <ContactCTA />
+      <ContactSection />
     </main>
   );
 }

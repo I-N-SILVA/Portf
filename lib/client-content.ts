@@ -17,6 +17,19 @@ export const CLIENT_SITE = {
 // Shown as a status pill in the hero — keep it current.
 export const AVAILABILITY = "Taking on new projects";
 
+// Contact form (Netlify Forms). The form-name must match public/__forms.html.
+export const CONTACT_FORM = {
+  NAME: "studio-contact",
+  RESPONSE_TIME: "I usually reply within one business day.",
+  PROJECT_TYPES: [
+    "General enquiry",
+    "AI Automation",
+    "Internal Tools & Dashboards",
+    "MVP & Product Build",
+    "Not sure yet",
+  ],
+} as const;
+
 export interface Service {
   title: string;
   body: string;

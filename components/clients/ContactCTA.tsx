@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import { CLIENT_SITE } from "@/lib/client-content";
 import Reveal from "@/components/clients/Reveal";
@@ -21,13 +22,13 @@ export default function ContactCTA({
           {subheading}
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a
-            href={CLIENT_SITE.BOOKING_URL}
+          <Link
+            href="/clients#contact"
             className="group flex items-center gap-2 rounded-full bg-stone-50 px-6 py-3 text-sm font-semibold text-stone-900 transition-colors hover:bg-stone-200"
           >
-            Book an intro call
+            Start a project
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-          </a>
+          </Link>
           <a
             href={`mailto:${CLIENT_SITE.EMAIL}`}
             className="flex items-center gap-2 rounded-full border border-stone-700 px-6 py-3 text-sm font-medium text-stone-300 transition-colors hover:border-stone-500 hover:text-stone-50"
