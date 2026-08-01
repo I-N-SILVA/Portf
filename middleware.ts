@@ -2,19 +2,24 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 /**
- * One app, three faces:
- *   iamnsilva.me         → marketing site (untouched)
- *   portal.iamnsilva.me  → client app   (rewritten to /portal/*)
- *   admin.iamnsilva.me   → admin app    (rewritten to /admin/*)
+ * One app, four faces:
+ *   iamnsilva.me                        → marketing site (untouched)
+ *   clients.iamnsilva.me / work.*       → public client studio (→ /clients/*)
+ *   portal.iamnsilva.me                 → client app   (→ /portal/*, auth'd)
+ *   admin.iamnsilva.me                  → admin app    (→ /admin/*, auth'd)
  *
- * Access is enforced HERE (routing + session + role) and again by RLS in the
- * database. A client guessing an /admin URL is stopped at both layers.
+ * The studio is public marketing and skips session handling entirely.
+ * Portal/admin access is enforced HERE (routing + session + role) and again by
+ * RLS in the database. A client guessing an /admin URL is stopped at both.
  *
- * Local dev: use portal.localhost:3000 / admin.localhost:3000 (browsers
- * resolve *.localhost to 127.0.0.1 automatically).
+ * Local dev: use portal.localhost:3000 / admin.localhost:3000 / etc.
+ * (browsers resolve *.localhost to 127.0.0.1 automatically).
  */
 
 const AUTH_PATHS = ["/login", "/reset-password", "/set-password"];
+
+// First labels that serve the public, client-facing studio view.
+const STUDIO_SUBDOMAINS = ["clients", "work"];
 
 function isAuthPath(path: string) {
   return (
@@ -23,10 +28,13 @@ function isAuthPath(path: string) {
   );
 }
 
-function getArea(host: string): "portal" | "admin" | "marketing" {
+function getArea(
+  host: string,
+): "portal" | "admin" | "studio" | "marketing" {
   const sub = host.split(":")[0].split(".")[0];
   if (sub === "portal") return "portal";
   if (sub === "admin") return "admin";
+  if (STUDIO_SUBDOMAINS.includes(sub)) return "studio";
   return "marketing";
 }
 
@@ -36,6 +44,24 @@ export async function middleware(request: NextRequest) {
   const area = getArea(host);
   const path = nextUrl.pathname;
   const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+
+  // ── Client studio (clients. / work.) ────────────────────────────────
+  // Public marketing served from /clients/*. No session, no auth.
+  if (area === "studio") {
+    // /clients paths and real files (e.g. /__forms.html) pass through as-is,
+    // so client-side navigation, #anchors, and the Netlify form POST target
+    // never get rewritten or bounced.
+    if (
+      path === "/clients" ||
+      path.startsWith("/clients/") ||
+      path.includes(".")
+    ) {
+      return NextResponse.next();
+    }
+    const url = nextUrl.clone();
+    url.pathname = `/clients${path === "/" ? "" : path}`;
+    return NextResponse.rewrite(url);
+  }
 
   // ── Marketing / apex ────────────────────────────────────────────────
   // Never expose the app shells here; otherwise leave the site untouched.

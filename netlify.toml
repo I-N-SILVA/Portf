@@ -1,0 +1,12 @@
+# Netlify build & runtime configuration.
+# The official Next.js runtime plugin handles SSR, middleware (host-based
+# subdomain rewrite), image optimization, and the publish directory.
+
+[build]
+  command = "npm run build"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  directory = "netlify/functions"

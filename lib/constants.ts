@@ -17,7 +17,7 @@ export const SITE = {
   TITLE: "Ian N. Silva — AI Automation Engineer & Full-Stack Developer",
   DESCRIPTION:
     "Ian N. Silva — AI Automation Engineer & Full-Stack Developer. Explore projects in AI agents, automation, Web3, and creative digital products.",
-  URL: "https://iansilva.dev",
+  URL: "https://iamnsilva.me",
 } as const;
 
 export const PLACEHOLDER_SOCIAL_URLS = [
