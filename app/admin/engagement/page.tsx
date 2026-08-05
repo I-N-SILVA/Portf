@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { ClientEngagement } from "@/lib/supabase/types";
+import { routes } from "@/lib/routes";
 
 export const metadata = { title: "Engagement — Shaft OS Admin" };
 
@@ -80,7 +81,7 @@ export default async function EngagementPage() {
                 <tr key={r.client_id} className={r.at_risk ? "at-risk" : ""}>
                   <td>
                     <Link
-                      href={`/clients/${r.client_id}`}
+                      href={routes.admin.client(r.client_id)}
                       style={{
                         color: r.at_risk ? "var(--os-accent)" : "var(--os-ink)",
                         textDecoration: "none",

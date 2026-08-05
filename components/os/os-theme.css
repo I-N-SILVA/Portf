@@ -129,6 +129,33 @@
   gap: 4px;
   flex: 1;
 }
+
+/* ─── admin-viewing-a-client-space banner ──────────────────────────── */
+.shaft-os .os-adminview {
+  position: sticky;
+  top: 46px;
+  z-index: 49;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 9px 20px;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--os-ink);
+  background: var(--os-gold, #b8912f);
+  background: color-mix(in srgb, var(--os-gold, #b8912f) 22%, transparent);
+  border-bottom: 1px solid var(--os-border);
+}
+.shaft-os .os-adminview b {
+  font-weight: 600;
+}
+.shaft-os .os-adminview a {
+  margin-left: auto;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .shaft-os .os-nav a {
   font-size: 11px;
   letter-spacing: 0.12em;

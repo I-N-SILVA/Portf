@@ -36,28 +36,7 @@ export function formatMoney(minorUnits: number, currency = "gbp"): string {
   }
 }
 
-/** Billing for the signed-in client (RLS scopes to their own rows). */
-export async function getClientBilling(): Promise<ClientBilling> {
-  const supabase = await createClient();
-  const [{ data: subs }, { data: invoices }] = await Promise.all([
-    supabase
-      .from("subscriptions")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(1),
-    supabase
-      .from("invoices")
-      .select("*")
-      .neq("status", "draft")
-      .order("created_at", { ascending: false }),
-  ]);
-  return {
-    subscription: ((subs ?? []) as Subscription[])[0] ?? null,
-    invoices: (invoices ?? []) as Invoice[],
-  };
-}
-
-/** Billing for a specific client — admin view. */
+/** Subscription + invoices for one client (see getProjectsForClient). */
 export async function getBillingForClient(clientId: string): Promise<ClientBilling> {
   const supabase = await createClient();
   const [{ data: subs }, { data: invoices }] = await Promise.all([

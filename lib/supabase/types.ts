@@ -7,7 +7,7 @@
  */
 
 export type UserRole = "admin" | "client";
-export type ClientStatus = "active" | "paused" | "churned";
+export type ClientStatus = "prospect" | "active" | "paused" | "churned";
 export type ClientTier = "project" | "subscription" | "hybrid";
 export type ProjectStatus =
   | "not_started"
@@ -39,6 +39,8 @@ export type ClientModules = {
 
 export type Client = {
   id: string;
+  /** Public identifier — everything for this client lives at /c/{slug}. */
+  slug: string;
   name: string;
   company: string | null;
   email: string;
@@ -52,6 +54,34 @@ export type Client = {
   stripe_customer_id: string | null;
   created_at: string;
 }
+
+/**
+ * Public pitch content for a client's space at /c/{slug}. Kept in its own
+ * table so the anon read policy can never reach `clients` (email, notes,
+ * billing ids). See supabase/migrations/0008_client_slugs.sql.
+ */
+export type ClientPage = {
+  client_id: string;
+  display_name: string;
+  headline: string | null;
+  note: string;
+  /** Case study slugs from lib/client-content.ts, in display order. */
+  case_studies: string[];
+  services: string[];
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+/** What `get_public_client_page(slug)` returns to an anonymous visitor. */
+export type PublicClientPage = {
+  slug: string;
+  display_name: string;
+  headline: string | null;
+  note: string;
+  case_studies: string[];
+  services: string[];
+};
 
 export type Subscription = {
   id: string;
@@ -249,6 +279,7 @@ export interface Database {
       nudge_log: Row<NudgeLogEntry>;
       notifications: Row<AppNotification>;
       messages: Row<Message>;
+      client_pages: Row<ClientPage>;
     };
     Views: {
       client_engagement: View<ClientEngagement>;
@@ -315,6 +346,11 @@ export interface Database {
         Returns: string;
       };
       mark_thread_read: { Args: { p_client_id: string }; Returns: undefined };
+      get_public_client_page: {
+        Args: { p_slug: string };
+        Returns: PublicClientPage[];
+      };
+      slugify: { Args: { p_input: string }; Returns: string | null };
     };
     Enums: {
       user_role: UserRole;

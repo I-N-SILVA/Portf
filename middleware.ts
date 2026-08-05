@@ -1,25 +1,29 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { LEGACY_SUBDOMAIN_AREAS, routes, safeNext } from "@/lib/routes";
 
 /**
- * One app, four faces:
- *   iamnsilva.me                        → marketing site (untouched)
- *   clients.iamnsilva.me / work.*       → public client studio (→ /clients/*)
- *   portal.iamnsilva.me                 → client app   (→ /portal/*, auth'd)
- *   admin.iamnsilva.me                  → admin app    (→ /admin/*, auth'd)
+ * One origin, four areas — separated by path, not hostname:
  *
- * The studio is public marketing and skips session handling entirely.
- * Portal/admin access is enforced HERE (routing + session + role) and again by
- * RLS in the database. A client guessing an /admin URL is stopped at both.
+ *   /            marketing portfolio
+ *   /studio      public studio (services, case studies, contact)
+ *   /c/{slug}    one client's space — public pitch page, then their portal
+ *   /admin       ops console (admin role required)
  *
- * Local dev: use portal.localhost:3000 / admin.localhost:3000 / etc.
- * (browsers resolve *.localhost to 127.0.0.1 automatically).
+ * Middleware does two jobs and no more: keep the Supabase session cookie
+ * fresh, and refuse obviously unauthorised requests before they reach a
+ * render. It deliberately does NOT decide who owns /c/{slug} — that needs a
+ * database read, so it belongs in the route (lib/os/client-scope.ts), with
+ * RLS as the backstop underneath both.
+ *
+ * Because the public path and the App Router path are now the same string,
+ * there are no rewrites here at all. That's what makes `revalidatePath()`
+ * and `<Link href>` work without translation.
+ *
+ * Local dev: plain http://localhost:3000 — no *.localhost subdomains needed.
  */
 
 const AUTH_PATHS = ["/login", "/reset-password", "/set-password"];
-
-// First labels that serve the public, client-facing studio view.
-const STUDIO_SUBDOMAINS = ["clients", "work"];
 
 function isAuthPath(path: string) {
   return (
@@ -28,52 +32,46 @@ function isAuthPath(path: string) {
   );
 }
 
-function getArea(
-  host: string,
-): "portal" | "admin" | "studio" | "marketing" {
-  const sub = host.split(":")[0].split(".")[0];
-  if (sub === "portal") return "portal";
-  if (sub === "admin") return "admin";
-  if (STUDIO_SUBDOMAINS.includes(sub)) return "studio";
-  return "marketing";
+/**
+ * Old subdomain hosts keep working: portal.* / admin.* / clients.* / work.*
+ * are 308'd onto their path equivalent on the canonical origin. Removable
+ * once the DNS records are gone and the redirects stop showing up in logs.
+ */
+function legacyHostRedirect(request: NextRequest, host: string) {
+  const label = host.split(":")[0].split(".")[0];
+  const area = LEGACY_SUBDOMAIN_AREAS[label];
+  if (!area) return null;
+
+  const canonical = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!canonical) return null;
+
+  const { pathname, search } = request.nextUrl;
+  const url = new URL(canonical);
+  // "/" on the old host meant that area's root; anything deeper hangs off it.
+  url.pathname = `${area}${pathname === "/" ? "" : pathname}`.replace(/\/+$/, "") || "/";
+  url.search = search;
+  return NextResponse.redirect(url, 308);
 }
 
 export async function middleware(request: NextRequest) {
   const { nextUrl } = request;
   const host = request.headers.get("host") ?? nextUrl.host;
-  const area = getArea(host);
   const path = nextUrl.pathname;
-  const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
-  // ── Client studio (clients. / work.) ────────────────────────────────
-  // Public marketing served from /clients/*. No session, no auth.
-  if (area === "studio") {
-    // /clients paths and real files (e.g. /__forms.html) pass through as-is,
-    // so client-side navigation, #anchors, and the Netlify form POST target
-    // never get rewritten or bounced.
-    if (
-      path === "/clients" ||
-      path.startsWith("/clients/") ||
-      path.includes(".")
-    ) {
-      return NextResponse.next();
-    }
-    const url = nextUrl.clone();
-    url.pathname = `/clients${path === "/" ? "" : path}`;
-    return NextResponse.rewrite(url);
-  }
+  const legacy = legacyHostRedirect(request, host);
+  if (legacy) return legacy;
 
-  // ── Marketing / apex ────────────────────────────────────────────────
-  // Never expose the app shells here; otherwise leave the site untouched.
-  if (area === "marketing") {
-    if (path.startsWith("/portal") || path.startsWith("/admin")) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+  const needsSession = path === "/admin" || path.startsWith("/admin/");
+  const needsSessionSoon = path.startsWith("/c/") || path.startsWith("/portal");
+
+  // Public pages (marketing, studio, published pitch pages) never touch auth.
+  if (!needsSession && !needsSessionSoon && !isAuthPath(path) && !path.startsWith("/api")) {
     return NextResponse.next();
   }
 
-  // ── portal / admin subdomains ───────────────────────────────────────
-  // Refresh the session first so cookies stay valid (skipped until env set).
+  // Session refresh — skipped entirely until Supabase env vars are set, so a
+  // preview build without secrets still serves the public site.
+  const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
   let user: Awaited<ReturnType<typeof updateSession>>["user"] = null;
   let response = NextResponse.next({ request });
   if (configured) {
@@ -87,42 +85,37 @@ export async function middleware(request: NextRequest) {
     return res;
   };
 
-  // API routes (webhooks etc.) pass through with a fresh session, no rewrite.
+  // Webhooks and cron carry their own auth (signatures, bearer secrets).
   if (path.startsWith("/api")) return response;
 
-  // Auth pages are always reachable; signed-in users skip past /login.
   if (isAuthPath(path)) {
-    if (user && path === "/login") {
-      return withCookies(NextResponse.redirect(new URL("/", request.url)));
+    if (user && path === routes.auth.login) {
+      const next = safeNext(nextUrl.searchParams.get("next") ?? undefined);
+      return withCookies(NextResponse.redirect(new URL(next, request.url)));
     }
     return response;
   }
 
-  // Beyond here a session is required.
-  if (configured && !user) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("next", path);
-    return withCookies(NextResponse.redirect(loginUrl));
-  }
-
-  // Admin subdomain demands the admin role (source of truth: RLS; fast check
-  // here reads the role claim set on the user at invite time).
-  if (area === "admin" && configured) {
-    const role = (user?.app_metadata as { role?: string } | undefined)?.role;
+  // /admin needs a session AND the admin role. The role claim is the fast
+  // check; profiles.role is the source of truth and RLS enforces it again on
+  // every query the console makes.
+  if (needsSession && configured) {
+    if (!user) {
+      return withCookies(
+        NextResponse.redirect(new URL(routes.auth.loginNext(path), request.url)),
+      );
+    }
+    const role = (user.app_metadata as { role?: string } | undefined)?.role;
     if (role !== "admin") {
-      const url = new URL(request.url);
-      url.host = host.replace(/^admin\./, "portal.");
-      url.pathname = "/";
-      return withCookies(NextResponse.redirect(url));
+      return withCookies(
+        NextResponse.redirect(new URL("/portal", request.url)),
+      );
     }
   }
 
-  // Rewrite the public path onto the internal route tree.
-  const rewriteUrl = nextUrl.clone();
-  if (!path.startsWith(`/${area}`)) {
-    rewriteUrl.pathname = `/${area}${path === "/" ? "" : path}`;
-  }
-  return withCookies(NextResponse.rewrite(rewriteUrl));
+  // /c/{slug} and /portal resolve their own access in the route — the slug
+  // has to be looked up in Postgres, and a published pitch page is public.
+  return response;
 }
 
 export const config = {

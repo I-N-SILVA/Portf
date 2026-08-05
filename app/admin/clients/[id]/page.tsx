@@ -10,6 +10,7 @@ import {
 import { getBookingsForClient, formatDateTime } from "@/lib/os/bookings";
 import { getThreadForClient } from "@/lib/os/messages";
 import { MessageThread } from "@/components/os/MessageThread";
+import { routes } from "@/lib/routes";
 import {
   MILESTONE_STATUS_LABEL,
   PROJECT_STATUS_LABEL,
@@ -67,7 +68,7 @@ export default async function AdminClientDetail({
   return (
     <main className="os-stage">
       <p className="os-eyebrow">
-        <Link href="/clients" style={{ color: "inherit" }}>
+        <Link href={routes.admin.clients} style={{ color: "inherit" }}>
           ← Clients
         </Link>
       </p>
@@ -75,6 +76,11 @@ export default async function AdminClientDetail({
       <p className="os-sub">
         {c.company ? `${c.company} · ` : ""}
         {c.email}
+      </p>
+      <p className="os-sub" style={{ marginTop: "-18px" }}>
+        Their space:{" "}
+        <Link href={routes.client.root(c.slug)}>{routes.client.root(c.slug)}</Link>
+        {" — "}the link you send them, before and after they sign.
       </p>
 
       <div className="os-statline" style={{ marginBottom: "36px" }}>

@@ -1,43 +1,104 @@
 # Client Portal & Admin — "Shaft OS"
 
 A modular client portal + internal admin dashboard, one Next.js codebase, one
-Supabase backend, served on two subdomains:
+Supabase backend, **one domain**. Areas are separated by their first path
+segment — there are no subdomains to create or certificates to wait on.
 
-- `portal.iamnsilva.me` — client app (`app/portal/*`)
-- `admin.iamnsilva.me` — admin ops console (`app/admin/*`)
-- `iamnsilva.me` — existing marketing site (untouched)
+| Path | What it is | Who can see it |
+|------|-----------|----------------|
+| `/` | marketing portfolio | everyone |
+| `/studio` | public client-facing studio: services, case studies, contact | everyone, indexed |
+| `/c/{slug}` | **one client's whole space** | see below |
+| `/admin` | ops console (`app/admin/*`) | admins only |
+| `/login`, `/set-password`, … | auth | everyone |
 
 Visual language: the **archival / parchment** variant of the site's Shaft design
 system (light `data-shaft-light` tokens) — warm parchment, ink-black type,
-Pilot-Pen-Blue accent, ochre gold, monospace-led with a serif masthead.
+Pilot-Pen-Blue accent, ochre gold, monospace-led with a serif masthead. The
+studio and public pitch pages use the lighter marketing chrome; signed-in
+clients and admins get the OS chrome.
+
+## The client slug
+
+Every client has a `slug` (migration `0008_client_slugs.sql`, unique, format-
+checked, reserved words excluded). It is the client's permanent public
+identifier, and **one URL covers their entire lifecycle**:
+
+```
+/c/acme                       ← the only link you ever send them
+```
+
+What that URL renders depends on who opens it (`lib/os/client-scope.ts`):
+
+| Visitor | Sees |
+|---------|------|
+| anyone, when `client_pages.published` is true | the pitch page — your personal note + curated case studies |
+| the owning client, signed in | their dashboard |
+| any admin | the same dashboard, with an "admin view" banner |
+| anyone else | 404 |
+
+So a prospect gets `/c/acme` with a proposal on it; when they sign, you invite
+them and the same bookmark becomes their portal. Nothing to re-send.
+
+Everything below the root requires a session belonging to that client (or an
+admin): `/c/acme/projects`, `/billing`, `/bookings`, `/messages`, `/settings`.
+Modules switched off in `clients.modules` 404 rather than merely disappearing
+from the nav (`requireClientModule`).
+
+### Pitch pages
+
+Pitch content lives in `client_pages` — a table separate from `clients` on
+purpose. `clients` holds email, private notes and Stripe ids; `client_pages`
+holds only what's safe to show a stranger, so its "published rows are readable
+by anyone" RLS policy can't leak anything else. Anonymous visitors resolve a
+slug through the `get_public_client_page(slug)` definer function, since RLS
+denies them `clients` entirely.
+
+`lib/client-content.ts` keeps a couple of sample pitch pages used **only** when
+Supabase is unconfigured, so `/c/acme` still renders in a bare clone.
 
 ## How routing works
 
-`middleware.ts` inspects the request hostname:
+`middleware.ts` does two things and no more: keeps the Supabase session cookie
+fresh, and blocks `/admin` for anyone without the `admin` role claim. It
+performs **no rewrites** — the public path and the App Router path are the same
+string, which is what makes `revalidatePath()` and `<Link href>` correct
+without translation.
 
-| Host | Behaviour |
-|------|-----------|
-| `portal.*` | rewrite public path → `/portal/*`, require a session |
-| `admin.*` | rewrite → `/admin/*`, require a session **and** the `admin` role |
-| anything else | marketing site; `/portal` & `/admin` are blocked |
+Who owns `/c/{slug}` is decided in the route, not the middleware, because it
+needs a database read. Access is enforced twice regardless: the route scope
+(`lib/os/client-scope.ts`) and Postgres RLS. Build URLs with `lib/routes.ts`
+rather than string literals.
 
-Access is enforced twice: middleware (routing/role) **and** Postgres RLS
-(database). A client hitting a guessed `/admin` URL is stopped at both.
+### Migrating from the subdomain build
+
+Old links keep working:
+
+- `portal.` / `admin.` / `clients.` / `work.` hosts 308 to their path
+  equivalent (middleware, driven by `LEGACY_SUBDOMAIN_AREAS`). Remove once the
+  DNS records are gone.
+- `/clients` → `/studio`, `/clients/work/:study` → `/studio/work/:study`,
+  `/clients/p/:slug` → `/c/:slug` (permanent redirects in `next.config.mjs`).
+- `/portal/*` resolves per-session to `/c/{slug}/*` via
+  `app/portal/[[...rest]]/page.tsx`. It doubles as the post-login landing
+  route: it forwards clients to their space and admins to `/admin`, so the
+  login form doesn't need to know which.
+
+DNS needs exactly one record: the apex. Nothing else to provision.
 
 ### Local development
 
-Use the wildcard-localhost subdomains (browsers resolve `*.localhost` to
-127.0.0.1 automatically):
+Plain `http://localhost:3000` — every area is a path:
 
-- Client: http://portal.localhost:3000
-- Admin: http://admin.localhost:3000
-- Marketing: http://localhost:3000
+- Studio: http://localhost:3000/studio
+- A client space: http://localhost:3000/c/acme
+- Admin: http://localhost:3000/admin
 
 ## Setup
 
 1. Copy env: `cp .env.example .env.local` and fill in the Supabase keys.
-2. Apply the schema: run `supabase/migrations/0001_foundation.sql` against your
-   project (Supabase SQL editor, `supabase db push`, or the MCP
+2. Apply the schema: run every file in `supabase/migrations/` in order against
+   your project (Supabase SQL editor, `supabase db push`, or the MCP
    `apply_migration` tool).
 3. Regenerate DB types (optional but recommended):
    `npx supabase gen types typescript --project-id <ref> > lib/supabase/types.ts`
@@ -49,7 +110,7 @@ Users are invite-only (no self-serve signup). To bootstrap the first admin:
 
 1. Create the auth user (Supabase dashboard → Authentication → Add user, or
    invite by email).
-2. Set their role claim so middleware admits them to `admin.*`:
+2. Set their role claim so middleware admits them to `/admin`:
    in the dashboard set **app_metadata** `{"role":"admin"}`.
 3. Insert their profile row (SQL editor):
    ```sql
@@ -149,8 +210,10 @@ timeline, engagement events, and nudges.
   threshold, channel (in-app / email / both), template with `{{name}}`.
 - **Evaluator:** `lib/os/nudges/evaluate.ts` runs every active rule, dedupes
   via `nudge_log.dedupe_key`, writes in-app notifications and sends email via
-  Resend. Called hourly by Vercel Cron (`/api/cron/nudges`, see `vercel.json`)
-  and on demand by the admin "Run evaluation now" button — one code path.
+  Resend. Called hourly by a Netlify scheduled function
+  (`netlify/functions/nudges-cron.mjs` → `/api/cron/nudges`, authenticated with
+  `CRON_SECRET`) and on demand by the admin "Run evaluation now" button — one
+  code path. Nudge emails link to the recipient's own `/c/{slug}`.
 - **In-app delivery:** `notifications` table + Supabase Realtime power the bell
   in both apps (`NotificationBell`).
 - Acceptance (spec 6.7): create a rule in the UI and it fires within one
@@ -158,9 +221,10 @@ timeline, engagement events, and nudges.
 
 ### Alternative scheduler
 
-The spec suggests a Supabase Edge Function on pg_cron. This build uses Vercel
-Cron → a Next API route instead so the evaluator stays a single Node/TS module.
-To use pg_cron instead, schedule an hourly `pg_net` POST to the same route.
+The spec suggests a Supabase Edge Function on pg_cron. This build uses a
+Netlify scheduled function → a Next API route instead, so the evaluator stays a
+single Node/TS module. To use pg_cron instead, schedule an hourly `pg_net` POST
+to the same route.
 
 ## Messaging (Phase 6)
 
@@ -179,14 +243,15 @@ To use pg_cron instead, schedule an hourly `pg_net` POST to the same route.
 
 ## Data model (Phase 1)
 
-`clients` · `profiles` · `activity_events` · `audit_log` — see the migration.
+`clients` · `profiles` · `activity_events` · `audit_log` · `client_pages` —
+see the migrations.
 Every client-scoped table carries `client_id` and an RLS policy limiting
 clients to their own rows; admins are unrestricted. `activity_events` is
 populated from day one (login beacon) so the Phase 5 nudge engine has history.
 
 ## Build phases
 
-- **Phase 1 (this slice):** schema + RLS + roles, subdomain middleware, auth
+- **Phase 1 (done):** schema + RLS + roles, routing middleware, auth
   (login / magic link / invite / reset), empty-state dashboards, activity logging.
 - **Phase 2 (done):** Projects — admin create/manage projects + milestones,
   mark ready for review; client view + approve/request-changes. Validates the

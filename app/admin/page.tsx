@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { billingSummary, formatMoney } from "@/lib/os/billing";
 import type { Invoice } from "@/lib/supabase/types";
+import { routes } from "@/lib/routes";
 
 export const metadata = { title: "Overview — Shaft OS Admin" };
 
@@ -28,7 +29,7 @@ export default async function AdminDashboard() {
 
   return (
     <main className="os-stage">
-      <p className="os-eyebrow">admin.iamnsilva.me</p>
+      <p className="os-eyebrow">{routes.admin.root}</p>
       <h1 className="os-title">The record.</h1>
       <p className="os-sub">
         Every client, their engagement, and what needs intervening on — in one

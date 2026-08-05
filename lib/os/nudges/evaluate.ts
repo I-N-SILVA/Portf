@@ -1,5 +1,6 @@
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendEmail, nudgeEmailHtml } from "@/lib/email/send";
+import { routes, siteUrl } from "@/lib/routes";
 import type {
   EngagementRule,
   NudgeConditionType,
@@ -27,11 +28,32 @@ function render(tpl: string | null, condition: NudgeConditionType, name: string)
   return (tpl ?? DEFAULT_TEMPLATES[condition]).replace(/\{\{\s*name\s*\}\}/g, name);
 }
 
-const portalUrl = () =>
-  (process.env.NEXT_PUBLIC_SITE_URL ?? "https://iamnsilva.me").replace(
-    /^https?:\/\//,
-    "https://portal.",
-  );
+/**
+ * The CTA a nudge email points at. Now that a client's space is a path rather
+ * than a subdomain, the link has to name the client — so resolve their slug.
+ * Cached per evaluation run: one pass can nudge the same client under several
+ * rules.
+ */
+const slugCache = new Map<string, string | null>();
+
+async function spaceUrl(
+  supabase: ServiceClient,
+  clientId: string | null,
+): Promise<string> {
+  if (!clientId) return siteUrl(routes.admin.root);
+
+  if (!slugCache.has(clientId)) {
+    const { data } = await supabase
+      .from("clients")
+      .select("slug")
+      .eq("id", clientId)
+      .maybeSingle();
+    slugCache.set(clientId, (data as { slug: string } | null)?.slug ?? null);
+  }
+
+  const slug = slugCache.get(clientId);
+  return slug ? siteUrl(routes.client.root(slug)) : siteUrl(routes.admin.root);
+}
 
 /** Recipients (auth user ids) for a client, and admins. */
 async function clientUsers(supabase: ServiceClient, clientId: string) {
@@ -89,7 +111,7 @@ async function fire(
     await sendEmail({
       to: email.to,
       subject: email.subject,
-      html: nudgeEmailHtml(message, portalUrl()),
+      html: nudgeEmailHtml(message, await spaceUrl(supabase, clientId)),
     });
   }
 

@@ -9,26 +9,7 @@ const isPast = (b: Booking, now: number) =>
   b.status === "cancelled" ||
   b.status === "completed";
 
-/** Upcoming vs past bookings for the signed-in client. */
-export async function getClientBookings(now: number = Date.now()): Promise<{
-  upcoming: Booking[];
-  past: Booking[];
-}> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("bookings")
-    .select("*")
-    .order("start_time", { ascending: true });
-  const all = (data ?? []) as Booking[];
-  return {
-    upcoming: all.filter((b) => !isPast(b, now)),
-    past: all
-      .filter((b) => isPast(b, now))
-      .sort((a, b) => b.start_time.localeCompare(a.start_time)),
-  };
-}
-
-/** All bookings for a specific client — admin view. */
+/** All bookings for one client (see getProjectsForClient), newest first. */
 export async function getBookingsForClient(clientId: string): Promise<Booking[]> {
   const supabase = await createClient();
   const { data } = await supabase
@@ -37,6 +18,21 @@ export async function getBookingsForClient(clientId: string): Promise<Booking[]>
     .eq("client_id", clientId)
     .order("start_time", { ascending: false });
   return (data ?? []) as Booking[];
+}
+
+/** Split a client's bookings into what's still to come and what isn't. */
+export function partitionBookings(
+  bookings: Booking[],
+  now: number = Date.now(),
+): { upcoming: Booking[]; past: Booking[] } {
+  return {
+    upcoming: bookings
+      .filter((b) => !isPast(b, now))
+      .sort((a, b) => a.start_time.localeCompare(b.start_time)),
+    past: bookings
+      .filter((b) => isPast(b, now))
+      .sort((a, b) => b.start_time.localeCompare(a.start_time)),
+  };
 }
 
 /** Active availability windows, ordered by weekday then start. */

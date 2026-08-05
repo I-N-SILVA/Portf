@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { routes } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/server";
 
 export type ActionResult = { ok: boolean; error?: string };
@@ -36,7 +37,7 @@ export async function addAvailability(
     active: true,
   });
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/settings", "layout");
+  revalidatePath(routes.admin.settings, "layout");
   return { ok: true };
 }
 
@@ -45,6 +46,6 @@ export async function removeAvailability(id: string): Promise<ActionResult> {
   if (!ok) return { ok: false, error: "Not authorised." };
   const { error } = await supabase.from("availability_windows").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/settings", "layout");
+  revalidatePath(routes.admin.settings, "layout");
   return { ok: true };
 }

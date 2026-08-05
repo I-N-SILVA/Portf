@@ -1,6 +1,12 @@
 # Netlify build & runtime configuration.
-# The official Next.js runtime plugin handles SSR, middleware (host-based
-# subdomain rewrite), image optimization, and the publish directory.
+#
+# This site deploys to Netlify only. The official Next.js runtime plugin
+# handles SSR, middleware, image optimization and the publish directory.
+#
+# Two things depend on being on Netlify specifically:
+#   - the studio contact form (Netlify Forms + netlify/functions/submission-created)
+#   - the hourly nudge evaluation (netlify/functions/nudges-cron, scheduled)
+# Moving hosts means replacing both.
 
 [build]
   command = "npm run build"
