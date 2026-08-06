@@ -1,0 +1,213 @@
+name: CI
+
+# A broken deploy now means a prospect opens the pitch link you emailed them
+# and gets a 500. These are the cheapest checks that would have caught it.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Dead module check
+        run: npm run check:dead
+
+      # Builds without Supabase credentials on purpose: every authenticated
+      # route is force-dynamic, so a build that needs secrets means something
+      # started prerendering that shouldn't.
+      - name: Build
+        run: npm run build
+
+  # Applies every migration to a throwaway Postgres, so a broken or
+  # out-of-order file fails here rather than against the live project.
+  migrations:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+          --command "postgres -c wal_level=logical"
+
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Vanilla Postgres lacks the pieces Supabase provides. These are the
+      # minimum stand-ins the migrations reference: the auth schema and uid(),
+      # the storage schema used by the attachments policies, and the realtime
+      # publication. Without them the failures are harness artefacts, not
+      # migration bugs.
+      - name: Stand in for Supabase
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon;  create role authenticated;  create role service_role;
+          create extension if not exists pgcrypto;
+
+          create schema if not exists auth;
+          create table auth.users (id uuid primary key default gen_random_uuid(), email text);
+          create or replace function auth.uid() returns uuid
+            language sql stable as $$ select null::uuid $$;
+
+          create schema if not exists storage;
+          create table storage.buckets (id text primary key, name text, public boolean default false);
+          create table storage.objects (
+            id uuid primary key default gen_random_uuid(),
+            bucket_id text, name text, owner uuid
+          );
+          create or replace function storage.foldername(name text) returns text[]
+            language sql immutable as $$ select string_to_array(name, '/') $$;
+
+          create publication supabase_realtime;
+          SQL
+
+      - name: Apply migrations in order
+        run: |
+          for f in supabase/migrations/*.sql; do
+            echo "── $f"
+            psql -v ON_ERROR_STOP=1 -q -f "$f"
+          done
+
+      # Regression test for the leak fixed in 0009: a signed-in client must be
+      # able to read their own clients row and NOT their private notes.
+      - name: Client cannot read private notes
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          insert into public.clients (name, company, email, slug)
+          values ('Test Client', 'Test Co', 'test@example.test', 'test-co');
+
+          update public.client_private set notes = 'private'
+          where client_id = (select id from public.clients where slug = 'test-co');
+
+          insert into auth.users (id, email)
+          values ('11111111-1111-1111-1111-111111111111', 'test@example.test');
+          insert into public.profiles (id, role, client_id)
+          select '11111111-1111-1111-1111-111111111111', 'client', id
+          from public.clients where slug = 'test-co';
+
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select '11111111-1111-1111-1111-111111111111'::uuid $$;
+
+          grant usage on schema public to authenticated;
+          grant select on all tables in schema public to authenticated;
+
+          set role authenticated;
+          do $$
+          begin
+            if (select count(*) from public.clients) <> 1 then
+              raise exception 'client should see exactly their own clients row';
+            end if;
+            if (select count(*) from public.client_private) <> 0 then
+              raise exception 'SECURITY: client can read client_private';
+            end if;
+          end $$;
+          reset role;
+          SQL
+
+      # Regression test for 0010: a client must not be able to write activity
+      # events about themselves, since those drive the engagement score and
+      # the nudges that are supposed to flag them going quiet.
+      - name: Client cannot forge activity events
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          grant execute on all functions in schema public to authenticated, anon;
+          set role authenticated;
+
+          do $$
+          begin
+            begin
+              insert into public.activity_events (client_id, event_type)
+              values (public.current_client_id(), 'milestone_approved');
+              raise exception 'SECURITY: direct insert into activity_events succeeded';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            begin
+              perform public.log_activity('milestone_approved');
+              raise exception 'SECURITY: log_activity accepted a forged event_type';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+          end $$;
+
+          -- The legitimate path works, and is rate limited to one per 30 min.
+          select public.log_activity('login');
+          select public.log_activity('login');
+          do $$
+          begin
+            if (select count(*) from public.activity_events where event_type = 'login') <> 1 then
+              raise exception 'login events should be rate limited to one';
+            end if;
+          end $$;
+          reset role;
+          SQL
+
+      # 0010 part B: pitch views are counted, throttled, and readable by nobody.
+      - name: Pitch view tracking
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          update public.client_pages set published = true, note = 'hi'
+          where client_id = (select id from public.clients where slug = 'test-co');
+
+          set role anon;
+          do $$
+          begin
+            if not public.record_pitch_view('test-co', 'visitor-aaaaaaaa') then
+              raise exception 'first view should count';
+            end if;
+            if public.record_pitch_view('test-co', 'visitor-aaaaaaaa') then
+              raise exception 'repeat view within 30 min should be throttled';
+            end if;
+            if not public.record_pitch_view('test-co', 'visitor-bbbbbbbb') then
+              raise exception 'a second visitor should count';
+            end if;
+            if public.record_pitch_view('no-such-slug', 'visitor-cccccccc') then
+              raise exception 'unknown slug should not count';
+            end if;
+          end $$;
+          reset role;
+
+          do $$
+          declare v record;
+          begin
+            select view_count, visitor_count into v from public.client_pages
+            where client_id = (select id from public.clients where slug = 'test-co');
+            if v.view_count <> 2 or v.visitor_count <> 2 then
+              raise exception 'expected 2 views / 2 visitors, got % / %',
+                v.view_count, v.visitor_count;
+            end if;
+          end $$;
+          SQL

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { sendMessage, markThreadRead } from "@/app/portal/messages/actions";
+import { sendMessage, markThreadRead } from "@/lib/os/actions/messages";
 import type { Message } from "@/lib/supabase/types";
 
 /**

@@ -1,4 +1,15 @@
+# Everything private now lives under a path rather than a subdomain, so it
+# has to be excluded explicitly. Belt and braces: these routes also set
+# `robots: noindex` in their layout metadata, which is what actually removes
+# a page that has already been crawled — Disallow only stops the next crawl.
 User-agent: *
 Allow: /
+Disallow: /c/
+Disallow: /admin
+Disallow: /portal
+Disallow: /login
+Disallow: /reset-password
+Disallow: /set-password
+Disallow: /api/
 
 Sitemap: https://iamnsilva.me/sitemap.xml

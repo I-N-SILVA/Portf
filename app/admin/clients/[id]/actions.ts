@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { routes } from "@/lib/routes";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe/server";
 import type { Client } from "@/lib/supabase/types";
@@ -44,7 +45,7 @@ export async function createProject(
     p_detail: { name: name.trim() },
   });
 
-  revalidatePath(`/clients/${clientId}`, "layout");
+  revalidatePath(routes.admin.client(clientId), "layout");
   return { ok: true };
 }
 
@@ -68,7 +69,7 @@ export async function addMilestone(
   });
   if (error) return { ok: false, error: error.message };
 
-  revalidatePath(`/clients/${clientId}`, "layout");
+  revalidatePath(routes.admin.client(clientId), "layout");
   return { ok: true };
 }
 
@@ -169,7 +170,7 @@ export async function createInvoice(
       p_detail: { amount: minor, description: description.trim() },
     });
 
-    revalidatePath(`/clients/${clientId}`, "layout");
+    revalidatePath(routes.admin.client(clientId), "layout");
     return { ok: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Stripe error.";
@@ -185,7 +186,7 @@ export async function confirmBooking(
   if (!ok) return { ok: false, error: "Not authorised." };
   const { error } = await supabase.rpc("confirm_booking", { p_id: bookingId });
   if (error) return { ok: false, error: error.message };
-  revalidatePath(`/clients/${clientId}`, "layout");
+  revalidatePath(routes.admin.client(clientId), "layout");
   return { ok: true };
 }
 
@@ -201,7 +202,7 @@ export async function declineBooking(
     p_reason: reason.trim() || null,
   });
   if (error) return { ok: false, error: error.message };
-  revalidatePath(`/clients/${clientId}`, "layout");
+  revalidatePath(routes.admin.client(clientId), "layout");
   return { ok: true };
 }
 
@@ -218,6 +219,6 @@ export async function markMilestoneReady(
   });
   if (error) return { ok: false, error: error.message };
 
-  revalidatePath(`/clients/${clientId}`, "layout");
+  revalidatePath(routes.admin.client(clientId), "layout");
   return { ok: true };
 }

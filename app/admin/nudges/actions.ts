@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { routes } from "@/lib/routes";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { evaluateNudges, type EvalSummary } from "@/lib/os/nudges/evaluate";
 import type { NudgeChannel, NudgeConditionType } from "@/lib/supabase/types";
@@ -44,7 +45,7 @@ export async function createRule(input: {
     active: true,
   });
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/nudges", "layout");
+  revalidatePath(routes.admin.nudges, "layout");
   return { ok: true };
 }
 
@@ -56,7 +57,7 @@ export async function toggleRule(id: string, active: boolean): Promise<ActionRes
     .update({ active })
     .eq("id", id);
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/nudges", "layout");
+  revalidatePath(routes.admin.nudges, "layout");
   return { ok: true };
 }
 
@@ -65,7 +66,7 @@ export async function deleteRule(id: string): Promise<ActionResult> {
   if (!ok) return { ok: false, error: "Not authorised." };
   const { error } = await supabase.from("engagement_rules").delete().eq("id", id);
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/nudges", "layout");
+  revalidatePath(routes.admin.nudges, "layout");
   return { ok: true };
 }
 
@@ -77,7 +78,7 @@ export async function runNudgesNow(): Promise<
   if (!ok) return { ok: false, error: "Not authorised." };
   try {
     const summary = await evaluateNudges(createServiceClient());
-    revalidatePath("/nudges", "layout");
+    revalidatePath(routes.admin.nudges, "layout");
     return { ok: true, summary };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Evaluation failed.";

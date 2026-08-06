@@ -1,5 +1,6 @@
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendEmail, nudgeEmailHtml } from "@/lib/email/send";
+import { routes, siteUrl } from "@/lib/routes";
 import type {
   EngagementRule,
   NudgeConditionType,
@@ -27,11 +28,30 @@ function render(tpl: string | null, condition: NudgeConditionType, name: string)
   return (tpl ?? DEFAULT_TEMPLATES[condition]).replace(/\{\{\s*name\s*\}\}/g, name);
 }
 
-const portalUrl = () =>
-  (process.env.NEXT_PUBLIC_SITE_URL ?? "https://iamnsilva.me").replace(
-    /^https?:\/\//,
-    "https://portal.",
-  );
+/**
+ * The CTA a nudge email points at. A client's space is a path now, so the link
+ * has to name the client — resolve their slug at send time.
+ *
+ * Deliberately uncached. A module-level cache would outlive the run (the
+ * module stays loaded between cron invocations on a warm instance) and keep
+ * emailing a stale URL after a slug change. Nudges are deduped by
+ * nudge_log.dedupe_key, so this runs a handful of times per hour at most.
+ */
+async function spaceUrl(
+  supabase: ServiceClient,
+  clientId: string | null,
+): Promise<string> {
+  if (!clientId) return siteUrl(routes.admin.root);
+
+  const { data } = await supabase
+    .from("clients")
+    .select("slug")
+    .eq("id", clientId)
+    .maybeSingle();
+
+  const slug = (data as { slug: string } | null)?.slug;
+  return slug ? siteUrl(routes.client.root(slug)) : siteUrl(routes.admin.root);
+}
 
 /** Recipients (auth user ids) for a client, and admins. */
 async function clientUsers(supabase: ServiceClient, clientId: string) {
@@ -89,7 +109,7 @@ async function fire(
     await sendEmail({
       to: email.to,
       subject: email.subject,
-      html: nudgeEmailHtml(message, portalUrl()),
+      html: nudgeEmailHtml(message, await spaceUrl(supabase, clientId)),
     });
   }
 

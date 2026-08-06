@@ -10,17 +10,22 @@ import { NotificationBell } from "./NotificationBell";
 export type NavItem = { label: string; href: string };
 
 /**
- * Persistent top chrome for both apps: host label, section nav, live clock,
+ * Persistent top chrome for both apps: area label, section nav, live clock,
  * and the ⌘K command palette trigger.
+ *
+ * `nav` hrefs are absolute app paths (built via lib/routes.ts), because the
+ * area is a path prefix now — "/c/acme/billing", not "/billing" on a
+ * subdomain. `basePath` is what the root entry is compared against so the
+ * dashboard link isn't marked active on every child page.
  */
 export function OSChrome({
-  host,
+  label,
   basePath,
   nav,
   commands,
 }: {
-  host: string;
-  basePath: string; // "/portal" | "/admin"
+  label: string; // "/c/acme" | "/admin"
+  basePath: string; // the area root, for exact-match active state
   nav: NavItem[];
   commands: Command[];
 }) {
@@ -60,7 +65,7 @@ export function OSChrome({
     <>
       <div className="os-chrome">
         <span className="os-host">
-          host: <b>{host}</b>
+          space: <b>{label}</b>
         </span>
         <nav className="os-nav">
           {nav.map((item) => (

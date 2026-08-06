@@ -6,9 +6,10 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Hourly nudge evaluation. Scheduled via Vercel Cron (see vercel.json). When
- * CRON_SECRET is set the request must carry `Authorization: Bearer <secret>`
- * (Vercel Cron sends this automatically).
+ * Hourly nudge evaluation. Triggered by the Netlify scheduled function in
+ * netlify/functions/nudges-cron.mjs, which calls this endpoint with
+ * `Authorization: Bearer $CRON_SECRET`. When CRON_SECRET is unset the
+ * endpoint is open — set it in production.
  */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;

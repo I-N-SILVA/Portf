@@ -1,8 +1,15 @@
 import { projects, type Project } from "@/lib/placeholder-content";
+import type { PublicClientPage } from "@/lib/supabase/types";
 
-// ─── Client Studio (subdomain view) content ─────────────────────────────
+// ─── Client Studio (/studio) content ────────────────────────────────────
 // Everything the client-facing view needs that the main portfolio doesn't
-// carry: outcome-first case studies and personalized pitch rooms.
+// carry: services, FAQs, and outcome-first case studies.
+//
+// Case studies live in code because they're portfolio content — they change
+// when the work changes, not when a client does. Per-client pitch pages are
+// the opposite: they live in Postgres (`client_pages`), keyed to the same
+// client record as the portal, so a prospect keeps one URL from first pitch
+// through to invoicing.
 
 export const CLIENT_SITE = {
   NAME: "Ian N. Silva — Studio",
@@ -10,8 +17,7 @@ export const CLIENT_SITE = {
   DESCRIPTION:
     "I design and ship AI automation systems and web products for businesses — from first prototype to production. See the work, the process, and the results.",
   EMAIL: "iannogueira@proton.me",
-  MAIN_SITE_URL: "https://iamnsilva.me",
-  BOOKING_URL: "https://iamnsilva.me/#contact",
+  PORTFOLIO_URL: "/",
 } as const;
 
 // Shown as a status pill in the hero — keep it current.
@@ -228,33 +234,28 @@ export function getCaseStudyProject(cs: CaseStudy): Project | undefined {
   return projects.find((p) => p.id === cs.projectId);
 }
 
-// ─── Pitch rooms ─────────────────────────────────────────────────────────
-// Personalized pages at /p/<slug> (clients.iamnsilva.me/p/acme): a curated
-// selection of case studies with a note written for one prospect.
-// Add a room per proposal you send. These pages are noindexed.
+// ─── Pitch pages — local fallback only ───────────────────────────────────
+// Real pitch pages live in Postgres (`client_pages`, migration 0008) so that
+// a prospect and a paying client are the same record behind the same URL.
+// These samples exist so `/c/acme` still renders in a checkout with no
+// Supabase credentials — they are never consulted once the backend is
+// configured. See lib/os/client-scope.ts.
 
-export interface PitchRoom {
-  slug: string;
-  clientName: string;
-  note: string; // your personal "here's what I'd do for you" message
-  caseStudySlugs: string[]; // curated, in display order
-  proposedServices?: string[];
-}
-
-export const pitchRooms: PitchRoom[] = [
+const DEV_PITCH_PAGES: PublicClientPage[] = [
   {
     slug: "acme",
-    clientName: "Acme Inc.",
+    display_name: "Acme Inc.",
+    headline: null,
     note: "Thanks for the conversation this week. Based on what you described — manual reporting eating your ops team's mornings — I've pulled together the three projects below that map most closely to what I'd build for you: a capture-to-dashboard workflow, automated multi-channel output, and the internal tooling to keep it maintainable. Have a look around, try the live demos, and grab a slot when you're ready to talk scope.",
-    caseStudySlugs: [
+    case_studies: [
       "stocksnap-field-inventory",
       "multi-platform-content-engine",
       "promptuous-prompt-platform",
     ],
-    proposedServices: ["AI Automation", "Internal Tooling", "Workflow Design"],
+    services: ["AI Automation", "Internal Tooling", "Workflow Design"],
   },
 ];
 
-export function getPitchRoom(slug: string) {
-  return pitchRooms.find((r) => r.slug === slug);
+export function devPitchRoom(slug: string): PublicClientPage | undefined {
+  return DEV_PITCH_PAGES.find((r) => r.slug === slug);
 }

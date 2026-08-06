@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 
@@ -9,9 +10,14 @@ export const dynamic = "force-dynamic";
  *   https://<host>/api/tidycal/webhook?token=<TIDYCAL_WEBHOOK_SECRET>
  * for booking.created / booking.cancelled events.
  *
- * TidyCal doesn't sign requests, so we gate on a shared secret in the query
- * string (or an x-tidycal-token header). Bookings are matched to a client by
- * the booking contact's email; unmatched bookings are acknowledged and skipped.
+ * TidyCal doesn't sign requests, so we gate on a shared secret. Prefer the
+ * `x-tidycal-token` header: a query string is recorded in access logs, CDN
+ * logs and any Referer that leaks off the page, so a secret placed there is
+ * a secret written down in several places you don't control. The `?token=`
+ * form still works because TidyCal's UI can't always set headers.
+ *
+ * Bookings are matched to a client by the booking contact's email; unmatched
+ * bookings are acknowledged and skipped.
  */
 type TidyCalBooking = {
   id?: number | string;
@@ -27,18 +33,46 @@ type TidyCalPayload = {
   booking?: TidyCalBooking;
 } & TidyCalBooking;
 
-function verify(request: NextRequest): boolean {
+/** Constant-time compare so a wrong token can't be narrowed by timing. */
+function tokensMatch(a: string, b: string): boolean {
+  const ab = Buffer.from(a);
+  const bb = Buffer.from(b);
+  if (ab.length !== bb.length) return false;
+  return timingSafeEqual(ab, bb);
+}
+
+type VerifyResult = { ok: true } | { ok: false; status: number; error: string };
+
+function verify(request: NextRequest): VerifyResult {
   const secret = process.env.TIDYCAL_WEBHOOK_SECRET;
-  if (!secret) return true; // unconfigured → allow (dev)
+
+  // Fail CLOSED. This handler writes through the service client, which
+  // bypasses RLS — an unconfigured production deploy would otherwise let
+  // anyone who finds the URL inject bookings into any client's timeline.
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "tidycal webhook: TIDYCAL_WEBHOOK_SECRET is unset; rejecting request",
+      );
+      return { ok: false, status: 503, error: "webhook not configured" };
+    }
+    return { ok: true }; // local dev only
+  }
+
   const token =
-    request.nextUrl.searchParams.get("token") ??
-    request.headers.get("x-tidycal-token");
-  return token === secret;
+    request.headers.get("x-tidycal-token") ??
+    request.nextUrl.searchParams.get("token");
+
+  if (!token || !tokensMatch(token, secret)) {
+    return { ok: false, status: 401, error: "unauthorised" };
+  }
+  return { ok: true };
 }
 
 export async function POST(request: NextRequest) {
-  if (!verify(request)) {
-    return NextResponse.json({ error: "unauthorised" }, { status: 401 });
+  const auth = verify(request);
+  if (!auth.ok) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
   }
 
   let payload: TidyCalPayload;

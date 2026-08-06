@@ -1,20 +1,29 @@
 import { MetadataRoute } from "next";
-import { SITE } from "@/lib/constants";
 import { caseStudies } from "@/lib/client-content";
+import { routes, siteUrl } from "@/lib/routes";
 
+/**
+ * Public surface only: the portfolio and the studio. Client spaces (/c/*),
+ * the portal and the admin console are intentionally absent — they're
+ * noindexed and Disallowed in robots.txt.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = SITE.URL;
   const now = new Date();
 
   return [
-    { url: base, lastModified: now, changeFrequency: "monthly", priority: 1 },
-    { url: `${base}/#about`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${base}/#projects`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/#expertise`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/#contact`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${base}/clients`, lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: siteUrl("/"), lastModified: now, changeFrequency: "monthly", priority: 1 },
+    { url: siteUrl("/#about"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { url: siteUrl("/#projects"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: siteUrl("/#expertise"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: siteUrl("/#contact"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    {
+      url: siteUrl(routes.studio.root),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     ...caseStudies.map((cs) => ({
-      url: `${base}/clients/work/${cs.slug}`,
+      url: siteUrl(routes.studio.work(cs.slug)),
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.7,

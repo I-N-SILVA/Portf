@@ -22,10 +22,14 @@ export async function sendEmail(opts: {
   return res.ok;
 }
 
-/** House style for nudge emails — mirrors the parchment portal aesthetic. */
+/**
+ * House style for nudge emails — mirrors the parchment portal aesthetic.
+ * `ctaUrl` points at the recipient's own space (/c/{slug}) or, for admin
+ * nudges, the console.
+ */
 export function nudgeEmailHtml(body: string, ctaUrl?: string): string {
   const cta = ctaUrl
-    ? `<p style="margin:24px 0 0"><a href="${ctaUrl}" style="background:#1c40a8;color:#fff;text-decoration:none;padding:11px 18px;border-radius:2px;font-family:monospace;font-size:13px;letter-spacing:.06em">OPEN PORTAL &rarr;</a></p>`
+    ? `<p style="margin:24px 0 0"><a href="${ctaUrl}" style="background:#1c40a8;color:#fff;text-decoration:none;padding:11px 18px;border-radius:2px;font-family:monospace;font-size:13px;letter-spacing:.06em">OPEN &rarr;</a></p>`
     : "";
   return `<div style="background:#f8f4ea;padding:32px;font-family:Georgia,serif;color:#18140e">
     <div style="max-width:520px;margin:0 auto;background:#fdfbf5;border:1px solid #d8cfba;border-radius:4px;padding:28px">

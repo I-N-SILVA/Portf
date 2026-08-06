@@ -7,7 +7,7 @@
  */
 
 export type UserRole = "admin" | "client";
-export type ClientStatus = "active" | "paused" | "churned";
+export type ClientStatus = "prospect" | "active" | "paused" | "churned";
 export type ClientTier = "project" | "subscription" | "hybrid";
 export type ProjectStatus =
   | "not_started"
@@ -39,19 +39,66 @@ export type ClientModules = {
 
 export type Client = {
   id: string;
+  /** Public identifier — everything for this client lives at /c/{slug}. */
+  slug: string;
   name: string;
   company: string | null;
   email: string;
   phone: string | null;
   tier: ClientTier;
   status: ClientStatus;
-  tags: string[];
-  notes: string | null;
-  custom_fields: Record<string, unknown>;
   modules: ClientModules;
   stripe_customer_id: string | null;
   created_at: string;
 }
+
+/**
+ * Admin-only fields about a client. Deliberately NOT columns on `clients`:
+ * a client can read their own `clients` row, and RLS can't hide a column
+ * inside a row it grants. See supabase/migrations/0009_client_private.sql.
+ */
+export type ClientPrivate = {
+  client_id: string;
+  notes: string | null;
+  tags: string[];
+  custom_fields: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Public pitch content for a client's space at /c/{slug}. Kept in its own
+ * table so the anon read policy can never reach `clients` (email, notes,
+ * billing ids). See supabase/migrations/0008_client_slugs.sql.
+ */
+export type ClientPage = {
+  client_id: string;
+  display_name: string;
+  headline: string | null;
+  note: string;
+  /** Case study slugs from lib/client-content.ts, in display order. */
+  case_studies: string[];
+  services: string[];
+  published: boolean;
+  /** Total opens, throttled to one per visitor per 30 minutes. */
+  view_count: number;
+  /** Distinct visitors, by first-party cookie. */
+  visitor_count: number;
+  first_viewed_at: string | null;
+  last_viewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** What `get_public_client_page(slug)` returns to an anonymous visitor. */
+export type PublicClientPage = {
+  slug: string;
+  display_name: string;
+  headline: string | null;
+  note: string;
+  case_studies: string[];
+  services: string[];
+};
 
 export type Subscription = {
   id: string;
@@ -249,6 +296,8 @@ export interface Database {
       nudge_log: Row<NudgeLogEntry>;
       notifications: Row<AppNotification>;
       messages: Row<Message>;
+      client_pages: Row<ClientPage>;
+      client_private: Row<ClientPrivate>;
     };
     Views: {
       client_engagement: View<ClientEngagement>;
@@ -315,6 +364,19 @@ export interface Database {
         Returns: string;
       };
       mark_thread_read: { Args: { p_client_id: string }; Returns: undefined };
+      get_public_client_page: {
+        Args: { p_slug: string };
+        Returns: PublicClientPage[];
+      };
+      slugify: { Args: { p_input: string }; Returns: string | null };
+      record_pitch_view: {
+        Args: { p_slug: string; p_visitor: string };
+        Returns: boolean;
+      };
+      slug_available: {
+        Args: { p_slug: string; p_except?: string | null };
+        Returns: boolean;
+      };
     };
     Enums: {
       user_role: UserRole;

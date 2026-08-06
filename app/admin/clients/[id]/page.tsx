@@ -10,6 +10,10 @@ import {
 import { getBookingsForClient, formatDateTime } from "@/lib/os/bookings";
 import { getThreadForClient } from "@/lib/os/messages";
 import { MessageThread } from "@/components/os/MessageThread";
+import { routes } from "@/lib/routes";
+import { caseStudies } from "@/lib/client-content";
+import { ClientRecordAdmin } from "./ClientRecordAdmin";
+import { PitchPageAdmin } from "./PitchPageAdmin";
 import {
   MILESTONE_STATUS_LABEL,
   PROJECT_STATUS_LABEL,
@@ -49,6 +53,16 @@ export default async function AdminClientDetail({
     .maybeSingle();
   if (!client) notFound();
 
+  // client_private and client_pages are admin-only / admin-writable; both are
+  // guaranteed to exist by the clients_provision_records trigger, but read
+  // them defensively so a client created before 0009 still renders.
+  const [{ data: privateData }, { data: pitchPage }, { data: linkedUsers }] =
+    await Promise.all([
+      supabase.from("client_private").select("*").eq("client_id", id).maybeSingle(),
+      supabase.from("client_pages").select("*").eq("client_id", id).maybeSingle(),
+      supabase.from("profiles").select("id").eq("client_id", id).limit(1),
+    ]);
+
   const c = client as Client;
   const projects = await getProjectsForClient(id);
   const { subscription, invoices } = await getBillingForClient(id);
@@ -67,7 +81,7 @@ export default async function AdminClientDetail({
   return (
     <main className="os-stage">
       <p className="os-eyebrow">
-        <Link href="/clients" style={{ color: "inherit" }}>
+        <Link href={routes.admin.clients} style={{ color: "inherit" }}>
           ← Clients
         </Link>
       </p>
@@ -75,6 +89,11 @@ export default async function AdminClientDetail({
       <p className="os-sub">
         {c.company ? `${c.company} · ` : ""}
         {c.email}
+      </p>
+      <p className="os-sub" style={{ marginTop: "-18px" }}>
+        Their space:{" "}
+        <Link href={routes.client.root(c.slug)}>{routes.client.root(c.slug)}</Link>
+        {" — "}the link you send them, before and after they sign.
       </p>
 
       <div className="os-statline" style={{ marginBottom: "36px" }}>
@@ -94,6 +113,28 @@ export default async function AdminClientDetail({
           <div className="n">{projects.length}</div>
           <div className="k">Projects</div>
         </div>
+      </div>
+
+      <div className="os-sec">Record</div>
+      <div className="os-tablewrap" style={{ padding: "18px", marginBottom: "36px" }}>
+        <ClientRecordAdmin
+          client={c}
+          privateData={privateData ?? null}
+          hasUser={(linkedUsers ?? []).length > 0}
+        />
+      </div>
+
+      <div className="os-sec">Pitch page</div>
+      <div className="os-tablewrap" style={{ padding: "18px", marginBottom: "36px" }}>
+        <PitchPageAdmin
+          clientId={c.id}
+          slug={c.slug}
+          page={pitchPage ?? null}
+          options={caseStudies.map((cs) => ({
+            slug: cs.slug,
+            headline: cs.headline,
+          }))}
+        />
       </div>
 
       <div className="os-sec">

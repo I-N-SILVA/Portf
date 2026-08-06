@@ -30,17 +30,12 @@ async function attachMilestones(
   }));
 }
 
-/** Projects for the signed-in client (RLS scopes to their own). */
-export async function getClientProjects(): Promise<ProjectWithMilestones[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("projects")
-    .select("*")
-    .order("created_at", { ascending: false });
-  return attachMilestones(supabase, (data ?? []) as Project[]);
-}
-
-/** Projects for a specific client — admin view. */
+/**
+ * Projects for one client. Every caller passes an explicit client id — the
+ * client space resolves it from the slug, the admin console from the record —
+ * so a page renders the same rows whether the client or an admin is looking.
+ * RLS still refuses ids the caller has no claim to.
+ */
 export async function getProjectsForClient(
   clientId: string,
 ): Promise<ProjectWithMilestones[]> {

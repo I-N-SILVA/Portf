@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { adminUnreadByClient } from "@/lib/os/messages";
 import type { Client } from "@/lib/supabase/types";
+import { routes } from "@/lib/routes";
+import { NewClientForm } from "./NewClientForm";
 
 export const metadata = { title: "Clients — Shaft OS Admin" };
 
@@ -27,13 +29,13 @@ export default async function ClientsPage() {
       <h1 className="os-title">Clients</h1>
       <p className="os-sub">
         Everyone you work with. Create a client, set their tier and modules,
-        then send an invite to open their portal.
+        then send an invite to open their space.
       </p>
 
       <div className="os-sec">
         Directory
         <span style={{ marginLeft: "auto", textTransform: "none" }}>
-          <button className="os-btn">+ New client</button>
+          <NewClientForm />
         </span>
       </div>
 
@@ -59,7 +61,7 @@ export default async function ClientsPage() {
                 <tr key={c.id}>
                   <td>
                     <Link
-                      href={`/clients/${c.id}`}
+                      href={routes.admin.client(c.id)}
                       style={{ color: "var(--os-ink)", textDecoration: "none" }}
                     >
                       {c.name}
@@ -69,19 +71,26 @@ export default async function ClientsPage() {
                         {unread[c.id]} new
                       </span>
                     )}
-                    {c.company && (
-                      <div
-                        style={{
-                          color: "var(--os-muted)",
-                          fontSize: "10px",
-                          letterSpacing: "0.04em",
-                          textTransform: "uppercase",
-                          marginTop: "3px",
-                        }}
+                    <div
+                      style={{
+                        color: "var(--os-muted)",
+                        fontSize: "10px",
+                        letterSpacing: "0.04em",
+                        marginTop: "3px",
+                      }}
+                    >
+                      {c.company && (
+                        <span style={{ textTransform: "uppercase" }}>
+                          {c.company} ·{" "}
+                        </span>
+                      )}
+                      <Link
+                        href={routes.client.root(c.slug)}
+                        style={{ color: "inherit" }}
                       >
-                        {c.company}
-                      </div>
-                    )}
+                        {routes.client.root(c.slug)}
+                      </Link>
+                    </div>
                   </td>
                   <td style={{ textTransform: "capitalize" }}>{c.tier}</td>
                   <td>
