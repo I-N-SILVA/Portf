@@ -103,9 +103,6 @@ export const routes = {
   },
 } as const;
 
-/** Path prefixes that must never be reachable without a session. */
-export const PROTECTED_PREFIXES = ["/admin", "/c/"] as const;
-
 /**
  * Sanitise a `?next=` parameter before redirecting to it. Only same-origin
  * absolute paths survive: anything with a scheme, and anything starting `//`

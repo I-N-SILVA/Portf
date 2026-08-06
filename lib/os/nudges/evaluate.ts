@@ -29,29 +29,27 @@ function render(tpl: string | null, condition: NudgeConditionType, name: string)
 }
 
 /**
- * The CTA a nudge email points at. Now that a client's space is a path rather
- * than a subdomain, the link has to name the client — so resolve their slug.
- * Cached per evaluation run: one pass can nudge the same client under several
- * rules.
+ * The CTA a nudge email points at. A client's space is a path now, so the link
+ * has to name the client — resolve their slug at send time.
+ *
+ * Deliberately uncached. A module-level cache would outlive the run (the
+ * module stays loaded between cron invocations on a warm instance) and keep
+ * emailing a stale URL after a slug change. Nudges are deduped by
+ * nudge_log.dedupe_key, so this runs a handful of times per hour at most.
  */
-const slugCache = new Map<string, string | null>();
-
 async function spaceUrl(
   supabase: ServiceClient,
   clientId: string | null,
 ): Promise<string> {
   if (!clientId) return siteUrl(routes.admin.root);
 
-  if (!slugCache.has(clientId)) {
-    const { data } = await supabase
-      .from("clients")
-      .select("slug")
-      .eq("id", clientId)
-      .maybeSingle();
-    slugCache.set(clientId, (data as { slug: string } | null)?.slug ?? null);
-  }
+  const { data } = await supabase
+    .from("clients")
+    .select("slug")
+    .eq("id", clientId)
+    .maybeSingle();
 
-  const slug = slugCache.get(clientId);
+  const slug = (data as { slug: string } | null)?.slug;
   return slug ? siteUrl(routes.client.root(slug)) : siteUrl(routes.admin.root);
 }
 

@@ -164,14 +164,11 @@ export async function saveClientNotes(
   const { supabase, ok } = await requireAdmin();
   if (!ok) return { ok: false, error: "Not authorised." };
 
-  const { error } = await supabase
-    .from("client_private")
-    .upsert({
-      client_id: clientId,
-      notes: notes.trim() || null,
-      tags: tags.map((t) => t.trim()).filter(Boolean),
-    })
-    .eq("client_id", clientId);
+  const { error } = await supabase.from("client_private").upsert({
+    client_id: clientId,
+    notes: notes.trim() || null,
+    tags: tags.map((t) => t.trim()).filter(Boolean),
+  });
   if (error) return { ok: false, error: error.message };
 
   revalidatePath(routes.admin.client(clientId), "layout");
