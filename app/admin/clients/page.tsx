@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { adminUnreadByClient } from "@/lib/os/messages";
 import type { Client } from "@/lib/supabase/types";
 import { routes } from "@/lib/routes";
+import { NewClientForm } from "./NewClientForm";
 
 export const metadata = { title: "Clients — Shaft OS Admin" };
 
@@ -34,7 +35,7 @@ export default async function ClientsPage() {
       <div className="os-sec">
         Directory
         <span style={{ marginLeft: "auto", textTransform: "none" }}>
-          <button className="os-btn">+ New client</button>
+          <NewClientForm />
         </span>
       </div>
 

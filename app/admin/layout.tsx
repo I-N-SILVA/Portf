@@ -41,6 +41,28 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Without credentials every page below throws on its first query. The rest
+  // of the app degrades to its public face in that state; say plainly what's
+  // missing instead of serving a 500 from a preview deploy.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return (
+      <div className="shaft-os">
+        <div className="os-paper" />
+        <main className="os-stage">
+          <p className="os-eyebrow">{routes.admin.root}</p>
+          <h1 className="os-title">Not configured.</h1>
+          <p className="os-sub">
+            The ops console needs a Supabase project. Set{" "}
+            <code>NEXT_PUBLIC_SUPABASE_URL</code>,{" "}
+            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> and{" "}
+            <code>SUPABASE_SERVICE_ROLE_KEY</code>, then apply the migrations in{" "}
+            <code>supabase/migrations/</code>.
+          </p>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="shaft-os">
       <div className="os-paper" />

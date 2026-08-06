@@ -100,9 +100,15 @@ Plain `http://localhost:3000` — every area is a path:
 2. Apply the schema: run every file in `supabase/migrations/` in order against
    your project (Supabase SQL editor, `supabase db push`, or the MCP
    `apply_migration` tool).
-3. Regenerate DB types (optional but recommended):
-   `npx supabase gen types typescript --project-id <ref> > lib/supabase/types.ts`
+3. Regenerate DB types after any migration — `lib/supabase/types.ts` is
+   hand-authored and drifts:
+   `SUPABASE_PROJECT_ID=<ref> npm run types:gen`
 4. `npm run dev`.
+
+Before pushing, `npm run verify` runs the same checks as CI: typecheck, lint,
+the dead-module scan, and a build. CI additionally applies every migration to a
+throwaway Postgres, so a broken or out-of-order file fails there rather than
+against the live project.
 
 ## Creating the first admin
 
@@ -119,6 +125,50 @@ Users are invite-only (no self-serve signup). To bootstrap the first admin:
    ```
    `profiles.role` is the RLS source of truth; the `app_metadata` claim is the
    fast check middleware uses.
+
+Every subsequent user is created from the console — see below.
+
+## Running a client, end to end
+
+All of this is UI now; none of it needs the SQL editor.
+
+1. **Create** — `/admin/clients` → *New client*. The slug is suggested from the
+   company name, checked for availability server-side, and previewed as the URL
+   you'll be sending. `client_private` and `client_pages` rows are created by
+   the `clients_provision_records` trigger, so the invariant holds however a
+   client row appears.
+2. **Pitch** — on `/admin/clients/{id}`, write the note, tick the case studies
+   (picked from the ones that exist, so a published page can't point at a
+   renamed slug), then *Save & publish*. Copy the link and send it. Status
+   defaults to `prospect`.
+3. **Convert** — *Send invite*. Supabase emails them; the callback drops them
+   on `/set-password`, and `/portal` forwards them to their space. The same URL
+   now serves their dashboard instead of the pitch page.
+4. **Notes** — anything in the private notes box lives in `client_private`,
+   which has one policy and it is admin-only. See below.
+
+### Admin-only fields (`0009_client_private.sql`)
+
+`clients.notes` used to carry a comment saying it was admin-only "see RLS". It
+wasn't. RLS is **row**-level: `clients_client_read_own` grants a client their
+whole row, every column, and no column privileges were ever revoked — so any
+signed-in client could read the private notes written about them straight from
+the public anon key:
+
+```js
+supabase.from('clients').select('notes').single()
+```
+
+Column-level `REVOKE` can't fix it alone, because Supabase gives admins and
+clients the same Postgres role (`authenticated`); revoking a column from that
+role locks the admin console out too. Access differs per *user*, not per role,
+which is what RLS is for — so `notes`, `tags` and `custom_fields` moved to
+`client_private`, a table whose entire policy set is admin-only. Same reasoning
+as `client_pages`: match the table to its audience instead of hiding columns
+inside a table with a broader one.
+
+CI asserts the regression: a simulated signed-in client must read exactly one
+`clients` row and zero `client_private` rows.
 
 ## Projects (Phase 2)
 
@@ -185,9 +235,13 @@ migrating.
 
 Bookings made in TidyCal sync back into the dashboard:
 
-1. Set `TIDYCAL_WEBHOOK_SECRET`.
+1. Set `TIDYCAL_WEBHOOK_SECRET`. **Required in production** — the endpoint
+   writes with the service role (bypassing RLS), so it fails closed with a 503
+   when the secret is unset rather than accepting anonymous booking writes.
 2. In TidyCal, add a webhook for booking created/cancelled pointing at
-   `https://<host>/api/tidycal/webhook?token=<TIDYCAL_WEBHOOK_SECRET>`.
+   `https://<host>/api/tidycal/webhook`, sending the secret as an
+   `x-tidycal-token` header. The `?token=<secret>` query form still works, but
+   query strings end up in access and CDN logs.
 3. Bookings are matched to a client by the booking contact's **email** (must
    match `clients.email`) and upserted idempotently (`external_source='tidycal'`,
    `external_id`=TidyCal booking id), landing as `confirmed` (or `cancelled`).
@@ -243,8 +297,8 @@ to the same route.
 
 ## Data model (Phase 1)
 
-`clients` · `profiles` · `activity_events` · `audit_log` · `client_pages` —
-see the migrations.
+`clients` · `profiles` · `activity_events` · `audit_log` · `client_pages` ·
+`client_private` — see the migrations.
 Every client-scoped table carries `client_id` and an RLS policy limiting
 clients to their own rows; admins are unrestricted. `activity_events` is
 populated from day one (login beacon) so the Phase 5 nudge engine has history.

@@ -47,13 +47,24 @@ export type Client = {
   phone: string | null;
   tier: ClientTier;
   status: ClientStatus;
-  tags: string[];
-  notes: string | null;
-  custom_fields: Record<string, unknown>;
   modules: ClientModules;
   stripe_customer_id: string | null;
   created_at: string;
 }
+
+/**
+ * Admin-only fields about a client. Deliberately NOT columns on `clients`:
+ * a client can read their own `clients` row, and RLS can't hide a column
+ * inside a row it grants. See supabase/migrations/0009_client_private.sql.
+ */
+export type ClientPrivate = {
+  client_id: string;
+  notes: string | null;
+  tags: string[];
+  custom_fields: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
 
 /**
  * Public pitch content for a client's space at /c/{slug}. Kept in its own
@@ -280,6 +291,7 @@ export interface Database {
       notifications: Row<AppNotification>;
       messages: Row<Message>;
       client_pages: Row<ClientPage>;
+      client_private: Row<ClientPrivate>;
     };
     Views: {
       client_engagement: View<ClientEngagement>;
@@ -351,6 +363,10 @@ export interface Database {
         Returns: PublicClientPage[];
       };
       slugify: { Args: { p_input: string }; Returns: string | null };
+      slug_available: {
+        Args: { p_slug: string; p_except?: string | null };
+        Returns: boolean;
+      };
     };
     Enums: {
       user_role: UserRole;
