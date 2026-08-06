@@ -147,6 +147,23 @@ All of this is UI now; none of it needs the SQL editor.
 4. **Notes** — anything in the private notes box lives in `client_private`,
    which has one policy and it is admin-only. See below.
 
+### Pitch views (`0010_…_pitch_views.sql`)
+
+A published pitch page reports back. `client_pages` carries `view_count`,
+`visitor_count`, `first_viewed_at` and `last_viewed_at`, written only by
+`record_pitch_view()`; every open also lands in `activity_events` as
+`pitch_viewed`, so it shows up on the client's timeline alongside everything
+else.
+
+Identification is a random opaque id in a first-party httpOnly cookie set by a
+server action (`lib/os/actions/pitch-view.ts`). No IP, no user agent, no
+third-party script — enough to tell one prospect's repeat visits from two
+different people, and nothing else. Views are throttled to one per visitor per
+30 minutes so a refresh isn't a second read.
+
+`/admin` sorts published pitches coldest-first: unopened before opened, longest
+wait first. That ordering is the follow-up list.
+
 ### Admin-only fields (`0009_client_private.sql`)
 
 `clients.notes` used to carry a comment saying it was admin-only "see RLS". It
@@ -169,6 +186,27 @@ inside a table with a broader one.
 
 CI asserts the regression: a simulated signed-in client must read exactly one
 `clients` row and zero `client_private` rows.
+
+### Activity integrity (`0010_…`)
+
+`activity_events` had an `activity_insert_self` policy letting a client INSERT
+directly as long as `client_id` was their own — with `event_type` and
+`metadata` unconstrained. From the browser, with the public anon key:
+
+```js
+supabase.from('activity_events')
+        .insert({ client_id: mine, event_type: 'milestone_approved' })
+```
+
+`client_engagement` scores on those rows and the nudge evaluator reads them, so
+a client could keep themselves looking active and suppress the at-risk nudges
+meant to tell you they'd gone quiet — backwards from what the signal is for.
+
+Clients now have no direct INSERT path. Everything goes through
+`log_activity()`, which is SECURITY DEFINER and validates: a client may write
+only about themselves, only `login`, at most once per 30 minutes, with metadata
+dropped. Every meaningful event is emitted by a definer function that has
+already verified the state change happened. CI asserts all three.
 
 ## Projects (Phase 2)
 

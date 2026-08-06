@@ -3,6 +3,7 @@ import { routes } from "@/lib/routes";
 import CaseStudyCard from "@/components/studio/CaseStudyCard";
 import ContactCTA from "@/components/studio/ContactCTA";
 import Reveal from "@/components/studio/Reveal";
+import { PitchViewBeacon } from "@/components/studio/PitchViewBeacon";
 import type { PublicClientPage } from "@/lib/supabase/types";
 
 /**
@@ -20,6 +21,8 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
 
   return (
     <main>
+      <PitchViewBeacon slug={page.slug} />
+
       {/* Personalized hero */}
       <section className="mx-auto max-w-4xl px-6 pb-16 pt-20 md:pt-28">
         <Reveal>

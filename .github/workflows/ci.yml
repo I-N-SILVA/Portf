@@ -135,3 +135,79 @@ jobs:
           end $$;
           reset role;
           SQL
+
+      # Regression test for 0010: a client must not be able to write activity
+      # events about themselves, since those drive the engagement score and
+      # the nudges that are supposed to flag them going quiet.
+      - name: Client cannot forge activity events
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          grant execute on all functions in schema public to authenticated, anon;
+          set role authenticated;
+
+          do $$
+          begin
+            begin
+              insert into public.activity_events (client_id, event_type)
+              values (public.current_client_id(), 'milestone_approved');
+              raise exception 'SECURITY: direct insert into activity_events succeeded';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            begin
+              perform public.log_activity('milestone_approved');
+              raise exception 'SECURITY: log_activity accepted a forged event_type';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+          end $$;
+
+          -- The legitimate path works, and is rate limited to one per 30 min.
+          select public.log_activity('login');
+          select public.log_activity('login');
+          do $$
+          begin
+            if (select count(*) from public.activity_events where event_type = 'login') <> 1 then
+              raise exception 'login events should be rate limited to one';
+            end if;
+          end $$;
+          reset role;
+          SQL
+
+      # 0010 part B: pitch views are counted, throttled, and readable by nobody.
+      - name: Pitch view tracking
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          update public.client_pages set published = true, note = 'hi'
+          where client_id = (select id from public.clients where slug = 'test-co');
+
+          set role anon;
+          do $$
+          begin
+            if not public.record_pitch_view('test-co', 'visitor-aaaaaaaa') then
+              raise exception 'first view should count';
+            end if;
+            if public.record_pitch_view('test-co', 'visitor-aaaaaaaa') then
+              raise exception 'repeat view within 30 min should be throttled';
+            end if;
+            if not public.record_pitch_view('test-co', 'visitor-bbbbbbbb') then
+              raise exception 'a second visitor should count';
+            end if;
+            if public.record_pitch_view('no-such-slug', 'visitor-cccccccc') then
+              raise exception 'unknown slug should not count';
+            end if;
+          end $$;
+          reset role;
+
+          do $$
+          declare v record;
+          begin
+            select view_count, visitor_count into v from public.client_pages
+            where client_id = (select id from public.clients where slug = 'test-co');
+            if v.view_count <> 2 or v.visitor_count <> 2 then
+              raise exception 'expected 2 views / 2 visitors, got % / %',
+                v.view_count, v.visitor_count;
+            end if;
+          end $$;
+          SQL

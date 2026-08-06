@@ -80,6 +80,12 @@ export type ClientPage = {
   case_studies: string[];
   services: string[];
   published: boolean;
+  /** Total opens, throttled to one per visitor per 30 minutes. */
+  view_count: number;
+  /** Distinct visitors, by first-party cookie. */
+  visitor_count: number;
+  first_viewed_at: string | null;
+  last_viewed_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -363,6 +369,10 @@ export interface Database {
         Returns: PublicClientPage[];
       };
       slugify: { Args: { p_input: string }; Returns: string | null };
+      record_pitch_view: {
+        Args: { p_slug: string; p_visitor: string };
+        Returns: boolean;
+      };
       slug_available: {
         Args: { p_slug: string; p_except?: string | null };
         Returns: boolean;

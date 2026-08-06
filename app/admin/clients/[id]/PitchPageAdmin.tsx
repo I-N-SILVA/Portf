@@ -37,6 +37,19 @@ export function PitchPageAdmin({
 
   const url = siteUrl(routes.client.root(slug));
 
+  // Reads reported by the page itself — the counters live on client_pages and
+  // are only ever written by record_pitch_view().
+  const views = page?.view_count ?? 0;
+  const visitors = page?.visitor_count ?? 0;
+  const lastViewed = page?.last_viewed_at
+    ? new Date(page.last_viewed_at).toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null;
+
   // Order matters — it's the display order on the page, so toggling appends.
   const toggle = (s: string) =>
     setPicked((cur) =>
@@ -79,6 +92,27 @@ export function PitchPageAdmin({
           {published ? "Published — anyone with the link can read it" : "Draft — only you"}
         </span>
       </div>
+
+      {published && (
+        <>
+          <div className="os-row">
+            <span className="label">Opens</span>
+            <span className={`val ${views > 0 ? "gold" : "accent"}`}>
+              {views === 0
+                ? "Never opened"
+                : `${views} open${views === 1 ? "" : "s"} · ${visitors} ${
+                    visitors === 1 ? "person" : "people"
+                  }`}
+            </span>
+          </div>
+          {lastViewed && (
+            <div className="os-row">
+              <span className="label">Last read</span>
+              <span className="val">{lastViewed}</span>
+            </div>
+          )}
+        </>
+      )}
 
       <div className="os-form-row">
         <input
