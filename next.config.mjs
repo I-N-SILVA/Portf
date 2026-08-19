@@ -10,6 +10,51 @@ const nextConfig = {
   },
 
   /**
+   * Sent on every response. None of these change what the app does; they
+   * remove things a browser would otherwise be willing to do on its behalf.
+   *
+   * No Content-Security-Policy yet — the root layout inlines two <script>
+   * blocks (the anti-FOUC theme read and the JSON-LD), so a real policy needs
+   * per-request nonces threaded through middleware. Worth doing; too large to
+   * bolt on here without risking a blank page in production.
+   */
+  async headers() {
+    const securityHeaders = [
+      // Two years, subdomains included, preload-eligible. The site is HTTPS
+      // only and the apex is already redirecting, so there is nothing left
+      // that a downgrade could usefully reach.
+      {
+        key: 'Strict-Transport-Security',
+        value: 'max-age=63072000; includeSubDomains; preload',
+      },
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      // Same-origin framing only — this app has an admin console and a signed-in
+      // client portal, both of which are clickjacking targets.
+      { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      // Nothing here uses hardware. Say so, so an injected script can't.
+      {
+        key: 'Permissions-Policy',
+        value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+      },
+      { key: 'X-DNS-Prefetch-Control', value: 'on' },
+    ];
+
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      // Belt and braces alongside the route-level `robots: noindex` on these
+      // layouts: a header also covers non-HTML responses (the Stripe portal
+      // redirect, file downloads) that carry no <meta> tag to read.
+      {
+        source: '/:area(c|admin|portal)/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+        ],
+      },
+    ];
+  },
+
+  /**
    * Permanent redirects from the pre-slug URL scheme. These run before
    * middleware, so they cost nothing on the hot path and can be cached by the
    * CDN. The one path that can't live here is /portal/* — resolving it needs

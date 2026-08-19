@@ -1,5 +1,5 @@
 import { createServiceClient } from "@/lib/supabase/server";
-import { sendEmail, nudgeEmailHtml } from "@/lib/email/send";
+import { emailConfigured, sendEmail, nudgeEmailHtml } from "@/lib/email/send";
 import { routes, siteUrl } from "@/lib/routes";
 import type {
   EngagementRule,
@@ -12,6 +12,8 @@ export type EvalSummary = {
   rulesEvaluated: number;
   nudgesSent: number;
   byRule: Record<string, number>;
+  /** Rules that threw. Present only when something actually failed. */
+  failures?: Record<string, string>;
 };
 
 const DAY_MS = 86_400_000;
@@ -106,11 +108,25 @@ async function fire(
   }
 
   if ((rule.channel === "email" || rule.channel === "both") && email) {
-    await sendEmail({
+    const delivered = await sendEmail({
       to: email.to,
       subject: email.subject,
       html: nudgeEmailHtml(message, await spaceUrl(supabase, clientId)),
     });
+
+    // The dedupe row is written first on purpose — at-most-once beats
+    // at-least-once when the side effect is somebody's inbox. But an
+    // email-only rule whose send failed has produced nothing at all, and
+    // leaving the row behind suppresses it forever. Drop it so the next
+    // hourly tick retries. On "both" the in-app notification did land, so
+    // the row stays and the nudge is not repeated.
+    if (!delivered && rule.channel === "email" && emailConfigured()) {
+      await supabase.from("nudge_log").delete().eq("dedupe_key", dedupeKey);
+      console.error(
+        `nudge "${rule.name}": email to ${email.to} failed; will retry next run`,
+      );
+      return false;
+    }
   }
 
   return true;
@@ -248,27 +264,39 @@ export async function evaluateNudges(
     .eq("active", true);
 
   const summary: EvalSummary = { rulesEvaluated: 0, nudgesSent: 0, byRule: {} };
+  const failures: Record<string, string> = {};
 
   for (const rule of (rules ?? []) as EngagementRule[]) {
     summary.rulesEvaluated++;
     let sent = 0;
-    switch (rule.condition_type) {
-      case "no_login_days":
-        sent = await evalNoLogin(supabase, rule);
-        break;
-      case "milestone_awaiting_hours":
-        sent = await evalMilestone(supabase, rule);
-        break;
-      case "invoice_unpaid_days":
-        sent = await evalInvoice(supabase, rule);
-        break;
-      case "booking_unconfirmed_hours":
-        sent = await evalBooking(supabase, rule);
-        break;
+    // One rule failing is not the whole hour failing. Without this, a single
+    // bad row — a client with no recipients, a transient Postgres error —
+    // aborted the loop, and every rule after it silently went unevaluated
+    // until the next cron tick.
+    try {
+      switch (rule.condition_type) {
+        case "no_login_days":
+          sent = await evalNoLogin(supabase, rule);
+          break;
+        case "milestone_awaiting_hours":
+          sent = await evalMilestone(supabase, rule);
+          break;
+        case "invoice_unpaid_days":
+          sent = await evalInvoice(supabase, rule);
+          break;
+        case "booking_unconfirmed_hours":
+          sent = await evalBooking(supabase, rule);
+          break;
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      failures[rule.name] = message;
+      console.error(`evaluateNudges: rule "${rule.name}" failed:`, message);
     }
     summary.byRule[rule.name] = sent;
     summary.nudgesSent += sent;
   }
 
+  if (Object.keys(failures).length > 0) summary.failures = failures;
   return summary;
 }

@@ -31,7 +31,7 @@ itself; don't add it.
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Billing. Webhook endpoint: `https://<host>/api/stripe/webhook`, subscribed to `customer.subscription.*` and `invoice.*`. |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Nudge emails. Unset → nudges are in-app only, which is a valid state. |
 | `ADMIN_NOTIFY_EMAIL` | Where admin-facing nudges go. |
-| `CRON_SECRET` | Bearer token the scheduled function sends to `/api/cron/nudges`. Unset → the endpoint is open. Set it. |
+| `CRON_SECRET` | Bearer token the scheduled function sends to `/api/cron/nudges`. Unset in production → the endpoint returns 503 and no nudges are ever evaluated. Set it. |
 | `CONFIRMATION_FROM` | Sender for the studio contact-form confirmation (`netlify/functions/submission-created.mjs`). Needs a Resend-verified domain. |
 | `NEXT_PUBLIC_BOOKING_URL` | Optional. Embeds an external scheduler on the bookings page instead of the native request form. |
 

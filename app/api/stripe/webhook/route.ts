@@ -60,6 +60,19 @@ async function syncInvoice(
 ) {
   const clientId = await clientIdForCustomer(supabase, inv.customer);
   if (!clientId) return;
+
+  // What we already believe about this invoice, read before the upsert
+  // overwrites it. Stripe reports one payment through several events
+  // (invoice.paid, invoice.payment_succeeded, a trailing invoice.updated) and
+  // re-delivers any of them on retry, so "the event says paid" is not the same
+  // question as "this invoice has just become paid".
+  const { data: existing } = await supabase
+    .from("invoices")
+    .select("status")
+    .eq("stripe_invoice_id", inv.id)
+    .maybeSingle();
+  const wasPaid = (existing as { status?: string } | null)?.status === "paid";
+
   await supabase.from("invoices").upsert(
     {
       client_id: clientId,
@@ -77,7 +90,8 @@ async function syncInvoice(
     { onConflict: "stripe_invoice_id" },
   );
 
-  if (inv.status === "paid") {
+  // Only the transition is an event worth a line in the client's timeline.
+  if (inv.status === "paid" && !wasPaid) {
     await supabase.from("activity_events").insert({
       client_id: clientId,
       event_type: "invoice_paid",

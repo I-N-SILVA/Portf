@@ -51,6 +51,8 @@ variables, DNS and verification steps: **[docs/deploying.md](docs/deploying.md)*
 Architecture, data model, and how each module works:
 **[docs/portal-admin.md](docs/portal-admin.md)**.
 
+Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.md)**.
+
 ## Conventions worth knowing before you edit
 
 - **Build URLs with `lib/routes.ts`**, never string literals. Moving an area
@@ -73,8 +75,9 @@ Architecture, data model, and how each module works:
 | Command | Does |
 |---|---|
 | `npm run dev` | Development server |
-| `npm run verify` | Typecheck, lint, dead-module scan, build — same as CI |
+| `npm run verify` | Typecheck, lint, unit tests, dead-module scan, build — same as CI |
 | `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Unit tests (Vitest) over the pure modules in `lib/` |
 | `npm run check:dead` | Fails if any module is unreachable from a Next.js entry point |
 | `npm run types:gen` | Regenerate `lib/supabase/types.ts` (needs `SUPABASE_PROJECT_ID`) |
 

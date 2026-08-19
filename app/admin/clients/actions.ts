@@ -130,6 +130,17 @@ export async function updateClientRecord(
   });
   if (!free) return { ok: false, error: `The slug "${slug}" is already taken.` };
 
+  // The slug the client's space currently answers on. If it changes, that old
+  // path has a rendered page sitting in the cache; leaving it there means the
+  // link you already sent someone keeps serving the pitch page under a slug
+  // that no longer resolves.
+  const { data: before } = await supabase
+    .from("clients")
+    .select("slug")
+    .eq("id", clientId)
+    .maybeSingle();
+  const previousSlug = (before as { slug: string } | null)?.slug ?? null;
+
   const { error } = await supabase
     .from("clients")
     .update({
@@ -152,6 +163,9 @@ export async function updateClientRecord(
   revalidatePath(routes.admin.client(clientId), "layout");
   revalidatePath(routes.admin.clients, "layout");
   revalidatePath(routes.client.root(slug), "layout");
+  if (previousSlug && previousSlug !== slug) {
+    revalidatePath(routes.client.root(previousSlug), "layout");
+  }
   return { ok: true };
 }
 

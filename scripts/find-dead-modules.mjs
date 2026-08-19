@@ -15,7 +15,10 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const EXTS = [".ts", ".tsx"];
-const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "public"]);
+// `tests` is skipped rather than treated as an entry point on purpose: a
+// module whose only importer is a test is still dead product code, and
+// counting the test as a reference would hide exactly that.
+const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "public", "tests"]);
 
 // Config and ambient declaration files aren't imported by anything by design.
 const ALWAYS_LIVE = new Set([
@@ -23,6 +26,7 @@ const ALWAYS_LIVE = new Set([
   "next-env.d.ts",
   "tailwind.config.ts",
   "postcss.config.mjs",
+  "vitest.config.ts",
   path.join("scripts", "find-dead-modules.mjs"),
 ]);
 
@@ -32,6 +36,7 @@ const ENTRY_STEMS = new Set([
   "route",
   "loading",
   "error",
+  "global-error",
   "not-found",
   "template",
   "default",
