@@ -1,39 +1,32 @@
-# Sound Effects
+# Sound effects
 
-This directory contains sound effect files for the interactive portfolio.
+**There are no audio files here, and none are needed.**
 
-## Required Files
+Every sound in the app is synthesised at runtime by `hooks/useSoundEffects.ts`
+using the Web Audio API — oscillators, filtered noise bursts and gain
+envelopes, built per sound and thrown away. Nothing is fetched, so there is no
+download cost and no missing-file failure mode.
 
-- `pickup.mp3` - Played when starting to drag a card
-- `drop.mp3` - Played when releasing/dropping a card
-- `flip.mp3` - Played when flipping a project card
-- `hover.mp3` - Played on soft hover interactions (optional)
+This file used to list four `.mp3` files as "required", with instructions for
+sourcing them. They were never added, never referenced, and the code stopped
+loading files long before that. The directory is kept only so this note has
+somewhere to live.
 
-## Getting Sound Effects
+## Changing a sound
 
-### Option 1: Free Sound Libraries
-- **Zapsplat**: https://www.zapsplat.com (free UI sounds)
-- **Freesound**: https://freesound.org (creative commons sounds)
-- **Mixkit**: https://mixkit.co/free-sound-effects (free without attribution)
+Edit the branch for it in `playSound()`. The types are declared at the top of
+the hook:
 
-### Option 2: Generate with AI
-- **ElevenLabs**: Generate custom sound effects
-- **Soundraw**: AI sound generation
+```
+"focus" | "close" | "maximize" | "minimize" | "click" | "shutter" | "hum" | "glitch" | "page"
+```
 
-### Recommendations
-- Keep files small (<50kb each) for fast loading
-- Use MP3 format for broad compatibility
-- Volume should be subtle (will be reduced to 30% in code)
-- Suggested search terms:
-  - "UI click soft"
-  - "UI whoosh"
-  - "paper shuffle"
-  - "card flip"
+Master gain is set once at the top of `playSound` — change it there rather
+than per sound.
 
-## Testing Without Sounds
+## Known gap
 
-The portfolio will work without sound files. Missing sounds will be logged as warnings but won't break functionality.
-
-## Current Status
-
-Replace the `.mp3` files in this directory with your chosen sound effects.
+There is no mute control and no stored preference. Audio only starts after the
+first pointer or key event (browser autoplay policy enforces that, and the hook
+waits for it deliberately), but someone who doesn't want UI sound has no way to
+say so. See `docs/improvements.md`.

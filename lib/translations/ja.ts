@@ -48,13 +48,6 @@ export const ja: Record<string, string> = {
   "archive.source": "ソース →",
 
   // ── Domains ──
-  "domains.section": "04 / コアドメイン",
-  "domains.1.title": "AI自律性",
-  "domains.1.body": "知覚し、推論し、複雑な操作を自律的に実行するインテリジェントエージェントとワークフローの構築。MCP統合、マルチエージェントシステム、LLMオーケストレーション。",
-  "domains.2.title": "行動デザイン",
-  "domains.2.body": "行動経済学を応用し、エンゲージメントとコンバージョンを自然に促進するユーザー体験を設計。",
-  "domains.3.title": "フルスタックシステム",
-  "domains.3.body": "堅牢でスケーラブルなアーキテクチャの設計 — 高性能フロントエンド、セキュアなクラウドインフラ、クリーンなAPI。",
 
   // ── The Call ──
   "call.section": "05 / ザ・コール",
@@ -74,7 +67,6 @@ export const ja: Record<string, string> = {
   "nav.opening": "オープニング",
   "nav.identity": "アイデンティティ",
   "nav.archive": "アーカイブ",
-  "nav.domains": "ドメイン",
   "nav.call": "ザ・コール",
   "nav.theme.dark": "[ ダーク ]",
   "nav.theme.light": "[ ライト ]",

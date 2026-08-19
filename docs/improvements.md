@@ -169,6 +169,55 @@ matters — `/c/{slug}`, which names the client when their page is published.
 Pitch links travel by Slack and DM; a generic preview and a personalised one
 cost the same to send.
 
+### A second pass: what the first one missed
+
+**The favicons were 736 KB each — and all four were the same file.**
+`favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png` and
+`apple-touch-icon.png` were byte-identical copies of one 1024x1024 **JPEG**,
+extension notwithstanding, so a 16-pixel tab icon cost three quarters of a
+megabyte and arrived with a Content-Type that didn't match its own bytes. The
+`192x192` and `512x512` manifest entries pointed at an 824x1024 portrait that
+was neither square nor either size. Regenerated at the sizes they claim, as
+real PNGs, plus a genuine ICO container: **2.9 MB down to 140 KB**, and the
+16px icon is now 482 bytes.
+
+**`hooks/` was never linted.** `next lint` covers `app`, `components`, `lib`,
+`pages` and `src` by default — so `hooks/`, `middleware.ts`,
+`instrumentation.ts` and the root config were outside every rule the project
+has, including the type-aware ones added in the last pass. Widening the scope
+immediately turned up two errors in `useSoundEffects.ts`: an unawaited
+`AudioContext.resume()` (it rejects under autoplay policy) and an unchecked
+`new AC()` that assumed the constructor exists.
+
+**Three of the five languages were 29 keys behind.** A `domains` section was
+renamed to `offers` and four projects were added; `en` and `pt` were updated
+and `es`, `ja` and `zh` were not. Because `t()` falls back to English key by
+key, nothing broke visibly — the entire services pitch simply renders in
+English for those visitors while the switcher still says 日本語. Eight dead
+`domains.*` keys were also still being shipped. The dead keys are gone, and
+`tests/i18n-parity.test.ts` now blocks further drift: adding an English key
+fails the suite until it's either translated or consciously listed. The 29 are
+listed, not asserted away — translating marketing copy is the owner's call,
+not mine.
+
+**`<html lang>` never changed.** Switching to Japanese changed the strings and
+nothing else, so a screen reader read Japanese with an English voice and
+English pronunciation rules. Now set from the locale.
+
+**A "background video" that was a 404 page.** `public/videos/background.mp4`
+was 109 bytes of HTML saying the object wasn't found, and
+`scripts/download-background-video.sh` wrote to
+`/Users/bhujoy/test/public/videos/` — a path on a machine nobody here has.
+Nothing referenced either. Both removed.
+
+**An index for the query the last pass created.** Batching the nudge evaluator
+turned the no-login rule into one query filtered on `event_type` and
+`created_at`. Every index on `activity_events` either leads with `client_id`
+or ignores time, so the planner read every login ever recorded and discarded
+the ones outside the window. Migration `0013` adds a partial index: measured
+on 60k rows, 15,000 index rows and 6.5 ms becomes 7,950 and 2.3 ms, and the
+gap only widens as history accumulates.
+
 ### Tests
 
 36 unit tests over the pure modules, in `npm run verify` and in CI. The one
@@ -185,12 +234,29 @@ and realtime silently stops updating, in production only).
 
 ## Still open
 
-**End-to-end tests.** The accessibility work above was verified in a real
-Chromium — skip link first in tab order, focus ring applied, `#main` present
-under reduced motion, native cursor restored — but by a throwaway script, not
-a committed suite. Playwright in CI with an axe pass over `/`, `/studio` and a
-published pitch page would keep it that way. This is the biggest remaining
-gap.
+**End-to-end tests.** The accessibility work was verified in a real Chromium —
+skip link first in tab order, focus ring applied, `#main` present under reduced
+motion, native cursor restored — but by a throwaway script, not a committed
+suite. Playwright in CI with an axe pass over `/`, `/studio` and a published
+pitch page would keep it that way. Still the biggest remaining gap.
+
+**Finish the translations, or stop advertising them.** 29 keys x 3 languages,
+including the whole offers section. The switcher currently promises five
+languages and delivers two. Either is a defensible decision; the current state
+isn't.
+
+**Locale lives in `localStorage`, so it's invisible to everyone but the
+visitor.** No `/es/...` URLs, no `hreflang`, no locale in the server render —
+Google only ever indexes the English page, and a translated link can't be
+shared. Moving the locale into the path would fix the SEO, let the server set
+`lang` properly, and let each bundle be code-split instead of all five landing
+in every visitor's JavaScript.
+
+**No mute for the UI sounds.** `useSoundEffects` plays on click, hover and page
+transition. Audio waits for a real interaction (autoplay policy, and the hook
+respects it), but there is no way to turn it off and no stored preference. The
+nav already hosts a theme toggle and a language picker; a third control there
+is a small change.
 
 **The landing page renders nothing without JavaScript.** `stage` starts at
 `"boot"`, so the initial HTML contains the boot sequence and none of the
@@ -198,14 +264,21 @@ portfolio. Search engines execute JS and will see it, but it costs first-paint
 content and it's why the skip link briefly has nothing to skip to. Rendering
 the content server-side and layering the intro over it would fix both.
 
+**Six brand images are JPEGs with a `.png` extension.** `brand-avatar`,
+`brand-icon`, `brand-full`, `floating-dog` and the project screenshots. Served
+with the wrong Content-Type, and none of them can have transparency. `next/image`
+sniffs the real format so rendering is unaffected — this is about correctness
+and about the ~4.8 MB in `public/projects/`, where five screenshots average
+~1 MB each and are never served at anything close to their intrinsic size.
+
 **`invoices` is read in full by the nudge evaluator.** The status filter is in
 Postgres but the `due_date ?? created_at` cutoff is applied in JavaScript, so
 every open invoice is fetched each run. It needs an `or()` filter to push down.
 
 **Netlify Forms is a single point of failure for the contact form.** It posts
 to `/__forms.html` and the confirmation email rides on a Netlify event
-function. Moving the host means rewriting both, and a failed submission
-currently surfaces only as "something went wrong".
+function. Moving host means rewriting both, and a failed submission currently
+surfaces only as "something went wrong".
 
 **The legacy subdomain redirect** in `middleware.ts` runs on every request and
 is marked removable once the DNS records are gone. Check the logs and delete

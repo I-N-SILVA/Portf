@@ -46,6 +46,21 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
+  /**
+   * Keep <html lang> in step with the chosen locale.
+   *
+   * The document is served as lang="en" and the switcher only ever changed
+   * the strings, so a screen reader kept reading Japanese and Chinese with an
+   * English voice and English pronunciation rules — which is not a degraded
+   * experience, it's an unusable one. Set in an effect rather than on the
+   * server because the locale lives in localStorage; see the note in
+   * docs/improvements.md about moving it into the URL, which is what would
+   * let the server render the right lang (and let search engines see it).
+   */
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
     try { localStorage.setItem("shaft-locale", l); } catch {}

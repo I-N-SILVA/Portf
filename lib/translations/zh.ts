@@ -48,13 +48,6 @@ export const zh: Record<string, string> = {
   "archive.source": "源代码 →",
 
   // ── Domains ──
-  "domains.section": "04 / 核心领域",
-  "domains.1.title": "AI自主性",
-  "domains.1.body": "构建能够感知、推理和自主执行复杂操作的智能代理和工作流程。MCP集成、多代理系统、LLM编排——全栈能力。",
-  "domains.2.title": "行为设计",
-  "domains.2.body": "应用行为经济学，设计能自然驱动参与和转化的用户体验。",
-  "domains.3.title": "全栈系统",
-  "domains.3.body": "设计健壮且可扩展的架构——高性能前端、安全云基础设施、简洁API。",
 
   // ── The Call ──
   "call.section": "05 / 通话",
@@ -74,7 +67,6 @@ export const zh: Record<string, string> = {
   "nav.opening": "开场",
   "nav.identity": "身份",
   "nav.archive": "档案",
-  "nav.domains": "领域",
   "nav.call": "通话",
   "nav.theme.dark": "[ 暗色 ]",
   "nav.theme.light": "[ 亮色 ]",

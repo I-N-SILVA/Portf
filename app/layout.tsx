@@ -58,17 +58,20 @@ export const metadata: Metadata = {
     description: SITE.DESCRIPTION,
     images: ["/brand-full.png"],
   },
+  // Every entry here is a real PNG at the size it claims. They used to be four
+  // byte-identical copies of one 1024x1024 JPEG — 736 KB fetched for a 16px
+  // tab icon, with the wrong Content-Type for its own bytes — and the 192/512
+  // entries pointed at an 824x1024 portrait that was neither size nor square.
   icons: {
     icon: [
-      { url: "/brand-avatar.png", type: "image/png" },
       { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.ico", sizes: "32x32" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     other: [
-      { rel: "icon", url: "/brand-avatar.png", sizes: "192x192", type: "image/png" },
-      { rel: "icon", url: "/brand-avatar.png", sizes: "512x512", type: "image/png" },
+      { rel: "icon", url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { rel: "icon", url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
   },
   manifest: "/site.webmanifest",

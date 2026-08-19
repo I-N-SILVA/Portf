@@ -48,13 +48,6 @@ export const es: Record<string, string> = {
   "archive.source": "CÓDIGO →",
 
   // ── Domains ──
-  "domains.section": "04 / DOMINIOS PRINCIPALES",
-  "domains.1.title": "AUTONOMÍA IA",
-  "domains.1.body": "Construcción de agentes inteligentes y flujos de trabajo que perciben, razonan y ejecutan operaciones complejas de forma autónoma. Integraciones MCP, sistemas multi-agente, orquestación de LLM — el stack completo.",
-  "domains.2.title": "DISEÑO CONDUCTUAL",
-  "domains.2.body": "Aplicación de economía conductual para diseñar experiencias de usuario que impulsan el engagement y la conversión de forma natural.",
-  "domains.3.title": "SISTEMAS FULL-STACK",
-  "domains.3.body": "Ingeniería de arquitecturas robustas y escalables — frontends de alto rendimiento, infraestructura cloud segura, APIs limpias.",
 
   // ── The Call ──
   "call.section": "05 / LA LLAMADA",
@@ -74,7 +67,6 @@ export const es: Record<string, string> = {
   "nav.opening": "APERTURA",
   "nav.identity": "IDENTIDAD",
   "nav.archive": "ARCHIVO",
-  "nav.domains": "DOMINIOS",
   "nav.call": "LA LLAMADA",
   "nav.theme.dark": "[ OSCURO ]",
   "nav.theme.light": "[ CLARO ]",

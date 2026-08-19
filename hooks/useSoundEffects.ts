@@ -28,11 +28,20 @@ export function useSoundEffects() {
 
   const getCtx = useCallback(() => {
     if (!ctxRef.current) {
-      const AC = (window as any).AudioContext || (window as any).webkitAudioContext;
+      // Safari still only exposes the prefixed constructor.
+      const AC =
+        window.AudioContext ??
+        (window as { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext;
+      if (!AC) return null;
       ctxRef.current = new AC();
     }
-    if (ctxRef.current?.state === "suspended") ctxRef.current.resume();
-    return ctxRef.current!;
+    if (ctxRef.current.state === "suspended") {
+      // Autoplay policy may refuse this until the page has been interacted
+      // with. It resolves or it doesn't; either way the caller carries on.
+      void ctxRef.current.resume().catch(() => {});
+    }
+    return ctxRef.current;
   }, []);
 
   useEffect(() => {
@@ -49,6 +58,7 @@ export function useSoundEffects() {
     if (typeof window === "undefined") return;
     try {
       const ctx = getCtx();
+      if (!ctx) return;
       const now = ctx.currentTime;
       const master = ctx.createGain();
       master.gain.setValueAtTime(0.18, now);
@@ -227,7 +237,7 @@ export function useSoundEffects() {
         osc.stop(now + 0.15);
       }
 
-    } catch (e) {
+    } catch {
       // Silently fail — never crash the UI over audio
     }
   }, [getCtx]);

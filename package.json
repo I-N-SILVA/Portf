@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --dir app --dir components --dir lib --dir hooks --file middleware.ts --file instrumentation.ts --file next.config.ts",
     "typecheck": "tsc --noEmit",
     "check:dead": "node scripts/find-dead-modules.mjs --check",
     "test": "vitest run",
