@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { CSP_STRICT } from "@/lib/security/csp";
 import { Inter, Syne, Playfair_Display, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
@@ -100,16 +102,38 @@ const jsonLd = {
 
 import { Providers } from "./providers";
 
-export default function RootLayout({
+/**
+ * The CSP nonce for this request, or undefined.
+ *
+ * `headers()` is called only when the strict policy is switched on, because
+ * calling it at all opts the whole app into dynamic rendering — and the
+ * marketing pages under this layout are prerendered today. `CSP_STRICT` is a
+ * build-time flag precisely so this branch is decided before prerendering
+ * runs, rather than at request time when it would be too late.
+ * See lib/security/csp.ts.
+ */
+async function cspNonce(): Promise<string | undefined> {
+  if (!CSP_STRICT) return undefined;
+  return (await headers()).get("x-nonce") ?? undefined;
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = await cspNonce();
+
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
         {/* Anti-FOUC: apply saved shaft theme before first paint */}
-        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('shaft-theme')==='light'){document.documentElement.setAttribute('data-shaft-light','')}}catch(e){}` }} />
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('shaft-theme')==='light'){document.documentElement.setAttribute('data-shaft-light','')}}catch(e){}` }}
+        />
+        {/* A JSON-LD block is data, not script — browsers never execute it, so
+            script-src doesn't apply and it needs no nonce. */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -118,6 +142,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${syne.variable} ${playfair.variable} ${spaceMono.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
       >
+        {/* First stop in the tab order: skips the nav, the social dock and
+            the ticker, which is otherwise a long walk to the content. */}
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <Providers>{children}</Providers>
       </body>
     </html>

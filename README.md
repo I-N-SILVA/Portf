@@ -69,6 +69,12 @@ Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.
   `client_pages` exist as separate tables rather than columns on `clients`.
 - **Client-facing writes go through `SECURITY DEFINER` functions**, never
   direct inserts, so state and authorisation are checked in one place.
+- **Read configuration through `lib/env.ts`**, not `process.env.X!`. A missing
+  variable should name itself; `instrumentation.ts` lists the unset ones at
+  server start, with what silently won't work without each.
+- **The RLS policies are tested.** The `migrations` job in CI applies every
+  migration to a throwaway Postgres and asserts cross-client isolation. If you
+  add a table a client can read, add it to that step.
 
 ## Scripts
 
@@ -78,6 +84,7 @@ Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.
 | `npm run verify` | Typecheck, lint, unit tests, dead-module scan, build — same as CI |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Unit tests (Vitest) over the pure modules in `lib/` |
+| `npm run test:watch` | The same, in watch mode |
 | `npm run check:dead` | Fails if any module is unreachable from a Next.js entry point |
 | `npm run types:gen` | Regenerate `lib/supabase/types.ts` (needs `SUPABASE_PROJECT_ID`) |
 

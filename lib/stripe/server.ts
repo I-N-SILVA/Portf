@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { requireEnv } from "@/lib/env";
 
 /**
  * Server-only Stripe client. Requires STRIPE_SECRET_KEY. Never import this
@@ -11,8 +12,8 @@ let cached: Stripe | null = null;
 
 export function getStripe(): Stripe {
   if (cached) return cached;
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY is not set");
-  cached = new Stripe(key);
+  cached = new Stripe(
+    requireEnv("STRIPE_SECRET_KEY", "Billing and the customer portal need it."),
+  );
   return cached;
 }

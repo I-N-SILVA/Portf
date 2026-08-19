@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { CSP_STRICT, contentSecurityPolicy } from "@/lib/security/csp";
 import { updateSession } from "@/lib/supabase/middleware";
+import { supabaseConfigured } from "@/lib/env";
 import { LEGACY_SUBDOMAIN_AREAS, routes, safeNext } from "@/lib/routes";
 
 /**
@@ -53,6 +55,33 @@ function legacyHostRedirect(request: NextRequest, host: string) {
   return NextResponse.redirect(url, 308);
 }
 
+/**
+ * Per-request nonce for the strict CSP.
+ *
+ * The value goes out twice: on the response, as part of the policy the
+ * browser enforces, and back into the *request* headers as `x-nonce`, which
+ * is how `app/layout.tsx` and Next's own script injection read it. Both have
+ * to be the same string or the page renders blank.
+ *
+ * Only minted when CSP_STRICT is on. Otherwise the policy is a static header
+ * set in next.config.ts and this costs nothing.
+ */
+function withStrictCsp() {
+  if (!CSP_STRICT) return null;
+
+  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const policy = contentSecurityPolicy(nonce);
+
+  // Only the additions. Callers merge these onto the live request headers
+  // at the moment they build a response, so a cookie refresh in between is
+  // not clobbered by a stale snapshot.
+  const extraHeaders = new Headers();
+  extraHeaders.set("x-nonce", nonce);
+  extraHeaders.set("content-security-policy", policy);
+
+  return { nonce, policy, extraHeaders };
+}
+
 export async function middleware(request: NextRequest) {
   const { nextUrl } = request;
   const host = request.headers.get("host") ?? nextUrl.host;
@@ -61,28 +90,41 @@ export async function middleware(request: NextRequest) {
   const legacy = legacyHostRedirect(request, host);
   if (legacy) return legacy;
 
+  const csp = withStrictCsp();
+  const nextOptions = () => {
+    if (!csp) return { request };
+    const headers = new Headers(request.headers);
+    csp.extraHeaders.forEach((value, key) => headers.set(key, value));
+    return { request: { headers } };
+  };
+  /** Stamp the policy on whatever response we end up returning. */
+  const withCsp = <T extends NextResponse>(res: T): T => {
+    if (csp) res.headers.set("Content-Security-Policy", csp.policy);
+    return res;
+  };
+
   const needsSession = path === "/admin" || path.startsWith("/admin/");
   const needsSessionSoon = path.startsWith("/c/") || path.startsWith("/portal");
 
   // Public pages (marketing, studio, published pitch pages) never touch auth.
   if (!needsSession && !needsSessionSoon && !isAuthPath(path) && !path.startsWith("/api")) {
-    return NextResponse.next();
+    return withCsp(NextResponse.next(nextOptions()));
   }
 
   // Session refresh — skipped entirely until Supabase env vars are set, so a
   // preview build without secrets still serves the public site.
-  const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const configured = supabaseConfigured();
   let user: Awaited<ReturnType<typeof updateSession>>["user"] = null;
-  let response = NextResponse.next({ request });
+  let response = withCsp(NextResponse.next(nextOptions()));
   if (configured) {
-    const session = await updateSession(request);
+    const session = await updateSession(request, csp?.extraHeaders);
     user = session.user;
-    response = session.response;
+    response = withCsp(session.response);
   }
 
   const withCookies = (res: NextResponse) => {
     response.cookies.getAll().forEach((c) => res.cookies.set(c.name, c.value));
-    return res;
+    return withCsp(res);
   };
 
   // Webhooks and cron carry their own auth (signatures, bearer secrets).

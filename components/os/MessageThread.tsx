@@ -51,8 +51,11 @@ export function MessageThread({
         },
       )
       .subscribe();
+    // A cleanup function can't be async, and a teardown that rejects (the
+    // socket already gone, the tab backgrounded) is not worth an unhandled
+    // rejection in the console.
     return () => {
-      supabase.removeChannel(channel);
+      void supabase.removeChannel(channel).catch(() => {});
     };
   }, [clientId]);
 

@@ -4,6 +4,7 @@ import { OSChrome, type NavItem } from "@/components/os/OSChrome";
 import { BootGate } from "@/components/os/BootGate";
 import type { Command } from "@/components/os/CommandPalette";
 import { routes } from "@/lib/routes";
+import { supabaseConfigured } from "@/lib/env";
 
 /**
  * Every page here reads the session and per-request data, so none of it can be
@@ -44,7 +45,7 @@ export default async function AdminLayout({
   // Without credentials every page below throws on its first query. The rest
   // of the app degrades to its public face in that state; say plainly what's
   // missing instead of serving a 500 from a preview deploy.
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  if (!supabaseConfigured()) {
     return (
       <div className="shaft-os">
         <div className="os-paper" />

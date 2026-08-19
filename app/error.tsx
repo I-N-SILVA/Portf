@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { StatusScreen } from "@/components/ui/StatusScreen";
+import { reportClientError } from "@/lib/observability/actions";
 
 /**
  * Route-level error boundary. Without one, an exception anywhere in a Server
@@ -22,6 +23,11 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error(error);
+    void reportClientError({
+      message: error.message,
+      digest: error.digest,
+      path: window.location.pathname,
+    }).catch(() => {});
   }, [error]);
 
   return (

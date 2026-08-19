@@ -26,7 +26,7 @@ export function NotificationBell() {
     const supabase = supabaseRef.current;
     let channel: ReturnType<typeof supabase.channel> | null = null;
 
-    (async () => {
+    void (async () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -47,10 +47,14 @@ export function NotificationBell() {
           (payload) => setItems((prev) => [payload.new as AppNotification, ...prev]),
         )
         .subscribe();
-    })();
+    })().catch((err) => {
+      // Realtime is an enhancement — the bell still renders whatever the
+      // initial load returned. Failing to subscribe must not blank it.
+      console.error("NotificationBell: subscribe failed", err);
+    });
 
     return () => {
-      if (channel) supabase.removeChannel(channel);
+      if (channel) void supabase.removeChannel(channel).catch(() => {});
     };
   }, [load]);
 

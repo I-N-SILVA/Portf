@@ -89,6 +89,8 @@ export default function ShaftArchive() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
+              type="button"
+              aria-pressed={filter === cat}
               onClick={() => { setFilter(cat); setExpanded(null); }}
               className="relative font-space-mono text-[9px] tracking-[0.45em] uppercase transition-all duration-100 pb-1"
               style={{ color: filter === cat ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-muted))" }}
@@ -123,7 +125,7 @@ export default function ShaftArchive() {
 
               {/* Entry row */}
               <button
-                className="w-full text-left group py-5 focus:outline-none"
+                className="w-full text-left group py-5"
                 onClick={() => {
                   const isExpanding = expanded !== project.id;
                   if (isExpanding) {

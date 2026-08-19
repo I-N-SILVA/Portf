@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Client, Profile } from "@/lib/supabase/types";
 
@@ -13,35 +14,43 @@ export type SessionContext = {
  * Resolves the signed-in user's profile (role + linked client) for use in
  * Server Components. Returns null when there is no session. RLS guarantees a
  * client can only ever read their own client row.
+ *
+ * `cache()` scopes one resolution to one request. A layout, the page it wraps
+ * and `resolveClientScope` all reach for this, and it costs up to three round
+ * trips each time — so without deduping, a single authenticated render paid
+ * for the same three queries three times over, with no guarantee the answers
+ * agreed.
  */
-export async function getSessionContext(): Promise<SessionContext | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+export const getSessionContext = cache(
+  async (): Promise<SessionContext | null> => {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  let client: Client | null = null;
-  if (profile?.client_id) {
-    const { data } = await supabase
-      .from("clients")
+    const { data: profile } = await supabase
+      .from("profiles")
       .select("*")
-      .eq("id", profile.client_id)
+      .eq("id", user.id)
       .maybeSingle();
-    client = data ?? null;
-  }
 
-  return {
-    userId: user.id,
-    email: user.email ?? null,
-    profile: profile ?? null,
-    client,
-    isAdmin: profile?.role === "admin",
-  };
-}
+    let client: Client | null = null;
+    if (profile?.client_id) {
+      const { data } = await supabase
+        .from("clients")
+        .select("*")
+        .eq("id", profile.client_id)
+        .maybeSingle();
+      client = data ?? null;
+    }
+
+    return {
+      userId: user.id,
+      email: user.email ?? null,
+      profile: profile ?? null,
+      client,
+      isAdmin: profile?.role === "admin",
+    };
+  },
+);

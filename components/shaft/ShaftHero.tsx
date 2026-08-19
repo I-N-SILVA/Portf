@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import type { MotionValue } from "framer-motion";
 import { useRef, useEffect } from "react";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation } from "@/lib/i18n";
@@ -26,29 +27,10 @@ function CinematicBlurName({ text, delay = 0 }: { text: string; delay?: number }
   );
 }
 
-/* ─── Effect 2: Cyber Strike Reveal (Try me out!) ────────────────────── */
-function CyberStrikeName({ text, delay = 0 }: { text: string; delay?: number }) {
-  return (
-    <span className="inline-flex overflow-hidden" aria-label={text}>
-      {text.split("").map((char, i) => (
-        <motion.span
-          key={`${char}-${i}`}
-          initial={{ opacity: 0, y: "150%", rotateX: 60, color: "rgb(var(--shaft-crimson))" }}
-          animate={{ opacity: 1, y: 0, rotateX: 0, color: "inherit" }} 
-          transition={{ duration: 0.7, delay: delay + i * 0.06, ease: [0.25, 1, 0.5, 1] }}
-          className="inline-block origin-bottom will-change-transform"
-        >
-          {char === " " ? <span>&nbsp;</span> : char}
-        </motion.span>
-      ))}
-    </span>
-  );
-}
-
 /* ─── HUD Shard Sub-component ─────────────────────────────────────── */
 function HUDShard({ img, top, left, size, delay, rot, index, springX, springY }: { 
   img: string; top: string; left: string; size: string; delay: number; rot: number; index: number;
-  springX: any; springY: any;
+  springX: MotionValue<number>; springY: MotionValue<number>;
 }) {
   const x = useTransform(springX, (v: number) => v * (1 + index * 0.2));
   const yParallax = useTransform(springY, (v: number) => v * (1 + index * 0.2));

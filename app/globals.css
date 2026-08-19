@@ -349,6 +349,36 @@ html[data-shaft-light] .shaft-paper-texture {
     text-shadow: 2px 2px 0px rgba(var(--primary), 0.2);
   }
 
+  /* ─── Focus ──────────────────────────────────────────────────────────
+     Keyboard focus was invisible on the landing page: StudioShell styles it
+     for /studio, but nothing did for the shaft pages, and two components
+     removed the browser default outright. `:focus-visible` (not `:focus`)
+     so a mouse click doesn't ring every button it touches. */
+  :where(a, button, [role="button"], summary, input, select, textarea,
+    [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 2px solid rgb(var(--shaft-crimson, 204 17 34));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Skip link — first thing in the tab order, visible only once focused. */
+  .skip-link {
+    position: absolute;
+    left: 12px;
+    top: -100px;
+    z-index: 10000;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    background: rgb(var(--foreground));
+    color: rgb(var(--background));
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+
   @media (min-width: 1024px) {
     body {
       cursor: none;
@@ -358,6 +388,18 @@ html[data-shaft-light] .shaft-paper-texture {
     button,
     [role="button"] {
       cursor: none;
+    }
+  }
+
+  /* The custom cursor is itself an animation, and hiding the real pointer
+     leaves nothing behind if it doesn't render. Give the native cursor back
+     to anyone who asked for less motion, and to coarse pointers. */
+  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
+    body,
+    a,
+    button,
+    [role="button"] {
+      cursor: auto;
     }
   }
 }

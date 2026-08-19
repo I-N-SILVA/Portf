@@ -43,12 +43,12 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem("shaft-locale") as Locale | null;
       if (saved && translations[saved]) setLocaleState(saved);
-    } catch (_) {}
+    } catch {}
   }, []);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
-    try { localStorage.setItem("shaft-locale", l); } catch (_) {}
+    try { localStorage.setItem("shaft-locale", l); } catch {}
   }, []);
 
   const t = useCallback(

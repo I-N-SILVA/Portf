@@ -159,7 +159,7 @@ export default function ShaftCall() {
               href="https://calendly.com/iansilva-plyaz/30min"
               target="_blank"
               rel="noopener noreferrer"
-              className="group w-full flex items-center justify-between border transition-colors duration-150 focus:outline-none hover:bg-[rgb(204_17_34)] "
+              className="group w-full flex items-center justify-between border transition-colors duration-150 hover:bg-[rgb(204_17_34)] "
               style={{
                 borderColor: "rgb(var(--shaft-crimson))",
                 backgroundColor: "transparent",

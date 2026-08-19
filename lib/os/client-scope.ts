@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseConfigured } from "@/lib/env";
 import { getSessionContext } from "@/lib/os/session";
 import { devPitchRoom } from "@/lib/client-content";
 import { isValidSlug, routes } from "@/lib/routes";
@@ -35,7 +36,7 @@ export type ClientScope =
   | { access: "none"; slug: string };
 
 /** True once Supabase env vars exist; false in a bare local checkout. */
-const configured = () => Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+const configured = supabaseConfigured;
 
 /**
  * Resolve a slug for the current request. `cache()` dedupes it so the layout

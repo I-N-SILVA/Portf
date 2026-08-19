@@ -22,7 +22,7 @@ const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "public", "tests"]);
 
 // Config and ambient declaration files aren't imported by anything by design.
 const ALWAYS_LIVE = new Set([
-  "next.config.mjs",
+  "next.config.ts",
   "next-env.d.ts",
   "tailwind.config.ts",
   "postcss.config.mjs",
@@ -96,7 +96,7 @@ for (const file of files) {
 
 const entries = files.filter((f) => {
   if (ALWAYS_LIVE.has(f) || f.endsWith(".d.ts")) return true;
-  if (f === "middleware.ts") return true;
+  if (f === "middleware.ts" || f === "instrumentation.ts") return true;
   const parts = f.split(path.sep);
   return parts[0] === "app" && ENTRY_STEMS.has(path.basename(f, path.extname(f)));
 });

@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
+import { reportError } from "@/lib/observability/report";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -123,6 +124,7 @@ export async function POST(request: NextRequest) {
   );
 
   if (error) {
+    reportError(error, { source: "tidycal-webhook", clientId });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   return NextResponse.json({ received: true, client_id: clientId });

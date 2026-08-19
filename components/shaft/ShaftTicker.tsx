@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 const TECH_ITEMS = [
   "AI AGENTS", "MCP SERVERS", "LLM ORCHESTRATION", "BEHAVIORAL PSYCHOLOGY",
   "FULL-STACK SYSTEMS", "AUTOMATION WORKFLOWS", "VECTOR DATABASES",
@@ -10,7 +8,11 @@ const TECH_ITEMS = [
 
 export default function ShaftTicker() {
   return (
-    <section 
+    <section
+      // The list is repeated three times to make the scroll seamless, so a
+      // screen reader would read every item three times over for no benefit.
+      // It's decoration; the same words appear as real content further down.
+      aria-hidden="true"
       className="relative w-full overflow-hidden border-y py-4"
       style={{ 
         borderColor: "rgb(var(--shaft-border))",

@@ -110,6 +110,8 @@ export type Subscription = {
   currency: string | null;
   current_period_end: string | null;
   cancel_at_period_end: boolean;
+  /** Stripe event.created of the webhook that last wrote this row (0011). */
+  stripe_event_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -127,6 +129,8 @@ export type Invoice = {
   due_date: string | null;
   paid_at: string | null;
   hosted_invoice_url: string | null;
+  /** Stripe event.created of the webhook that last wrote this row (0011). */
+  stripe_event_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -370,7 +374,11 @@ export interface Database {
       };
       slugify: { Args: { p_input: string }; Returns: string | null };
       record_pitch_view: {
-        Args: { p_slug: string; p_visitor: string };
+        Args: {
+          p_slug: string;
+          p_visitor: string;
+          p_fingerprint?: string | null;
+        };
         Returns: boolean;
       };
       slug_available: {

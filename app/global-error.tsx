@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { reportClientError } from "@/lib/observability/actions";
 
 /**
  * Last resort: an error thrown in the root layout itself, before any of the
@@ -17,6 +18,11 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     console.error(error);
+    void reportClientError({
+      message: error.message,
+      digest: error.digest,
+      path: window.location.pathname,
+    }).catch(() => {});
   }, [error]);
 
   return (

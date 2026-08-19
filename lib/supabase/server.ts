@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createRawClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import { publicEnv, requireEnv } from "@/lib/env";
 import type { Database } from "./types";
 
 /**
@@ -14,8 +15,8 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    publicEnv.supabaseUrl,
+    publicEnv.supabaseAnonKey,
     {
       cookies: {
         getAll() {
@@ -42,8 +43,11 @@ export async function createClient() {
  */
 export function createServiceClient() {
   return createRawClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv(
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "Webhooks and the invite flow bypass RLS and cannot run without it.",
+    ),
     { auth: { autoRefreshToken: false, persistSession: false } },
   );
 }

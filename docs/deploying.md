@@ -32,6 +32,9 @@ itself; don't add it.
 | `RESEND_API_KEY`, `EMAIL_FROM` | Nudge emails. Unset → nudges are in-app only, which is a valid state. |
 | `ADMIN_NOTIFY_EMAIL` | Where admin-facing nudges go. |
 | `CRON_SECRET` | Bearer token the scheduled function sends to `/api/cron/nudges`. Unset in production → the endpoint returns 503 and no nudges are ever evaluated. Set it. |
+| `ERROR_WEBHOOK_URL` | Optional. Any endpoint that accepts a JSON POST — errors are forwarded there as well as logged. |
+| `PITCH_VIEW_SECRET` | Optional. Signs the pitch-view visitor cookie and derives the per-network rate-limit tag. Falls back to the service role key. |
+| `CSP_STRICT` | Optional, **build-time**. `1` switches to the nonce-based CSP with no `'unsafe-inline'`; costs static prerendering on the marketing pages. |
 | `CONFIRMATION_FROM` | Sender for the studio contact-form confirmation (`netlify/functions/submission-created.mjs`). Needs a Resend-verified domain. |
 | `NEXT_PUBLIC_BOOKING_URL` | Optional. Embeds an external scheduler on the bookings page instead of the native request form. |
 

@@ -863,6 +863,41 @@
   font-family: var(--os-sans);
 }
 
+/* ─── loading skeleton ─────────────────────────────────────────────── */
+/* Used by the loading.tsx boundaries. Every /c and /admin page is
+   force-dynamic and makes two or three sequential Supabase round trips, so
+   without a boundary the browser holds the *previous* page on screen for the
+   whole wait and a navigation looks like a dead click. */
+.shaft-os .os-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--os-ink-dim) 0%,
+    var(--os-muted) 50%,
+    var(--os-ink-dim) 100%
+  );
+  background-size: 200% 100%;
+  opacity: 0.16;
+  border-radius: 2px;
+  animation: os-skeleton-sweep 1.4s ease-in-out infinite;
+}
+.shaft-os .os-skeleton + .os-skeleton {
+  margin-top: 12px;
+}
+
+@keyframes os-skeleton-sweep {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+
+/* The sweep is the one animation here that runs unprompted and indefinitely.
+   Reduce it to a flat block rather than a slow one. */
+@media (prefers-reduced-motion: reduce) {
+  .shaft-os .os-skeleton {
+    animation: none;
+    background: var(--os-ink-dim);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shaft-os *,
   .shaft-os *::before,

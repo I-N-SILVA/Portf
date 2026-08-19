@@ -32,7 +32,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
   useEffect(() => {
     try {
       if (localStorage.getItem("shaft-theme") === "light") setIsLight(true);
-    } catch (_) {}
+    } catch {}
   }, []);
 
   /* Section IntersectionObserver */
@@ -73,7 +73,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
         document.documentElement.removeAttribute("data-shaft-light");
         localStorage.setItem("shaft-theme", "dark");
       }
-    } catch (_) {}
+    } catch {}
   };
 
   const selectLang = (code: Locale) => {

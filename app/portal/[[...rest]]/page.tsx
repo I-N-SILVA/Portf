@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/os/session";
 import { routes } from "@/lib/routes";
+import { supabaseConfigured } from "@/lib/env";
 
 /**
  * Compatibility shim for the old portal.iamnsilva.me URLs.
@@ -20,7 +21,7 @@ export default async function LegacyPortalRedirect({
 }) {
   const { rest } = await params;
   const tail = rest?.length ? `/${rest.join("/")}` : "";
-  const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const configured = supabaseConfigured();
   const ctx = configured ? await getSessionContext() : null;
 
   if (!ctx) redirect(routes.auth.loginNext(`/portal${tail}`));

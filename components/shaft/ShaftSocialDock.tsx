@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Instagram, Youtube, Linkedin, Github, Mail, Newspaper, X } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Instagram, Youtube, Linkedin, Github, Mail } from "lucide-react";
 import { socialLinks } from "@/lib/placeholder-content";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import Image from "next/image";
@@ -14,7 +15,9 @@ const SubstackIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const iconMap: Record<string, any> = {
+type DockIcon = LucideIcon | ((props: { className?: string }) => React.ReactElement);
+
+const iconMap: Record<string, DockIcon> = {
   instagram: Instagram,
   youtube: Youtube,
   linkedin: Linkedin,

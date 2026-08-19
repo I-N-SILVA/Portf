@@ -41,6 +41,20 @@ export default function ShaftLandingContent() {
     setTimeout(() => playSound("hum"), 100);
   }, [playSound]);
 
+  // Reduced motion skips the cinema.
+  //
+  // The landing page opens on a boot sequence and an intertitle, and the real
+  // content only mounts once both have played. For someone who has asked for
+  // less motion that is two unskippable animations standing between them and
+  // the page — and, because #main doesn't exist until the end of it, the skip
+  // link has nothing to skip to either. BootGate in the OS chrome already
+  // makes the same concession; this brings the front door in line.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setStage("main");
+    }
+  }, []);
+
   // Handle global "Negative Flash" event
   useEffect(() => {
     const triggerFlash = () => {
@@ -91,6 +105,7 @@ export default function ShaftLandingContent() {
 
       {stage === "main" && (
         <motion.main
+          id="main"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}

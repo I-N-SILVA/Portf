@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { evaluateNudges } from "@/lib/os/nudges/evaluate";
+import { reportError } from "@/lib/observability/report";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: true, ...summary });
   } catch (err) {
     const message = err instanceof Error ? err.message : "evaluation failed";
-    console.error("nudges cron:", message);
+    reportError(err, { source: "nudges-cron" });
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 }

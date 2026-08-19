@@ -23,6 +23,9 @@
  * `clients_slug_format` CHECK constraint in 0008_client_slugs.sql; change both
  * together.
  */
+/** Fallback origin when NEXT_PUBLIC_SITE_URL is unset. */
+export const DEFAULT_SITE_URL = "https://iamnsilva.me";
+
 export const RESERVED_SLUGS = [
   "admin",
   "api",
@@ -117,8 +120,11 @@ export function safeNext(next: string | undefined, fallback = "/portal"): string
 
 /** Absolute URL for emails, webhooks, and metadata. */
 export function siteUrl(path = "/"): string {
+  // Read through process.env rather than lib/env's cached literal: the tests
+  // set NEXT_PUBLIC_SITE_URL at runtime, and a module-scope constant would
+  // have frozen the default before they got the chance.
   const base = (
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://iamnsilva.me"
+    process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL
   ).replace(/\/$/, "");
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }

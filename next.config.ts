@@ -1,5 +1,7 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+import { CSP_STRICT, contentSecurityPolicy } from './lib/security/csp';
+
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -13,13 +15,18 @@ const nextConfig = {
    * Sent on every response. None of these change what the app does; they
    * remove things a browser would otherwise be willing to do on its behalf.
    *
-   * No Content-Security-Policy yet — the root layout inlines two <script>
-   * blocks (the anti-FOUC theme read and the JSON-LD), so a real policy needs
-   * per-request nonces threaded through middleware. Worth doing; too large to
-   * bolt on here without risking a blank page in production.
+   * The Content-Security-Policy is included here only in its default form,
+   * which needs no nonce and so can be a static header the CDN caches. With
+   * CSP_STRICT=1 the policy is per-request (it carries a nonce) and is set by
+   * middleware instead — sending it from both places would give the browser
+   * two policies and it would enforce the intersection, which is neither.
+   * See lib/security/csp.ts.
    */
   async headers() {
     const securityHeaders = [
+      ...(CSP_STRICT
+        ? []
+        : [{ key: 'Content-Security-Policy', value: contentSecurityPolicy() }]),
       // Two years, subdomains included, preload-eligible. The site is HTTPS
       // only and the apex is already redirecting, so there is nothing left
       // that a downgrade could usefully reach.
