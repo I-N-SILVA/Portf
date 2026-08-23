@@ -70,7 +70,16 @@ export const pt: Record<string, string> = {
   "nav.theme.dark": "[ ESCURO ]",
   "nav.theme.light": "[ CLARO ]",
 
+  // ── Gateway (estúdio + portal do cliente) ──
+  "gateway.studio.aria": "Abrir o estúdio — serviços, casos e contacto",
+  "gateway.portal.aria": "Entrar no portal do cliente",
+  "gateway.studio": "ESTÚDIO",
+  "gateway.portal": "PORTAL",
+
   // ── Projetos ──
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "Utilitário macOS gratuito e de código aberto que transforma o notch do MacBook num monitor ao vivo de uso de IA em oito fornecedores.",
+  "projects.9.full": "O NOTCHY transforma o notch físico do MacBook — espaço que o macOS desperdiça — num monitor de uso de IA ao estilo da Dynamic Island. Uma pequena pílula funde-se com o notch e mostra o teu limite mais próximo num relance; ao passar o rato, expande-se num painel completo com uso da sessão, quota semanal, tempo até reiniciar e alertas de limite. Acompanha oito fornecedores, e Claude, Codex e Gemini não precisam de qualquer chave de API — lê o login que a CLI oficial já guardou. Uma app nativa em Swift com menos de 10MB, local-first, sem telemetria e com licença MIT.",
   "projects.8.title": "StockSnap Inventário de Veículos Móvel",
   "projects.8.desc": "Web app de inventário mobile-first projetada para rastreamento, verificação e relatórios de stock eficientes no terreno.",
   "projects.8.full": "O StockSnap é um dashboard de inventário mobile-first que permite aos utilizadores capturar check-ins de stock no local e visualizar instantaneamente resultados agregados por localização e data. A aplicação fornece métricas rápidas, auditorias pesquisáveis e exportações com um clique, simplificando a reconciliação de stock para operações em múltiplos locais.",

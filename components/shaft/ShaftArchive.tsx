@@ -9,6 +9,7 @@ import ShaftRedact from "./ShaftRedact";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
+  "9": "/projects/notchy.png",
   "8": "/projects/ai-agents.png",
   "7": "/projects/calendar.png",
   "2": "/projects/content-engine.png",

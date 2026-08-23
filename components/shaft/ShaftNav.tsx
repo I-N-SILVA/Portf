@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation, LOCALES, type Locale } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
+import { ShaftGatewayControls } from "./ShaftGateway";
 
 const chapters = [
   { id: "shaft-hero",     key: "nav.opening",  num: "01" },
@@ -96,7 +97,10 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.25, delay: 0.15 }}
-            className="fixed top-5 left-5 md:top-8 md:left-8 z-[101] flex items-center gap-2"
+            /* Capped on small screens so the gateway pair wraps to a second row
+               instead of running into the hero's [ 01 / OPENING ] marker,
+               which is pinned to the opposite corner of the same band. */
+            className="fixed top-5 left-5 md:top-8 md:left-8 z-[101] flex flex-wrap items-center gap-y-1 gap-x-2 max-w-[58vw] sm:max-w-none"
           >
             {/* Theme toggle — prominent pill button */}
               <button
@@ -195,6 +199,9 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                 )}
               </AnimatePresence>
             </div>
+
+            {/* Out of the portfolio: the studio, and the client portal. */}
+            <ShaftGatewayControls />
           </motion.div>
         )}
       </AnimatePresence>

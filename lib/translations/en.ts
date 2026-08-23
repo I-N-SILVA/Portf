@@ -73,7 +73,16 @@ export const en: Record<string, string> = {
   "nav.theme.dark": "[ DARK ]",
   "nav.theme.light": "[ LIGHT ]",
 
+  // ── Gateway (studio + client portal) ──
+  "gateway.studio.aria": "Open the studio — services, case studies and contact",
+  "gateway.portal.aria": "Sign in to the client portal",
+  "gateway.studio": "STUDIO",
+  "gateway.portal": "PORTAL",
+
   // ── Projects ──
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "Free, open-source macOS utility that turns the MacBook notch into a live AI usage monitor across eight providers.",
+  "projects.9.full": "NOTCHY turns the MacBook's hardware notch — real estate macOS otherwise wastes — into a Dynamic Island-style AI usage monitor. A minimal pill blends into the notch and shows your binding limit at a glance; hover expands it into a full panel with session usage, weekly quota, time until reset and threshold alerts. It tracks eight providers, and Claude, Codex and Gemini need no API key at all — it reads the login their official CLI already stored. A native Swift app under 10MB, local-first with zero telemetry, MIT licensed.",
   "projects.8.title": "StockSnap Mobile Vehicle Stocktaking",
   "projects.8.desc": "Mobile-first stocktaking web app designed for efficient inventory tracking, verification, and reporting in the field.",
   "projects.8.full": "StockSnap is a mobile-first stocktaking dashboard that enables users to capture on-site inventory checks and instantly see aggregated results by location and date. The app provides at-a-glance metrics (total items checked, number of checks, in-stock vs not-in-stock), searchable recent audits, and one-click exports for exceptions or full stock lists, streamlining inventory reconciliation and reporting for multi-site operations.",

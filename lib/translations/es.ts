@@ -78,4 +78,10 @@ export const es: Record<string, string> = {
   "nav.call": "LA LLAMADA",
   "nav.theme.dark": "[ OSCURO ]",
   "nav.theme.light": "[ CLARO ]",
+
+  // ── Gateway (estudio + portal de clientes) ──
+  "gateway.studio.aria": "Abrir el estudio — servicios, casos y contacto",
+  "gateway.portal.aria": "Entrar al portal de clientes",
+  "gateway.studio": "ESTUDIO",
+  "gateway.portal": "PORTAL",
 };

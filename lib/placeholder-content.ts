@@ -45,6 +45,32 @@ export const profileData = {
 // Projects data
 export const projects: Project[] = [
   {
+    id: "9",
+    title: "NOTCHY",
+    category: "AI",
+    description: "Free, open-source macOS utility that turns the MacBook notch into a live AI usage monitor across eight providers.",
+    image: "/projects/notchy.png",
+    bannerImage: "/projects/notchy.png",
+    tags: ["Swift", "SwiftUI", "macOS", "Homebrew", "Open Source"],
+    link: "https://github.com/I-N-SILVA/NOTCHYLIMIT",
+    github: "https://github.com/I-N-SILVA/NOTCHYLIMIT",
+    badge: "OPEN SOURCE",
+    fullDescription: "NOTCHY turns the MacBook's hardware notch — real estate macOS otherwise wastes — into a Dynamic Island-style AI usage monitor. A minimal pill blends into the notch and shows your binding limit at a glance; hover expands it into a full panel with session usage, weekly quota, time until reset and threshold alerts. It tracks eight providers (Claude, Codex, Gemini, OpenAI, OpenRouter, DeepSeek, ElevenLabs and Perplexity), and the first three need no API key at all — it reads the login their official CLI already stored. A native Swift app under 10MB, local-first with zero telemetry, MIT licensed, and installable in one Homebrew command.",
+    features: [
+      "Eight providers, no API key needed for Claude, Codex or Gemini",
+      "Dynamic Island-style pill that blends with the hardware notch",
+      "Menu-bar mode for Macs without a notch",
+      "Arc progress ring, mood-reactive mascot, reset countdown",
+      "Outage badges read from provider status pages",
+      "In-app alerts at 25/50/75/90% — no system permission required",
+      "Tokens in the macOS Keychain, zero telemetry",
+      "One-command install via a Homebrew cask",
+    ],
+    role: "Creator & Swift Developer",
+    duration: "Ongoing",
+    teamSize: "Solo",
+  },
+  {
     id: "8",
     title: "StockSnap Mobile Vehicle Stocktaking",
     description: "Mobile-first stocktaking web app designed for efficient inventory tracking, verification, and reporting in the field.",
