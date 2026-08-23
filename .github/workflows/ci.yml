@@ -211,3 +211,123 @@ jobs:
             end if;
           end $$;
           SQL
+
+      # 0011: a client may set their own preferences and nothing else. The
+      # functions resolve the caller from auth.uid(), so there is no client id
+      # to forge — what's asserted here is that the elevated write stays
+      # inside the columns it is meant to touch, and that the direct path
+      # stays shut.
+      - name: Client settings write only what they own
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          insert into public.clients (name, company, email, slug)
+          values ('Other Client', 'Other Co', 'other@example.test', 'other-co');
+
+          set role authenticated;
+          do $$
+          begin
+            if (select count(*) from public.client_preferences) <> 1 then
+              raise exception 'a client should see exactly their own preferences row';
+            end if;
+
+            -- No UPDATE policy and no column grant. Which of the two refuses
+            -- first differs between this harness and Supabase, and a bare RLS
+            -- denial is a silent zero-row update rather than an error — so
+            -- assert the row, not the exception.
+            begin
+              update public.client_preferences set email_billing = false;
+            exception when others then null;
+            end;
+
+            if not (select email_billing from public.client_preferences) then
+              raise exception 'SECURITY: a direct update of client_preferences went through';
+            end if;
+          end $$;
+
+          select public.update_my_preferences(false, true, false);
+          select public.update_my_profile('Renamed Client', '+44 7000 000000');
+          reset role;
+
+          do $$
+          declare v record;
+          begin
+            select p.email_reminders, p.email_billing into v
+            from public.client_preferences p
+            join public.clients c on c.id = p.client_id
+            where c.slug = 'test-co';
+            if v.email_reminders or v.email_billing then
+              raise exception 'the caller''s own preferences should have been saved';
+            end if;
+
+            if exists (
+              select 1 from public.client_preferences p
+              join public.clients c on c.id = p.client_id
+              where c.slug = 'other-co'
+                and (not p.email_reminders or not p.email_billing)
+            ) then
+              raise exception 'SECURITY: another client''s preferences were changed';
+            end if;
+
+            -- The elevated write must not have reached anything else on the row.
+            select role, client_id into v from public.profiles
+            where id = '11111111-1111-1111-1111-111111111111';
+            if v.role <> 'client' or v.client_id is null then
+              raise exception 'SECURITY: update_my_profile touched role or client_id';
+            end if;
+
+            select status, phone into v from public.clients where slug = 'test-co';
+            if v.status <> 'active' or v.phone <> '+44 7000 000000' then
+              raise exception 'update_my_profile should set phone and nothing else, got % / %',
+                v.status, v.phone;
+            end if;
+          end $$;
+          SQL
+
+      # 0012: the analytics aggregates read every client's numbers, so they
+      # are admin-only. The guard is asserted, not assumed — the functions are
+      # SECURITY INVOKER precisely so RLS still stands behind it.
+      - name: Analytics is admin-only
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          set role authenticated;
+          do $$
+          begin
+            begin
+              perform * from public.analytics_revenue(now() - interval '30 days', interval '7 days');
+              raise exception 'SECURITY: a client read analytics_revenue';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            begin
+              perform public.analytics_active_clients(now() - interval '30 days');
+              raise exception 'SECURITY: a client read analytics_active_clients';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+          end $$;
+          reset role;
+
+          -- And an admin does get numbers back.
+          insert into auth.users (id, email)
+          values ('22222222-2222-2222-2222-222222222222', 'admin@example.test');
+          insert into public.profiles (id, role, full_name)
+          values ('22222222-2222-2222-2222-222222222222', 'admin', 'Admin');
+
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select '22222222-2222-2222-2222-222222222222'::uuid $$;
+
+          set role authenticated;
+          do $$
+          begin
+            if (select public.analytics_active_clients(now() - interval '30 days')) < 1 then
+              raise exception 'the login event logged earlier should count as an active client';
+            end if;
+            if not exists (
+              select 1 from public.analytics_event_mix(now() - interval '30 days')
+            ) then
+              raise exception 'the event mix should not be empty';
+            end if;
+          end $$;
+          reset role;
+          SQL
