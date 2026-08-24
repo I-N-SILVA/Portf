@@ -13,15 +13,24 @@ const PROJECT_IMAGES: Record<string, string> = {
   "10": "/projects/muski.png",
   "9": "/projects/notchy.png",
   "8": "/projects/ai-agents.png",
-  "7": "/projects/calendar.png",
-  "2": "/projects/content-engine.png",
-  "3": "/projects/prompt-library.png",
-  "4": "/projects/defi-analytics.png",
-  "5": "/projects/ai-agents.png",
-  "6": "/projects/prompt-library.png",
 };
 
-const CATEGORIES = ["ALL", "AI", "WEB3", "CREATIVE"];
+/**
+ * Retired projects keep their records for the studio case studies that point
+ * at them (see Project.retired), but they are off the portfolio.
+ */
+const SHOWN = projects.filter((p) => !p.retired);
+
+/**
+ * Derived from what is actually on the list rather than hardcoded, so a
+ * filter can never be a dead end. The old fixed list still offered WEB3 after
+ * the last WEB3 project went, and picking it rendered nothing at all — the
+ * section has no empty state, so the rules just closed on blank space.
+ */
+const CATEGORIES = [
+  "ALL",
+  ...Array.from(new Set(SHOWN.map((p) => p.category.toUpperCase()))).sort(),
+];
 
 export default function ShaftArchive() {
   const [filter, setFilter]     = useState("ALL");
@@ -32,7 +41,7 @@ export default function ShaftArchive() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
-  const filtered = projects.filter(
+  const filtered = SHOWN.filter(
     (p) => filter === "ALL" || p.category.toUpperCase() === filter
   );
 

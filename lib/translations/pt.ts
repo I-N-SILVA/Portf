@@ -98,9 +98,6 @@ export const pt: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "Plataforma de Gestão de Prompts IA - uma biblioteca completa para organizar, refinar e implementar prompts de forma eficiente.",
   "projects.3.full": "O Promptuous é um sistema de gestão de prompts projetado para profissionais de IA e criadores de conteúdo. Oferece um espaço de trabalho centralizado para armazenar, categorizar e iterar em prompts, garantindo performance otimizada e workflows de implementação sem falhas.",
-  "projects.5.title": "Currículo Inspirado no Spotify",
-  "projects.5.desc": "Uma plataforma de portfólio/currículo criativa e interativa que apresenta informações profissionais numa interface estilo Spotify.",
-  "projects.5.full": "Este projeto demonstra a capacidade de criar soluções inovadoras que diferenciam candidatos em mercados competitivos, mantendo sofisticação técnica. Combina desenvolvimento web moderno com uma experiência de utilizador única e envolvente.",
 
   // ── Offers ──
   "offers.section": "03 / CAPACIDADES",

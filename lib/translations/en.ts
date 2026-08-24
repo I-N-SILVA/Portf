@@ -102,9 +102,6 @@ export const en: Record<string, string> = {
   "projects.3.desc": "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
   "projects.3.full": "Promptuous is a full-featured prompt library and management system designed for AI practitioners, developers, and content creators who need to organize, refine, and deploy AI prompts efficiently. The platform provides a centralized workspace for storing, categorizing, and iterating on prompts across different use cases, from creative applications to general-purpose workflows.",
 
-  "projects.5.title": "Spotify-Inspired CV Application",
-  "projects.5.desc": "A creative, interactive CV/portfolio platform that presents professional information in a Spotify-style interface.",
-  "projects.5.full": "This project showcases your ability to create innovative solutions that differentiate candidates in competitive job markets while maintaining professional functionality and technical sophistication. It combines modern web development with a unique, engaging user experience that transforms traditional resumes into visually appealing, shareable applications.",
 
 
   // ── Offers ──

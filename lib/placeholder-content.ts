@@ -16,6 +16,17 @@ export interface Project {
   teamSize?: string;
   caseStudyLink?: string;
   fullDescription?: string;
+  /**
+   * Off the portfolio archive, but still a live record.
+   *
+   * A studio case study in lib/client-content.ts points back here by
+   * `projectId`, and app/studio/work/[study] 404s if that lookup misses — so
+   * these can't simply be deleted without taking three indexed pages, their
+   * sitemap entries, and the case studies an admin can tick onto a pitch page
+   * down with them. Retiring hides them from the portfolio and leaves the
+   * studio intact.
+   */
+  retired?: boolean;
 }
 
 export interface Skill {
@@ -141,6 +152,7 @@ export const projects: Project[] = [
   },
   {
     id: "7",
+    retired: true,   // backs a /studio/work case study
     title: "Event Management Calendar System",
     description: "A full-stack event management calendar application with a cyberpunk-inspired dark UI and comprehensive scheduling capabilities.",
     image: "/projects/calendar.png",
@@ -165,6 +177,7 @@ export const projects: Project[] = [
   },
   {
     id: "2",
+    retired: true,   // backs a /studio/work case study
     title: "Multi-Platform Content Engine",
     category: "AI",
     description: "AI-powered content creation and distribution system leveraging Claude API, GPT-4, and custom automation workflows",
@@ -185,6 +198,7 @@ export const projects: Project[] = [
   },
   {
     id: "3",
+    retired: true,   // backs a /studio/work case study
     title: "Promptuous",
     category: "AI",
     description: "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
@@ -208,29 +222,6 @@ export const projects: Project[] = [
     teamSize: "Solo developer",
   },
 
-  {
-    id: "5",
-    title: "Spotify-Inspired CV Application",
-    description: "A creative, interactive CV/portfolio platform that presents professional information in a Spotify-style interface.",
-    image: "https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=800&h=600&fit=crop",
-    tags: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS", "Vercel"],
-    link: "https://spoti-indol.vercel.app/",
-    badge: "NEW",
-    fullDescription: "This project showcases your ability to create innovative solutions that differentiate candidates in competitive job markets while maintaining professional functionality and technical sophistication. It combines modern web development with a unique, engaging user experience that transforms traditional resumes into visually appealing, shareable applications.",
-    features: [
-      "Spotify-themed interface with customizable color schemes",
-      "Profile picture upload with drag-and-drop",
-      "Background music integration",
-      "Real-time preview of CV changes",
-      "Dual storage architecture (Local & Supabase)",
-      "Professional Content Management",
-      "PDF download & Share functionality",
-    ],
-    category: "Creative",
-    role: "Full-Stack Developer",
-    duration: "1 month",
-    teamSize: "Solo developer",
-  },
 
 ];
 
