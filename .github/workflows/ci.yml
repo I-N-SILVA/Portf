@@ -33,6 +33,11 @@ jobs:
       - name: Dead module check
         run: npm run check:dead
 
+      # types.ts is hand-authored and drifts; this compares its table, view
+      # and callable-function names against the migrations.
+      - name: Types match the migrations
+        run: npm run check:types
+
       # Before the build, because they are the fastest thing that can fail.
       - name: Tests
         run: npm run test
@@ -342,4 +347,47 @@ jobs:
             end if;
           end $$;
           reset role;
+          SQL
+
+      # 0013: the nudge evaluator's idle-client query answers only to the
+      # service role or an admin — the result is a list of every client who
+      # has gone quiet.
+      - name: Idle-client query is not client-callable
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          -- The previous step left auth.uid() as the admin; be explicit about
+          -- who is asking, or this asserts nothing.
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select '11111111-1111-1111-1111-111111111111'::uuid $$;
+
+          set role authenticated;
+          do $$
+          begin
+            begin
+              perform * from public.clients_idle_since(now() - interval '7 days');
+              raise exception 'SECURITY: a client listed idle clients';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+          end $$;
+          reset role;
+
+          -- Back to no session, which is how the service role reaches it.
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select null::uuid $$;
+
+          -- And it answers the question it is meant to: test-co logged in
+          -- during an earlier step, other-co never has.
+          do $$
+          declare v text;
+          begin
+            select string_agg(name, ',' order by name) into v
+            from public.clients_idle_since(now() - interval '7 days');
+            if v is null or v not like '%Other Client%' then
+              raise exception 'expected the never-logged-in client, got %', v;
+            end if;
+            if v like '%Renamed Client%' then
+              raise exception 'a client that logged in should not be idle';
+            end if;
+          end $$;
           SQL

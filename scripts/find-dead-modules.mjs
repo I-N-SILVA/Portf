@@ -24,6 +24,7 @@ const ALWAYS_LIVE = new Set([
   "tailwind.config.ts",
   "postcss.config.mjs",
   path.join("scripts", "find-dead-modules.mjs"),
+  path.join("scripts", "check-types-drift.mjs"),
   "vitest.config.mts",
 ]);
 
