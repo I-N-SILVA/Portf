@@ -84,4 +84,18 @@ export const es: Record<string, string> = {
   "gateway.portal.aria": "Entrar al portal de clientes",
   "gateway.studio": "ESTUDIO",
   "gateway.portal": "PORTAL",
+
+  // ── Projects (archive) ──
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "Utilidad de macOS gratuita y de código abierto que convierte el notch del MacBook en un monitor en vivo de uso de IA en ocho proveedores.",
+  "projects.9.full": "NOTCHY convierte el notch físico del MacBook — espacio que macOS desaprovecha — en un monitor de uso de IA al estilo de la Dynamic Island. Una píldora mínima se funde con el notch y muestra tu límite más cercano de un vistazo; al pasar el cursor se despliega en un panel completo con uso de la sesión, cuota semanal, tiempo hasta el reinicio y alertas de umbral. Sigue ocho proveedores, y Claude, Codex y Gemini no necesitan ninguna clave de API: lee el inicio de sesión que su CLI oficial ya guardó. Una app nativa en Swift de menos de 10MB, local-first, sin telemetría y con licencia MIT.",
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "Reproductor de música local y descargador de audio de YouTube en estilo neobrutalista — fuentes de píxeles, sombras duras y un motor de audio en Rust por debajo.",
+  "projects.10.full": "MUSKI es un reproductor de escritorio que se niega a ser un cliente de streaming. Tu biblioteca es local, indexada a partir de metadatos reales de las etiquetas, con un observador del sistema de archivos que detecta los archivos nuevos automáticamente, y la reproducción se queda anclada en tu máquina. Busca en YouTube dentro de la app y descarga el audio con yt-dlp, con progreso en vivo y carátulas en alta resolución. El reproductor hace shuffle por permutación, barra de progreso con forma de onda, normalización de volumen EBU R128, EQ por stem y letras sincronizadas en karaoke — además de un sandbox de visualización 3D reactiva al audio. Todo ello con una piel neobrutalista sobre un backend en Rust.",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "Un reproductor de música que vive en tu terminal — visualizador de espectro FFT en tiempo real, biblioteca local y descargas de YouTube, dibujado enteramente en texto.",
+  "projects.11.full": "Terminal DJ es un reproductor de música completo dibujado dentro de una terminal. Escanea una biblioteca local, reproduce a través de rodio y pasa el audio decodificado por una FFT real para alimentar un visualizador de espectro con tres modos — RetroCRT, NeonWaves y CyberpunkPeak — todos pintados con caracteres de caja y color neón. Descarga pistas de YouTube con yt-dlp y progreso en vivo, lee carátulas y etiquetas, y habla con la API de Spotify para los metadatos. Todo se controla desde el teclado.",
+  "projects.8.title": "StockSnap — Inventario Móvil de Vehículos",
+  "projects.8.desc": "Aplicación web de inventario pensada para móvil, para registrar, verificar e informar existencias sobre el terreno.",
+  "projects.8.full": "StockSnap es un panel de inventario pensado para móvil que permite registrar comprobaciones sobre el terreno y ver al instante los resultados agregados por ubicación y fecha. Ofrece métricas de un vistazo (artículos comprobados, número de comprobaciones, en stock frente a fuera de stock), un historial de auditorías con búsqueda y exportaciones en un clic para excepciones o listas completas, simplificando la conciliación de inventario en operaciones con varias sedes.",
 };

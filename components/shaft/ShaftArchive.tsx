@@ -9,10 +9,10 @@ import ShaftRedact from "./ShaftRedact";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
-  "11": "/projects/terminal-dj.png",
-  "10": "/projects/muski.png",
-  "9": "/projects/notchy.png",
-  "8": "/projects/ai-agents.png",
+  "11": "/projects/terminal-dj.webp",
+  "10": "/projects/muski.webp",
+  "9": "/projects/notchy.webp",
+  "8": "/projects/ai-agents.webp",
 };
 
 /**
