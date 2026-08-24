@@ -44,7 +44,7 @@ export default function BootSequence({ onComplete }: BootSequenceProps) {
                     initial={{ opacity: 1 }}
                     exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
                     transition={{ duration: 0.6, ease: "easeInOut" }}
-                    className="fixed inset-0 z-[200] flex flex-col items-center justify-center p-8 font-mono"
+                    className="shaft-intro-overlay fixed inset-0 z-[200] flex flex-col items-center justify-center p-8 font-mono"
                     style={{ backgroundColor: "rgb(var(--shaft-bg))", color: "rgb(var(--shaft-cream))" }}
                 >
                     <div className="w-full max-w-md relative z-10">

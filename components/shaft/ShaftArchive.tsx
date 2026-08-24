@@ -254,7 +254,10 @@ export default function ShaftArchive() {
                             alt={project.title}
                             width={800}
                             height={400}
-                            className="w-full h-auto object-cover grayscale group-hover/img:grayscale-0 transition-all duration-700"
+                            // `group-hover` never fires on a touch screen, so every project image
+                            // stayed grey forever on a phone. The arbitrary variant restores
+                            // colour wherever hover does not exist.
+                            className="w-full h-auto object-cover grayscale group-hover/img:grayscale-0 [@media(hover:none)]:grayscale-0 transition-all duration-700"
                             style={{ opacity: 0.7 }}
                           />
                           {/* Scanline overlay */}
