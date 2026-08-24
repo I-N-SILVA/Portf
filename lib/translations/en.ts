@@ -80,6 +80,12 @@ export const en: Record<string, string> = {
   "gateway.portal": "PORTAL",
 
   // ── Projects ──
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "Neo-brutalist local music player and YouTube audio downloader — pixel fonts, hard shadows, and a real Rust audio engine underneath.",
+  "projects.10.full": "MUSKI is a desktop music player that refuses to be a streaming client. Your library is local, indexed from real tag metadata with a filesystem watcher that picks up dropped-in files, and playback stays anchored on your machine. It searches YouTube in-app and pulls audio down through yt-dlp with live progress and high-res cover art. The player does permutation shuffle, a waveform seekbar, EBU R128 loudness normalisation, per-stem EQ, and synced karaoke lyrics — plus an audio-reactive 3D visualiser sandbox. All of it wears a neo-brutalist skin over a Rust backend.",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "A music player that lives in your terminal — real-time FFT spectrum visualiser, local library, and YouTube downloads, drawn entirely in text.",
+  "projects.11.full": "Terminal DJ is a full music player rendered in a terminal. It scans a local library, plays through rodio, and runs decoded audio through a real FFT to drive a spectrum visualiser with three modes — RetroCRT, NeonWaves and CyberpunkPeak — all painted in box-drawing characters and neon colour. It pulls tracks from YouTube through yt-dlp with live progress, reads cover art and tags, and talks to the Spotify API for metadata. Everything is keyboard-driven.",
   "projects.9.title": "NOTCHY",
   "projects.9.desc": "Free, open-source macOS utility that turns the MacBook notch into a live AI usage monitor across eight providers.",
   "projects.9.full": "NOTCHY turns the MacBook's hardware notch — real estate macOS otherwise wastes — into a Dynamic Island-style AI usage monitor. A minimal pill blends into the notch and shows your binding limit at a glance; hover expands it into a full panel with session usage, weekly quota, time until reset and threshold alerts. It tracks eight providers, and Claude, Codex and Gemini need no API key at all — it reads the login their official CLI already stored. A native Swift app under 10MB, local-first with zero telemetry, MIT licensed.",

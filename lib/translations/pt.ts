@@ -77,6 +77,12 @@ export const pt: Record<string, string> = {
   "gateway.portal": "PORTAL",
 
   // ── Projetos ──
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "Leitor de música local e descarregador de áudio do YouTube em estilo neo-brutalista — fontes pixel, sombras duras e um motor de áudio em Rust por baixo.",
+  "projects.10.full": "O MUSKI é um leitor de música para desktop que se recusa a ser um cliente de streaming. A biblioteca é local, indexada a partir de metadados reais das tags, com um observador do sistema de ficheiros que apanha ficheiros novos automaticamente, e a reprodução fica ancorada na tua máquina. Pesquisa no YouTube dentro da app e descarrega o áudio via yt-dlp, com progresso ao vivo e capas em alta resolução. O leitor faz shuffle por permutação, barra de progresso com forma de onda, normalização de volume EBU R128, EQ por stem e letras sincronizadas em karaoke — além de um sandbox de visualização 3D reativa ao áudio. Tudo isto com uma pele neo-brutalista sobre um backend em Rust.",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "Um leitor de música que vive no terminal — visualizador de espectro FFT em tempo real, biblioteca local e descargas do YouTube, tudo desenhado em texto.",
+  "projects.11.full": "O Terminal DJ é um leitor de música completo desenhado dentro de um terminal. Analisa uma biblioteca local, reproduz através do rodio e passa o áudio descodificado por uma FFT real para alimentar um visualizador de espectro com três modos — RetroCRT, NeonWaves e CyberpunkPeak — todos pintados com caracteres de caixa e cor néon. Descarrega faixas do YouTube via yt-dlp com progresso ao vivo, lê capas e tags, e comunica com a API do Spotify para metadados. Tudo é controlado pelo teclado.",
   "projects.9.title": "NOTCHY",
   "projects.9.desc": "Utilitário macOS gratuito e de código aberto que transforma o notch do MacBook num monitor ao vivo de uso de IA em oito fornecedores.",
   "projects.9.full": "O NOTCHY transforma o notch físico do MacBook — espaço que o macOS desperdiça — num monitor de uso de IA ao estilo da Dynamic Island. Uma pequena pílula funde-se com o notch e mostra o teu limite mais próximo num relance; ao passar o rato, expande-se num painel completo com uso da sessão, quota semanal, tempo até reiniciar e alertas de limite. Acompanha oito fornecedores, e Claude, Codex e Gemini não precisam de qualquer chave de API — lê o login que a CLI oficial já guardou. Uma app nativa em Swift com menos de 10MB, local-first, sem telemetria e com licença MIT.",
