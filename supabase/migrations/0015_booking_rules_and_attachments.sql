@@ -172,6 +172,7 @@ where id = 'attachments';
 -- 0006 granted SELECT and INSERT and stopped there, so nothing could ever be
 -- removed — not a client who attached the wrong file, not an admin, not a
 -- cleanup job. Same folder-scoping as the other two.
+drop policy if exists "attachments_delete" on storage.objects;
 create policy "attachments_delete" on storage.objects
   for delete to authenticated using (
     bucket_id = 'attachments' and (

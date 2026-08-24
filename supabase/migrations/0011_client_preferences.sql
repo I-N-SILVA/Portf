@@ -36,18 +36,21 @@ create table if not exists public.client_preferences (
   updated_at            timestamptz not null default now()
 );
 
+drop trigger if exists client_preferences_touch_updated_at on public.client_preferences;
 create trigger client_preferences_touch_updated_at
   before update on public.client_preferences
   for each row execute function public.touch_updated_at();
 
 alter table public.client_preferences enable row level security;
 
+drop policy if exists client_preferences_admin_all on public.client_preferences;
 create policy client_preferences_admin_all on public.client_preferences
   for all using (public.is_admin()) with check (public.is_admin());
 
 -- Read-only for the client: the settings page renders from this, but writes
 -- go through update_my_preferences() so there is one place that decides what
 -- a client may set.
+drop policy if exists client_preferences_client_read_own on public.client_preferences;
 create policy client_preferences_client_read_own on public.client_preferences
   for select using (client_id = public.current_client_id());
 
