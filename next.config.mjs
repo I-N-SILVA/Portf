@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  /**
+   * lib/og.tsx reads the hero plates off disk to inline them into the share
+   * cards. File tracing cannot see through `path.join`, so name them here or
+   * they are absent from the serverless bundle and every card 500s.
+   */
+  outputFileTracingIncludes: {
+    "/c/[slug]/opengraph-image": ["./public/og/**"],
+    "/studio/work/[study]/opengraph-image": ["./public/og/**"],
+  },
+
   images: {
     remotePatterns: [
       {
