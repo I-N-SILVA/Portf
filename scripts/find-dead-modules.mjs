@@ -34,6 +34,7 @@ const ENTRY_STEMS = new Set([
   "route",
   "loading",
   "error",
+  "global-error",
   "not-found",
   "template",
   "default",

@@ -129,6 +129,8 @@ export type Subscription = {
   currency: string | null;
   current_period_end: string | null;
   cancel_at_period_end: boolean;
+  /** Timestamp of the newest Stripe event applied — guards out-of-order delivery. */
+  last_event_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -146,6 +148,8 @@ export type Invoice = {
   due_date: string | null;
   paid_at: string | null;
   hosted_invoice_url: string | null;
+  /** Timestamp of the newest Stripe event applied — guards out-of-order delivery. */
+  last_event_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -392,6 +396,36 @@ export interface Database {
       record_pitch_view: {
         Args: { p_slug: string; p_visitor: string };
         Returns: boolean;
+      };
+      log_invoice_paid: {
+        Args: {
+          p_client_id: string;
+          p_stripe_invoice_id: string;
+          p_amount: number;
+        };
+        Returns: undefined;
+      };
+      sync_stripe_invoice: {
+        Args: {
+          p_client_id: string;
+          p_stripe_id: string;
+          p_event_at: string;
+          p_fields: Record<string, unknown>;
+        };
+        Returns: undefined;
+      };
+      sync_stripe_subscription: {
+        Args: {
+          p_client_id: string;
+          p_stripe_id: string;
+          p_event_at: string;
+          p_fields: Record<string, unknown>;
+        };
+        Returns: undefined;
+      };
+      assert_bookable: {
+        Args: { p_start: string; p_end: string; p_exclude?: string | null };
+        Returns: undefined;
       };
       clients_idle_since: {
         Args: { p_cutoff: string };
