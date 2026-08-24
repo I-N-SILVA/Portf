@@ -33,6 +33,10 @@ jobs:
       - name: Dead module check
         run: npm run check:dead
 
+      # Before the build, because they are the fastest thing that can fail.
+      - name: Tests
+        run: npm run test
+
       # Builds without Supabase credentials on purpose: every authenticated
       # route is force-dynamic, so a build that needs secrets means something
       # started prerendering that shouldn't.
