@@ -50,12 +50,20 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         ports: ["5432:5432"]
+        # No --command here: it is not a `docker create` flag, and Actions
+        # passes these options to `docker create` verbatim. It used to carry
+        # `postgres -c wal_level=logical`, which made every run of this job
+        # die at "Initialize containers" and SKIP every step below — so the
+        # security assertions this job exists for had never actually run.
+        #
+        # The default wal_level is enough. Creating the publication and
+        # adding tables to it are DDL and work at `replica`; only decoding
+        # the WAL needs `logical`, and nothing here decodes anything.
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-          --command "postgres -c wal_level=logical"
 
     env:
       PGHOST: localhost
