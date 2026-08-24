@@ -433,6 +433,77 @@ behind it. It is SECURITY DEFINER and answers only the service role (no
 has gone quiet. The milestone and invoice rules resolve their whole batch up
 front for the same reason.
 
+## Webhook integrity (Phase 9, `0014_billing_event_integrity.sql`)
+
+Two defects in the Stripe handler.
+
+**One payment wrote several `invoice_paid` events.** Eight invoice event
+types route to the same sync function, which ended with
+`if (inv.status === 'paid') insert into activity_events`. Stripe sends both
+`invoice.paid` and `invoice.payment_succeeded` for a single charge, any later
+`invoice.updated` on a paid invoice makes a third, and deliveries are retried.
+`client_engagement` scores on those rows, so paying an invoice inflated a
+client's engagement several-fold and suppressed the at-risk nudge meant to
+flag them going quiet — the same failure 0010 closed when a *client* forged
+events, except self-inflicted. `log_invoice_paid()` is now the only writer,
+and a partial unique index enforces one row per invoice so two racing
+deliveries cannot both slip through.
+
+**Stripe does not guarantee delivery order.** An `invoice.updated` arriving
+after `invoice.paid` overwrote the row with older state. `invoices` and
+`subscriptions` carry `last_event_at`, and `sync_stripe_invoice()` /
+`sync_stripe_subscription()` drop any delivery older than the one already
+applied.
+
+The cron endpoint at `/api/cron/nudges` also **fails closed** now, matching
+the TidyCal webhook: unset `CRON_SECRET` in production returns 503. A run
+sends email and writes notifications, so an unconfigured deploy previously
+let anyone who found the URL message the client list.
+
+## Booking rules (Phase 9, `0015_booking_rules_and_attachments.sql`)
+
+`request_booking` used to validate one thing: that the end was after the
+start. A client could book last Tuesday, book 3am on a Sunday, or take a slot
+someone already held — the availability windows set in `/admin/settings` were
+never read by anything.
+
+`assert_bookable()` is shared by request and reschedule, and refuses:
+
+- a start in the past,
+- a time outside the published `availability_windows` — but only once some
+  are active, so the admin UI's promise that "clients can still request any
+  time" holds when none are,
+- a slot overlapping any booking already `requested` or `confirmed`. One
+  studio, one person; adjacent slots are fine, overlapping ones are not.
+
+Admins are exempt from all three: the console exists to fix things, including
+recording a session that already happened.
+
+**Time zone:** `availability_windows` stores a bare `time` and bookings are
+`timestamptz`, so the comparison picks UTC. Operating from a zone with
+daylight saving shifts the windows an hour against local time twice a year;
+the fix then is a zone column on the window, not arithmetic in the function.
+
+Rejections are phrased for the person reading them — "that slot is already
+taken" — because the booking form surfaces the SQL error message directly.
+
+## Attachments (Phase 9)
+
+The bucket now carries a 25 MB `file_size_limit` and a MIME allowlist, and
+`storage.objects` gained the DELETE policy 0006 omitted — nothing could be
+removed before, by anyone, including an admin. `MessageThread` mirrors the
+same limits client-side so an oversized file fails before the upload rather
+than after.
+
+## Error boundaries (Phase 9)
+
+`app/error.tsx`, `app/global-error.tsx` and `app/not-found.tsx`, plus
+area-specific boundaries for `/admin` and `/c/[slug]` that keep a failure
+inside the right chrome. There were none, so `notFound()` — which the
+client-scope resolver calls for every unknown slug — rendered Next's unstyled
+default on a domain a prospect may have been sent, and a database blip showed
+a raw error screen on a client's own space.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` · `client_pages` ·
@@ -466,3 +537,7 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
   nudge evaluator's per-client queries collapsed into one, generated OG cards
   for every share link, a unit-test suite, and a guard against `types.ts`
   drifting from the migrations.
+- **Phase 9 (done):** Correctness in the trusted paths — an idempotent,
+  order-independent Stripe webhook, a cron endpoint that fails closed,
+  bookings that are actually validated, bounded and deletable attachments,
+  and error boundaries so a fault never shows a client a stack trace.

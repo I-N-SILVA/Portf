@@ -8,12 +8,26 @@ export const maxDuration = 60;
 /**
  * Hourly nudge evaluation. Triggered by the Netlify scheduled function in
  * netlify/functions/nudges-cron.mjs, which calls this endpoint with
- * `Authorization: Bearer $CRON_SECRET`. When CRON_SECRET is unset the
- * endpoint is open — set it in production.
+ * `Authorization: Bearer $CRON_SECRET`.
+ *
+ * Fails CLOSED, matching the TidyCal webhook. A run sends email and writes
+ * notifications to clients, so an unconfigured production deploy previously
+ * let anyone who found the URL message your client list and burn the Resend
+ * quota. Unset in development it still runs, so `npm run dev` needs no
+ * ceremony.
  */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
-  if (secret) {
+
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      console.error("cron/nudges: CRON_SECRET is unset; rejecting request");
+      return NextResponse.json(
+        { error: "cron not configured" },
+        { status: 503 },
+      );
+    }
+  } else {
     const auth = request.headers.get("authorization");
     if (auth !== `Bearer ${secret}`) {
       return NextResponse.json({ error: "unauthorised" }, { status: 401 });

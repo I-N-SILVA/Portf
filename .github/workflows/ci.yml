@@ -99,7 +99,10 @@ jobs:
             language sql stable as $$ select null::uuid $$;
 
           create schema if not exists storage;
-          create table storage.buckets (id text primary key, name text, public boolean default false);
+          create table storage.buckets (
+            id text primary key, name text, public boolean default false,
+            file_size_limit bigint, allowed_mime_types text[]
+          );
           create table storage.objects (
             id uuid primary key default gen_random_uuid(),
             bucket_id text, name text, owner uuid
@@ -390,4 +393,116 @@ jobs:
               raise exception 'a client that logged in should not be idle';
             end if;
           end $$;
+          SQL
+
+      # 0014: a single payment must record exactly one invoice_paid event.
+      # Several Stripe event types reach the same code path for one charge,
+      # and client_engagement scores on those rows.
+      - name: One invoice_paid per invoice
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select null::uuid $$;
+
+          do $$
+          declare c uuid; n int;
+          begin
+            select id into c from public.clients where slug = 'test-co';
+
+            -- invoice.paid, invoice.payment_succeeded, a later invoice.updated,
+            -- and a redelivery: four calls, one payment.
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_2', 100);
+
+            select count(*) into n from public.activity_events
+            where event_type = 'invoice_paid'
+              and metadata->>'stripe_invoice_id' = 'in_CI_1';
+            if n <> 1 then
+              raise exception 'expected 1 invoice_paid for in_CI_1, got %', n;
+            end if;
+
+            select count(*) into n from public.activity_events
+            where event_type = 'invoice_paid';
+            if n <> 2 then
+              raise exception 'expected 2 invoice_paid rows in total, got %', n;
+            end if;
+          end $$;
+
+          -- A stale event must not regress a paid invoice back to open.
+          do $$
+          declare c uuid; v text;
+          begin
+            select id into c from public.clients where slug = 'test-co';
+            perform public.sync_stripe_invoice(c, 'in_CI_ORDER', now(),
+              jsonb_build_object('status','paid','amount','9900','amount_paid','9900'));
+            perform public.sync_stripe_invoice(c, 'in_CI_ORDER', now() - interval '5 minutes',
+              jsonb_build_object('status','open','amount','9900','amount_paid','0'));
+
+            select status into v from public.invoices where stripe_invoice_id = 'in_CI_ORDER';
+            if v <> 'paid' then
+              raise exception 'an out-of-order event regressed the invoice to %', v;
+            end if;
+          end $$;
+          SQL
+
+      # 0015: bookings are validated, not merely recorded.
+      - name: Bookings reject the past, the unavailable and the taken
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select '11111111-1111-1111-1111-111111111111'::uuid $$;
+
+          set role authenticated;
+          do $$
+          begin
+            -- No windows published: a future slot is fine.
+            perform public.request_booking('CI', now() + interval '10 days',
+                                                 now() + interval '10 days 1 hour');
+
+            begin
+              perform public.request_booking('CI', now() - interval '2 days',
+                                                   now() - interval '47 hours');
+              raise exception 'SECURITY: booked a time in the past';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            begin
+              perform public.request_booking('CI', now() + interval '10 days 30 minutes',
+                                                   now() + interval '10 days 90 minutes');
+              raise exception 'SECURITY: double booked an occupied slot';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            -- Butting up against the previous booking is not an overlap.
+            perform public.request_booking('CI', now() + interval '10 days 1 hour',
+                                                 now() + interval '10 days 2 hours');
+          end $$;
+          reset role;
+
+          -- With hours published, outside them is refused.
+          insert into public.availability_windows (weekday, start_time, end_time, active)
+          select extract(dow from (now() + interval '20 days') at time zone 'UTC')::int,
+                 '09:00', '10:00', true;
+
+          set role authenticated;
+          do $$
+          declare d date := ((now() + interval '20 days') at time zone 'UTC')::date;
+          begin
+            begin
+              perform public.request_booking('CI', (d + time '15:00') at time zone 'UTC',
+                                                   (d + time '16:00') at time zone 'UTC');
+              raise exception 'SECURITY: booked outside the published hours';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            perform public.request_booking('CI', (d + time '09:00') at time zone 'UTC',
+                                                 (d + time '10:00') at time zone 'UTC');
+          end $$;
+          reset role;
           SQL

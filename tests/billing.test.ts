@@ -23,6 +23,7 @@ function invoice(over: Partial<Invoice> = {}): Invoice {
     due_date: null,
     paid_at: null,
     hosted_invoice_url: null,
+    last_event_at: null,
     created_at: new Date(NOW).toISOString(),
     updated_at: new Date(NOW).toISOString(),
     ...over,
