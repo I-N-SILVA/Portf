@@ -29,7 +29,7 @@ export default function ShaftIntertitle({ onComplete }: ShaftIntertitleProps) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="fixed inset-0 z-[150] flex flex-col items-center justify-center select-none"
+          className="shaft-intro-overlay fixed inset-0 z-[150] flex flex-col items-center justify-center select-none"
           style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
         >
           {/* Scanline overlay */}

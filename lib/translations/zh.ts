@@ -84,4 +84,18 @@ export const zh: Record<string, string> = {
   "gateway.portal.aria": "登录客户端口",
   "gateway.studio": "工作室",
   "gateway.portal": "客户端口",
+
+  // ── Projects (archive) ──
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "免费开源的 macOS 工具，把 MacBook 刘海变成八家服务商的 AI 用量实时监视器。",
+  "projects.9.full": "NOTCHY 把 macOS 一直闲置的 MacBook 硬件刘海，变成灵动岛风格的 AI 用量监视器。一枚极简胶囊融入刘海，一眼看到当前最紧的额度；悬停即展开完整面板，显示会话用量、每周配额、重置倒计时与阈值提醒。支持八家服务商，其中 Claude、Codex 与 Gemini 完全无需 API 密钥 — 它直接读取官方 CLI 已保存的登录信息。原生 Swift 应用，体积不到 10MB，本地优先、零遥测、MIT 许可。",
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "新粗野主义风格的本地音乐播放器与 YouTube 音频下载器 — 像素字体、硬阴影，底层是真正的 Rust 音频引擎。",
+  "projects.10.full": "MUSKI 是一款拒绝成为流媒体客户端的桌面音乐播放器。曲库完全在本地，依据真实标签元数据建立索引，文件系统监视器会自动收录新放入的文件，播放始终锚定在你自己的机器上。它能在应用内搜索 YouTube，并通过 yt-dlp 拉取音频，附带实时进度与高分辨率封面。播放器支持排列洗牌、波形进度条、EBU R128 响度归一化、分轨 EQ 与同步卡拉 OK 歌词，还有一个音频响应式 3D 可视化沙盒。这一切都披着新粗野主义的外衣，跑在 Rust 后端之上。",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "住在终端里的音乐播放器 — 实时 FFT 频谱可视化、本地曲库与 YouTube 下载，全部用字符绘制。",
+  "projects.11.full": "Terminal DJ 是一个完整绘制在终端中的音乐播放器。它扫描本地曲库，通过 rodio 播放，并把解码后的音频送入真正的 FFT，驱动一个具备三种模式的频谱可视化器 — RetroCRT、NeonWaves 与 CyberpunkPeak — 全部以制表符与霓虹色绘成。它通过 yt-dlp 从 YouTube 下载曲目并显示实时进度，读取封面与标签，并调用 Spotify API 获取元数据。所有操作均由键盘驱动。",
+  "projects.8.title": "StockSnap 移动车辆盘点",
+  "projects.8.desc": "为现场库存记录、核对与报表而设计的移动优先盘点 Web 应用。",
+  "projects.8.full": "StockSnap 是一个移动优先的盘点面板，让你在现场即时记录库存核对，并立刻按地点与日期查看汇总结果。它提供一目了然的指标（已核对数量、核对次数、有货与缺货），可搜索的近期审计记录，以及一键导出异常清单或完整库存清单，把多站点的库存对账与报表收拢成一条流程。",
 };

@@ -39,14 +39,9 @@ export const metadata: Metadata = {
     description: SITE.DESCRIPTION,
     url: SITE.URL,
     siteName: SITE.NAME,
-    images: [
-      {
-        url: "/brand-full.png",
-        width: 1024,
-        height: 1024,
-        alt: `${SITE.NAME} — Portfolio`,
-      },
-    ],
+    // No `images` here on purpose: app/opengraph-image.tsx generates a proper
+    // 1200x630 card, and an explicit list would override the file convention
+    // and put the old 1024x1024 square back.
     type: "website",
     locale: "en_GB",
   },
@@ -54,7 +49,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.TITLE,
     description: SITE.DESCRIPTION,
-    images: ["/brand-full.png"],
   },
   icons: {
     icon: [
@@ -110,6 +104,13 @@ export default function RootLayout({
       <head>
         {/* Anti-FOUC: apply saved shaft theme before first paint */}
         <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('shaft-theme')==='light'){document.documentElement.setAttribute('data-shaft-light','')}}catch(e){}` }} />
+        {/*
+          Runs before first paint, same trick as the theme script above. The
+          landing page now ships its content in the server HTML with the intro
+          drawn over the top, so without this a returning visitor would see one
+          hydration frame of the boot overlay before React removed it.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem('shaft-booted')){document.documentElement.dataset.booted='1'}}catch(e){}` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

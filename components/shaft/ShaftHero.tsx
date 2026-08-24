@@ -136,10 +136,10 @@ export default function ShaftHero() {
         {/* ── HUD Shards (Floating Project Fragments) ── */}
         <div className="absolute inset-0 opacity-20">
           {[
-            { img: "/projects/ai-agents.png", top: "15%", left: "10%", size: "120px", delay: 0, rot: 15 },
-            { img: "/projects/calendar.png", top: "65%", left: "5%", size: "160px", delay: 1, rot: -10 },
-            { img: "/projects/defi-analytics.png", top: "25%", left: "80%", size: "140px", delay: 2, rot: 5 },
-            { img: "/projects/prompt-library.png", top: "75%", left: "75%", size: "110px", delay: 1.5, rot: -20 },
+            { img: "/projects/ai-agents.webp", top: "15%", left: "10%", size: "120px", delay: 0, rot: 15 },
+            { img: "/projects/calendar.webp", top: "65%", left: "5%", size: "160px", delay: 1, rot: -10 },
+            { img: "/projects/defi-analytics.webp", top: "25%", left: "80%", size: "140px", delay: 2, rot: 5 },
+            { img: "/projects/prompt-library.webp", top: "75%", left: "75%", size: "110px", delay: 1.5, rot: -20 },
           ].map((shard, i) => (
             <HUDShard
               key={i}

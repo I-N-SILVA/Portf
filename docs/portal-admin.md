@@ -397,6 +397,42 @@ The charts are `components/os/BarChart.tsx` — flexbox and a `title`
 attribute, no JavaScript and no charting dependency, so they render inside the
 same server component as the table below them.
 
+## Audit trail (Phase 8)
+
+`/admin/audit`. `audit_log` has been written since 0001 by
+`log_admin_action` — client edits, pitch saves and publishes, project
+creation, invoices raised — and read by nothing until now. The page pages
+through it, resolving actor and client names in one round trip each rather
+than per row: `actor_id` references `auth.users`, not `profiles`, so there is
+no foreign key for a PostgREST embed to follow.
+
+The table keeps a read policy and no write policy — nothing in the app can
+edit or delete a row.
+
+## Analytics export (Phase 8)
+
+`/admin/analytics/export?range=…` returns the range currently on screen as a
+CSV: totals, both series, the event mix and the per-client table in one file.
+Amounts stay in **minor units with the currency in its own column** — a
+spreadsheet reading a pre-formatted "£12.00" is one locale away from a wrong
+number. It is a plain link, so it works with JavaScript off, and inherits both
+`/admin`'s middleware gate and the SQL admin check under the aggregates.
+
+## Nudge query shape (Phase 8, `0013_nudge_queries.sql`)
+
+The no-login rule used to fetch every active client and then ask "when did
+this one last log in?" separately for each — a round trip per client per rule
+per hour. Filtering in memory instead would have been worse: PostgREST caps a
+response at 1000 rows and `activity_events` is the busiest table in the
+schema, so past the cap the evaluator would have quietly started nudging
+clients who had in fact logged in.
+
+`clients_idle_since(cutoff)` asks once, with a partial index on login events
+behind it. It is SECURITY DEFINER and answers only the service role (no
+`auth.uid()`) or an admin, because the result is a list of every client who
+has gone quiet. The milestone and invoice rules resolve their whole batch up
+front for the same reason.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` · `client_pages` ·
@@ -426,3 +462,7 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
   client settings (details, email preferences honoured by the evaluator,
   password) and admin analytics (revenue, engagement and pipeline trends over
   a selectable window).
+- **Phase 8 (done):** The audit trail made visible, analytics exportable, the
+  nudge evaluator's per-client queries collapsed into one, generated OG cards
+  for every share link, a unit-test suite, and a guard against `types.ts`
+  drifting from the migrations.

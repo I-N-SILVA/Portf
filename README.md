@@ -73,9 +73,11 @@ Architecture, data model, and how each module works:
 | Command | Does |
 |---|---|
 | `npm run dev` | Development server |
-| `npm run verify` | Typecheck, lint, dead-module scan, build — same as CI |
+| `npm run verify` | Typecheck, lint, dead-module scan, types drift, tests, build — same as CI |
 | `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Unit tests (vitest) over the pure modules |
 | `npm run check:dead` | Fails if any module is unreachable from a Next.js entry point |
+| `npm run check:types` | Fails if `lib/supabase/types.ts` has drifted from the migrations |
 | `npm run types:gen` | Regenerate `lib/supabase/types.ts` (needs `SUPABASE_PROJECT_ID`) |
 
 ## Stack

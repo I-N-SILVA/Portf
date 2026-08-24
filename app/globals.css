@@ -424,6 +424,17 @@ html[data-shaft-light] .shaft-paper-texture {
   animation: blob-2 18s infinite linear;
 }
 
+/* ─── Intro overlays ─────────────────────────────────────────────────── */
+/*
+ * Stamped on <html> before first paint by the inline script in layout.tsx
+ * when this session has already seen the intro. React reaches the same
+ * conclusion a moment later and unmounts these; this just prevents the frame
+ * in between from flashing the boot screen at a returning visitor.
+ */
+html[data-booted] .shaft-intro-overlay {
+  display: none !important;
+}
+
 /* ─── Respect user motion preferences ────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
 

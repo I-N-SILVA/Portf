@@ -9,10 +9,10 @@ import ShaftRedact from "./ShaftRedact";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
-  "11": "/projects/terminal-dj.png",
-  "10": "/projects/muski.png",
-  "9": "/projects/notchy.png",
-  "8": "/projects/ai-agents.png",
+  "11": "/projects/terminal-dj.webp",
+  "10": "/projects/muski.webp",
+  "9": "/projects/notchy.webp",
+  "8": "/projects/ai-agents.webp",
 };
 
 /**
@@ -254,7 +254,10 @@ export default function ShaftArchive() {
                             alt={project.title}
                             width={800}
                             height={400}
-                            className="w-full h-auto object-cover grayscale group-hover/img:grayscale-0 transition-all duration-700"
+                            // `group-hover` never fires on a touch screen, so every project image
+                            // stayed grey forever on a phone. The arbitrary variant restores
+                            // colour wherever hover does not exist.
+                            className="w-full h-auto object-cover grayscale group-hover/img:grayscale-0 [@media(hover:none)]:grayscale-0 transition-all duration-700"
                             style={{ opacity: 0.7 }}
                           />
                           {/* Scanline overlay */}

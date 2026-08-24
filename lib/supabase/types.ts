@@ -393,6 +393,10 @@ export interface Database {
         Args: { p_slug: string; p_visitor: string };
         Returns: boolean;
       };
+      clients_idle_since: {
+        Args: { p_cutoff: string };
+        Returns: { id: string; name: string; email: string }[];
+      };
       analytics_revenue: {
         Args: { p_from: string; p_step: string };
         Returns: {

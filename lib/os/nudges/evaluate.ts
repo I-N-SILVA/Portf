@@ -68,6 +68,24 @@ async function clientUsers(supabase: ServiceClient, clientId: string) {
   return (data ?? []).map((r) => r.id as string);
 }
 
+/** Name and email for a set of clients, in one round trip. */
+async function clientsByIds(supabase: ServiceClient, ids: string[]) {
+  const unique = [...new Set(ids)].filter(Boolean);
+  if (unique.length === 0) return new Map<string, { name: string; email: string }>();
+
+  const { data } = await supabase
+    .from("clients")
+    .select("id, name, email")
+    .in("id", unique);
+
+  return new Map(
+    (data ?? []).map((c) => [
+      c.id as string,
+      { name: c.name as string, email: c.email as string },
+    ]),
+  );
+}
+
 async function adminUsers(supabase: ServiceClient) {
   const { data } = await supabase.from("profiles").select("id").eq("role", "admin");
   return (data ?? []).map((r) => r.id as string);
@@ -159,23 +177,19 @@ async function fire(
 }
 
 async function evalNoLogin(supabase: ServiceClient, rule: EngagementRule) {
-  const cutoff = Date.now() - rule.threshold * DAY_MS;
-  const { data: clients } = await supabase
-    .from("clients")
-    .select("id, name, email")
-    .eq("status", "active");
+  // One question instead of one per client. This used to fetch every active
+  // client and then ask "when did this one last log in?" separately for each,
+  // which is a round trip per client per rule per hour. Filtering in memory
+  // instead would have been worse: PostgREST caps a response at 1000 rows and
+  // activity_events is the busiest table in the schema, so past that cap the
+  // evaluator would have started nudging clients who had in fact logged in.
+  const cutoff = new Date(Date.now() - rule.threshold * DAY_MS).toISOString();
+  const { data: clients } = await supabase.rpc("clients_idle_since", {
+    p_cutoff: cutoff,
+  });
+
   let sent = 0;
   for (const c of clients ?? []) {
-    const { data: last } = await supabase
-      .from("activity_events")
-      .select("created_at")
-      .eq("client_id", c.id)
-      .eq("event_type", "login")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    const lastTs = last?.created_at ? new Date(last.created_at).getTime() : 0;
-    if (lastTs > cutoff) continue;
     const bucket = new Date().toISOString().slice(0, 10);
     const recipients = await clientUsers(supabase, c.id);
     const msg = render(rule.template, rule.condition_type, c.name ?? "there");
@@ -197,23 +211,29 @@ async function evalMilestone(supabase: ServiceClient, rule: EngagementRule) {
     .select("id, project_id, ready_at")
     .eq("status", "ready_for_review")
     .lt("ready_at", cutoff);
+  // Resolve every project and client the batch touches up front, rather than
+  // two lookups per milestone.
+  const projectIds = [...new Set((ms ?? []).map((m) => m.project_id))];
+  if (projectIds.length === 0) return 0;
+
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("id, client_id")
+    .in("id", projectIds);
+  const clientIdByProject = new Map(
+    (projects ?? []).map((p) => [p.id as string, p.client_id as string]),
+  );
+  const clientsById = await clientsByIds(supabase, [...clientIdByProject.values()]);
+
   let sent = 0;
   for (const m of ms ?? []) {
-    const { data: proj } = await supabase
-      .from("projects")
-      .select("client_id")
-      .eq("id", m.project_id)
-      .maybeSingle();
-    if (!proj?.client_id) continue;
-    const { data: c } = await supabase
-      .from("clients")
-      .select("name, email")
-      .eq("id", proj.client_id)
-      .maybeSingle();
-    const recipients = await clientUsers(supabase, proj.client_id);
+    const clientId = clientIdByProject.get(m.project_id);
+    if (!clientId) continue;
+    const c = clientsById.get(clientId);
+    const recipients = await clientUsers(supabase, clientId);
     const msg = render(rule.template, rule.condition_type, c?.name ?? "there");
     if (
-      await fire(supabase, rule, proj.client_id, `${rule.id}:${m.id}`, msg, recipients, {
+      await fire(supabase, rule, clientId, `${rule.id}:${m.id}`, msg, recipients, {
         to: c?.email ?? "",
         subject: "A milestone is ready for your review",
       })
@@ -229,15 +249,19 @@ async function evalInvoice(supabase: ServiceClient, rule: EngagementRule) {
     .from("invoices")
     .select("id, client_id, due_date, created_at")
     .in("status", ["open", "uncollectible"]);
-  let sent = 0;
-  for (const inv of invoices ?? []) {
+  const due = (invoices ?? []).filter((inv) => {
     const ref = inv.due_date ?? inv.created_at;
-    if (!ref || ref > cutoff) continue;
-    const { data: c } = await supabase
-      .from("clients")
-      .select("name, email")
-      .eq("id", inv.client_id)
-      .maybeSingle();
+    return Boolean(ref) && ref <= cutoff;
+  });
+  if (due.length === 0) return 0;
+  const clientsById = await clientsByIds(
+    supabase,
+    due.map((inv) => inv.client_id as string),
+  );
+
+  let sent = 0;
+  for (const inv of due) {
+    const c = clientsById.get(inv.client_id as string);
     const recipients = await clientUsers(supabase, inv.client_id);
     const msg = render(rule.template, rule.condition_type, c?.name ?? "there");
     if (

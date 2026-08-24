@@ -77,6 +77,15 @@ export default async function AnalyticsPage({
             {RANGES[key].label}
           </Link>
         ))}
+        {/* A plain link, not a fetch: the route sets Content-Disposition and
+            the browser does the rest, so it works with JS off too. */}
+        <a
+          className="os-btn ghost"
+          href={routes.admin.analyticsExport(range)}
+          style={{ marginLeft: "auto" }}
+        >
+          ↓ CSV
+        </a>
       </div>
 
       <div className="os-statline">

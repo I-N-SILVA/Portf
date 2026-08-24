@@ -1,6 +1,7 @@
 "use client";
 
 import React, { use } from "react";
+import { notFound } from "next/navigation";
 import { projects } from "@/lib/placeholder-content";
 import { ArrowLeft, ExternalLink, Github, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
@@ -16,18 +17,10 @@ export default function ProjectPage({ params }: PageProps) {
     const resolvedParams = use(params);
     const project = projects.find((p) => p.id === resolvedParams.id);
 
-    if (!project) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-6">
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold mb-4">Project Not Found</h1>
-                    <Link href="/" className="text-primary hover:underline flex items-center justify-center gap-2">
-                        <ArrowLeft className="w-4 h-4" /> Back to Home
-                    </Link>
-                </div>
-            </div>
-        );
-    }
+    // Was a hand-rolled "not found" panel returned with a 200, so an unknown
+    // id looked like a real page to a crawler and to anything checking status
+    // codes. notFound() renders the app's own boundary with a real 404.
+    if (!project) notFound();
 
     return (
         <main className="min-h-screen bg-background text-foreground relative selection:bg-primary selection:text-primary-foreground">

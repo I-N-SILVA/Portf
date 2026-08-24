@@ -24,6 +24,8 @@ const ALWAYS_LIVE = new Set([
   "tailwind.config.ts",
   "postcss.config.mjs",
   path.join("scripts", "find-dead-modules.mjs"),
+  path.join("scripts", "check-types-drift.mjs"),
+  "vitest.config.mts",
 ]);
 
 const ENTRY_STEMS = new Set([
@@ -92,6 +94,9 @@ for (const file of files) {
 const entries = files.filter((f) => {
   if (ALWAYS_LIVE.has(f) || f.endsWith(".d.ts")) return true;
   if (f === "middleware.ts") return true;
+  // Vitest loads these directly; nothing in the app imports them, and the
+  // modules they reach are live by virtue of being under test.
+  if (f.split(path.sep)[0] === "tests") return true;
   const parts = f.split(path.sep);
   return parts[0] === "app" && ENTRY_STEMS.has(path.basename(f, path.extname(f)));
 });
