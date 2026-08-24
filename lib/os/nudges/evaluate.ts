@@ -1,5 +1,10 @@
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendEmail, nudgeEmailHtml } from "@/lib/email/send";
+import {
+  DEFAULT_EMAIL_PREFERENCES,
+  EMAIL_PREF_FOR_CONDITION,
+  type EmailPreferences,
+} from "@/lib/os/preference-utils";
 import { routes, siteUrl } from "@/lib/routes";
 import type {
   EngagementRule,
@@ -69,6 +74,39 @@ async function adminUsers(supabase: ServiceClient) {
 }
 
 /**
+ * Whether this client still wants email of this kind (0011).
+ *
+ * Only the email leg is gated. In-app notifications keep going out whatever
+ * the preference says: the bell is inside the portal they chose to open, and
+ * a client who muted their inbox has not asked to be told nothing — they've
+ * asked not to be emailed.
+ *
+ * Rules that nudge the studio rather than the client map to no preference at
+ * all, so a client cannot switch off the reminder telling you to confirm
+ * their booking.
+ */
+async function emailAllowed(
+  supabase: ServiceClient,
+  rule: EngagementRule,
+  clientId: string | null,
+): Promise<boolean> {
+  const pref = EMAIL_PREF_FOR_CONDITION[rule.condition_type];
+  if (!pref || !clientId) return true;
+
+  const { data } = await supabase
+    .from("client_preferences")
+    .select("email_reminders, email_project_updates, email_billing")
+    .eq("client_id", clientId)
+    .maybeSingle();
+
+  const prefs = {
+    ...DEFAULT_EMAIL_PREFERENCES,
+    ...((data ?? {}) as Partial<EmailPreferences>),
+  };
+  return prefs[pref];
+}
+
+/**
  * Fire one nudge if not already sent (dedupe_key is unique). Returns true when
  * a new nudge was actually enqueued.
  */
@@ -105,7 +143,11 @@ async function fire(
     }
   }
 
-  if ((rule.channel === "email" || rule.channel === "both") && email) {
+  if (
+    (rule.channel === "email" || rule.channel === "both") &&
+    email &&
+    (await emailAllowed(supabase, rule, clientId))
+  ) {
     await sendEmail({
       to: email.to,
       subject: email.subject,

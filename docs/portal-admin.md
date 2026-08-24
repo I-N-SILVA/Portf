@@ -333,6 +333,70 @@ to the same route.
   restricts read/write to that client (or any admin). Links use short-lived
   signed URLs.
 
+## Client settings (Phase 7)
+
+`client_preferences` (`0011_client_preferences.sql`) + `/c/{slug}/settings`.
+
+The page has four parts: the client's own details, their email preferences,
+their password, and a read-only summary of their space.
+
+- **Details** — `profiles.full_name` and `clients.phone`, written by
+  `update_my_profile()`. Their email is shown but not editable: it is the
+  unique key on `clients`, the address Supabase Auth signs them in with, and
+  the handle the TidyCal webhook matches bookings by. Changing it in one place
+  and not the others silently detaches a client from their own bookings, so
+  it is an admin action.
+- **Email preferences** — one switch per nudge category
+  (`email_reminders` → `no_login_days`, `email_project_updates` →
+  `milestone_awaiting_hours`, `email_billing` → `invoice_unpaid_days`),
+  written by `update_my_preferences()`. The evaluator checks them in `fire()`
+  before it sends. Every switch is real: nothing on that page is decorative.
+  **In-app delivery is never gated** — a client who muted their inbox hasn't
+  asked to be told nothing, so the bell keeps every notice. The
+  `booking_unconfirmed_hours` rule maps to no preference at all, since it
+  nudges the studio rather than the client.
+- **Password** — `supabase.auth.updateUser` from the browser, same call as
+  `/set-password`.
+
+Why a separate table again: a client may write these, and RLS is row-level.
+An UPDATE policy on their `clients` row would also hand them `status`,
+`tier` and `modules`; one on `profiles` would hand them `role` and
+`client_id`. So preferences get their own table with a client-scoped read
+policy, and the two contact fields are written by `SECURITY DEFINER`
+functions that name their columns. CI asserts a client's write reaches their
+own preferences and nothing else — not another client's row, not their own
+role, not their status.
+
+An admin visiting `/c/{slug}/settings` sees the page with every control
+**disabled rather than hidden**. All three forms write the signed-in user's
+own record, so a save there would land on the admin's account while appearing
+to edit the client's.
+
+## Analytics (Phase 7)
+
+`/admin/analytics`, over a 30-day / 90-day / 12-month window picked from the
+page (`?range=`). Five totals — collected, invoiced, recurring per period,
+outstanding, clients active — then the shape of them: money and activity as
+bar charts, an event mix table, the pitch-to-client pipeline, and a per-client
+table pairing revenue with engagement (a client paying well and going quiet is
+the one to call).
+
+Every group-by runs in Postgres (`0012_analytics.sql`), not in the page.
+PostgREST caps a request at 1000 rows by default and `activity_events` is the
+busiest table in the schema, so summing it in the page would mean either
+paging through a year of rows or charting the first thousand and calling it a
+trend — and a truncated chart still looks like a chart. Buckets come from
+`date_bin()` with the range start as origin, so "last 30 days" starts 30 days
+ago rather than on the 1st; a year is binned into 30-day periods because
+`date_bin()` refuses intervals containing months.
+
+The functions are admin-gated and `SECURITY INVOKER`, so RLS still stands
+behind the guard. CI asserts a client calling them is refused.
+
+The charts are `components/os/BarChart.tsx` — flexbox and a `title`
+attribute, no JavaScript and no charting dependency, so they render inside the
+same server component as the table below them.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` · `client_pages` ·
@@ -358,3 +422,7 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
   notification bell.
 - **Phase 6 (done):** Messaging — realtime per-client threads, attachments,
   unread counts, notification bell.
+- **Phase 7 (done):** The two pages the earlier phases left as placeholders —
+  client settings (details, email preferences honoured by the evaluator,
+  password) and admin analytics (revenue, engagement and pipeline trends over
+  a selectable window).

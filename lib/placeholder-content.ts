@@ -16,6 +16,17 @@ export interface Project {
   teamSize?: string;
   caseStudyLink?: string;
   fullDescription?: string;
+  /**
+   * Off the portfolio archive, but still a live record.
+   *
+   * A studio case study in lib/client-content.ts points back here by
+   * `projectId`, and app/studio/work/[study] 404s if that lookup misses — so
+   * these can't simply be deleted without taking three indexed pages, their
+   * sitemap entries, and the case studies an admin can tick onto a pitch page
+   * down with them. Retiring hides them from the portfolio and leaves the
+   * studio intact.
+   */
+  retired?: boolean;
 }
 
 export interface Skill {
@@ -45,6 +56,80 @@ export const profileData = {
 // Projects data
 export const projects: Project[] = [
   {
+    id: "9",
+    title: "NOTCHY",
+    category: "AI",
+    description: "Free, open-source macOS utility that turns the MacBook notch into a live AI usage monitor across eight providers.",
+    image: "/projects/notchy.png",
+    bannerImage: "/projects/notchy.png",
+    tags: ["Swift", "SwiftUI", "macOS", "Homebrew", "Open Source"],
+    link: "https://github.com/I-N-SILVA/NOTCHYLIMIT",
+    github: "https://github.com/I-N-SILVA/NOTCHYLIMIT",
+    badge: "OPEN SOURCE",
+    fullDescription: "NOTCHY turns the MacBook's hardware notch — real estate macOS otherwise wastes — into a Dynamic Island-style AI usage monitor. A minimal pill blends into the notch and shows your binding limit at a glance; hover expands it into a full panel with session usage, weekly quota, time until reset and threshold alerts. It tracks eight providers (Claude, Codex, Gemini, OpenAI, OpenRouter, DeepSeek, ElevenLabs and Perplexity), and the first three need no API key at all — it reads the login their official CLI already stored. A native Swift app under 10MB, local-first with zero telemetry, MIT licensed, and installable in one Homebrew command.",
+    features: [
+      "Eight providers, no API key needed for Claude, Codex or Gemini",
+      "Dynamic Island-style pill that blends with the hardware notch",
+      "Menu-bar mode for Macs without a notch",
+      "Arc progress ring, mood-reactive mascot, reset countdown",
+      "Outage badges read from provider status pages",
+      "In-app alerts at 25/50/75/90% — no system permission required",
+      "Tokens in the macOS Keychain, zero telemetry",
+      "One-command install via a Homebrew cask",
+    ],
+    role: "Creator & Swift Developer",
+    duration: "Ongoing",
+    teamSize: "Solo",
+  },
+  {
+    id: "10",
+    title: "MUSKI",
+    category: "Creative",
+    description: "Neo-brutalist local music player and YouTube audio downloader — pixel fonts, hard shadows, and a real Rust audio engine underneath.",
+    image: "/projects/muski.png",
+    bannerImage: "/projects/muski.png",
+    tags: ["Tauri", "Rust", "React", "TypeScript", "Three.js"],
+    github: "https://github.com/I-N-SILVA/MUSICTUI",
+    badge: "DESKTOP",
+    fullDescription: "MUSKI is a desktop music player that refuses to be a streaming client. Your library is local, indexed from real tag metadata with a filesystem watcher that picks up dropped-in files, and playback stays anchored on your machine. It searches YouTube in-app and pulls audio down through yt-dlp with live progress and high-res cover art. The player does permutation shuffle (every track once per cycle), a waveform seekbar, EBU R128 loudness normalisation, per-stem EQ with reverb environments, and synced karaoke lyrics. There is also an audio-reactive 3D visualiser sandbox, because why not. The whole thing wears a neo-brutalist skin — pixel fonts, hard shadows, CRT scanlines, spinning vinyl — over a Rust backend.",
+    features: [
+      "Local-first library with tag metadata and a filesystem watcher",
+      "In-app YouTube search and download via yt-dlp",
+      "Permutation shuffle — every track once per cycle",
+      "EBU R128 loudness normalisation and per-stem EQ",
+      "Synced karaoke lyrics with click-to-seek and translation",
+      "Audio-reactive 3D visualiser sandbox",
+      "Tray controls, global media keys, OS media-session metadata",
+      "Session resume, tag editor, and safe delete with undo",
+    ],
+    role: "Creator & Full-Stack Developer",
+    duration: "Ongoing",
+    teamSize: "Solo",
+  },
+  {
+    id: "11",
+    title: "Terminal DJ",
+    category: "Creative",
+    description: "A music player that lives in your terminal — real-time FFT spectrum visualiser, local library, and YouTube downloads, drawn entirely in text.",
+    image: "/projects/terminal-dj.png",
+    bannerImage: "/projects/terminal-dj.png",
+    tags: ["Rust", "ratatui", "rodio", "rustfft", "Tokio"],
+    github: "https://github.com/I-N-SILVA/terminal-dj",
+    badge: "TUI",
+    fullDescription: "Terminal DJ is a full music player rendered in a terminal. It scans a local library, plays through rodio, and runs decoded audio through a real FFT to drive a spectrum visualiser with three modes — RetroCRT, NeonWaves and CyberpunkPeak — all painted in box-drawing characters and neon colour. It pulls tracks from YouTube through yt-dlp with live progress, reads cover art and tags, and talks to the Spotify API for metadata. Everything is keyboard-driven: space to play, j/k to navigate, brackets for volume, comma and period to seek.",
+    features: [
+      "Real-time FFT spectrum with three visualiser modes",
+      "Local library scan with cover art and tag metadata",
+      "YouTube downloads through yt-dlp, with live progress",
+      "Spotify API integration for metadata",
+      "Entirely keyboard-driven, drawn with ratatui",
+      "Async throughout on Tokio",
+    ],
+    role: "Creator & Rust Developer",
+    duration: "Ongoing",
+    teamSize: "Solo",
+  },
+  {
     id: "8",
     title: "StockSnap Mobile Vehicle Stocktaking",
     description: "Mobile-first stocktaking web app designed for efficient inventory tracking, verification, and reporting in the field.",
@@ -67,6 +152,7 @@ export const projects: Project[] = [
   },
   {
     id: "7",
+    retired: true,   // backs a /studio/work case study
     title: "Event Management Calendar System",
     description: "A full-stack event management calendar application with a cyberpunk-inspired dark UI and comprehensive scheduling capabilities.",
     image: "/projects/calendar.png",
@@ -91,6 +177,7 @@ export const projects: Project[] = [
   },
   {
     id: "2",
+    retired: true,   // backs a /studio/work case study
     title: "Multi-Platform Content Engine",
     category: "AI",
     description: "AI-powered content creation and distribution system leveraging Claude API, GPT-4, and custom automation workflows",
@@ -111,6 +198,7 @@ export const projects: Project[] = [
   },
   {
     id: "3",
+    retired: true,   // backs a /studio/work case study
     title: "Promptuous",
     category: "AI",
     description: "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
@@ -134,29 +222,6 @@ export const projects: Project[] = [
     teamSize: "Solo developer",
   },
 
-  {
-    id: "5",
-    title: "Spotify-Inspired CV Application",
-    description: "A creative, interactive CV/portfolio platform that presents professional information in a Spotify-style interface.",
-    image: "https://images.unsplash.com/photo-1611339555312-e607c8352fd7?w=800&h=600&fit=crop",
-    tags: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS", "Vercel"],
-    link: "https://spoti-indol.vercel.app/",
-    badge: "NEW",
-    fullDescription: "This project showcases your ability to create innovative solutions that differentiate candidates in competitive job markets while maintaining professional functionality and technical sophistication. It combines modern web development with a unique, engaging user experience that transforms traditional resumes into visually appealing, shareable applications.",
-    features: [
-      "Spotify-themed interface with customizable color schemes",
-      "Profile picture upload with drag-and-drop",
-      "Background music integration",
-      "Real-time preview of CV changes",
-      "Dual storage architecture (Local & Supabase)",
-      "Professional Content Management",
-      "PDF download & Share functionality",
-    ],
-    category: "Creative",
-    role: "Full-Stack Developer",
-    duration: "1 month",
-    teamSize: "Solo developer",
-  },
 
 ];
 

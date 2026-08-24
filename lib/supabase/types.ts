@@ -67,6 +67,25 @@ export type ClientPrivate = {
 };
 
 /**
+ * What a client has chosen for themselves. Its own table for the same reason
+ * `client_private` is: a client may write these, and must not be able to
+ * write `clients.status`, `clients.modules` or `profiles.role` — which an
+ * UPDATE policy on either of those rows would also grant.
+ * See supabase/migrations/0011_client_preferences.sql.
+ */
+export type ClientPreferences = {
+  client_id: string;
+  /** "It's been a while" check-in emails. */
+  email_reminders: boolean;
+  /** "A milestone is ready for your review" emails. */
+  email_project_updates: boolean;
+  /** Invoice reminder emails. */
+  email_billing: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
  * Public pitch content for a client's space at /c/{slug}. Kept in its own
  * table so the anon read policy can never reach `clients` (email, notes,
  * billing ids). See supabase/migrations/0008_client_slugs.sql.
@@ -298,6 +317,7 @@ export interface Database {
       messages: Row<Message>;
       client_pages: Row<ClientPage>;
       client_private: Row<ClientPrivate>;
+      client_preferences: Row<ClientPreferences>;
     };
     Views: {
       client_engagement: View<ClientEngagement>;
@@ -372,6 +392,53 @@ export interface Database {
       record_pitch_view: {
         Args: { p_slug: string; p_visitor: string };
         Returns: boolean;
+      };
+      analytics_revenue: {
+        Args: { p_from: string; p_step: string };
+        Returns: {
+          bucket: string;
+          collected: number;
+          invoiced: number;
+          paid_count: number;
+        }[];
+      };
+      analytics_activity: {
+        Args: { p_from: string; p_step: string };
+        Returns: {
+          bucket: string;
+          events: number;
+          active_clients: number;
+        }[];
+      };
+      analytics_event_mix: {
+        Args: { p_from: string };
+        Returns: { event_type: string; events: number; clients: number }[];
+      };
+      analytics_active_clients: {
+        Args: { p_from: string };
+        Returns: number;
+      };
+      analytics_top_clients: {
+        Args: { p_from: string; p_limit?: number };
+        Returns: {
+          client_id: string;
+          name: string;
+          slug: string;
+          collected: number;
+          events: number;
+        }[];
+      };
+      update_my_profile: {
+        Args: { p_full_name: string; p_phone?: string | null };
+        Returns: undefined;
+      };
+      update_my_preferences: {
+        Args: {
+          p_email_reminders: boolean;
+          p_email_project_updates: boolean;
+          p_email_billing: boolean;
+        };
+        Returns: undefined;
       };
       slug_available: {
         Args: { p_slug: string; p_except?: string | null };

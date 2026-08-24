@@ -73,7 +73,22 @@ export const en: Record<string, string> = {
   "nav.theme.dark": "[ DARK ]",
   "nav.theme.light": "[ LIGHT ]",
 
+  // ── Gateway (studio + client portal) ──
+  "gateway.studio.aria": "Open the studio — services, case studies and contact",
+  "gateway.portal.aria": "Sign in to the client portal",
+  "gateway.studio": "STUDIO",
+  "gateway.portal": "PORTAL",
+
   // ── Projects ──
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "Neo-brutalist local music player and YouTube audio downloader — pixel fonts, hard shadows, and a real Rust audio engine underneath.",
+  "projects.10.full": "MUSKI is a desktop music player that refuses to be a streaming client. Your library is local, indexed from real tag metadata with a filesystem watcher that picks up dropped-in files, and playback stays anchored on your machine. It searches YouTube in-app and pulls audio down through yt-dlp with live progress and high-res cover art. The player does permutation shuffle, a waveform seekbar, EBU R128 loudness normalisation, per-stem EQ, and synced karaoke lyrics — plus an audio-reactive 3D visualiser sandbox. All of it wears a neo-brutalist skin over a Rust backend.",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "A music player that lives in your terminal — real-time FFT spectrum visualiser, local library, and YouTube downloads, drawn entirely in text.",
+  "projects.11.full": "Terminal DJ is a full music player rendered in a terminal. It scans a local library, plays through rodio, and runs decoded audio through a real FFT to drive a spectrum visualiser with three modes — RetroCRT, NeonWaves and CyberpunkPeak — all painted in box-drawing characters and neon colour. It pulls tracks from YouTube through yt-dlp with live progress, reads cover art and tags, and talks to the Spotify API for metadata. Everything is keyboard-driven.",
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "Free, open-source macOS utility that turns the MacBook notch into a live AI usage monitor across eight providers.",
+  "projects.9.full": "NOTCHY turns the MacBook's hardware notch — real estate macOS otherwise wastes — into a Dynamic Island-style AI usage monitor. A minimal pill blends into the notch and shows your binding limit at a glance; hover expands it into a full panel with session usage, weekly quota, time until reset and threshold alerts. It tracks eight providers, and Claude, Codex and Gemini need no API key at all — it reads the login their official CLI already stored. A native Swift app under 10MB, local-first with zero telemetry, MIT licensed.",
   "projects.8.title": "StockSnap Mobile Vehicle Stocktaking",
   "projects.8.desc": "Mobile-first stocktaking web app designed for efficient inventory tracking, verification, and reporting in the field.",
   "projects.8.full": "StockSnap is a mobile-first stocktaking dashboard that enables users to capture on-site inventory checks and instantly see aggregated results by location and date. The app provides at-a-glance metrics (total items checked, number of checks, in-stock vs not-in-stock), searchable recent audits, and one-click exports for exceptions or full stock lists, streamlining inventory reconciliation and reporting for multi-site operations.",
@@ -87,9 +102,6 @@ export const en: Record<string, string> = {
   "projects.3.desc": "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
   "projects.3.full": "Promptuous is a full-featured prompt library and management system designed for AI practitioners, developers, and content creators who need to organize, refine, and deploy AI prompts efficiently. The platform provides a centralized workspace for storing, categorizing, and iterating on prompts across different use cases, from creative applications to general-purpose workflows.",
 
-  "projects.5.title": "Spotify-Inspired CV Application",
-  "projects.5.desc": "A creative, interactive CV/portfolio platform that presents professional information in a Spotify-style interface.",
-  "projects.5.full": "This project showcases your ability to create innovative solutions that differentiate candidates in competitive job markets while maintaining professional functionality and technical sophistication. It combines modern web development with a unique, engaging user experience that transforms traditional resumes into visually appealing, shareable applications.",
 
 
   // ── Offers ──

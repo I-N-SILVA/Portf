@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Client, Profile } from "@/lib/supabase/types";
 
@@ -13,8 +14,13 @@ export type SessionContext = {
  * Resolves the signed-in user's profile (role + linked client) for use in
  * Server Components. Returns null when there is no session. RLS guarantees a
  * client can only ever read their own client row.
+ *
+ * `cache()` for the same reason `resolveClientScope` has it: a single render
+ * can ask more than once (the scope resolver, then a page wanting the
+ * profile), and three round trips per ask adds up. One answer per request
+ * also means two callers can't disagree about who is signed in.
  */
-export async function getSessionContext(): Promise<SessionContext | null> {
+export const getSessionContext = cache(async (): Promise<SessionContext | null> => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -44,4 +50,4 @@ export async function getSessionContext(): Promise<SessionContext | null> {
     client,
     isAdmin: profile?.role === "admin",
   };
-}
+});

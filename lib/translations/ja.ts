@@ -78,4 +78,10 @@ export const ja: Record<string, string> = {
   "nav.call": "ザ・コール",
   "nav.theme.dark": "[ ダーク ]",
   "nav.theme.light": "[ ライト ]",
+
+  // ── Gateway (スタジオ + クライアントポータル) ──
+  "gateway.studio.aria": "スタジオを開く — サービス・実績・お問い合わせ",
+  "gateway.portal.aria": "クライアントポータルにサインイン",
+  "gateway.studio": "スタジオ",
+  "gateway.portal": "ポータル",
 };

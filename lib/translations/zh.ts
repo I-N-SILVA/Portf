@@ -78,4 +78,10 @@ export const zh: Record<string, string> = {
   "nav.call": "通话",
   "nav.theme.dark": "[ 暗色 ]",
   "nav.theme.light": "[ 亮色 ]",
+
+  // ── Gateway (工作室 + 客户端口) ──
+  "gateway.studio.aria": "打开工作室 — 服务、案例与联系方式",
+  "gateway.portal.aria": "登录客户端口",
+  "gateway.studio": "工作室",
+  "gateway.portal": "客户端口",
 };
