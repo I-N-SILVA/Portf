@@ -24,6 +24,7 @@ const NAV: NavItem[] = [
   { label: "Clients", href: routes.admin.clients },
   { label: "Engagement", href: routes.admin.engagement },
   { label: "Nudges", href: routes.admin.nudges },
+  { label: "Audit", href: routes.admin.audit },
   { label: "Analytics", href: routes.admin.analytics },
   { label: "Settings", href: routes.admin.settings },
 ];
@@ -34,6 +35,8 @@ const COMMANDS: Command[] = [
   { label: "Engagement dashboard", href: routes.admin.engagement, hint: "nav" },
   { label: "Nudge rules", href: routes.admin.nudges, hint: "nav" },
   { label: "Analytics", href: routes.admin.analytics, hint: "nav" },
+  { label: "Audit trail", href: routes.admin.audit, hint: "nav" },
+  { label: "Settings", href: routes.admin.settings, hint: "nav" },
 ];
 
 export default async function AdminLayout({
