@@ -39,14 +39,9 @@ export const metadata: Metadata = {
     description: SITE.DESCRIPTION,
     url: SITE.URL,
     siteName: SITE.NAME,
-    images: [
-      {
-        url: "/brand-full.png",
-        width: 1024,
-        height: 1024,
-        alt: `${SITE.NAME} — Portfolio`,
-      },
-    ],
+    // No `images` here on purpose: app/opengraph-image.tsx generates a proper
+    // 1200x630 card, and an explicit list would override the file convention
+    // and put the old 1024x1024 square back.
     type: "website",
     locale: "en_GB",
   },
@@ -54,7 +49,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.TITLE,
     description: SITE.DESCRIPTION,
-    images: ["/brand-full.png"],
   },
   icons: {
     icon: [
