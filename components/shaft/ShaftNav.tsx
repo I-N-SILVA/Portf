@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useSoundEffects, useSoundPreference } from "@/hooks/useSoundEffects";
 import { useTranslation, LOCALES, type Locale } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 
@@ -23,6 +23,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
   const [isLight, setIsLight] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { playSound } = useSoundEffects();
+  const [soundOn, setSoundOn] = useSoundPreference();
   const { locale, setLocale, t } = useTranslation();
 
   const { scrollYProgress } = useScroll();
@@ -98,6 +99,34 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
             transition={{ duration: 0.25, delay: 0.15 }}
             className="fixed top-5 left-5 md:top-8 md:left-8 z-[101] flex items-center gap-2"
           >
+            {/* Sound toggle.
+                Sits first because it's the control someone reaches for in a
+                hurry: the site makes noise on click, hover and page change,
+                and until now there was no way to stop it. Clicking it off is
+                itself silent — playing a click to confirm you want silence is
+                the wrong answer. */}
+              <button
+                onClick={() => {
+                  const next = !soundOn;
+                  if (next) playSound("click");
+                  setSoundOn(next);
+                }}
+                className="flex items-center gap-2 px-3 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+                style={{ backgroundColor: "transparent" }}
+                aria-pressed={!soundOn}
+                aria-label={soundOn ? "Mute interface sound" : "Unmute interface sound"}
+              >
+                <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
+                  {soundOn ? "◈" : "◇"}
+                </span>
+                <span
+                  className="font-space-mono text-[8px] tracking-[0.25em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
+                  style={{ color: "rgb(var(--shaft-muted))" }}
+                >
+                  {soundOn ? "SOUND" : "MUTED"}
+                </span>
+              </button>
+
             {/* Theme toggle — prominent pill button */}
               <button
                 onClick={toggleTheme}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type SoundType = "focus" | "close" | "maximize" | "minimize" | "click" | "shutter" | "hum" | "glitch" | "page";
 
@@ -21,6 +21,63 @@ function noise(ctx: AudioContext, duration: number) {
   const src = ctx.createBufferSource();
   src.buffer = buf;
   return src;
+}
+
+/**
+ * Whether UI sound is switched on.
+ *
+ * Kept in a module-level store rather than React context because the hook is
+ * called from a dozen components that share no provider, and every one of
+ * them has to see a change made in the nav immediately. `localStorage` is the
+ * source of truth; this mirrors it so `playSound` never touches storage on
+ * the hot path.
+ */
+const STORAGE_KEY = "shaft-sound";
+let enabled: boolean | null = null;
+const listeners = new Set<(on: boolean) => void>();
+
+function readPreference(): boolean {
+  if (enabled !== null) return enabled;
+  if (typeof window === "undefined") return true;
+  try {
+    enabled = localStorage.getItem(STORAGE_KEY) !== "off";
+  } catch {
+    enabled = true;
+  }
+  return enabled;
+}
+
+export function soundEnabled(): boolean {
+  return readPreference();
+}
+
+export function setSoundEnabled(on: boolean) {
+  enabled = on;
+  try {
+    localStorage.setItem(STORAGE_KEY, on ? "on" : "off");
+  } catch {}
+  listeners.forEach((fn) => fn(on));
+}
+
+/**
+ * Subscribe to the preference. Returns the current value and a setter, and
+ * re-renders every consumer when any of them flips it.
+ */
+export function useSoundPreference(): [boolean, (on: boolean) => void] {
+  // Start from `true` on the server and on the very first client render, then
+  // correct in an effect — reading localStorage during render would make the
+  // markup differ between the two and React would discard the whole tree.
+  const [on, setOn] = useState(true);
+
+  useEffect(() => {
+    setOn(readPreference());
+    listeners.add(setOn);
+    return () => {
+      listeners.delete(setOn);
+    };
+  }, []);
+
+  return [on, setSoundEnabled];
 }
 
 export function useSoundEffects() {
@@ -56,6 +113,7 @@ export function useSoundEffects() {
 
   const playSound = useCallback((type: SoundType) => {
     if (typeof window === "undefined") return;
+    if (!readPreference()) return;
     try {
       const ctx = getCtx();
       if (!ctx) return;

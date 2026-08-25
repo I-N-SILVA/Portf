@@ -119,7 +119,7 @@ export const studioAbout = {
     "I'm Ian — an AI automation engineer and full-stack developer with a BSc in Economics and a Masters in Psychology. That mix matters: I don't just build systems that work technically, I build them around how your team actually behaves.",
     "I work solo, which means the person you talk to on the first call is the person designing, building, and shipping your project. No account managers, no hand-offs, no telephone game.",
   ],
-  portrait: "/hero-portrait.png",
+  portrait: "/hero-portrait.webp",
   // Paste a Loom or YouTube URL here to show a short intro video in the
   // About section. Leave empty to show just the portrait + text.
   videoUrl: "",

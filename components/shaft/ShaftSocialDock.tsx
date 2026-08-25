@@ -112,7 +112,7 @@ export default function ShaftSocialDock() {
         {/* The Dog Asset */}
         <div className="relative w-14 h-14">
           <Image
-            src="/floating-dog.png"
+            src="/floating-dog.webp"
             alt="Bit-Ko Robot Dog"
             fill
             className={`object-contain transition-all duration-300 ${expanded ? 'brightness-125' : 'grayscale group-hover:grayscale-0'}`}

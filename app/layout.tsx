@@ -41,14 +41,10 @@ export const metadata: Metadata = {
     description: SITE.DESCRIPTION,
     url: SITE.URL,
     siteName: SITE.NAME,
-    images: [
-      {
-        url: "/brand-full.png",
-        width: 1024,
-        height: 1024,
-        alt: `${SITE.NAME} — Portfolio`,
-      },
-    ],
+    // No `images` here on purpose: app/opengraph-image.tsx and its per-route
+    // siblings generate the real share cards, and a file-convention image
+    // wins over this field anyway. Listing one here only created a second,
+    // stale answer to the same question.
     type: "website",
     locale: "en_GB",
   },
@@ -56,7 +52,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.TITLE,
     description: SITE.DESCRIPTION,
-    images: ["/brand-full.png"],
   },
   // Every entry here is a real PNG at the size it claims. They used to be four
   // byte-identical copies of one 1024x1024 JPEG — 736 KB fetched for a 16px

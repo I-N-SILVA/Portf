@@ -93,6 +93,9 @@ export default function ShaftLandingContent() {
         )}
       </AnimatePresence>
       
+      {/* The intro plays *over* the page, not instead of it. Both of these are
+          fixed, full-screen overlays with their own z-index, so the content
+          below can render from the very first byte. */}
       <AnimatePresence mode="wait">
         {stage === "boot" && (
           <BootSequence key="boot" onComplete={handleBootComplete} />
@@ -103,9 +106,21 @@ export default function ShaftLandingContent() {
         )}
       </AnimatePresence>
 
-      {stage === "main" && (
+      {/*
+        Always rendered, including in the server HTML.
+
+        This used to be gated on `stage === "main"`, so the page a browser with
+        no JavaScript received — and the page in the initial response for
+        everyone else — contained a boot animation and none of the portfolio.
+        It also meant the skip link pointed at an id that did not exist yet.
+
+        While the intro is on screen the content is present but not reachable:
+        `inert` takes it out of the tab order and hides it from assistive
+        tech, so nobody lands focus on something they cannot see.
+      */}
         <motion.main
           id="main"
+          inert={stage !== "main" ? true : undefined}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
@@ -116,7 +131,7 @@ export default function ShaftLandingContent() {
           }}
         >
           <ShaftStatusStrip />
-          <ShaftNav visible={true} />
+          <ShaftNav visible={stage === "main"} />
           <ShaftSocialDock />
           <ShaftMobileCTA />
 
@@ -144,7 +159,6 @@ export default function ShaftLandingContent() {
             <ShaftCall />
           </ShaftPerspectiveSection>
         </motion.main>
-      )}
     </LocaleProvider>
   );
 }

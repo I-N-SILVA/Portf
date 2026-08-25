@@ -172,7 +172,7 @@ export default function ShaftIdentity() {
                 style={{ backgroundColor: "rgb(var(--shaft-crimson) / 0.12)" }}
               />
               <Image
-                src="/brand-avatar.png"
+                src="/brand-avatar.webp"
                 alt={profileData.name}
                 width={112}
                 height={112}

@@ -118,10 +118,10 @@ export default function ShaftHero() {
         {/* ── HUD Shards (Floating Project Fragments) ── */}
         <div className="absolute inset-0 opacity-20">
           {[
-            { img: "/projects/ai-agents.png", top: "15%", left: "10%", size: "120px", delay: 0, rot: 15 },
-            { img: "/projects/calendar.png", top: "65%", left: "5%", size: "160px", delay: 1, rot: -10 },
-            { img: "/projects/defi-analytics.png", top: "25%", left: "80%", size: "140px", delay: 2, rot: 5 },
-            { img: "/projects/prompt-library.png", top: "75%", left: "75%", size: "110px", delay: 1.5, rot: -20 },
+            { img: "/projects/ai-agents.webp", top: "15%", left: "10%", size: "120px", delay: 0, rot: 15 },
+            { img: "/projects/calendar.webp", top: "65%", left: "5%", size: "160px", delay: 1, rot: -10 },
+            { img: "/projects/defi-analytics.webp", top: "25%", left: "80%", size: "140px", delay: 2, rot: 5 },
+            { img: "/projects/prompt-library.webp", top: "75%", left: "75%", size: "110px", delay: 1.5, rot: -20 },
           ].map((shard, i) => (
             <HUDShard
               key={i}
@@ -167,7 +167,7 @@ export default function ShaftHero() {
             }}
           >
             <Image
-              src="/hero-portrait.png"
+              src="/hero-portrait.webp"
               alt="Ian N. Silva"
               fill
               priority
@@ -239,7 +239,7 @@ export default function ShaftHero() {
           className="absolute bottom-0 right-0 w-[75vw] h-[50vh] md:hidden"
         >
           <Image
-            src="/hero-portrait.png"
+            src="/hero-portrait.webp"
             alt="Ian N. Silva"
             fill
             priority

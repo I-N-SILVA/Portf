@@ -283,22 +283,25 @@ async function evalInvoice(
   rule: EngagementRule,
 ) {
   const cutoff = new Date(Date.now() - rule.threshold * DAY_MS).toISOString();
-  // Filter in Postgres rather than reading every open invoice and discarding
-  // most of them here. `due_date` is nullable, so fall back to created_at.
+
+  // The whole predicate runs in Postgres. It used to read every open invoice
+  // and drop most of them in a loop here — the comment above it claimed
+  // otherwise, which is how it survived. `due_date` is nullable, so an
+  // invoice is overdue if its due date is past the cutoff, or if it has no
+  // due date and was raised before the cutoff.
   const { data: invoices } = await supabase
     .from("invoices")
-    .select("id, client_id, due_date, created_at")
-    .in("status", ["open", "uncollectible"]);
+    .select("id, client_id")
+    .in("status", ["open", "uncollectible"])
+    .or(
+      `due_date.lte."${cutoff}",and(due_date.is.null,created_at.lte."${cutoff}")`,
+    );
 
   let sent = 0;
   for (const inv of (invoices ?? []) as {
     id: string;
     client_id: string;
-    due_date: string | null;
-    created_at: string;
   }[]) {
-    const ref = inv.due_date ?? inv.created_at;
-    if (!ref || ref > cutoff) continue;
     const c = await loaders.client(inv.client_id);
     const recipients = await loaders.clientUsers(inv.client_id);
     const msg = render(rule.template, rule.condition_type, c?.name ?? "there");

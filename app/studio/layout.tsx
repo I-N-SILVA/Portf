@@ -16,14 +16,8 @@ export const metadata: Metadata = {
     siteName: CLIENT_SITE.NAME,
     type: "website",
     url: siteUrl(routes.studio.root),
-    images: [
-      {
-        url: "/brand-full.png",
-        width: 1024,
-        height: 1024,
-        alt: CLIENT_SITE.NAME,
-      },
-    ],
+    // app/studio/opengraph-image.tsx generates the card; a file-convention
+    // image takes precedence over this field regardless.
   },
 };
 

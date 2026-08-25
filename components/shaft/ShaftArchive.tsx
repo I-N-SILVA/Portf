@@ -9,13 +9,13 @@ import ShaftRedact from "./ShaftRedact";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
-  "8": "/projects/ai-agents.png",
-  "7": "/projects/calendar.png",
-  "2": "/projects/content-engine.png",
-  "3": "/projects/prompt-library.png",
-  "4": "/projects/defi-analytics.png",
-  "5": "/projects/ai-agents.png",
-  "6": "/projects/prompt-library.png",
+  "8": "/projects/ai-agents.webp",
+  "7": "/projects/calendar.webp",
+  "2": "/projects/content-engine.webp",
+  "3": "/projects/prompt-library.webp",
+  "4": "/projects/defi-analytics.webp",
+  "5": "/projects/ai-agents.webp",
+  "6": "/projects/prompt-library.webp",
 };
 
 const CATEGORIES = ["ALL", "AI", "WEB3", "CREATIVE"];
