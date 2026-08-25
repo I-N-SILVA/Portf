@@ -92,6 +92,7 @@ export const routes = {
     root: "/admin",
     clients: "/admin/clients",
     client: (id: string) => `/admin/clients/${id}`,
+    enquiries: "/admin/enquiries",
     engagement: "/admin/engagement",
     nudges: "/admin/nudges",
     analytics: "/admin/analytics",

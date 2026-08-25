@@ -18,9 +18,14 @@ import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
 import BootSequence from "@/components/ui/BootSequence";
 import Cursor from "@/components/ui/inverted-cursor";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
-import { LocaleProvider } from "@/lib/i18n";
+import { LocaleProvider, type Locale } from "@/lib/i18n";
 
-export default function ShaftLandingContent() {
+export default function ShaftLandingContent({
+  locale,
+}: {
+  /** Set by the /{locale} routes; absent on `/`, where the cookie decides. */
+  locale?: Locale;
+} = {}) {
   const [stage, setStage] = useState<"boot" | "intertitle" | "main">("boot");
   const [isInverted, setIsInverted] = useState(false);
   const { playSound } = useSoundEffects();
@@ -68,7 +73,7 @@ export default function ShaftLandingContent() {
   }, [playSound]);
 
   return (
-    <LocaleProvider>
+    <LocaleProvider initialLocale={locale}>
       <Cursor />
       <div className="shaft-paper-texture" />
 

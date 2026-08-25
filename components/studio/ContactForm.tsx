@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { CONTACT_FORM, CLIENT_SITE } from "@/lib/client-content";
+import { submitContact } from "@/lib/os/actions/contact";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -13,6 +14,7 @@ const encode = (data: Record<string, string>) =>
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
+  const [error, setError] = useState<string | null>(null);
   // Prefill from the URL — a client's pitch page links here as
   // /studio?company=Acme&ref=acme#contact so the form arrives personalized.
   const [company, setCompany] = useState("");
@@ -43,16 +45,41 @@ export default function ContactForm() {
     });
 
     setStatus("submitting");
+
+    // Our own record first. This is the one that decides whether the enquiry
+    // survives: Netlify Forms was previously the only copy, so an outage at
+    // exactly the wrong moment lost the lead with nothing to recover from.
+    const saved = await submitContact({
+      name: payload.name ?? "",
+      email: payload.email ?? "",
+      message: payload.message ?? "",
+      company: payload.company,
+      projectType: payload.projectType,
+      ref: payload.ref,
+    });
+
+    // Netlify Forms is now the notification channel, not the record. It is
+    // what emails you that someone got in touch, so it is still worth
+    // posting to — but a failure here is cosmetic once the row is saved.
+    let notified = false;
     try {
       const res = await fetch("/__forms.html", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: encode(payload),
       });
-      setStatus(res.ok ? "success" : "error");
+      notified = res.ok;
     } catch {
-      setStatus("error");
+      notified = false;
     }
+
+    if (saved.ok || notified) {
+      setStatus("success");
+      return;
+    }
+
+    setError(saved.error ?? null);
+    setStatus("error");
   }
 
   if (status === "success") {
@@ -168,16 +195,25 @@ export default function ContactForm() {
       </label>
 
       {status === "error" && (
-        <p className="mt-4 text-sm text-red-600">
-          Something went wrong sending that. Please email me directly at{" "}
-          <a
-            href={`mailto:${CLIENT_SITE.EMAIL}`}
-            className="underline underline-offset-2"
-          >
-            {CLIENT_SITE.EMAIL}
-          </a>
-          .
-        </p>
+        <div
+          role="alert"
+          className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+        >
+          <p className="font-medium">
+            {error ?? "That didn't send."}
+          </p>
+          <p className="mt-1 text-red-600">
+            Nothing was lost on your end — the text is still in the form, so
+            you can press Send again. If it keeps failing, email me directly at{" "}
+            <a
+              href={`mailto:${CLIENT_SITE.EMAIL}`}
+              className="font-medium underline underline-offset-2"
+            >
+              {CLIENT_SITE.EMAIL}
+            </a>
+            .
+          </p>
+        </div>
       )}
 
       <button

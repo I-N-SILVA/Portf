@@ -398,3 +398,63 @@ jobs:
             end if;
           end $$;
           SQL
+
+      # 0014: the contact form's only record used to be Netlify's dashboard.
+      # submit_contact() is a public write path, so its validation, its length
+      # caps and its ceiling are the only things standing between an anonymous
+      # caller and the table.
+      - name: Contact submissions are validated and capped
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          grant usage on schema public to anon;
+          grant execute on all functions in schema public to anon, authenticated;
+
+          set role anon;
+          do $$
+          declare i int;
+          begin
+            if not public.submit_contact(
+              'Ada', 'ada@example.test', 'I need an internal tool.',
+              'Analytical Co', 'AI Automation', 'acme'
+            ) then
+              raise exception 'a valid submission should be accepted';
+            end if;
+
+            if public.submit_contact('', 'bad@example.test', 'x') then
+              raise exception 'an empty name should be rejected';
+            end if;
+            if public.submit_contact('Bob', 'not-an-email', 'hello') then
+              raise exception 'a malformed address should be rejected';
+            end if;
+            if public.submit_contact('Bob', 'bob@example.test', '   ') then
+              raise exception 'an empty message should be rejected';
+            end if;
+
+            -- Same address, same hour: five, then no more.
+            for i in 1..6 loop
+              perform public.submit_contact('Ada', 'ada@example.test', 'again ' || i);
+            end loop;
+          end $$;
+
+          -- The sender must not be able to read the table they just wrote to.
+          do $$
+          begin
+            begin
+              perform count(*) from public.contact_submissions;
+              raise exception 'SECURITY: anon can read contact_submissions';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+          end $$;
+          reset role;
+
+          do $$
+          declare n int;
+          begin
+            select count(*) into n from public.contact_submissions;
+            if n <> 5 then
+              raise exception 'expected 5 stored submissions (the hourly cap), got %', n;
+            end if;
+          end $$;
+          SQL
+

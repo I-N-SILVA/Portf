@@ -100,6 +100,19 @@ export type PublicClientPage = {
   services: string[];
 };
 
+export type ContactSubmission = {
+  id: string;
+  name: string;
+  email: string;
+  company: string | null;
+  project_type: string | null;
+  message: string;
+  ref: string | null;
+  handled_at: string | null;
+  client_id: string | null;
+  created_at: string;
+};
+
 export type Subscription = {
   id: string;
   client_id: string;
@@ -292,6 +305,7 @@ export interface Database {
       audit_log: Row<AuditLogEntry>;
       projects: Row<Project>;
       milestones: Row<Milestone>;
+      contact_submissions: Row<ContactSubmission>;
       subscriptions: Row<Subscription>;
       invoices: Row<Invoice>;
       bookings: Row<Booking>;
@@ -373,6 +387,18 @@ export interface Database {
         Returns: PublicClientPage[];
       };
       slugify: { Args: { p_input: string }; Returns: string | null };
+      submit_contact: {
+        Args: {
+          p_name: string;
+          p_email: string;
+          p_message: string;
+          p_company?: string | null;
+          p_project_type?: string | null;
+          p_ref?: string | null;
+        };
+        Returns: boolean;
+      };
+      mark_contact_handled: { Args: { p_id: string }; Returns: boolean };
       record_pitch_view: {
         Args: {
           p_slug: string;

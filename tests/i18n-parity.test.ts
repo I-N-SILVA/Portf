@@ -11,24 +11,25 @@ import { zh } from "@/lib/translations/zh";
  * missing translation is invisible — the page just renders in English and the
  * language switcher still says 日本語.
  *
- * That is how es/ja/zh ended up 29 keys behind: a "domains" section was
+ * That is how es/ja/zh once fell 29 keys behind: a "domains" section was
  * renamed to "offers" and four projects were added, en and pt were updated,
  * and nothing anywhere noticed the other three weren't. The whole services
- * pitch renders in English for those visitors today.
+ * pitch rendered in English for those visitors, and the switcher still said
+ * 日本語.
  *
- * The debt is listed below rather than asserted away. Adding a new English
- * key now fails this test until it's either translated or consciously added
- * to the list — which is the point: the decision becomes explicit instead of
- * silently defaulting to "ship it in English".
+ * All five locales are complete now. Adding a new English key fails this test
+ * until it is either translated or consciously allowed for below — which is
+ * the point: the decision becomes explicit instead of silently defaulting to
+ * "ship it in English".
  */
 const bundles: Record<Locale, Record<string, string>> = { en, pt, es, ja, zh };
 
-/** Keys knowingly untranslated. This list should only ever get shorter. */
-const KNOWN_UNTRANSLATED: Partial<Record<Locale, number>> = {
-  es: 29,
-  ja: 29,
-  zh: 29,
-};
+/**
+ * Keys knowingly untranslated. Empty, and meant to stay that way — the test
+ * below fails in both directions, so leaving a stale allowance here is as
+ * loud as introducing a gap.
+ */
+const KNOWN_UNTRANSLATED: Partial<Record<Locale, number>> = {};
 
 const enKeys = Object.keys(en);
 

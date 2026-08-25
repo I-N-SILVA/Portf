@@ -51,6 +51,8 @@ variables, DNS and verification steps: **[docs/deploying.md](docs/deploying.md)*
 Architecture, data model, and how each module works:
 **[docs/portal-admin.md](docs/portal-admin.md)**.
 
+The data model, drawn: **[docs/data-model.md](docs/data-model.md)**.
+
 Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.md)**.
 
 ## Conventions worth knowing before you edit

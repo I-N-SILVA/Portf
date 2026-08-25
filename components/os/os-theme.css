@@ -863,6 +863,18 @@
   font-family: var(--os-sans);
 }
 
+/* ─── inline text states ───────────────────────────────────────────── */
+.shaft-os .os-dim {
+  color: var(--os-muted);
+  font-size: 12px;
+}
+.shaft-os .os-error {
+  color: var(--os-danger, #a33326);
+  font-family: var(--os-sans);
+  font-size: 12px;
+  margin-left: 8px;
+}
+
 /* ─── loading skeleton ─────────────────────────────────────────────── */
 /* Used by the loading.tsx boundaries. Every /c and /admin page is
    force-dynamic and makes two or three sequential Supabase round trips, so

@@ -35,6 +35,7 @@ itself; don't add it.
 | `ERROR_WEBHOOK_URL` | Optional. Any endpoint that accepts a JSON POST — errors are forwarded there as well as logged. |
 | `PITCH_VIEW_SECRET` | Optional. Signs the pitch-view visitor cookie and derives the per-network rate-limit tag. Falls back to the service role key. |
 | `CSP_STRICT` | Optional, **build-time**. `1` switches to the nonce-based CSP with no `'unsafe-inline'`; costs static prerendering on the marketing pages. |
+| `LEGACY_SUBDOMAINS` | Optional. `off` disables the portal.* / admin.* / clients.* / work.* redirects once those DNS records are gone. |
 | `CONFIRMATION_FROM` | Sender for the studio contact-form confirmation (`netlify/functions/submission-created.mjs`). Needs a Resend-verified domain. |
 | `NEXT_PUBLIC_BOOKING_URL` | Optional. Embeds an external scheduler on the bookings page instead of the native request form. |
 

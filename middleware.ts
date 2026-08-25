@@ -36,10 +36,20 @@ function isAuthPath(path: string) {
 
 /**
  * Old subdomain hosts keep working: portal.* / admin.* / clients.* / work.*
- * are 308'd onto their path equivalent on the canonical origin. Removable
- * once the DNS records are gone and the redirects stop showing up in logs.
+ * are 308'd onto their path equivalent on the canonical origin.
+ *
+ * This is meant to be temporary, and temporary things need a way to end. Set
+ * `LEGACY_SUBDOMAINS=off` once the DNS records are gone and the redirects have
+ * stopped appearing in the logs — that turns the whole branch off without a
+ * deploy of code, and if something was still relying on it you can turn it
+ * back on just as fast. Delete the function once the switch has been off for
+ * a while and nobody has noticed.
  */
+const legacySubdomainsEnabled = process.env.LEGACY_SUBDOMAINS !== "off";
+
 function legacyHostRedirect(request: NextRequest, host: string) {
+  if (!legacySubdomainsEnabled) return null;
+
   const label = host.split(":")[0].split(".")[0];
   const area = LEGACY_SUBDOMAIN_AREAS[label];
   if (!area) return null;
