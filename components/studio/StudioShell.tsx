@@ -27,7 +27,9 @@ export default function StudioShell({
       {showNav && <StudioNav />}
       <div id="main-content">{children}</div>
       <footer className="border-t border-stone-800 bg-stone-900 px-6 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-xs text-stone-500 sm:flex-row">
+        <div // stone-500 on this footer's stone-900 is 3.65:1, under the 4.5:1 AA
+          // needs. stone-400 clears it at 6.93:1 and still reads as secondary.
+          className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-xs text-stone-400 sm:flex-row">
           <span>
             © {new Date().getFullYear()} {CLIENT_SITE.NAME}
           </span>

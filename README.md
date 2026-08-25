@@ -83,10 +83,11 @@ Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.
 | Command | Does |
 |---|---|
 | `npm run dev` | Development server |
-| `npm run verify` | Typecheck, lint, unit tests, dead-module scan, build — same as CI |
+| `npm run verify` | Typecheck, lint, unit tests, dead-module scan, build — the CI `verify` job |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm test` | Unit tests (Vitest) over the pure modules in `lib/` |
 | `npm run test:watch` | The same, in watch mode |
+| `npm run test:e2e` | Playwright: axe accessibility pass, reduced-motion behaviour, no-JS rendering |
 | `npm run check:dead` | Fails if any module is unreachable from a Next.js entry point |
 | `npm run types:gen` | Regenerate `lib/supabase/types.ts` (needs `SUPABASE_PROJECT_ID`) |
 

@@ -11,7 +11,10 @@
   --shaft-cream-dim: 175 168 152;
   --shaft-crimson: 204 17 34;
   --shaft-gold: 196 151 58;
-  --shaft-muted: 100 100 100;
+  /* 100 100 100 was 3.38:1 on the 8/8/8 ground — under AA for the 9px
+     labels this token is used for almost everywhere. 130 gives 5.21:1 and
+     still reads as secondary against the cream. */
+  --shaft-muted: 130 130 130;
   --shaft-border: 38 38 38;
   --shaft-white: 245 245 240;
 }
@@ -24,7 +27,7 @@ html[data-shaft-light] {
   --shaft-cream: 24 20 14;
   --shaft-cream-dim: 72 64 52;
   --shaft-crimson: 28 64 168; /* Pilot Pen Blue */
-  --shaft-gold: 148 106 14;
+  --shaft-gold: 140 99 12; /* 4.42:1 -> 4.86:1 on parchment */
   --shaft-muted: 110 100 85;
   --shaft-border: 198 188 168;
   --shaft-white: 10 8 6;

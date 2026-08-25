@@ -1,0 +1,27 @@
+import { test, expect } from "@playwright/test";
+
+/**
+ * Runs only under the `reduced-motion` project.
+ *
+ * globals.css already neutralised CSS animation under this media query, but
+ * nothing on the landing page animates in CSS — framer-motion writes
+ * transforms straight onto elements from JavaScript, which no stylesheet can
+ * reach. These assertions cover the JavaScript side, which is the side that
+ * was actually broken.
+ */
+test("reduced motion skips the intro and shows the content", async ({ page }) => {
+  await page.goto("/", { waitUntil: "networkidle" });
+
+  // The boot sequence and intertitle are gone; #main is reachable immediately
+  // rather than after two unskippable animations.
+  await expect(page.locator("#main")).toBeVisible({ timeout: 5000 });
+  await expect(page.locator("#main")).not.toHaveAttribute("inert", /.*/);
+});
+
+test("reduced motion gives back the native cursor", async ({ page }) => {
+  await page.goto("/", { waitUntil: "networkidle" });
+  // `cursor: none` is global on desktop with a JavaScript cursor as the only
+  // fallback — which is nothing at all if it hasn't rendered.
+  const cursor = await page.evaluate(() => getComputedStyle(document.body).cursor);
+  expect(cursor).not.toBe("none");
+});

@@ -234,55 +234,26 @@ and realtime silently stops updating, in production only).
 
 ## Still open
 
-**End-to-end tests.** The accessibility work was verified in a real Chromium —
-skip link first in tab order, focus ring applied, `#main` present under reduced
-motion, native cursor restored — but by a throwaway script, not a committed
-suite. Playwright in CI with an axe pass over `/`, `/studio` and a published
-pitch page would keep it that way. Still the biggest remaining gap.
+Nothing from the original backlog. What's left is judgement, not debt:
 
-**Finish the translations, or stop advertising them.** 29 keys x 3 languages,
-including the whole offers section. The switcher currently promises five
-languages and delivers two. Either is a defensible decision; the current state
-isn't.
+**The translations want a native read-through.** All five locales are complete
+and the parity test keeps them that way, but the es/ja/zh copy for the offers
+section and four projects is mine, not a native speaker's. The structure is
+sound; the register is worth a second opinion before it fronts a paying
+engagement.
 
-**Locale lives in `localStorage`, so it's invisible to everyone but the
-visitor.** No `/es/...` URLs, no `hreflang`, no locale in the server render —
-Google only ever indexes the English page, and a translated link can't be
-shared. Moving the locale into the path would fix the SEO, let the server set
-`lang` properly, and let each bundle be code-split instead of all five landing
-in every visitor's JavaScript.
+**`--shaft-crimson` is 3.5:1 on the dark ground.** Below AA for text, and axe
+doesn't currently flag it because the crimson elements on the page are large
+enough to qualify for the 3:1 large-text threshold. If a small crimson label
+ever appears, it will fail. The clean fix is a separate `--shaft-crimson-text`
+token at around `232 62 78` (4.99:1), leaving the brand red alone for rules,
+underlines and fills.
 
-**No mute for the UI sounds.** `useSoundEffects` plays on click, hover and page
-transition. Audio waits for a real interaction (autoplay policy, and the hook
-respects it), but there is no way to turn it off and no stored preference. The
-nav already hosts a theme toggle and a language picker; a third control there
-is a small change.
+**`public/projects/` is still ~900 KB.** Down from 4.8 MB, and every image goes
+through `next/image`, so what ships is resized anyway. Dropping the sources to
+the largest size actually rendered would halve it again.
 
-**The landing page renders nothing without JavaScript.** `stage` starts at
-`"boot"`, so the initial HTML contains the boot sequence and none of the
-portfolio. Search engines execute JS and will see it, but it costs first-paint
-content and it's why the skip link briefly has nothing to skip to. Rendering
-the content server-side and layering the intro over it would fix both.
-
-**Six brand images are JPEGs with a `.png` extension.** `brand-avatar`,
-`brand-icon`, `brand-full`, `floating-dog` and the project screenshots. Served
-with the wrong Content-Type, and none of them can have transparency. `next/image`
-sniffs the real format so rendering is unaffected — this is about correctness
-and about the ~4.8 MB in `public/projects/`, where five screenshots average
-~1 MB each and are never served at anything close to their intrinsic size.
-
-**`invoices` is read in full by the nudge evaluator.** The status filter is in
-Postgres but the `due_date ?? created_at` cutoff is applied in JavaScript, so
-every open invoice is fetched each run. It needs an `or()` filter to push down.
-
-**Netlify Forms is a single point of failure for the contact form.** It posts
-to `/__forms.html` and the confirmation email rides on a Netlify event
-function. Moving host means rewriting both, and a failed submission currently
-surfaces only as "something went wrong".
-
-**The legacy subdomain redirect** in `middleware.ts` runs on every request and
-is marked removable once the DNS records are gone. Check the logs and delete
-it.
-
-**No schema diagram.** The data model is the hardest thing here to hold in your
-head and the one thing not drawn anywhere.
+**Netlify remains the notification channel.** Submissions are durable now — the
+row is written before the Netlify post and its failure is cosmetic — but the
+email that tells you someone got in touch still comes from a Netlify event
+function. Moving hosts means rewriting that one piece.

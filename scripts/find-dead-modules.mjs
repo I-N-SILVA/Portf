@@ -18,7 +18,7 @@ const EXTS = [".ts", ".tsx"];
 // `tests` is skipped rather than treated as an entry point on purpose: a
 // module whose only importer is a test is still dead product code, and
 // counting the test as a reference would hide exactly that.
-const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "public", "tests"]);
+const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "public", "tests", "e2e"]);
 
 // Config and ambient declaration files aren't imported by anything by design.
 const ALWAYS_LIVE = new Set([
@@ -27,6 +27,7 @@ const ALWAYS_LIVE = new Set([
   "tailwind.config.ts",
   "postcss.config.mjs",
   "vitest.config.ts",
+  "playwright.config.ts",
   path.join("scripts", "find-dead-modules.mjs"),
 ]);
 
