@@ -41,10 +41,9 @@ export const metadata: Metadata = {
     description: SITE.DESCRIPTION,
     url: SITE.URL,
     siteName: SITE.NAME,
-    // No `images` here on purpose: app/opengraph-image.tsx and its per-route
-    // siblings generate the real share cards, and a file-convention image
-    // wins over this field anyway. Listing one here only created a second,
-    // stale answer to the same question.
+    // No `images` here on purpose: app/opengraph-image.tsx generates a proper
+    // 1200x630 card, and an explicit list would override the file convention
+    // and put the old 1024x1024 square back.
     type: "website",
     locale: "en_GB",
   },
@@ -129,6 +128,16 @@ export default async function RootLayout({
         <script
           nonce={nonce}
           dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('shaft-theme')==='light'){document.documentElement.setAttribute('data-shaft-light','')}}catch(e){}` }}
+        />
+        {/*
+          Runs before first paint, same trick as the theme script above. The
+          landing page now ships its content in the server HTML with the intro
+          drawn over the top, so without this a returning visitor would see one
+          hydration frame of the boot overlay before React removed it.
+        */}
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: `try{if(sessionStorage.getItem('shaft-booted')){document.documentElement.dataset.booted='1'}}catch(e){}` }}
         />
         {/* A JSON-LD block is data, not script — browsers never execute it, so
             script-src doesn't apply and it needs no nonce. */}

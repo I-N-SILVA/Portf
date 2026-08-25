@@ -71,5 +71,5 @@ test("security headers are present on every response", async ({ request }) => {
 test("an unknown path renders the styled 404, not Next's default", async ({ page }) => {
   const res = await page.goto("/definitely-not-a-page");
   expect(res?.status()).toBe(404);
-  await expect(page.getByText(/nothing at this address/i)).toBeVisible();
+  await expect(page.getByText(/nothing filed here/i)).toBeVisible();
 });

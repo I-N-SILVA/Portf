@@ -1,5 +1,4 @@
 export const es: Record<string, string> = {
-  // ── Intertitle ──
   "intertitle.year": "PORTAFOLIO · 2026",
   "intertitle.subtitle": "INGENIERO DE AUTOMATIZACIÓN IA",
 
@@ -48,8 +47,6 @@ export const es: Record<string, string> = {
   "archive.source": "CÓDIGO →",
 
   // ── Domains ──
-
-  // ── The Call ──
   "call.section": "05 / LA LLAMADA",
   "call.title1": "AGENDAR",
   "call.title2": "LA LLAMADA.",
@@ -71,7 +68,27 @@ export const es: Record<string, string> = {
   "nav.theme.dark": "[ OSCURO ]",
   "nav.theme.light": "[ CLARO ]",
 
-  // ── Offers ──
+  // ── Gateway (estudio + portal de clientes) ──
+  "gateway.studio.aria": "Abrir el estudio — servicios, casos y contacto",
+  "gateway.portal.aria": "Entrar al portal de clientes",
+  "gateway.studio": "ESTUDIO",
+  "gateway.portal": "PORTAL",
+
+  // ── Projects (archive) ──
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "Utilidad de macOS gratuita y de código abierto que convierte el notch del MacBook en un monitor en vivo de uso de IA en ocho proveedores.",
+  "projects.9.full": "NOTCHY convierte el notch físico del MacBook — espacio que macOS desaprovecha — en un monitor de uso de IA al estilo de la Dynamic Island. Una píldora mínima se funde con el notch y muestra tu límite más cercano de un vistazo; al pasar el cursor se despliega en un panel completo con uso de la sesión, cuota semanal, tiempo hasta el reinicio y alertas de umbral. Sigue ocho proveedores, y Claude, Codex y Gemini no necesitan ninguna clave de API: lee el inicio de sesión que su CLI oficial ya guardó. Una app nativa en Swift de menos de 10MB, local-first, sin telemetría y con licencia MIT.",
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "Reproductor de música local y descargador de audio de YouTube en estilo neobrutalista — fuentes de píxeles, sombras duras y un motor de audio en Rust por debajo.",
+  "projects.10.full": "MUSKI es un reproductor de escritorio que se niega a ser un cliente de streaming. Tu biblioteca es local, indexada a partir de metadatos reales de las etiquetas, con un observador del sistema de archivos que detecta los archivos nuevos automáticamente, y la reproducción se queda anclada en tu máquina. Busca en YouTube dentro de la app y descarga el audio con yt-dlp, con progreso en vivo y carátulas en alta resolución. El reproductor hace shuffle por permutación, barra de progreso con forma de onda, normalización de volumen EBU R128, EQ por stem y letras sincronizadas en karaoke — además de un sandbox de visualización 3D reactiva al audio. Todo ello con una piel neobrutalista sobre un backend en Rust.",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "Un reproductor de música que vive en tu terminal — visualizador de espectro FFT en tiempo real, biblioteca local y descargas de YouTube, dibujado enteramente en texto.",
+  "projects.11.full": "Terminal DJ es un reproductor de música completo dibujado dentro de una terminal. Escanea una biblioteca local, reproduce a través de rodio y pasa el audio decodificado por una FFT real para alimentar un visualizador de espectro con tres modos — RetroCRT, NeonWaves y CyberpunkPeak — todos pintados con caracteres de caja y color neón. Descarga pistas de YouTube con yt-dlp y progreso en vivo, lee carátulas y etiquetas, y habla con la API de Spotify para los metadatos. Todo se controla desde el teclado.",
+  "projects.8.title": "StockSnap — Inventario Móvil de Vehículos",
+  "projects.8.desc": "Aplicación web de inventario pensada para móvil, para registrar, verificar e informar existencias sobre el terreno.",
+  "projects.8.full": "StockSnap es un panel de inventario pensado para móvil que permite registrar comprobaciones sobre el terreno y ver al instante los resultados agregados por ubicación y fecha. Ofrece métricas de un vistazo (artículos comprobados, número de comprobaciones, en stock frente a fuera de stock), un historial de auditorías con búsqueda y exportaciones en un clic para excepciones o listas completas, simplificando la conciliación de inventario en operaciones con varias sedes.",
+
+  // ── Added on the improvement branch ──
   "nav.offers": "SERVICIOS",
   "offers.section": "03 / CAPACIDADES",
   "offers.title": "Lo que puedo construir para ti en 2–4 semanas.",
@@ -88,9 +105,6 @@ export const es: Record<string, string> = {
   "offers.cta": "¿No sabes qué necesitas? Trae la idea en bruto. Descubriremos juntos lo más pequeño y potente que podamos construir primero.",
 
   // ── Projects (2, 3, 5, 7, 8) ──
-  "projects.8.title": "StockSnap — Inventario Móvil de Vehículos",
-  "projects.8.desc": "Aplicación web de inventario diseñada para móvil, pensada para registrar, verificar y reportar existencias de forma eficiente sobre el terreno.",
-  "projects.8.full": "StockSnap es un panel de inventario diseñado para móvil que permite registrar comprobaciones de existencias in situ y ver al instante los resultados agregados por ubicación y fecha. La aplicación ofrece métricas de un vistazo (artículos comprobados, número de comprobaciones, en stock frente a sin stock), un historial de auditorías con búsqueda y exportaciones en un clic para incidencias o inventarios completos, agilizando la conciliación y los informes en operaciones multisede.",
   "projects.7.title": "Sistema de Calendario y Gestión de Eventos",
   "projects.7.desc": "Aplicación full-stack de calendario y gestión de eventos, con una interfaz oscura de inspiración cyberpunk y capacidades completas de programación.",
   "projects.7.full": "Este proyecto demuestra desarrollo frontend avanzado con vistas de calendario interactivas y gestión de eventos en tiempo real. La aplicación ofrece varios modos de visualización —día, semana y mes— con creación de eventos con un clic. Permite programar, organizar y ejecutar eventos desde una interfaz intuitiva con atajos de teclado (CMD+K para buscar, SHIFT+CLIC para alternar modos) y franjas de añadido rápido en todos los periodos.",
@@ -100,7 +114,4 @@ export const es: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "Plataforma de gestión de prompts de IA: una biblioteca completa para organizar, refinar y desplegar prompts con eficacia",
   "projects.3.full": "Promptuous es una biblioteca y sistema de gestión de prompts pensado para profesionales de la IA, desarrolladores y creadores de contenido que necesitan organizar, refinar y desplegar prompts con eficacia. La plataforma ofrece un espacio de trabajo centralizado para almacenar, clasificar e iterar sobre prompts en distintos casos de uso, desde aplicaciones creativas hasta flujos de trabajo de propósito general.",
-  "projects.5.title": "CV Interactivo al Estilo Spotify",
-  "projects.5.desc": "Una plataforma creativa e interactiva de CV y portafolio que presenta la información profesional con una interfaz al estilo de Spotify.",
-  "projects.5.full": "Este proyecto demuestra la capacidad de crear soluciones originales que diferencian a un candidato en mercados laborales competitivos, sin renunciar a la funcionalidad profesional ni a la solidez técnica. Combina desarrollo web moderno con una experiencia de usuario singular y envolvente que convierte el currículum tradicional en una aplicación atractiva y fácil de compartir.",
 };

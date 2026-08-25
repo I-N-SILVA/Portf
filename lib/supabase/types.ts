@@ -67,6 +67,25 @@ export type ClientPrivate = {
 };
 
 /**
+ * What a client has chosen for themselves. Its own table for the same reason
+ * `client_private` is: a client may write these, and must not be able to
+ * write `clients.status`, `clients.modules` or `profiles.role` — which an
+ * UPDATE policy on either of those rows would also grant.
+ * See supabase/migrations/0011_client_preferences.sql.
+ */
+export type ClientPreferences = {
+  client_id: string;
+  /** "It's been a while" check-in emails. */
+  email_reminders: boolean;
+  /** "A milestone is ready for your review" emails. */
+  email_project_updates: boolean;
+  /** Invoice reminder emails. */
+  email_billing: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
  * Public pitch content for a client's space at /c/{slug}. Kept in its own
  * table so the anon read policy can never reach `clients` (email, notes,
  * billing ids). See supabase/migrations/0008_client_slugs.sql.
@@ -123,8 +142,8 @@ export type Subscription = {
   currency: string | null;
   current_period_end: string | null;
   cancel_at_period_end: boolean;
-  /** Stripe event.created of the webhook that last wrote this row (0011). */
-  stripe_event_at: string | null;
+  /** Timestamp of the newest Stripe event applied — guards out-of-order delivery. */
+  last_event_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -142,8 +161,8 @@ export type Invoice = {
   due_date: string | null;
   paid_at: string | null;
   hosted_invoice_url: string | null;
-  /** Stripe event.created of the webhook that last wrote this row (0011). */
-  stripe_event_at: string | null;
+  /** Timestamp of the newest Stripe event applied — guards out-of-order delivery. */
+  last_event_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -316,6 +335,7 @@ export interface Database {
       messages: Row<Message>;
       client_pages: Row<ClientPage>;
       client_private: Row<ClientPrivate>;
+      client_preferences: Row<ClientPreferences>;
     };
     Views: {
       client_engagement: View<ClientEngagement>;
@@ -387,6 +407,15 @@ export interface Database {
         Returns: PublicClientPage[];
       };
       slugify: { Args: { p_input: string }; Returns: string | null };
+      record_pitch_view: {
+        Args: {
+          p_slug: string;
+          p_visitor: string;
+          p_fingerprint?: string | null;
+        };
+        Returns: boolean;
+      };
+      pitch_view_visitor_cap: { Args: Record<string, never>; Returns: number };
       submit_contact: {
         Args: {
           p_name: string;
@@ -399,13 +428,86 @@ export interface Database {
         Returns: boolean;
       };
       mark_contact_handled: { Args: { p_id: string }; Returns: boolean };
-      record_pitch_view: {
+      log_invoice_paid: {
         Args: {
-          p_slug: string;
-          p_visitor: string;
-          p_fingerprint?: string | null;
+          p_client_id: string;
+          p_stripe_invoice_id: string;
+          p_amount: number;
         };
-        Returns: boolean;
+        Returns: undefined;
+      };
+      sync_stripe_invoice: {
+        Args: {
+          p_client_id: string;
+          p_stripe_id: string;
+          p_event_at: string;
+          p_fields: Record<string, unknown>;
+        };
+        Returns: undefined;
+      };
+      sync_stripe_subscription: {
+        Args: {
+          p_client_id: string;
+          p_stripe_id: string;
+          p_event_at: string;
+          p_fields: Record<string, unknown>;
+        };
+        Returns: undefined;
+      };
+      assert_bookable: {
+        Args: { p_start: string; p_end: string; p_exclude?: string | null };
+        Returns: undefined;
+      };
+      clients_idle_since: {
+        Args: { p_cutoff: string };
+        Returns: { id: string; name: string; email: string }[];
+      };
+      analytics_revenue: {
+        Args: { p_from: string; p_step: string };
+        Returns: {
+          bucket: string;
+          collected: number;
+          invoiced: number;
+          paid_count: number;
+        }[];
+      };
+      analytics_activity: {
+        Args: { p_from: string; p_step: string };
+        Returns: {
+          bucket: string;
+          events: number;
+          active_clients: number;
+        }[];
+      };
+      analytics_event_mix: {
+        Args: { p_from: string };
+        Returns: { event_type: string; events: number; clients: number }[];
+      };
+      analytics_active_clients: {
+        Args: { p_from: string };
+        Returns: number;
+      };
+      analytics_top_clients: {
+        Args: { p_from: string; p_limit?: number };
+        Returns: {
+          client_id: string;
+          name: string;
+          slug: string;
+          collected: number;
+          events: number;
+        }[];
+      };
+      update_my_profile: {
+        Args: { p_full_name: string; p_phone?: string | null };
+        Returns: undefined;
+      };
+      update_my_preferences: {
+        Args: {
+          p_email_reminders: boolean;
+          p_email_project_updates: boolean;
+          p_email_billing: boolean;
+        };
+        Returns: undefined;
       };
       slug_available: {
         Args: { p_slug: string; p_except?: string | null };

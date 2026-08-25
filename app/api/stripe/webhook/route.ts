@@ -7,14 +7,12 @@ import { reportError } from "@/lib/observability/report";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type ServiceClient = ReturnType<typeof createServiceClient>;
-
 const toIso = (unix: number | null | undefined) =>
   unix ? new Date(unix * 1000).toISOString() : null;
 
 /** Resolve our client row from a Stripe customer id. */
 async function clientIdForCustomer(
-  supabase: ServiceClient,
+  supabase: ReturnType<typeof createServiceClient>,
   customer: string | Stripe.Customer | Stripe.DeletedCustomer | null,
 ): Promise<string | null> {
   const id = typeof customer === "string" ? customer : customer?.id;
@@ -27,38 +25,13 @@ async function clientIdForCustomer(
   return data?.id ?? null;
 }
 
-/**
- * Whether this event is newer than whatever last wrote the row.
- *
- * Stripe delivers out of order and re-delivers on failure, so "an event says
- * the invoice is open" is not the same claim as "the invoice is open now". A
- * late `invoice.updated` from before the payment would otherwise flip a paid
- * invoice back to open, in front of the client, on their billing page.
- *
- * `null` (nothing recorded yet) always wins, so rows written before this
- * column existed still accept their next update.
- */
-function isStale(storedAt: string | null | undefined, eventAt: string): boolean {
-  return Boolean(storedAt && storedAt > eventAt);
-}
-
 async function syncSubscription(
-  supabase: ServiceClient,
+  supabase: ReturnType<typeof createServiceClient>,
   sub: Stripe.Subscription,
   eventAt: string,
 ) {
   const clientId = await clientIdForCustomer(supabase, sub.customer);
   if (!clientId) return;
-
-  const { data: existing } = await supabase
-    .from("subscriptions")
-    .select("stripe_event_at")
-    .eq("stripe_subscription_id", sub.id)
-    .maybeSingle();
-  if (isStale((existing as { stripe_event_at?: string } | null)?.stripe_event_at, eventAt)) {
-    return;
-  }
-
   const item = sub.items.data[0];
   // `current_period_end` sits on the subscription in older API versions and on
   // the subscription item in newer ones — read whichever is present.
@@ -66,11 +39,14 @@ async function syncSubscription(
     (sub as unknown as { current_period_end?: number }).current_period_end ??
     (item as unknown as { current_period_end?: number } | undefined)
       ?.current_period_end;
-
-  await supabase.from("subscriptions").upsert(
-    {
-      client_id: clientId,
-      stripe_subscription_id: sub.id,
+  // Through a definer function rather than a direct upsert, so a delivery
+  // that arrives out of order cannot regress the row — Stripe guarantees no
+  // ordering, and an `updated` landing after a `deleted` used to win.
+  await supabase.rpc("sync_stripe_subscription", {
+    p_client_id: clientId,
+    p_stripe_id: sub.id,
+    p_event_at: eventAt,
+    p_fields: {
       plan:
         item?.price?.nickname ??
         (typeof item?.price?.product === "string" ? item.price.product : null),
@@ -79,60 +55,47 @@ async function syncSubscription(
       currency: item?.price?.currency ?? "gbp",
       current_period_end: toIso(periodEnd),
       cancel_at_period_end: sub.cancel_at_period_end,
-      stripe_event_at: eventAt,
     },
-    { onConflict: "stripe_subscription_id" },
-  );
+  });
 }
 
 async function syncInvoice(
-  supabase: ServiceClient,
+  supabase: ReturnType<typeof createServiceClient>,
   inv: Stripe.Invoice,
   eventAt: string,
 ) {
   const clientId = await clientIdForCustomer(supabase, inv.customer);
   if (!clientId) return;
 
-  // What we already believe about this invoice, read before the upsert
-  // overwrites it. Stripe reports one payment through several events and
-  // re-delivers any of them on retry, so "the event says paid" is not the
-  // same question as "this invoice has just become paid".
-  const { data: existing } = await supabase
-    .from("invoices")
-    .select("status, stripe_event_at")
-    .eq("stripe_invoice_id", inv.id)
-    .maybeSingle();
-  const prior = existing as
-    | { status?: string; stripe_event_at?: string }
-    | null;
-
-  if (isStale(prior?.stripe_event_at, eventAt)) return;
-  const wasPaid = prior?.status === "paid";
-
-  await supabase.from("invoices").upsert(
-    {
-      client_id: clientId,
-      stripe_invoice_id: inv.id,
+  await supabase.rpc("sync_stripe_invoice", {
+    p_client_id: clientId,
+    p_stripe_id: inv.id,
+    p_event_at: eventAt,
+    p_fields: {
       number: inv.number ?? null,
       description: inv.description ?? inv.lines?.data[0]?.description ?? null,
-      amount: inv.total ?? inv.amount_due ?? 0,
-      amount_paid: inv.amount_paid ?? 0,
+      amount: String(inv.total ?? inv.amount_due ?? 0),
+      amount_paid: String(inv.amount_paid ?? 0),
       currency: inv.currency ?? "gbp",
       status: inv.status ?? "open",
       due_date: toIso(inv.due_date),
       paid_at: toIso(inv.status_transitions?.paid_at),
       hosted_invoice_url: inv.hosted_invoice_url ?? null,
-      stripe_event_at: eventAt,
     },
-    { onConflict: "stripe_invoice_id" },
-  );
+  });
 
-  // Only the transition is an event worth a line in the client's timeline.
-  if (inv.status === "paid" && !wasPaid) {
-    await supabase.from("activity_events").insert({
-      client_id: clientId,
-      event_type: "invoice_paid",
-      metadata: { stripe_invoice_id: inv.id, amount: inv.amount_paid },
+  if (inv.status === "paid" && inv.id) {
+    // Several of the event types below reach this line for a single payment —
+    // Stripe sends `invoice.paid` and `invoice.payment_succeeded` for one
+    // charge, any later `invoice.updated` on a paid invoice makes another, and
+    // deliveries are retried. This used to insert an `invoice_paid` activity
+    // event every time, inflating the engagement score that decides whether a
+    // client looks at-risk. The function is idempotent per invoice, enforced
+    // by a unique index so racing deliveries cannot both slip through.
+    await supabase.rpc("log_invoice_paid", {
+      p_client_id: clientId,
+      p_stripe_invoice_id: inv.id,
+      p_amount: inv.amount_paid ?? 0,
     });
   }
 }
@@ -158,7 +121,7 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = createServiceClient();
-  // When Stripe says this happened — the ordering key. Not when it arrived.
+  // The event's own timestamp is the only ordering Stripe gives us.
   const eventAt = new Date(event.created * 1000).toISOString();
 
   try {
@@ -166,11 +129,7 @@ export async function POST(request: NextRequest) {
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
-        await syncSubscription(
-          supabase,
-          event.data.object as Stripe.Subscription,
-          eventAt,
-        );
+        await syncSubscription(supabase, event.data.object as Stripe.Subscription, eventAt);
         break;
       case "invoice.created":
       case "invoice.finalized":
@@ -186,7 +145,6 @@ export async function POST(request: NextRequest) {
         break;
     }
   } catch (err) {
-    // 500 so Stripe retries. The ordering guard above makes that safe.
     reportError(err, { source: "stripe-webhook", eventType: event.type, eventId: event.id });
     const message = err instanceof Error ? err.message : "handler error";
     return NextResponse.json({ error: message }, { status: 500 });

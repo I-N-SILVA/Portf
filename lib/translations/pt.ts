@@ -70,7 +70,22 @@ export const pt: Record<string, string> = {
   "nav.theme.dark": "[ ESCURO ]",
   "nav.theme.light": "[ CLARO ]",
 
+  // ── Gateway (estúdio + portal do cliente) ──
+  "gateway.studio.aria": "Abrir o estúdio — serviços, casos e contacto",
+  "gateway.portal.aria": "Entrar no portal do cliente",
+  "gateway.studio": "ESTÚDIO",
+  "gateway.portal": "PORTAL",
+
   // ── Projetos ──
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "Leitor de música local e descarregador de áudio do YouTube em estilo neo-brutalista — fontes pixel, sombras duras e um motor de áudio em Rust por baixo.",
+  "projects.10.full": "O MUSKI é um leitor de música para desktop que se recusa a ser um cliente de streaming. A biblioteca é local, indexada a partir de metadados reais das tags, com um observador do sistema de ficheiros que apanha ficheiros novos automaticamente, e a reprodução fica ancorada na tua máquina. Pesquisa no YouTube dentro da app e descarrega o áudio via yt-dlp, com progresso ao vivo e capas em alta resolução. O leitor faz shuffle por permutação, barra de progresso com forma de onda, normalização de volume EBU R128, EQ por stem e letras sincronizadas em karaoke — além de um sandbox de visualização 3D reativa ao áudio. Tudo isto com uma pele neo-brutalista sobre um backend em Rust.",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "Um leitor de música que vive no terminal — visualizador de espectro FFT em tempo real, biblioteca local e descargas do YouTube, tudo desenhado em texto.",
+  "projects.11.full": "O Terminal DJ é um leitor de música completo desenhado dentro de um terminal. Analisa uma biblioteca local, reproduz através do rodio e passa o áudio descodificado por uma FFT real para alimentar um visualizador de espectro com três modos — RetroCRT, NeonWaves e CyberpunkPeak — todos pintados com caracteres de caixa e cor néon. Descarrega faixas do YouTube via yt-dlp com progresso ao vivo, lê capas e tags, e comunica com a API do Spotify para metadados. Tudo é controlado pelo teclado.",
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "Utilitário macOS gratuito e de código aberto que transforma o notch do MacBook num monitor ao vivo de uso de IA em oito fornecedores.",
+  "projects.9.full": "O NOTCHY transforma o notch físico do MacBook — espaço que o macOS desperdiça — num monitor de uso de IA ao estilo da Dynamic Island. Uma pequena pílula funde-se com o notch e mostra o teu limite mais próximo num relance; ao passar o rato, expande-se num painel completo com uso da sessão, quota semanal, tempo até reiniciar e alertas de limite. Acompanha oito fornecedores, e Claude, Codex e Gemini não precisam de qualquer chave de API — lê o login que a CLI oficial já guardou. Uma app nativa em Swift com menos de 10MB, local-first, sem telemetria e com licença MIT.",
   "projects.8.title": "StockSnap Inventário de Veículos Móvel",
   "projects.8.desc": "Web app de inventário mobile-first projetada para rastreamento, verificação e relatórios de stock eficientes no terreno.",
   "projects.8.full": "O StockSnap é um dashboard de inventário mobile-first que permite aos utilizadores capturar check-ins de stock no local e visualizar instantaneamente resultados agregados por localização e data. A aplicação fornece métricas rápidas, auditorias pesquisáveis e exportações com um clique, simplificando a reconciliação de stock para operações em múltiplos locais.",
@@ -83,9 +98,6 @@ export const pt: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "Plataforma de Gestão de Prompts IA - uma biblioteca completa para organizar, refinar e implementar prompts de forma eficiente.",
   "projects.3.full": "O Promptuous é um sistema de gestão de prompts projetado para profissionais de IA e criadores de conteúdo. Oferece um espaço de trabalho centralizado para armazenar, categorizar e iterar em prompts, garantindo performance otimizada e workflows de implementação sem falhas.",
-  "projects.5.title": "Currículo Inspirado no Spotify",
-  "projects.5.desc": "Uma plataforma de portfólio/currículo criativa e interativa que apresenta informações profissionais numa interface estilo Spotify.",
-  "projects.5.full": "Este projeto demonstra a capacidade de criar soluções inovadoras que diferenciam candidatos em mercados competitivos, mantendo sofisticação técnica. Combina desenvolvimento web moderno com uma experiência de utilizador única e envolvente.",
 
   // ── Offers ──
   "offers.section": "03 / CAPACIDADES",

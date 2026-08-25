@@ -30,11 +30,17 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Unit tests
-        run: npm test
-
       - name: Dead module check
         run: npm run check:dead
+
+      # types.ts is hand-authored and drifts; this compares its table, view
+      # and callable-function names against the migrations.
+      - name: Types match the migrations
+        run: npm run check:types
+
+      # Before the build, because they are the fastest thing that can fail.
+      - name: Tests
+        run: npm run test
 
       # Builds without Supabase credentials on purpose: every authenticated
       # route is force-dynamic, so a build that needs secrets means something
@@ -42,8 +48,8 @@ jobs:
       - name: Build
         run: npm run build
 
-  # Drives a real browser over the pages a stranger can reach. This is the
-  # only place the accessibility work is actually protected: "reduce motion is
+  # Drives a real browser over the pages a stranger can reach. This is the only
+  # place the accessibility work is actually protected: "reduce motion is
   # honoured", "the skip link is first in the tab order", "focus is visible"
   # are claims about a rendered page, and nothing short of rendering it checks
   # them. The axe pass is scoped to WCAG A/AA — axe's "best-practice" rules
@@ -65,8 +71,8 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       # Built without Supabase credentials, like the verify job: /c/acme falls
-      # back to the sample pitch room, which is exactly the public page we
-      # want to check.
+      # back to the sample pitch room, which is exactly the public page we want
+      # to check.
       - name: Build
         run: npm run build
 
@@ -80,6 +86,9 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
+
+  # Drives a real browser over the pages a stranger can reach. This is the
+
   # Applies every migration to a throwaway Postgres, so a broken or
   # out-of-order file fails here rather than against the live project.
   migrations:
@@ -91,12 +100,20 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
         ports: ["5432:5432"]
+        # No --command here: it is not a `docker create` flag, and Actions
+        # passes these options to `docker create` verbatim. It used to carry
+        # `postgres -c wal_level=logical`, which made every run of this job
+        # die at "Initialize containers" and SKIP every step below — so the
+        # security assertions this job exists for had never actually run.
+        #
+        # The default wal_level is enough. Creating the publication and
+        # adding tables to it are DDL and work at `replica`; only decoding
+        # the WAL needs `logical`, and nothing here decodes anything.
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-          --command "postgres -c wal_level=logical"
 
     env:
       PGHOST: localhost
@@ -114,8 +131,10 @@ jobs:
       - name: Stand in for Supabase
         run: |
           psql -v ON_ERROR_STOP=1 <<'SQL'
-          -- Idempotent so the whole job can be replayed against a local
-          -- Postgres (roles are cluster-wide and outlive a dropped database).
+          -- Idempotent so the job can be replayed against a local Postgres.
+          -- Roles are cluster-wide and outlive a dropped database, so a plain
+          -- `create role` fails on the second run and takes every assertion
+          -- below with it.
           do $$ begin
             create role anon;           exception when duplicate_object then null; end $$;
           do $$ begin
@@ -130,7 +149,10 @@ jobs:
             language sql stable as $$ select null::uuid $$;
 
           create schema if not exists storage;
-          create table storage.buckets (id text primary key, name text, public boolean default false);
+          create table storage.buckets (
+            id text primary key, name text, public boolean default false,
+            file_size_limit bigint, allowed_mime_types text[]
+          );
           create table storage.objects (
             id uuid primary key default gen_random_uuid(),
             bucket_id text, name text, owner uuid
@@ -260,6 +282,281 @@ jobs:
           end $$;
           SQL
 
+      # 0011: a client may set their own preferences and nothing else. The
+      # functions resolve the caller from auth.uid(), so there is no client id
+      # to forge — what's asserted here is that the elevated write stays
+      # inside the columns it is meant to touch, and that the direct path
+      # stays shut.
+      - name: Client settings write only what they own
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          insert into public.clients (name, company, email, slug)
+          values ('Other Client', 'Other Co', 'other@example.test', 'other-co');
+
+          set role authenticated;
+          do $$
+          begin
+            if (select count(*) from public.client_preferences) <> 1 then
+              raise exception 'a client should see exactly their own preferences row';
+            end if;
+
+            -- No UPDATE policy and no column grant. Which of the two refuses
+            -- first differs between this harness and Supabase, and a bare RLS
+            -- denial is a silent zero-row update rather than an error — so
+            -- assert the row, not the exception.
+            begin
+              update public.client_preferences set email_billing = false;
+            exception when others then null;
+            end;
+
+            if not (select email_billing from public.client_preferences) then
+              raise exception 'SECURITY: a direct update of client_preferences went through';
+            end if;
+          end $$;
+
+          select public.update_my_preferences(false, true, false);
+          select public.update_my_profile('Renamed Client', '+44 7000 000000');
+          reset role;
+
+          do $$
+          declare v record;
+          begin
+            select p.email_reminders, p.email_billing into v
+            from public.client_preferences p
+            join public.clients c on c.id = p.client_id
+            where c.slug = 'test-co';
+            if v.email_reminders or v.email_billing then
+              raise exception 'the caller''s own preferences should have been saved';
+            end if;
+
+            if exists (
+              select 1 from public.client_preferences p
+              join public.clients c on c.id = p.client_id
+              where c.slug = 'other-co'
+                and (not p.email_reminders or not p.email_billing)
+            ) then
+              raise exception 'SECURITY: another client''s preferences were changed';
+            end if;
+
+            -- The elevated write must not have reached anything else on the row.
+            select role, client_id into v from public.profiles
+            where id = '11111111-1111-1111-1111-111111111111';
+            if v.role <> 'client' or v.client_id is null then
+              raise exception 'SECURITY: update_my_profile touched role or client_id';
+            end if;
+
+            select status, phone into v from public.clients where slug = 'test-co';
+            if v.status <> 'active' or v.phone <> '+44 7000 000000' then
+              raise exception 'update_my_profile should set phone and nothing else, got % / %',
+                v.status, v.phone;
+            end if;
+          end $$;
+          SQL
+
+      # 0012: the analytics aggregates read every client's numbers, so they
+      # are admin-only. The guard is asserted, not assumed — the functions are
+      # SECURITY INVOKER precisely so RLS still stands behind it.
+      - name: Analytics is admin-only
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          set role authenticated;
+          do $$
+          begin
+            begin
+              perform * from public.analytics_revenue(now() - interval '30 days', interval '7 days');
+              raise exception 'SECURITY: a client read analytics_revenue';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            begin
+              perform public.analytics_active_clients(now() - interval '30 days');
+              raise exception 'SECURITY: a client read analytics_active_clients';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+          end $$;
+          reset role;
+
+          -- And an admin does get numbers back.
+          insert into auth.users (id, email)
+          values ('22222222-2222-2222-2222-222222222222', 'admin@example.test');
+          insert into public.profiles (id, role, full_name)
+          values ('22222222-2222-2222-2222-222222222222', 'admin', 'Admin');
+
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select '22222222-2222-2222-2222-222222222222'::uuid $$;
+
+          set role authenticated;
+          do $$
+          begin
+            if (select public.analytics_active_clients(now() - interval '30 days')) < 1 then
+              raise exception 'the login event logged earlier should count as an active client';
+            end if;
+            if not exists (
+              select 1 from public.analytics_event_mix(now() - interval '30 days')
+            ) then
+              raise exception 'the event mix should not be empty';
+            end if;
+          end $$;
+          reset role;
+          SQL
+
+      # 0013: the nudge evaluator's idle-client query answers only to the
+      # service role or an admin — the result is a list of every client who
+      # has gone quiet.
+      - name: Idle-client query is not client-callable
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          -- The previous step left auth.uid() as the admin; be explicit about
+          -- who is asking, or this asserts nothing.
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select '11111111-1111-1111-1111-111111111111'::uuid $$;
+
+          set role authenticated;
+          do $$
+          begin
+            begin
+              perform * from public.clients_idle_since(now() - interval '7 days');
+              raise exception 'SECURITY: a client listed idle clients';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+          end $$;
+          reset role;
+
+          -- Back to no session, which is how the service role reaches it.
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select null::uuid $$;
+
+          -- And it answers the question it is meant to: test-co logged in
+          -- during an earlier step, other-co never has.
+          do $$
+          declare v text;
+          begin
+            select string_agg(name, ',' order by name) into v
+            from public.clients_idle_since(now() - interval '7 days');
+            if v is null or v not like '%Other Client%' then
+              raise exception 'expected the never-logged-in client, got %', v;
+            end if;
+            if v like '%Renamed Client%' then
+              raise exception 'a client that logged in should not be idle';
+            end if;
+          end $$;
+          SQL
+
+      # 0014: a single payment must record exactly one invoice_paid event.
+      # Several Stripe event types reach the same code path for one charge,
+      # and client_engagement scores on those rows.
+      - name: One invoice_paid per invoice
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select null::uuid $$;
+
+          do $$
+          declare c uuid; n int;
+          begin
+            select id into c from public.clients where slug = 'test-co';
+
+            -- invoice.paid, invoice.payment_succeeded, a later invoice.updated,
+            -- and a redelivery: four calls, one payment.
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_1', 50000);
+            perform public.log_invoice_paid(c, 'in_CI_2', 100);
+
+            select count(*) into n from public.activity_events
+            where event_type = 'invoice_paid'
+              and metadata->>'stripe_invoice_id' = 'in_CI_1';
+            if n <> 1 then
+              raise exception 'expected 1 invoice_paid for in_CI_1, got %', n;
+            end if;
+
+            select count(*) into n from public.activity_events
+            where event_type = 'invoice_paid';
+            if n <> 2 then
+              raise exception 'expected 2 invoice_paid rows in total, got %', n;
+            end if;
+          end $$;
+
+          -- A stale event must not regress a paid invoice back to open.
+          do $$
+          declare c uuid; v text;
+          begin
+            select id into c from public.clients where slug = 'test-co';
+            perform public.sync_stripe_invoice(c, 'in_CI_ORDER', now(),
+              jsonb_build_object('status','paid','amount','9900','amount_paid','9900'));
+            perform public.sync_stripe_invoice(c, 'in_CI_ORDER', now() - interval '5 minutes',
+              jsonb_build_object('status','open','amount','9900','amount_paid','0'));
+
+            select status into v from public.invoices where stripe_invoice_id = 'in_CI_ORDER';
+            if v <> 'paid' then
+              raise exception 'an out-of-order event regressed the invoice to %', v;
+            end if;
+          end $$;
+          SQL
+
+      # 0015: bookings are validated, not merely recorded.
+      - name: Bookings reject the past, the unavailable and the taken
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          create or replace function auth.uid() returns uuid language sql stable
+          as $$ select '11111111-1111-1111-1111-111111111111'::uuid $$;
+
+          set role authenticated;
+          do $$
+          begin
+            -- No windows published: a future slot is fine.
+            perform public.request_booking('CI', now() + interval '10 days',
+                                                 now() + interval '10 days 1 hour');
+
+            begin
+              perform public.request_booking('CI', now() - interval '2 days',
+                                                   now() - interval '47 hours');
+              raise exception 'SECURITY: booked a time in the past';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            begin
+              perform public.request_booking('CI', now() + interval '10 days 30 minutes',
+                                                   now() + interval '10 days 90 minutes');
+              raise exception 'SECURITY: double booked an occupied slot';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            -- Butting up against the previous booking is not an overlap.
+            perform public.request_booking('CI', now() + interval '10 days 1 hour',
+                                                 now() + interval '10 days 2 hours');
+          end $$;
+          reset role;
+
+          -- With hours published, outside them is refused.
+          insert into public.availability_windows (weekday, start_time, end_time, active)
+          select extract(dow from (now() + interval '20 days') at time zone 'UTC')::int,
+                 '09:00', '10:00', true;
+
+          set role authenticated;
+          do $$
+          declare d date := ((now() + interval '20 days') at time zone 'UTC')::date;
+          begin
+            begin
+              perform public.request_booking('CI', (d + time '15:00') at time zone 'UTC',
+                                                   (d + time '16:00') at time zone 'UTC');
+              raise exception 'SECURITY: booked outside the published hours';
+            exception when others then
+              if sqlerrm like 'SECURITY:%' then raise; end if;
+            end;
+
+            perform public.request_booking('CI', (d + time '09:00') at time zone 'UTC',
+                                                 (d + time '10:00') at time zone 'UTC');
+          end $$;
+          reset role;
+          SQL
+
       # The test above proves a client sees their OWN row. It cannot prove
       # they don't see anyone ELSE's, because until now the fixture held a
       # single client and `count(*) = 1` passed either way. This seeds a
@@ -271,15 +568,20 @@ jobs:
       - name: Clients are isolated from each other
         run: |
           psql -v ON_ERROR_STOP=1 <<'SQL'
-          -- Second tenant, fully populated.
+          -- Second tenant, fully populated. Earlier steps may already have
+          -- created the client and its user, so this adopts whatever is there
+          -- rather than depending on step order.
           insert into public.clients (name, company, email, slug)
-          values ('Other Client', 'Other Co', 'other@example.test', 'other-co');
+          values ('Other Client', 'Other Co', 'other@example.test', 'other-co')
+          on conflict (slug) do nothing;
 
           insert into auth.users (id, email)
-          values ('22222222-2222-2222-2222-222222222222', 'other@example.test');
+          values ('22222222-2222-2222-2222-222222222222', 'other@example.test')
+          on conflict (id) do nothing;
           insert into public.profiles (id, role, client_id)
           select '22222222-2222-2222-2222-222222222222', 'client', id
-          from public.clients where slug = 'other-co';
+          from public.clients where slug = 'other-co'
+          on conflict (id) do nothing;
 
           with other as (select id from public.clients where slug = 'other-co')
           insert into public.projects (client_id, name)
@@ -495,4 +797,3 @@ jobs:
             end if;
           end $$;
           SQL
-

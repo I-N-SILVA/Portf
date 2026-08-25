@@ -94,8 +94,10 @@ export const routes = {
     client: (id: string) => `/admin/clients/${id}`,
     enquiries: "/admin/enquiries",
     engagement: "/admin/engagement",
+    audit: "/admin/audit",
     nudges: "/admin/nudges",
     analytics: "/admin/analytics",
+    analyticsExport: (range: string) => `/admin/analytics/export?range=${range}`,
     settings: "/admin/settings",
   },
 

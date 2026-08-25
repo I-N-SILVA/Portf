@@ -9,16 +9,28 @@ import ShaftRedact from "./ShaftRedact";
 
 /* Map project IDs to generated images */
 const PROJECT_IMAGES: Record<string, string> = {
+  "11": "/projects/terminal-dj.webp",
+  "10": "/projects/muski.webp",
+  "9": "/projects/notchy.webp",
   "8": "/projects/ai-agents.webp",
-  "7": "/projects/calendar.webp",
-  "2": "/projects/content-engine.webp",
-  "3": "/projects/prompt-library.webp",
-  "4": "/projects/defi-analytics.webp",
-  "5": "/projects/ai-agents.webp",
-  "6": "/projects/prompt-library.webp",
 };
 
-const CATEGORIES = ["ALL", "AI", "WEB3", "CREATIVE"];
+/**
+ * Retired projects keep their records for the studio case studies that point
+ * at them (see Project.retired), but they are off the portfolio.
+ */
+const SHOWN = projects.filter((p) => !p.retired);
+
+/**
+ * Derived from what is actually on the list rather than hardcoded, so a
+ * filter can never be a dead end. The old fixed list still offered WEB3 after
+ * the last WEB3 project went, and picking it rendered nothing at all — the
+ * section has no empty state, so the rules just closed on blank space.
+ */
+const CATEGORIES = [
+  "ALL",
+  ...Array.from(new Set(SHOWN.map((p) => p.category.toUpperCase()))).sort(),
+];
 
 export default function ShaftArchive() {
   const [filter, setFilter]     = useState("ALL");
@@ -29,7 +41,7 @@ export default function ShaftArchive() {
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
-  const filtered = projects.filter(
+  const filtered = SHOWN.filter(
     (p) => filter === "ALL" || p.category.toUpperCase() === filter
   );
 
@@ -89,8 +101,6 @@ export default function ShaftArchive() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              type="button"
-              aria-pressed={filter === cat}
               onClick={() => { setFilter(cat); setExpanded(null); }}
               className="relative font-space-mono text-[9px] tracking-[0.45em] uppercase transition-all duration-100 pb-1"
               style={{ color: filter === cat ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-muted))" }}
@@ -125,7 +135,7 @@ export default function ShaftArchive() {
 
               {/* Entry row */}
               <button
-                className="w-full text-left group py-5"
+                className="w-full text-left group py-5 focus:outline-none"
                 onClick={() => {
                   const isExpanding = expanded !== project.id;
                   if (isExpanding) {
@@ -244,7 +254,10 @@ export default function ShaftArchive() {
                             alt={project.title}
                             width={800}
                             height={400}
-                            className="w-full h-auto object-cover grayscale group-hover/img:grayscale-0 transition-all duration-700"
+                            // `group-hover` never fires on a touch screen, so every project image
+                            // stayed grey forever on a phone. The arbitrary variant restores
+                            // colour wherever hover does not exist.
+                            className="w-full h-auto object-cover grayscale group-hover/img:grayscale-0 [@media(hover:none)]:grayscale-0 transition-all duration-700"
                             style={{ opacity: 0.7 }}
                           />
                           {/* Scanline overlay */}

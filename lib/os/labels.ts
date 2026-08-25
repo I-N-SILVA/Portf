@@ -42,3 +42,18 @@ export const ACTIVITY_LABEL: Record<string, string> = {
   booking_declined: "Session declined",
   booking_cancelled: "Session cancelled",
 };
+
+/**
+ * Human phrasing for audit_log.action. Written only by `log_admin_action`,
+ * which four admin actions call today; unknown values fall through to the raw
+ * string so a new one shows up rather than disappearing.
+ */
+export const AUDIT_LABEL: Record<string, string> = {
+  client_updated: "Client record edited",
+  pitch_saved: "Pitch page saved",
+  pitch_published: "Pitch page published",
+  project_created: "Project created",
+  invoice_created: "Invoice raised",
+  client_invited: "Client invited",
+  notes_saved: "Private notes edited",
+};

@@ -6,6 +6,21 @@ import { sendMessage, markThreadRead } from "@/lib/os/actions/messages";
 import type { Message } from "@/lib/supabase/types";
 
 /**
+ * Mirrors the limits `storage.buckets` enforces for the attachments bucket
+ * (migration 0015). The bucket is the boundary that actually holds — this is
+ * here so a 40MB file fails before it is uploaded rather than after.
+ */
+const MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024;
+const ACCEPTED_TYPES =
+  "image/png,image/jpeg,image/gif,image/webp,image/svg+xml,application/pdf," +
+  "text/plain,text/csv,text/markdown,application/zip," +
+  ".doc,.docx,.xls,.xlsx,.ppt,.pptx";
+
+function tooLarge(file: File) {
+  return file.size > MAX_ATTACHMENT_BYTES;
+}
+
+/**
  * Realtime per-client thread, shared by the portal and admin. `viewerIsAdmin`
  * only affects bubble alignment; all auth is enforced server-side.
  */
@@ -74,6 +89,11 @@ export function MessageThread({
     let attachmentName: string | null = null;
 
     if (file) {
+      if (tooLarge(file)) {
+        setBusy(false);
+        setError("Attachments are limited to 25MB.");
+        return;
+      }
       const safe = file.name.replace(/[^\w.\-]+/g, "_");
       const path = `${clientId}/${Date.now()}-${safe}`;
       const { error: upErr } = await supabaseRef.current.storage
@@ -158,7 +178,18 @@ export function MessageThread({
           <input
             type="file"
             hidden
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            accept={ACCEPTED_TYPES}
+            onChange={(e) => {
+              const picked = e.target.files?.[0] ?? null;
+              if (picked && tooLarge(picked)) {
+                setError("Attachments are limited to 25MB.");
+                setFile(null);
+                e.target.value = "";
+                return;
+              }
+              setError("");
+              setFile(picked);
+            }}
           />
         </label>
         <button className="os-btn primary" disabled={busy} onClick={send}>

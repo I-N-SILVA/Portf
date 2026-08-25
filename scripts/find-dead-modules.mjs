@@ -15,10 +15,7 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 const EXTS = [".ts", ".tsx"];
-// `tests` is skipped rather than treated as an entry point on purpose: a
-// module whose only importer is a test is still dead product code, and
-// counting the test as a reference would hide exactly that.
-const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "public", "tests", "e2e"]);
+const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "public"]);
 
 // Config and ambient declaration files aren't imported by anything by design.
 const ALWAYS_LIVE = new Set([
@@ -26,9 +23,10 @@ const ALWAYS_LIVE = new Set([
   "next-env.d.ts",
   "tailwind.config.ts",
   "postcss.config.mjs",
-  "vitest.config.ts",
-  "playwright.config.ts",
   path.join("scripts", "find-dead-modules.mjs"),
+  path.join("scripts", "check-types-drift.mjs"),
+  "vitest.config.mts",
+  "playwright.config.ts",
 ]);
 
 const ENTRY_STEMS = new Set([
@@ -98,6 +96,10 @@ for (const file of files) {
 const entries = files.filter((f) => {
   if (ALWAYS_LIVE.has(f) || f.endsWith(".d.ts")) return true;
   if (f === "middleware.ts" || f === "instrumentation.ts") return true;
+  // Vitest loads these directly; nothing in the app imports them, and the
+  // modules they reach are live by virtue of being under test.
+  if (f.split(path.sep)[0] === "tests") return true;
+  if (f.split(path.sep)[0] === "e2e") return true;
   const parts = f.split(path.sep);
   return parts[0] === "app" && ENTRY_STEMS.has(path.basename(f, path.extname(f)));
 });

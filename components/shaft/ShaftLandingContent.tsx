@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useVelocity, useTransform, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useVelocity, useTransform, useSpring, useReducedMotion } from "framer-motion";
 import ShaftIntertitle from "./ShaftIntertitle";
 import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
@@ -20,22 +20,50 @@ import Cursor from "@/components/ui/inverted-cursor";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LocaleProvider, type Locale } from "@/lib/i18n";
 
+/**
+ * `sessionStorage` key set once the intro has played. A companion inline
+ * script in app/layout.tsx reads it before first paint and stamps
+ * `data-booted` on <html>, so a returning visitor never sees a frame of the
+ * boot overlay while React hydrates.
+ */
+const BOOTED_KEY = "shaft-booted";
+
 export default function ShaftLandingContent({
   locale,
 }: {
-  /** Set by the /{locale} routes; absent on `/`, where the cookie decides. */
+  /** Set by the /pt /es /ja /zh routes; absent on `/`. */
   locale?: Locale;
 } = {}) {
   const [stage, setStage] = useState<"boot" | "intertitle" | "main">("boot");
   const [isInverted, setIsInverted] = useState(false);
   const { playSound } = useSoundEffects();
+  const reduceMotion = useReducedMotion();
+
+  // Play the intro once per session, not once per navigation — and not at
+  // all for someone who has asked for less motion, since it is two
+  // unskippable full-screen animations standing between them and the page.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setStage("main");
+      return;
+    }
+    try {
+      if (sessionStorage.getItem(BOOTED_KEY)) setStage("main");
+    } catch {
+      // Private mode, or storage disabled — just play the intro.
+    }
+  }, []);
 
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
   
   // Map high velocity to a glitch intensity
-  const glitchOpacity = useTransform(smoothVelocity, [-3000, -1500, 0, 1500, 3000], [0.4, 0, 0, 0, 0.4]);
+  const glitchOpacity = useTransform(
+    smoothVelocity,
+    [-3000, -1500, 0, 1500, 3000],
+    reduceMotion ? [0, 0, 0, 0, 0] : [0.4, 0, 0, 0, 0.4],
+  );
 
   const handleBootComplete = useCallback(() => {
     setStage("intertitle");
@@ -43,34 +71,32 @@ export default function ShaftLandingContent({
 
   const handleIntertitleComplete = useCallback(() => {
     setStage("main");
+    try {
+      sessionStorage.setItem(BOOTED_KEY, "1");
+      document.documentElement.dataset.booted = "1";
+    } catch {
+      // Nothing to remember it with; the intro plays again next time.
+    }
     setTimeout(() => playSound("hum"), 100);
   }, [playSound]);
-
-  // Reduced motion skips the cinema.
-  //
-  // The landing page opens on a boot sequence and an intertitle, and the real
-  // content only mounts once both have played. For someone who has asked for
-  // less motion that is two unskippable animations standing between them and
-  // the page — and, because #main doesn't exist until the end of it, the skip
-  // link has nothing to skip to either. BootGate in the OS chrome already
-  // makes the same concession; this brings the front door in line.
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setStage("main");
-    }
-  }, []);
 
   // Handle global "Negative Flash" event
   useEffect(() => {
     const triggerFlash = () => {
-      setIsInverted(true);
+      // A full-screen inversion, fired by every nav click, theme toggle,
+      // language change and archive row. It is driven by React state rather
+      // than a CSS animation, so the blanket `animation-duration: 0.01ms`
+      // rule in globals.css never suppressed it — this does. The shutter
+      // sound is not motion and still plays.
       playSound("shutter");
+      if (reduceMotion) return;
+      setIsInverted(true);
       setTimeout(() => setIsInverted(false), 120);
     };
 
     window.addEventListener("shaft-flash", triggerFlash);
     return () => window.removeEventListener("shaft-flash", triggerFlash);
-  }, [playSound]);
+  }, [playSound, reduceMotion]);
 
   return (
     <LocaleProvider initialLocale={locale}>
@@ -98,9 +124,6 @@ export default function ShaftLandingContent({
         )}
       </AnimatePresence>
       
-      {/* The intro plays *over* the page, not instead of it. Both of these are
-          fixed, full-screen overlays with their own z-index, so the content
-          below can render from the very first byte. */}
       <AnimatePresence mode="wait">
         {stage === "boot" && (
           <BootSequence key="boot" onComplete={handleBootComplete} />
@@ -112,31 +135,28 @@ export default function ShaftLandingContent({
       </AnimatePresence>
 
       {/*
-        Always rendered, including in the server HTML.
+        Always rendered, never gated on `stage`.
 
-        This used to be gated on `stage === "main"`, so the page a browser with
-        no JavaScript received — and the page in the initial response for
-        everyone else — contained a boot animation and none of the portfolio.
-        It also meant the skip link pointed at an id that did not exist yet.
-
-        While the intro is on screen the content is present but not reachable:
-        `inert` takes it out of the tab order and hides it from assistive
-        tech, so nobody lands focus on something they cannot see.
+        The intro used to withhold the whole page until it finished, which
+        meant the server sent a document containing the boot log and nothing
+        else — no hero, no archive, no links, and none of the #anchors the
+        sitemap advertises. The overlays below cover this while they play, so
+        the intro looks identical and the markup is there from the first byte.
       */}
-        <motion.main
-          id="main"
-          inert={stage !== "main" ? true : undefined}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="w-full min-h-screen overflow-x-hidden relative"
-          style={{ 
-            backgroundColor: "rgb(var(--shaft-bg))",
-            filter: isInverted ? "invert(1)" : "none" 
-          }}
-        >
+      <motion.main
+        id="main"
+        inert={stage !== "main" ? true : undefined}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="w-full min-h-screen overflow-x-hidden relative"
+        style={{
+          backgroundColor: "rgb(var(--shaft-bg))",
+          filter: isInverted ? "invert(1)" : "none",
+        }}
+      >
           <ShaftStatusStrip />
-          <ShaftNav visible={stage === "main"} />
+          <ShaftNav visible={true} />
           <ShaftSocialDock />
           <ShaftMobileCTA />
 
@@ -160,10 +180,10 @@ export default function ShaftLandingContent({
 
 
 
-          <ShaftPerspectiveSection>
-            <ShaftCall />
-          </ShaftPerspectiveSection>
-        </motion.main>
+        <ShaftPerspectiveSection>
+          <ShaftCall />
+        </ShaftPerspectiveSection>
+      </motion.main>
     </LocaleProvider>
   );
 }

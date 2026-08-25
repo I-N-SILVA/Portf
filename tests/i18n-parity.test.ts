@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { LOCALES, type Locale } from "@/lib/i18n";
+import { LOCALES, type Locale } from "@/lib/locales";
 import { en } from "@/lib/translations/en";
 import { pt } from "@/lib/translations/pt";
 import { es } from "@/lib/translations/es";

@@ -1,5 +1,4 @@
 export const zh: Record<string, string> = {
-  // ── Intertitle ──
   "intertitle.year": "作品集 · 2026",
   "intertitle.subtitle": "AI自动化工程师",
 
@@ -48,8 +47,6 @@ export const zh: Record<string, string> = {
   "archive.source": "源代码 →",
 
   // ── Domains ──
-
-  // ── The Call ──
   "call.section": "05 / 通话",
   "call.title1": "预约",
   "call.title2": "通话。",
@@ -71,7 +68,27 @@ export const zh: Record<string, string> = {
   "nav.theme.dark": "[ 暗色 ]",
   "nav.theme.light": "[ 亮色 ]",
 
-  // ── Offers ──
+  // ── Gateway (工作室 + 客户端口) ──
+  "gateway.studio.aria": "打开工作室 — 服务、案例与联系方式",
+  "gateway.portal.aria": "登录客户端口",
+  "gateway.studio": "工作室",
+  "gateway.portal": "客户端口",
+
+  // ── Projects (archive) ──
+  "projects.9.title": "NOTCHY",
+  "projects.9.desc": "免费开源的 macOS 工具，把 MacBook 刘海变成八家服务商的 AI 用量实时监视器。",
+  "projects.9.full": "NOTCHY 把 macOS 一直闲置的 MacBook 硬件刘海，变成灵动岛风格的 AI 用量监视器。一枚极简胶囊融入刘海，一眼看到当前最紧的额度；悬停即展开完整面板，显示会话用量、每周配额、重置倒计时与阈值提醒。支持八家服务商，其中 Claude、Codex 与 Gemini 完全无需 API 密钥 — 它直接读取官方 CLI 已保存的登录信息。原生 Swift 应用，体积不到 10MB，本地优先、零遥测、MIT 许可。",
+  "projects.10.title": "MUSKI",
+  "projects.10.desc": "新粗野主义风格的本地音乐播放器与 YouTube 音频下载器 — 像素字体、硬阴影，底层是真正的 Rust 音频引擎。",
+  "projects.10.full": "MUSKI 是一款拒绝成为流媒体客户端的桌面音乐播放器。曲库完全在本地，依据真实标签元数据建立索引，文件系统监视器会自动收录新放入的文件，播放始终锚定在你自己的机器上。它能在应用内搜索 YouTube，并通过 yt-dlp 拉取音频，附带实时进度与高分辨率封面。播放器支持排列洗牌、波形进度条、EBU R128 响度归一化、分轨 EQ 与同步卡拉 OK 歌词，还有一个音频响应式 3D 可视化沙盒。这一切都披着新粗野主义的外衣，跑在 Rust 后端之上。",
+  "projects.11.title": "Terminal DJ",
+  "projects.11.desc": "住在终端里的音乐播放器 — 实时 FFT 频谱可视化、本地曲库与 YouTube 下载，全部用字符绘制。",
+  "projects.11.full": "Terminal DJ 是一个完整绘制在终端中的音乐播放器。它扫描本地曲库，通过 rodio 播放，并把解码后的音频送入真正的 FFT，驱动一个具备三种模式的频谱可视化器 — RetroCRT、NeonWaves 与 CyberpunkPeak — 全部以制表符与霓虹色绘成。它通过 yt-dlp 从 YouTube 下载曲目并显示实时进度，读取封面与标签，并调用 Spotify API 获取元数据。所有操作均由键盘驱动。",
+  "projects.8.title": "StockSnap 移动车辆盘点",
+  "projects.8.desc": "为现场库存记录、核对与报表而设计的移动优先盘点 Web 应用。",
+  "projects.8.full": "StockSnap 是一个移动优先的盘点面板，让你在现场即时记录库存核对，并立刻按地点与日期查看汇总结果。它提供一目了然的指标（已核对数量、核对次数、有货与缺货），可搜索的近期审计记录，以及一键导出异常清单或完整库存清单，把多站点的库存对账与报表收拢成一条流程。",
+
+  // ── Added on the improvement branch ──
   "nav.offers": "服务",
   "offers.section": "03 / 能力范围",
   "offers.title": "我能在 2–4 周内为你做出来的东西。",
@@ -88,9 +105,6 @@ export const zh: Record<string, string> = {
   "offers.cta": "还不确定自己需要什么？把没理清的想法直接带过来。我们一起找出最小、也最有力的那件先做。",
 
   // ── Projects (2, 3, 5, 7, 8) ──
-  "projects.8.title": "StockSnap 车辆盘点移动应用",
-  "projects.8.desc": "面向移动端设计的盘点应用，用于在现场高效记录、核对与上报库存。",
-  "projects.8.full": "StockSnap 是一款移动优先的盘点看板，让使用者在现场完成库存核查，并即时按地点和日期查看汇总结果。应用提供一目了然的指标（已核查数量、核查次数、有货与缺货对比）、可搜索的近期盘点记录，以及一键导出异常项或完整库存清单的能力，让多站点运营的库存对账与报表工作明显提速。",
   "projects.7.title": "活动管理日历系统",
   "projects.7.desc": "一套全栈活动管理日历应用，配以赛博朋克风格的深色界面和完整的排程能力。",
   "projects.7.full": "这个项目通过交互式日历视图与实时活动管理，展现了进阶的前端开发能力。应用支持日、周、月多种查看模式，点击即可创建活动。用户可以在直观的界面中安排、组织并执行活动，配有键盘快捷键（CMD+K 搜索、SHIFT+点击 切换模式）以及覆盖各个时段的快速添加位。",
@@ -100,7 +114,4 @@ export const zh: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "AI 提示词管理平台——一套功能完整的提示词库，用于高效地整理、打磨和投入使用",
   "projects.3.full": "Promptuous 是一套完整的提示词库与管理系统，为需要高效整理、打磨并投入使用提示词的 AI 从业者、开发者和内容创作者而设计。平台提供集中的工作空间，用于存储、分类并反复迭代提示词，覆盖从创意应用到通用工作流的各类场景。",
-  "projects.5.title": "Spotify 风格互动简历",
-  "projects.5.desc": "一个富有创意的互动式简历与作品集平台，以 Spotify 式的界面呈现职业经历。",
-  "projects.5.full": "这个项目展现了打造创新方案的能力——既能让候选人在激烈的求职市场中脱颖而出，又保持了专业的实用性与技术上的完成度。它把现代 Web 开发与独特、引人入胜的使用体验结合起来，把传统简历变成一个好看、也便于分享的应用。",
 };

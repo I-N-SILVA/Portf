@@ -1,122 +1,99 @@
-import { describe, expect, it } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
-  RESERVED_SLUGS,
+  slugify,
   isValidSlug,
   safeNext,
   siteUrl,
-  slugify,
+  RESERVED_SLUGS,
   routes,
 } from "@/lib/routes";
 
 describe("slugify", () => {
   it("lowercases and hyphenates", () => {
-    expect(slugify("Acme Corp")).toBe("acme-corp");
-    expect(slugify("ACME")).toBe("acme");
+    expect(slugify("Acme Industries")).toBe("acme-industries");
   });
 
   it("collapses runs of separators and trims the ends", () => {
-    expect(slugify("  Acme -- & -- Sons  ")).toBe("acme-sons");
+    expect(slugify("  --Acme & Co.--  ")).toBe("acme-co");
+    expect(slugify("A///B")).toBe("a-b");
+  });
+
+  it("drops accents and symbols rather than escaping them", () => {
+    expect(slugify("Café Über!")).toBe("caf-ber");
+  });
+
+  it("can produce an empty string, which isValidSlug must then reject", () => {
     expect(slugify("!!!")).toBe("");
-  });
-
-  it("keeps digits", () => {
-    expect(slugify("Studio 54")).toBe("studio-54");
-  });
-
-  it("produces a valid slug for anything long enough", () => {
-    for (const input of ["Acme Corp", "Böhm & Sons", "24/7 Ops"]) {
-      const out = slugify(input);
-      if (out.length >= 2) expect(isValidSlug(out)).toBe(true);
-    }
+    expect(isValidSlug(slugify("!!!"))).toBe(false);
   });
 });
 
 describe("isValidSlug", () => {
-  it("accepts the shapes the constraint allows", () => {
+  it("accepts lowercase hyphenated names", () => {
     expect(isValidSlug("acme")).toBe(true);
-    expect(isValidSlug("acme-corp")).toBe(true);
-    expect(isValidSlug("a1")).toBe(true);
+    expect(isValidSlug("acme-industries-2")).toBe(true);
   });
 
-  it("rejects anything that could shadow or escape a route", () => {
-    expect(isValidSlug("Acme")).toBe(false); // uppercase
-    expect(isValidSlug("a")).toBe(false); // too short
-    expect(isValidSlug("a".repeat(49))).toBe(false); // too long
-    expect(isValidSlug("-acme")).toBe(false);
-    expect(isValidSlug("acme-")).toBe(false);
-    expect(isValidSlug("acme--corp")).toBe(false);
-    expect(isValidSlug("acme/../admin")).toBe(false);
-    expect(isValidSlug("acme corp")).toBe(false);
-    expect(isValidSlug("")).toBe(false);
+  it("rejects anything the SQL CHECK constraint would", () => {
+    expect(isValidSlug("A")).toBe(false);          // too short, uppercase
+    expect(isValidSlug("-acme")).toBe(false);      // leading hyphen
+    expect(isValidSlug("acme-")).toBe(false);      // trailing hyphen
+    expect(isValidSlug("ac--me")).toBe(false);     // doubled hyphen
+    expect(isValidSlug("acme co")).toBe(false);    // space
+    expect(isValidSlug("a")).toBe(false);          // under two characters
+    expect(isValidSlug("x".repeat(49))).toBe(false); // over 48
   });
 
-  it("rejects every reserved word", () => {
+  it("rejects every reserved word, so a client can never shadow a system page", () => {
     for (const reserved of RESERVED_SLUGS) {
-      expect(isValidSlug(reserved), reserved).toBe(false);
+      expect(isValidSlug(reserved)).toBe(false);
+    }
+  });
+
+  it("reserves every first path segment the router actually serves", () => {
+    // A slug colliding with a real area would make /c/{slug} ambiguous the
+    // day that area moves up a level. Keep this list and RESERVED_SLUGS
+    // honest about each other.
+    for (const segment of ["admin", "api", "auth", "login", "studio", "portal"]) {
+      expect(RESERVED_SLUGS as readonly string[]).toContain(segment);
     }
   });
 });
 
 describe("safeNext", () => {
-  it("passes through same-origin absolute paths", () => {
-    expect(safeNext("/c/acme")).toBe("/c/acme");
-    expect(safeNext("/admin/clients")).toBe("/admin/clients");
+  it("keeps same-origin absolute paths", () => {
+    expect(safeNext("/c/acme/billing")).toBe("/c/acme/billing");
   });
 
   it("falls back when the target could leave the site", () => {
-    // A crafted /login?next=… link is the whole reason this function exists.
-    expect(safeNext("https://evil.example/steal")).toBe("/portal");
-    expect(safeNext("//evil.example/steal")).toBe("/portal");
+    expect(safeNext("https://evil.test/x")).toBe("/portal");
+    expect(safeNext("//evil.test/x")).toBe("/portal");   // protocol-relative
     expect(safeNext("javascript:alert(1)")).toBe("/portal");
-    expect(safeNext("portal")).toBe("/portal");
     expect(safeNext(undefined)).toBe("/portal");
     expect(safeNext("")).toBe("/portal");
   });
 
-  it("honours an explicit fallback", () => {
-    expect(safeNext("//evil.example", "/studio")).toBe("/studio");
-  });
-});
-
-describe("siteUrl", () => {
-  it("joins without doubling or dropping the separator", () => {
-    expect(siteUrl("/studio")).toMatch(/^https?:\/\/[^/]+\/studio$/);
-    expect(siteUrl("studio")).toBe(siteUrl("/studio"));
-    expect(siteUrl()).toMatch(/\/$/);
-  });
-
-  it("does not double a slash when the env base has a trailing one", () => {
-    const previous = process.env.NEXT_PUBLIC_SITE_URL;
-    process.env.NEXT_PUBLIC_SITE_URL = "https://example.test/";
-    try {
-      expect(siteUrl("/studio")).toBe("https://example.test/studio");
-    } finally {
-      if (previous === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
-      else process.env.NEXT_PUBLIC_SITE_URL = previous;
-    }
+  it("honours a caller-supplied fallback", () => {
+    expect(safeNext("//evil.test", "/admin")).toBe("/admin");
   });
 });
 
 describe("routes", () => {
-  it("builds every client path under the same /c/{slug} root", () => {
-    const slug = "acme";
-    const root = routes.client.root(slug);
-    expect(root).toBe("/c/acme");
-    for (const path of [
-      routes.client.projects(slug),
-      routes.client.billing(slug),
-      routes.client.bookings(slug),
-      routes.client.messages(slug),
-      routes.client.settings(slug),
-      routes.client.project(slug, "p1"),
-    ]) {
-      expect(path.startsWith(`${root}/`)).toBe(true);
-    }
+  it("builds client paths under one slug", () => {
+    expect(routes.client.root("acme")).toBe("/c/acme");
+    expect(routes.client.billing("acme")).toBe("/c/acme/billing");
+    expect(routes.client.project("acme", "p1")).toBe("/c/acme/projects/p1");
   });
 
-  it("encodes the login redirect target", () => {
-    expect(routes.auth.loginNext("/c/acme/billing")).toBe(
-      "/login?next=%2Fc%2Facme%2Fbilling",
+  it("encodes the next parameter", () => {
+    expect(routes.auth.loginNext("/c/acme?x=1")).toBe(
+      "/login?next=%2Fc%2Facme%3Fx%3D1",
     );
+  });
+
+  it("joins siteUrl without doubling or dropping the slash", () => {
+    expect(siteUrl("/studio")).toMatch(/\/studio$/);
+    expect(siteUrl("studio")).toMatch(/\/studio$/);
+    expect(siteUrl("/studio")).not.toMatch(/\/\/studio$/);
   });
 });

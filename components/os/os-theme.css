@@ -863,6 +863,161 @@
   font-family: var(--os-sans);
 }
 
+/* ─── settings: hints and toggles ──────────────────────────────────── */
+/* Unlike .os-note this wraps and carries no bullet — it's a paragraph of
+   explanation under a control, not a one-line status. */
+.shaft-os .os-hint {
+  font-family: var(--os-sans);
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--os-muted);
+  margin: 0;
+  max-width: 60ch;
+}
+.shaft-os .os-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 11px 12px;
+  border: 1px solid var(--os-border);
+  border-radius: 2px;
+  background: var(--os-bg);
+  cursor: pointer;
+}
+.shaft-os .os-toggle:has(input:disabled) {
+  cursor: default;
+  opacity: 0.6;
+}
+.shaft-os .os-toggle input {
+  accent-color: var(--os-accent);
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  flex: none;
+}
+.shaft-os .os-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.shaft-os .os-toggle-text strong {
+  font-family: var(--os-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--os-ink);
+}
+.shaft-os .os-toggle-text span {
+  font-family: var(--os-sans);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--os-muted);
+}
+.shaft-os .os-input:disabled {
+  color: var(--os-muted);
+  background: var(--os-surface-alt);
+  cursor: not-allowed;
+}
+.shaft-os .os-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.shaft-os .os-btn:disabled:hover {
+  background: transparent;
+  color: inherit;
+  border-color: var(--os-border);
+}
+
+/* ─── analytics: range switch + bar charts ─────────────────────────── */
+.shaft-os .os-rangebar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.shaft-os .os-chart {
+  border: 1px solid var(--os-border);
+  border-radius: 3px;
+  background: var(--os-surface);
+  padding: 16px 16px 10px;
+  margin-bottom: 28px;
+}
+.shaft-os .os-chart-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.shaft-os .os-chart-key {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--os-muted);
+}
+.shaft-os .os-chart-key::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 1px;
+  background: var(--os-accent);
+}
+.shaft-os .os-chart-key.gold::before {
+  background: var(--os-gold);
+}
+.shaft-os .os-chart-plot {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  overflow-x: auto;
+}
+.shaft-os .os-chart-col {
+  flex: 1 1 0;
+  min-width: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.shaft-os .os-chart-stack {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 150px;
+}
+.shaft-os .os-chart-bar {
+  flex: 1;
+  background: var(--os-accent);
+  border-radius: 1px 1px 0 0;
+  transition: opacity 0.18s;
+}
+.shaft-os .os-chart-bar:hover {
+  opacity: 0.72;
+}
+.shaft-os .os-chart-bar.gold {
+  background: var(--os-gold);
+}
+.shaft-os .os-chart-tick {
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: var(--os-muted);
+  text-align: center;
+  white-space: nowrap;
+  border-top: 1px solid var(--os-border);
+  padding-top: 6px;
+}
+.shaft-os .os-chart-empty {
+  font-family: var(--os-sans);
+  font-size: 12.5px;
+  color: var(--os-muted);
+  margin: 0;
+  padding: 22px 4px;
+  text-align: center;
+}
+
 /* ─── inline text states ───────────────────────────────────────────── */
 .shaft-os .os-dim {
   color: var(--os-muted);
@@ -926,5 +1081,10 @@
   }
   .shaft-os .os-nav {
     overflow-x: auto;
+  }
+  /* Columns stop shrinking and the plot scrolls instead, so a year of
+     buckets stays readable rather than collapsing into hairlines. */
+  .shaft-os .os-chart-col {
+    flex: 0 0 34px;
   }
 }

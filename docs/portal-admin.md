@@ -333,6 +333,177 @@ to the same route.
   restricts read/write to that client (or any admin). Links use short-lived
   signed URLs.
 
+## Client settings (Phase 7)
+
+`client_preferences` (`0011_client_preferences.sql`) + `/c/{slug}/settings`.
+
+The page has four parts: the client's own details, their email preferences,
+their password, and a read-only summary of their space.
+
+- **Details** — `profiles.full_name` and `clients.phone`, written by
+  `update_my_profile()`. Their email is shown but not editable: it is the
+  unique key on `clients`, the address Supabase Auth signs them in with, and
+  the handle the TidyCal webhook matches bookings by. Changing it in one place
+  and not the others silently detaches a client from their own bookings, so
+  it is an admin action.
+- **Email preferences** — one switch per nudge category
+  (`email_reminders` → `no_login_days`, `email_project_updates` →
+  `milestone_awaiting_hours`, `email_billing` → `invoice_unpaid_days`),
+  written by `update_my_preferences()`. The evaluator checks them in `fire()`
+  before it sends. Every switch is real: nothing on that page is decorative.
+  **In-app delivery is never gated** — a client who muted their inbox hasn't
+  asked to be told nothing, so the bell keeps every notice. The
+  `booking_unconfirmed_hours` rule maps to no preference at all, since it
+  nudges the studio rather than the client.
+- **Password** — `supabase.auth.updateUser` from the browser, same call as
+  `/set-password`.
+
+Why a separate table again: a client may write these, and RLS is row-level.
+An UPDATE policy on their `clients` row would also hand them `status`,
+`tier` and `modules`; one on `profiles` would hand them `role` and
+`client_id`. So preferences get their own table with a client-scoped read
+policy, and the two contact fields are written by `SECURITY DEFINER`
+functions that name their columns. CI asserts a client's write reaches their
+own preferences and nothing else — not another client's row, not their own
+role, not their status.
+
+An admin visiting `/c/{slug}/settings` sees the page with every control
+**disabled rather than hidden**. All three forms write the signed-in user's
+own record, so a save there would land on the admin's account while appearing
+to edit the client's.
+
+## Analytics (Phase 7)
+
+`/admin/analytics`, over a 30-day / 90-day / 12-month window picked from the
+page (`?range=`). Five totals — collected, invoiced, recurring per period,
+outstanding, clients active — then the shape of them: money and activity as
+bar charts, an event mix table, the pitch-to-client pipeline, and a per-client
+table pairing revenue with engagement (a client paying well and going quiet is
+the one to call).
+
+Every group-by runs in Postgres (`0012_analytics.sql`), not in the page.
+PostgREST caps a request at 1000 rows by default and `activity_events` is the
+busiest table in the schema, so summing it in the page would mean either
+paging through a year of rows or charting the first thousand and calling it a
+trend — and a truncated chart still looks like a chart. Buckets come from
+`date_bin()` with the range start as origin, so "last 30 days" starts 30 days
+ago rather than on the 1st; a year is binned into 30-day periods because
+`date_bin()` refuses intervals containing months.
+
+The functions are admin-gated and `SECURITY INVOKER`, so RLS still stands
+behind the guard. CI asserts a client calling them is refused.
+
+The charts are `components/os/BarChart.tsx` — flexbox and a `title`
+attribute, no JavaScript and no charting dependency, so they render inside the
+same server component as the table below them.
+
+## Audit trail (Phase 8)
+
+`/admin/audit`. `audit_log` has been written since 0001 by
+`log_admin_action` — client edits, pitch saves and publishes, project
+creation, invoices raised — and read by nothing until now. The page pages
+through it, resolving actor and client names in one round trip each rather
+than per row: `actor_id` references `auth.users`, not `profiles`, so there is
+no foreign key for a PostgREST embed to follow.
+
+The table keeps a read policy and no write policy — nothing in the app can
+edit or delete a row.
+
+## Analytics export (Phase 8)
+
+`/admin/analytics/export?range=…` returns the range currently on screen as a
+CSV: totals, both series, the event mix and the per-client table in one file.
+Amounts stay in **minor units with the currency in its own column** — a
+spreadsheet reading a pre-formatted "£12.00" is one locale away from a wrong
+number. It is a plain link, so it works with JavaScript off, and inherits both
+`/admin`'s middleware gate and the SQL admin check under the aggregates.
+
+## Nudge query shape (Phase 8, `0013_nudge_queries.sql`)
+
+The no-login rule used to fetch every active client and then ask "when did
+this one last log in?" separately for each — a round trip per client per rule
+per hour. Filtering in memory instead would have been worse: PostgREST caps a
+response at 1000 rows and `activity_events` is the busiest table in the
+schema, so past the cap the evaluator would have quietly started nudging
+clients who had in fact logged in.
+
+`clients_idle_since(cutoff)` asks once, with a partial index on login events
+behind it. It is SECURITY DEFINER and answers only the service role (no
+`auth.uid()`) or an admin, because the result is a list of every client who
+has gone quiet. The milestone and invoice rules resolve their whole batch up
+front for the same reason.
+
+## Webhook integrity (Phase 9, `0014_billing_event_integrity.sql`)
+
+Two defects in the Stripe handler.
+
+**One payment wrote several `invoice_paid` events.** Eight invoice event
+types route to the same sync function, which ended with
+`if (inv.status === 'paid') insert into activity_events`. Stripe sends both
+`invoice.paid` and `invoice.payment_succeeded` for a single charge, any later
+`invoice.updated` on a paid invoice makes a third, and deliveries are retried.
+`client_engagement` scores on those rows, so paying an invoice inflated a
+client's engagement several-fold and suppressed the at-risk nudge meant to
+flag them going quiet — the same failure 0010 closed when a *client* forged
+events, except self-inflicted. `log_invoice_paid()` is now the only writer,
+and a partial unique index enforces one row per invoice so two racing
+deliveries cannot both slip through.
+
+**Stripe does not guarantee delivery order.** An `invoice.updated` arriving
+after `invoice.paid` overwrote the row with older state. `invoices` and
+`subscriptions` carry `last_event_at`, and `sync_stripe_invoice()` /
+`sync_stripe_subscription()` drop any delivery older than the one already
+applied.
+
+The cron endpoint at `/api/cron/nudges` also **fails closed** now, matching
+the TidyCal webhook: unset `CRON_SECRET` in production returns 503. A run
+sends email and writes notifications, so an unconfigured deploy previously
+let anyone who found the URL message the client list.
+
+## Booking rules (Phase 9, `0015_booking_rules_and_attachments.sql`)
+
+`request_booking` used to validate one thing: that the end was after the
+start. A client could book last Tuesday, book 3am on a Sunday, or take a slot
+someone already held — the availability windows set in `/admin/settings` were
+never read by anything.
+
+`assert_bookable()` is shared by request and reschedule, and refuses:
+
+- a start in the past,
+- a time outside the published `availability_windows` — but only once some
+  are active, so the admin UI's promise that "clients can still request any
+  time" holds when none are,
+- a slot overlapping any booking already `requested` or `confirmed`. One
+  studio, one person; adjacent slots are fine, overlapping ones are not.
+
+Admins are exempt from all three: the console exists to fix things, including
+recording a session that already happened.
+
+**Time zone:** `availability_windows` stores a bare `time` and bookings are
+`timestamptz`, so the comparison picks UTC. Operating from a zone with
+daylight saving shifts the windows an hour against local time twice a year;
+the fix then is a zone column on the window, not arithmetic in the function.
+
+Rejections are phrased for the person reading them — "that slot is already
+taken" — because the booking form surfaces the SQL error message directly.
+
+## Attachments (Phase 9)
+
+The bucket now carries a 25 MB `file_size_limit` and a MIME allowlist, and
+`storage.objects` gained the DELETE policy 0006 omitted — nothing could be
+removed before, by anyone, including an admin. `MessageThread` mirrors the
+same limits client-side so an oversized file fails before the upload rather
+than after.
+
+## Error boundaries (Phase 9)
+
+`app/error.tsx`, `app/global-error.tsx` and `app/not-found.tsx`, plus
+area-specific boundaries for `/admin` and `/c/[slug]` that keep a failure
+inside the right chrome. There were none, so `notFound()` — which the
+client-scope resolver calls for every unknown slug — rendered Next's unstyled
+default on a domain a prospect may have been sent, and a database blip showed
+a raw error screen on a client's own space.
+
 ## Data model (Phase 1)
 
 `clients` · `profiles` · `activity_events` · `audit_log` · `client_pages` ·
@@ -358,3 +529,15 @@ populated from day one (login beacon) so the Phase 5 nudge engine has history.
   notification bell.
 - **Phase 6 (done):** Messaging — realtime per-client threads, attachments,
   unread counts, notification bell.
+- **Phase 7 (done):** The two pages the earlier phases left as placeholders —
+  client settings (details, email preferences honoured by the evaluator,
+  password) and admin analytics (revenue, engagement and pipeline trends over
+  a selectable window).
+- **Phase 8 (done):** The audit trail made visible, analytics exportable, the
+  nudge evaluator's per-client queries collapsed into one, generated OG cards
+  for every share link, a unit-test suite, and a guard against `types.ts`
+  drifting from the migrations.
+- **Phase 9 (done):** Correctness in the trusted paths — an idempotent,
+  order-independent Stripe webhook, a cron endpoint that fails closed,
+  bookings that are actually validated, bounded and deletable attachments,
+  and error boundaries so a fault never shows a client a stack trace.

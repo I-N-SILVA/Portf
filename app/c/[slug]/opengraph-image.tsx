@@ -1,44 +1,72 @@
-import { ImageResponse } from "next/og";
-import { OgCard, OG_CONTENT_TYPE, OG_SIZE } from "@/components/og/OgCard";
-import { resolveClientScope } from "@/lib/os/client-scope";
+import { createClient as createRawClient } from "@supabase/supabase-js";
+import { devPitchRoom } from "@/lib/client-content";
+import { isValidSlug } from "@/lib/routes";
+import { ogCard, OG_SIZE, OG_CONTENT_TYPE } from "@/lib/og";
+import type { Database, PublicClientPage } from "@/lib/supabase/types";
 
-export const alt = "Prepared by Ian N. Silva";
+export const alt = "Prepared for you";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 
 /**
- * The card that renders when a pitch link is pasted into Slack, iMessage or a
- * DM — which is how every one of these links actually travels. A generic
- * preview and a personalised one are the same amount of work to send and are
- * not the same pitch.
+ * The card a prospect sees before they open the link.
  *
- * It names the client only when their page is published, which is exactly the
- * `access: "public"` branch of `resolveClientScope`. A crawler has no session,
- * so an unpublished space falls through to the generic card and gives away
- * nothing about whether that slug exists.
+ * `/c/{slug}` is the one URL sent to a client, so it is the share preview
+ * that matters most on the whole site — and it had none, only the site-wide
+ * square. This names them.
+ *
+ * It resolves through `get_public_client_page`, the same SECURITY DEFINER
+ * function the anonymous pitch page uses, so it can only ever show what a
+ * stranger visiting that URL would already see. An unpublished page, an
+ * unknown slug, or no backend at all falls through to a generic card, which
+ * means the preview never confirms whether a given slug exists.
  */
+
+// Per-request: a pitch page can be published or renamed at any time, and a
+// prerendered card would keep unfurling the old answer.
+export const dynamic = "force-dynamic";
+
+async function publishedPage(slug: string): Promise<PublicClientPage | null> {
+  if (!isValidSlug(slug)) return null;
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return devPitchRoom(slug) ?? null;
+
+  try {
+    const supabase = createRawClient<Database>(url, key, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const { data } = await supabase
+      .rpc("get_public_client_page", { p_slug: slug })
+      .maybeSingle();
+    return (data as PublicClientPage) ?? null;
+  } catch {
+    // A card is a nice-to-have; never let it take the page down with it.
+    return null;
+  }
+}
+
 export default async function Image({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const scope = await resolveClientScope(slug);
+  const page = await publishedPage(slug);
 
-  const personalised = scope.access === "public" ? scope.page : null;
+  if (!page) {
+    return ogCard({
+      eyebrow: "Ian N. Silva",
+      title: "A proposal, prepared by hand",
+      subtitle: "AI automations, landing pages and MVPs you can test in weeks.",
+    });
+  }
 
-  return new ImageResponse(
-    (
-      <OgCard
-        eyebrow={personalised ? `Prepared for ${personalised.display_name}` : "Proposal"}
-        title={personalised?.headline ?? "A proposal, written for you"}
-        subtitle={
-          personalised
-            ? "Selected work, scope, and what happens next."
-            : "AI automation and product work."
-        }
-      />
-    ),
-    size,
-  );
+  return ogCard({
+    eyebrow: "Prepared for",
+    title: page.display_name,
+    subtitle: page.headline ?? undefined,
+    footer: `iamnsilva.me/c/${slug}`,
+  });
 }

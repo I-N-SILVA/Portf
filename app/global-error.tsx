@@ -4,10 +4,9 @@ import { useEffect } from "react";
 import { reportClientError } from "@/lib/observability/actions";
 
 /**
- * Last resort: an error thrown in the root layout itself, before any of the
- * app's providers, fonts or CSS are in play. It has to render its own <html>
- * and <body>, and it cannot rely on Tailwind having loaded — hence the inline
- * styles, which are the only thing guaranteed to reach the visitor here.
+ * The last resort: an error thrown in the root layout itself, where no other
+ * boundary and none of the app's own styling is available. Everything here is
+ * inline for that reason.
  */
 export default function GlobalError({
   error,
@@ -30,45 +29,51 @@ export default function GlobalError({
       <body
         style={{
           margin: 0,
-          minHeight: "100dvh",
+          minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          gap: "1rem",
-          padding: "2rem",
+          gap: "18px",
+          background: "#080808",
+          color: "#f0ead6",
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
           textAlign: "center",
-          background: "#0f1720",
-          color: "#e8eef4",
-          fontFamily:
-            "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+          padding: "32px",
         }}
       >
-        <p style={{ fontSize: 12, letterSpacing: "0.4em", opacity: 0.6, margin: 0 }}>
-          {error.digest ? `ERROR · ${error.digest}` : "ERROR"}
+        <p style={{ fontSize: "11px", letterSpacing: "0.4em", color: "#c4973a", margin: 0 }}>
+          SYSTEM FAULT
         </p>
-        <h1 style={{ fontSize: 28, fontWeight: 600, margin: 0 }}>
-          The site failed to load
+        <h1 style={{ fontSize: "26px", fontWeight: 500, margin: 0 }}>
+          The site failed to start.
         </h1>
-        <p style={{ maxWidth: 420, fontSize: 14, lineHeight: 1.6, opacity: 0.75, margin: 0 }}>
-          Something went wrong before the page could render. Reloading usually
-          fixes it.
+        <p style={{ fontSize: "14px", color: "#a49a80", margin: 0, maxWidth: "44ch", lineHeight: 1.6 }}>
+          This one is ours. Reload, or come back shortly.
         </p>
         <button
           onClick={reset}
           style={{
-            marginTop: 8,
-            borderRadius: 999,
-            border: "1px solid rgba(232,238,244,0.25)",
+            marginTop: "10px",
+            padding: "10px 18px",
+            fontSize: "11px",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "#f0ead6",
             background: "transparent",
-            color: "inherit",
-            padding: "10px 20px",
-            fontSize: 14,
+            border: "1px solid #cc1122",
+            borderRadius: "2px",
             cursor: "pointer",
+            fontFamily: "inherit",
           }}
         >
           Reload
         </button>
+        {error.digest && (
+          <p style={{ fontSize: "11px", color: "#5a5346", margin: 0 }}>
+            Reference {error.digest}
+          </p>
+        )}
       </body>
     </html>
   );

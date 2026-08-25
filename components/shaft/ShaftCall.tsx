@@ -5,6 +5,7 @@ import { useRef } from "react";
 
 import { socialLinks } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
+import { ShaftGatewayLinks } from "./ShaftGateway";
 
 // Minimal social icon labels for text-only rendering
 const SOCIAL_LABELS: Record<string, string> = {
@@ -241,6 +242,7 @@ export default function ShaftCall() {
 
           {/* Social links as text */}
           <div className="flex flex-wrap items-center gap-6">
+            <ShaftGatewayLinks />
             {socialLinks.map((link) => (
               <a
                 key={link.name}

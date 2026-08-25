@@ -176,7 +176,7 @@ export default function ShaftIdentity() {
                 alt={profileData.name}
                 width={112}
                 height={112}
-                className="relative h-28 w-28 rounded-full border-2 object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                className="relative h-28 w-28 rounded-full border-2 object-cover grayscale hover:grayscale-0 [@media(hover:none)]:grayscale-0 transition-all duration-500"
                 style={{
                   borderColor: "rgb(var(--shaft-crimson) / 0.4)",
                   boxShadow: "0 20px 50px rgba(0,0,0,0.5)",

@@ -162,6 +162,37 @@ Finally, confirm `/api/tidycal/webhook` returns **503** if you haven't set
 
 ---
 
+## 6b. Applying a batch of migrations by hand
+
+`supabase/apply-0011-0015.sql` is every migration from 0011 to 0015 in one
+file, ready to paste into the Supabase SQL editor and run once.
+
+It is **generated, not written** — `npm run bundle:sql 0011 0015` concatenates
+the real migration files, so the SQL you paste into production is byte-for-byte
+the SQL CI applies to a throwaway Postgres and asserts against. Never edit the
+bundle: edit the migration and regenerate, or the two stop matching.
+
+- It runs in one transaction. A failure applies nothing, so you can fix and
+  re-paste.
+- It is safe to run twice. Every statement is guarded, and re-running was
+  tested against a database already carrying the changes.
+- It ends with a verification query. Seven rows, all of which should read
+  `ok`.
+
+What it changes that is worth knowing before you run it:
+
+- **Engagement scores will drop for clients who have paid you.** 0014 deletes
+  the duplicate `invoice_paid` events the old webhook wrote — several per
+  payment — keeping the earliest of each set. Those scores were inflated; this
+  is them becoming correct.
+- Every existing client gains a `client_preferences` row, opted in to all
+  three email categories, which is what they were already receiving.
+- Bookings become validated. Any *existing* booking in the past or outside
+  your published hours stays exactly as it is; only new requests and
+  reschedules are checked.
+
+For a different range: `npm run bundle:sql 0016 0018`.
+
 ## 7. Rollback
 
 The merge is one commit. To undo everything:

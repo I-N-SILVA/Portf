@@ -115,7 +115,7 @@ export default function ShaftSocialDock() {
             src="/floating-dog.webp"
             alt="Bit-Ko Robot Dog"
             fill
-            className={`object-contain transition-all duration-300 ${expanded ? 'brightness-125' : 'grayscale group-hover:grayscale-0'}`}
+            className={`object-contain transition-all duration-300 ${expanded ? 'brightness-125' : 'grayscale group-hover:grayscale-0 [@media(hover:none)]:grayscale-0'}`}
           />
         </div>
 

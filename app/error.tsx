@@ -1,18 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
-import { StatusScreen } from "@/components/ui/StatusScreen";
 import { reportClientError } from "@/lib/observability/actions";
+import { routes } from "@/lib/routes";
 
 /**
- * Route-level error boundary. Without one, an exception anywhere in a Server
- * Component reaches the visitor as Next's unstyled default page — including on
- * a pitch link sent to a prospect, which is the one page that must never look
- * broken.
- *
- * `digest` is the only detail shown: Next strips server error messages in
- * production on purpose, and the digest is what correlates this screen with
- * the real stack trace in the platform logs.
+ * Catches anything thrown while rendering a route — most realistically the
+ * database being unreachable. Without it Next serves its own error screen,
+ * which on a link sent to a client reads as a broken site rather than a
+ * temporary fault.
  */
 export default function Error({
   error,
@@ -23,6 +20,9 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error(error);
+    // A console line on a serverless function is a log nobody reads. This
+    // forwards it to whatever ERROR_WEBHOOK_URL points at, and is a no-op
+    // when that isn't set.
     void reportClientError({
       message: error.message,
       digest: error.digest,
@@ -31,17 +31,23 @@ export default function Error({
   }, [error]);
 
   return (
-    <StatusScreen
-      code={error.digest ? `Error · ${error.digest}` : "Error"}
-      title="Something broke on our side"
-      message="This one's on me, not you. Try again — if it keeps happening, send me the reference above and I'll go and look."
-    >
-      <button
-        onClick={reset}
-        className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-90"
-      >
-        Try again
-      </button>
-    </StatusScreen>
+    <main className="shaft-fallback">
+      <p className="shaft-fallback-eyebrow">Interruption</p>
+      <h1 className="shaft-fallback-title">That didn&apos;t load.</h1>
+      <p className="shaft-fallback-body">
+        Something went wrong at our end, not yours. Try again in a moment.
+      </p>
+      <div className="shaft-fallback-actions">
+        <button className="shaft-fallback-link" onClick={reset}>
+          Try again
+        </button>
+        <Link className="shaft-fallback-link" href={routes.home}>
+          Portfolio
+        </Link>
+      </div>
+      {error.digest && (
+        <p className="shaft-fallback-ref">Reference {error.digest}</p>
+      )}
+    </main>
   );
 }
