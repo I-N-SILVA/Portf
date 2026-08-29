@@ -17,15 +17,19 @@
    ══════════════════════════════════════════════════════════════════════ */
 
 .studio-doc {
-  --st-bg: #f8f4ea;
-  --st-surface: #fdfbf5;
-  --st-surface-alt: #f0eadc;
-  --st-ink: #18140e;
-  --st-ink-dim: #484034;
-  --st-accent: #1c40a8; /* Pilot Pen Blue — the portal's accent */
-  --st-gold: #946a0e;
-  --st-muted: #6e6455;
-  --st-border: #d8cfba;
+  /* Aliases of the shared parchment — see "The paper palette" in
+     app/globals.css. Naming them separately keeps the studio free to add
+     steps the apps have no use for (the night ground below) without
+     reaching into the apps' namespace. */
+  --st-bg: var(--paper-bg);
+  --st-surface: var(--paper-surface);
+  --st-surface-alt: var(--paper-surface-alt);
+  --st-ink: var(--paper-ink);
+  --st-ink-dim: var(--paper-ink-dim);
+  --st-accent: var(--paper-accent);
+  --st-gold: var(--paper-gold);
+  --st-muted: var(--paper-muted);
+  --st-border: var(--paper-border);
 
   /* The cover sheet and the closing panel, quoting the reel's ground. */
   --st-night: #0b0b0a;
@@ -33,7 +37,11 @@
   --st-night-ink: #f0ead6;
   --st-night-dim: #a49c88;
   --st-night-border: #2a2825;
-  --st-crimson: #cc1122;
+  /* The reel's crimson is rgb(204 17 34), which lands at 3.44:1 on this
+     ground — fine as a hairline, not as the 9px type in the availability
+     stamp. Lifted for use as text; the rule itself still reads as the same
+     red. */
+  --st-crimson: #e04256;
 
   --st-mono: var(--font-space-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
   --st-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;

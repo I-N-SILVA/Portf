@@ -5,15 +5,24 @@
    ══════════════════════════════════════════════════════════════════════ */
 
 .shaft-os {
-  --os-bg: #f8f4ea;
-  --os-surface: #fdfbf5;
-  --os-surface-alt: #f0eadc;
-  --os-ink: #18140e;
-  --os-ink-dim: #484034;
-  --os-accent: #1c40a8; /* Pilot Pen Blue */
-  --os-gold: #946a0e;
-  --os-muted: #8a8069;
-  --os-border: #d8cfba;
+  /* Aliases, not copies — see "The paper palette" in app/globals.css. This
+     block used to restate the same hexes and claim in a comment to mirror
+     the light palette; it had in fact drifted, leaving --os-gold at 4.42:1
+     and --os-muted at 3.56:1 against the parchment. --os-muted colours
+     roughly two dozen labels, captions and empty states across the portal
+     and /admin, so most of the secondary text in both apps was under AA.
+     They now clear it at 4.86:1 and 5.29:1. */
+  --os-bg: var(--paper-bg);
+  --os-surface: var(--paper-surface);
+  --os-surface-alt: var(--paper-surface-alt);
+  --os-ink: var(--paper-ink);
+  --os-ink-dim: var(--paper-ink-dim);
+  --os-accent: var(--paper-accent);
+  --os-gold: var(--paper-gold);
+  --os-muted: var(--paper-muted);
+  --os-border: var(--paper-border);
+  /* No paper equivalent: this is the redaction bar's ink, not a text or
+     surface step. */
   --os-redact: #17130d;
 
   --os-mono: var(--font-space-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -250,14 +259,24 @@
 }
 
 /* ─── window cards ─────────────────────────────────────────────────── */
+/* The hairlines between tiles are drawn by the tiles, not by letting a
+   border-coloured container show through a 1px gap. With auto-fit columns
+   the number of tiles rarely divides evenly — four modules across three
+   columns is the default case — and the leftover cells rendered as a solid
+   slab of border colour across the dashboard's front door. Each tile now
+   rings itself; adjacent rings meet in the 1px gap to make one line, and an
+   empty cell is simply the surface. */
 .shaft-os .os-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1px;
-  background: var(--os-border);
+  background: var(--os-surface);
   border: 1px solid var(--os-border);
   border-radius: 3px;
   overflow: hidden;
+}
+.shaft-os .os-grid > * {
+  box-shadow: 0 0 0 1px var(--os-border);
 }
 .shaft-os .os-win {
   background: var(--os-surface);

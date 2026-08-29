@@ -19,6 +19,38 @@
   --shaft-white: 245 245 240;
 }
 
+/* ─── The paper palette ───────────────────────────────────────────────
+   One definition of the parchment for the two surfaces built on it: the
+   studio (components/studio/studio-theme.css) and the client + admin apps
+   (components/os/os-theme.css). Both alias these rather than restating
+   them.
+
+   It exists because os-theme.css used to carry the same colours as its own
+   literals and claimed in a comment to mirror the light palette below — but
+   the contrast corrections made there never reached it, leaving its gold at
+   4.42:1 and its muted grey, the colour of most secondary text in both
+   apps, at 3.56:1. Aliasing makes that drift impossible.
+
+   The light mode below is the same family but is not an alias of this: it
+   stores space-separated RGB triples so Tailwind can compose them with an
+   alpha, and its surface and border steps are its own. globals.css is
+   imported by the root layout, so these are defined on every route.  */
+:root {
+  --paper-bg: #f8f4ea;
+  --paper-surface: #fdfbf5;
+  --paper-surface-alt: #f0eadc;
+  --paper-ink: #18140e;
+  --paper-ink-dim: #484034;
+  --paper-accent: #1c40a8; /* Pilot Pen Blue */
+  /* Set against --paper-surface-alt, the darkest of the three parchment
+     steps, not against --paper-bg: the studio's alternating bands and the
+     apps' panels both put 9px gold labels on it, where the light palette's
+     own value only reached 4.48:1. */
+  --paper-gold: #875f0b; /* 4.77:1 on --paper-surface-alt, 5.21:1 on --paper-bg */
+  --paper-muted: #6e6455; /* 4.84:1 on --paper-surface-alt, 5.29:1 on --paper-bg */
+  --paper-border: #d8cfba;
+}
+
 /* ─── Light Mode (parchment / archival document) ─────────────────────── */
 html[data-shaft-light] {
   --shaft-bg: 248 244 234;
