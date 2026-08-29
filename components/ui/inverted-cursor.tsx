@@ -27,11 +27,20 @@ export const Cursor: React.FC = () => {
   useEffect(() => {
     // Disable custom cursor on touch devices
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (isTouchDevice) {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isTouchDevice || reduceMotion) {
       setIsMobile(true);
       return;
     }
     setIsMobile(false);
+
+    // Hiding the native pointer is this component's business, not the
+    // stylesheet's. globals.css used to do it for every page at >=1024px,
+    // which left the studio, the portal, /admin and /login with no pointer
+    // at all — the reticle only ever renders here. Stamping the flag from
+    // inside the effect ties the two together: the native cursor goes away
+    // exactly where, and for exactly as long as, a reticle replaces it.
+    document.documentElement.dataset.shaftCursor = "on";
 
     const handleMouseMove = (e: MouseEvent) => {
       x.set(e.clientX);
@@ -74,6 +83,7 @@ export const Cursor: React.FC = () => {
       window.removeEventListener("mouseover", handleMouseOver);
       document.documentElement.removeEventListener("mouseleave", handleMouseLeave);
       document.documentElement.removeEventListener("mouseenter", handleMouseEnter);
+      delete document.documentElement.dataset.shaftCursor;
     };
   }, [x, y]);
 

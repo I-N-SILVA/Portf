@@ -6,10 +6,9 @@ import { useEffect, useState } from "react";
 import { routes } from "@/lib/routes";
 
 const LINKS: [label: string, id: string][] = [
-  ["Services", "services"],
   ["Work", "work"],
-  ["Process", "process"],
-  ["FAQ", "faq"],
+  ["Approach", "approach"],
+  ["Terms", "terms"],
 ];
 
 export default function StudioNavLinks() {
@@ -48,11 +47,12 @@ export default function StudioNavLinks() {
             key={id}
             href={`${routes.studio.root}#${id}`}
             aria-current={isActive ? "true" : undefined}
-            className={`hidden text-sm transition-colors min-[480px]:block ${
-              isActive
-                ? "font-medium text-stone-900"
-                : "text-stone-600 hover:text-stone-900"
+            className={`st-label st-underline hidden min-[560px]:block ${
+              isActive ? "" : "st-underline-grow"
             }`}
+            style={{
+              color: isActive ? "var(--st-night-ink)" : "var(--st-night-dim)",
+            }}
           >
             {label}
           </Link>

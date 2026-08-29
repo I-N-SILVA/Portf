@@ -2,26 +2,40 @@ import Link from "next/link";
 import StudioNavLinks from "@/components/studio/StudioNavLinks";
 import { routes } from "@/lib/routes";
 
+/**
+ * A single ruled line across the top of the document, not a floating
+ * capsule. It stays put rather than following the scroll: the page is short
+ * enough that a persistent bar would cost more than it returns, and the
+ * contact block ends the page anyway.
+ */
 export default function StudioNav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200 bg-stone-50/85 backdrop-blur-md">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href={routes.studio.root} className="flex items-baseline gap-2">
-          <span className="font-playfair text-lg font-bold tracking-tight text-stone-900">
+    <header
+      className="st-night relative z-50"
+      style={{ borderBottom: "1px solid var(--st-night-border)" }}
+    >
+      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 md:px-10">
+        <Link
+          href={routes.studio.root}
+          className="flex items-baseline gap-3 whitespace-nowrap"
+        >
+          <span
+            className="text-base font-bold tracking-tight"
+            style={{ fontFamily: "var(--st-serif)" }}
+          >
             Ian N. Silva
           </span>
-          <span className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-500">
-            Studio
-          </span>
+          <span className="st-label">Studio</span>
         </Link>
 
-        <div className="flex items-center gap-4 sm:gap-6">
+        <div className="flex items-center gap-5 sm:gap-7">
           <StudioNavLinks />
           <Link
             href={routes.studio.section("contact")}
-            className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-stone-50 transition-colors hover:bg-stone-700"
+            className="st-label border px-4 py-2.5 transition-colors hover:bg-[var(--st-night-ink)] hover:text-[var(--st-night)]"
+            style={{ borderColor: "var(--st-night-border)" }}
           >
-            Start a project
+            Start
           </Link>
         </div>
       </nav>

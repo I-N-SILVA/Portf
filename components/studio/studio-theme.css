@@ -1,0 +1,271 @@
+/* ══════════════════════════════════════════════════════════════════════
+   Studio — the client-facing dossier.
+
+   The site has three surfaces and they are deliberately one family:
+
+     /            the reel      — black ground, cream type, crimson  (globals.css)
+     /studio      the dossier   — this file
+     /c, /portal  the record    — parchment, ink, pilot blue  (os-theme.css)
+
+   The studio sits between the other two and is built to hand a visitor
+   across: it opens on a black cover sheet that quotes the reel, then the
+   document opens into the same parchment, ink and pilot blue a client will
+   live in once they sign. Tokens below mirror os-theme.css exactly so the
+   two really are the same paper, not two designs that resemble each other.
+
+   Scoped under .studio-doc so nothing here can reach the portfolio.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.studio-doc {
+  --st-bg: #f8f4ea;
+  --st-surface: #fdfbf5;
+  --st-surface-alt: #f0eadc;
+  --st-ink: #18140e;
+  --st-ink-dim: #484034;
+  --st-accent: #1c40a8; /* Pilot Pen Blue — the portal's accent */
+  --st-gold: #946a0e;
+  --st-muted: #6e6455;
+  --st-border: #d8cfba;
+
+  /* The cover sheet and the closing panel, quoting the reel's ground. */
+  --st-night: #0b0b0a;
+  --st-night-alt: #131211;
+  --st-night-ink: #f0ead6;
+  --st-night-dim: #a49c88;
+  --st-night-border: #2a2825;
+  --st-crimson: #cc1122;
+
+  --st-mono: var(--font-space-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --st-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --st-serif: var(--font-playfair), "Iowan Old Style", Palatino, Georgia, serif;
+
+  background: var(--st-bg);
+  color: var(--st-ink);
+  font-family: var(--st-sans);
+  /* Ink bleed, same as the portal's. */
+  text-shadow: 0.2px 0.2px 0.4px rgba(24, 20, 14, 0.14);
+  letter-spacing: -0.005em;
+}
+
+/* The dark bands opt out of the ink bleed — it is a paper effect and only
+   muddies cream type on black. */
+.studio-doc .st-night {
+  background: var(--st-night);
+  color: var(--st-night-ink);
+  text-shadow: none;
+}
+
+.studio-doc ::selection {
+  background: rgba(28, 64, 168, 0.16);
+  color: var(--st-ink);
+}
+.studio-doc .st-night ::selection {
+  background: rgba(204, 17, 34, 0.32);
+  color: var(--st-night-ink);
+}
+
+/* ─── registry label ───────────────────────────────────────────────────
+   The 9px letterspaced monospace caption that names every block. Its job
+   is to look like it was typed onto the form, not designed. */
+.studio-doc .st-label {
+  font-family: var(--st-mono);
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--st-gold);
+}
+
+.studio-doc .st-meta {
+  font-family: var(--st-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--st-muted);
+}
+
+.studio-doc .st-night .st-meta {
+  color: var(--st-night-dim);
+}
+
+/* On black, the parchment palette inverts or it fails to be readable:
+   the gold that clears AA on paper (#946a0e) drops to 3.4:1 against the
+   night ground, and the pilot blue accent (#1c40a8) is worse still at
+   2.2:1 — both are unusable at the 9px this type is set in. These are the
+   dark-mode values from globals.css, at 7.0:1 and 12.9:1. */
+.studio-doc .st-night .st-label {
+  color: #c4973a;
+}
+.studio-doc .st-night .st-accent-mark {
+  color: var(--st-night-ink) !important;
+}
+
+/* ─── ruled paper ──────────────────────────────────────────────────────
+   A 1px registry grid, barely there. It gives the parchment a sense of
+   being a form rather than a blank page, and it is what the section
+   numbers and hairlines align to. */
+.studio-doc .st-grid {
+  background-image:
+    linear-gradient(to right, rgba(24, 20, 14, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(24, 20, 14, 0.045) 1px, transparent 1px);
+  background-size: 88px 88px;
+}
+
+.studio-doc .st-night.st-grid {
+  background-image:
+    linear-gradient(to right, rgba(240, 234, 214, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(240, 234, 214, 0.055) 1px, transparent 1px);
+}
+
+/* Paper grain, identical to the portal's os-paper. */
+.studio-doc .st-paper {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+  opacity: 0.045;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─── the stamp ────────────────────────────────────────────────────────
+   Availability, rendered as a rubber stamp rather than a SaaS status pill.
+   Rotated a degree and a half because a real one never lands square. */
+.studio-doc .st-stamp {
+  font-family: var(--st-mono);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--st-crimson);
+  border: 1.5px solid var(--st-crimson);
+  padding: 5px 10px;
+  transform: rotate(-1.5deg);
+  opacity: 0.85;
+}
+
+/* ─── links ────────────────────────────────────────────────────────────
+   Underlines are drawn, not decorated, so they can grow on hover without
+   the text shifting. */
+.studio-doc .st-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  transition: background-size 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-doc .st-underline-grow {
+  background-size: 0% 1px;
+}
+.studio-doc .st-underline-grow:hover,
+.studio-doc .st-underline-grow:focus-visible {
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-doc .st-underline,
+  .studio-doc .st-underline-grow {
+    transition: none;
+  }
+}
+
+/* ─── form fields ──────────────────────────────────────────────────────
+   Ruled lines, the way a form on paper is ruled — no boxes, no radii, no
+   fill. The rule goes accent-coloured on focus, which is the only state
+   change a field needs and is visible without relying on colour alone
+   (the caret and the label sit right on it). */
+.studio-doc .st-field {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--st-border);
+  border-radius: 0;
+  color: var(--st-ink);
+  font-family: var(--st-sans);
+  transition: border-color 0.2s ease;
+}
+.studio-doc .st-field::placeholder {
+  color: var(--st-muted);
+}
+.studio-doc .st-field:focus {
+  border-bottom-color: var(--st-accent);
+  border-bottom-width: 2px;
+  /* Keep the baseline from jumping when the rule thickens. */
+  margin-bottom: -1px;
+}
+/* The field outline is the focus indicator here, so the generic 2px ring
+   would only double it up. */
+.studio-doc .st-field:focus-visible {
+  outline: none;
+}
+
+.studio-doc .st-night .st-field {
+  border-bottom-color: var(--st-night-border);
+  color: var(--st-night-ink);
+}
+.studio-doc .st-night .st-field::placeholder {
+  color: var(--st-night-dim);
+}
+.studio-doc .st-night .st-field:focus {
+  border-bottom-color: var(--st-night-ink);
+}
+/* A <select>'s dropdown is painted by the OS, which does not inherit the
+   dark panel — name both sides so the options stay readable. */
+/* Reset the platform control so a <select> reads as another ruled field
+   rather than the one rounded white box on the panel. The arrow is drawn
+   back on as a background glyph, since removing the appearance removes
+   the affordance with it. */
+.studio-doc select.st-field {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1.5rem;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right 0.55rem top 1.15rem, right 0.25rem top 1.15rem;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.studio-doc .st-night select.st-field option {
+  background: var(--st-night);
+  color: var(--st-night-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-doc .st-field {
+    transition: none;
+  }
+}
+
+/* A monospace note that stays sentence-case — .st-meta's uppercase and
+   letterspacing outrank the Tailwind utilities that would undo them. */
+.studio-doc .st-note {
+  font-family: var(--st-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--st-muted);
+}
+.studio-doc .st-night .st-note {
+  color: var(--st-night-dim);
+}
+
+/* ─── entrance ─────────────────────────────────────────────────────────
+   The cover sheet's reveal is a CSS animation rather than a JS one for
+   the same reason Reveal.tsx is: framer-motion's `initial` is written
+   into the server-rendered HTML, so the headline, the subhead and both
+   calls to action arrived at opacity 0 and stayed there until React
+   hydrated. A keyframe with `both` fill runs with no JavaScript at all,
+   and the blanket reduced-motion rule in globals.css collapses it to its
+   end state for anyone who asked for less movement. */
+@keyframes st-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.studio-doc .st-rise {
+  animation: st-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}

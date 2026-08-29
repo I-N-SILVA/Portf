@@ -51,14 +51,23 @@ const FRAMES = [
   "https://*.bolt.host",
 ];
 
+/**
+ * `next dev` compiles modules through `eval` for fast refresh and source
+ * maps, so a policy without 'unsafe-eval' stops the dev server hydrating any
+ * page at all — React never boots, and every client component renders as
+ * inert server markup. It only ever applies to `next dev`; a production
+ * build never sees it.
+ */
+const DEV_EVAL = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+
 export function contentSecurityPolicy(nonce?: string): string {
   const script = nonce
     ? // 'strict-dynamic' lets Next's nonced bootstrap load the chunks it needs
       // without every chunk URL having to be listed. The https: and
       // 'unsafe-inline' fallbacks are ignored by browsers that understand
       // 'strict-dynamic' and keep older ones working.
-      `'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`
-    : "'self' 'unsafe-inline'";
+      `'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${DEV_EVAL}`
+    : `'self' 'unsafe-inline'${DEV_EVAL}`;
 
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],

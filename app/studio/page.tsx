@@ -1,8 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
 import {
-  AVAILABILITY,
   caseStudies,
   faqs,
   services,
@@ -12,7 +9,8 @@ import AboutVideo from "@/components/studio/AboutVideo";
 import CaseStudyCard from "@/components/studio/CaseStudyCard";
 import ContactSection from "@/components/studio/ContactSection";
 import Reveal from "@/components/studio/Reveal";
-import { routes } from "@/lib/routes";
+import StudioHero from "@/components/studio/StudioHero";
+import StudioMark from "@/components/studio/StudioMark";
 
 const PROCESS_STEPS = [
   {
@@ -35,70 +33,69 @@ const PROCESS_STEPS = [
 export default function ClientStudioPage() {
   return (
     <main>
-      {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pb-20 pt-20 md:pb-28 md:pt-32">
-        <Reveal>
-          <div className="flex flex-wrap items-center gap-4">
-            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              AI Automation & Product Studio
-            </p>
-            <span className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
-              {AVAILABILITY}
-            </span>
-          </div>
-          <h1 className="mt-5 max-w-4xl font-playfair text-4xl font-bold leading-[1.1] tracking-tight md:text-6xl">
-            I build the systems that give your team its hours back.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-600">
-            AI automation, internal tools, and web products — designed around
-            your workflow and shipped fast. Below is the work, the way I run
-            projects, and the live products you can try yourself.
-          </p>
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <Link
-              href={routes.studio.section("work")}
-              className="group flex items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 transition-colors hover:bg-stone-700"
-            >
-              See the work
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-            <Link
-              href={routes.studio.section("process")}
-              className="flex items-center justify-center gap-2 rounded-full border border-stone-300 px-6 py-3 text-sm font-medium text-stone-700 transition-colors hover:border-stone-900 hover:text-stone-900"
-            >
-              How I work
-            </Link>
-          </div>
-        </Reveal>
-      </section>
+      <StudioHero />
 
-      {/* Services */}
-      <section id="services" className="scroll-mt-16 border-t border-stone-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+      {/* ── 02 · Capabilities ──────────────────────────────────────────
+          A ledger, not three cards: each service is a ruled row whose
+          deliverables sit in the right-hand column, the way a scope
+          sheet reads. It costs a third of the height the cards did. */}
+      <section id="services" className="scroll-mt-8 px-6 py-16 md:px-10 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <StudioMark num="02" label="Capabilities" />
           <Reveal>
-            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              Services
-            </p>
-            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
-              What I can do for you
+            <h2
+              className="mb-10 max-w-3xl font-black tracking-tight md:mb-14"
+              style={{
+                fontFamily: "var(--st-serif)",
+                fontSize: "clamp(30px, 4.4vw, 54px)",
+                lineHeight: 1.02,
+              }}
+            >
+              Three kinds of problem I take on.
             </h2>
           </Reveal>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+
+          <div style={{ borderTop: "1px solid var(--st-border)" }}>
             {services.map((service, i) => (
-              <Reveal key={service.title} delay={i * 0.1}>
-                <div className="flex h-full flex-col rounded-2xl border border-stone-200 bg-stone-50 p-8">
-                  <h3 className="font-playfair text-xl font-bold">
-                    {service.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-stone-600">
-                    {service.body}
-                  </p>
-                  <ul className="mt-6 space-y-2.5 border-t border-stone-200 pt-6">
+              <Reveal key={service.title} delay={i * 0.06}>
+                <div
+                  className="grid gap-6 py-8 md:grid-cols-12 md:gap-10 md:py-10"
+                  style={{ borderBottom: "1px solid var(--st-border)" }}
+                >
+                  <div className="md:col-span-1">
+                    <span
+                      className="st-label tabular-nums"
+                      style={{ color: "var(--st-accent)" }}
+                    >
+                      0{i + 1}
+                    </span>
+                  </div>
+                  <div className="md:col-span-5">
+                    <h3
+                      className="text-2xl font-bold tracking-tight md:text-[28px]"
+                      style={{ fontFamily: "var(--st-serif)" }}
+                    >
+                      {service.title}
+                    </h3>
+                    <p
+                      className="mt-3 max-w-md text-sm leading-relaxed"
+                      style={{ color: "var(--st-ink-dim)" }}
+                    >
+                      {service.body}
+                    </p>
+                  </div>
+                  <ul className="grid gap-x-8 gap-y-2.5 sm:grid-cols-2 md:col-span-6 md:content-start">
                     {service.deliverables.map((item) => (
-                      <li key={item} className="flex items-start gap-2.5">
-                        <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-stone-400" />
-                        <span className="text-xs leading-relaxed text-stone-600">
+                      <li key={item} className="flex gap-3">
+                        <span
+                          aria-hidden="true"
+                          className="mt-[7px] h-px w-3 shrink-0"
+                          style={{ backgroundColor: "var(--st-accent)" }}
+                        />
+                        <span
+                          className="text-[13px] leading-relaxed"
+                          style={{ color: "var(--st-ink-dim)" }}
+                        >
                           {item}
                         </span>
                       </li>
@@ -111,18 +108,31 @@ export default function ClientStudioPage() {
         </div>
       </section>
 
-      {/* Case studies */}
-      <section id="work" className="scroll-mt-16 border-t border-stone-200">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+      {/* ── 03 · Selected work ─────────────────────────────────────── */}
+      <section
+        id="work"
+        className="scroll-mt-8 px-6 py-16 md:px-10 md:py-24"
+        style={{
+          backgroundColor: "var(--st-surface-alt)",
+          borderTop: "1px solid var(--st-border)",
+          borderBottom: "1px solid var(--st-border)",
+        }}
+      >
+        <div className="mx-auto max-w-6xl">
+          <StudioMark num="03" label="Selected work" />
           <Reveal>
-            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              Selected Work
-            </p>
-            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
-              Case studies
+            <h2
+              className="mb-10 max-w-3xl font-black tracking-tight md:mb-14"
+              style={{
+                fontFamily: "var(--st-serif)",
+                fontSize: "clamp(30px, 4.4vw, 54px)",
+                lineHeight: 1.02,
+              }}
+            >
+              What the finished thing looks like.
             </h2>
           </Reveal>
-          <div className="mt-12 grid gap-8 md:grid-cols-2">
+          <div className="grid gap-px md:grid-cols-2">
             {caseStudies.map((cs, i) => (
               <CaseStudyCard key={cs.slug} caseStudy={cs} index={i} />
             ))}
@@ -130,103 +140,146 @@ export default function ClientStudioPage() {
         </div>
       </section>
 
-      {/* Process */}
-      <section id="process" className="scroll-mt-16 border-t border-stone-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+      {/* ── 04 · Approach ──────────────────────────────────────────────
+          The process rail and the person running it in one block. They
+          were two full-height sections making the same argument. */}
+      <section id="approach" className="scroll-mt-8 px-6 py-16 md:px-10 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <StudioMark num="04" label="Approach" />
           <Reveal>
-            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              Process
-            </p>
-            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
-              From problem to production
+            <h2
+              className="mb-10 max-w-3xl font-black tracking-tight md:mb-14"
+              style={{
+                fontFamily: "var(--st-serif)",
+                fontSize: "clamp(30px, 4.4vw, 54px)",
+                lineHeight: 1.02,
+              }}
+            >
+              From problem to production, in three moves.
             </h2>
           </Reveal>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+
+          <ol className="grid gap-px md:grid-cols-3">
             {PROCESS_STEPS.map((item, i) => (
-              <Reveal key={item.step} delay={i * 0.1}>
-                <div className="h-full rounded-2xl border border-stone-200 bg-stone-50 p-8">
-                  <span className="font-space-mono text-sm text-stone-400">
-                    {item.step}
+              <Reveal key={item.step} delay={i * 0.08}>
+                <li
+                  className="h-full pt-6 md:pl-8 md:pt-0"
+                  style={{ borderTop: "1px solid var(--st-border)" }}
+                >
+                  <span
+                    className="st-label tabular-nums"
+                    style={{ color: "var(--st-accent)" }}
+                  >
+                    Step {item.step}
                   </span>
-                  <h3 className="mt-3 font-playfair text-xl font-bold">
+                  <h3
+                    className="mt-4 text-xl font-bold tracking-tight"
+                    style={{ fontFamily: "var(--st-serif)" }}
+                  >
                     {item.title}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-stone-600">
+                  <p
+                    className="mt-3 max-w-xs pb-8 text-sm leading-relaxed md:pb-0"
+                    style={{ color: "var(--st-ink-dim)" }}
+                  >
                     {item.body}
                   </p>
-                </div>
+                </li>
               </Reveal>
             ))}
-          </div>
-        </div>
-      </section>
+          </ol>
 
-      {/* About */}
-      <section id="about" className="scroll-mt-16 border-t border-stone-200">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 py-20 md:grid-cols-[280px_1fr] md:py-28">
+          {/* The signature block: who is actually doing the work. */}
           <Reveal>
-            <div className="relative mx-auto aspect-square w-56 overflow-hidden rounded-2xl border border-stone-200 bg-stone-900 md:w-full">
-              <Image
-                src={studioAbout.portrait}
-                alt="Portrait of Ian N. Silva"
-                fill
-                sizes="280px"
-                className="object-cover"
-              />
+            <div
+              className="mt-16 grid gap-8 pt-10 md:grid-cols-[140px_1fr] md:gap-12 md:pt-12"
+              style={{ borderTop: "1px solid var(--st-border)" }}
+            >
+              <div
+                className="relative aspect-square w-32 overflow-hidden md:w-full"
+                style={{ border: "1px solid var(--st-border)" }}
+              >
+                <Image
+                  src={studioAbout.portrait}
+                  alt="Portrait of Ian N. Silva"
+                  fill
+                  sizes="140px"
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <span className="st-label">On the record</span>
+                <h3
+                  className="mt-4 text-2xl font-bold tracking-tight md:text-3xl"
+                  style={{ fontFamily: "var(--st-serif)" }}
+                >
+                  {studioAbout.heading}
+                </h3>
+                {studioAbout.paragraphs.map((paragraph) => (
+                  <p
+                    key={paragraph}
+                    className="mt-4 max-w-2xl text-[15px] leading-relaxed"
+                    style={{ color: "var(--st-ink-dim)" }}
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+                {studioAbout.videoUrl && (
+                  <div className="mt-8 max-w-2xl">
+                    <AboutVideo
+                      url={studioAbout.videoUrl}
+                      label={studioAbout.videoLabel}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
-            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              About
-            </p>
-            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
-              {studioAbout.heading}
-            </h2>
-            {studioAbout.paragraphs.map((paragraph) => (
-              <p
-                key={paragraph}
-                className="mt-5 max-w-2xl leading-relaxed text-stone-600"
-              >
-                {paragraph}
-              </p>
-            ))}
-          </Reveal>
         </div>
-
-        {studioAbout.videoUrl && (
-          <div className="mx-auto max-w-4xl px-6 pb-20 md:pb-28">
-            <Reveal>
-              <AboutVideo
-                url={studioAbout.videoUrl}
-                label={studioAbout.videoLabel}
-              />
-            </Reveal>
-          </div>
-        )}
       </section>
 
-      {/* FAQ */}
-      <section id="faq" className="scroll-mt-16 border-t border-stone-200 bg-white">
-        <div className="mx-auto max-w-4xl px-6 py-20 md:py-28">
-          <Reveal>
-            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              FAQ
-            </p>
-            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
-              The questions everyone asks
-            </h2>
-          </Reveal>
-          <div className="mt-10 divide-y divide-stone-200 border-y border-stone-200">
+      {/* ── 05 · Terms ─────────────────────────────────────────────────
+          The FAQ, set as the small print of the document and collapsed by
+          default. It is reference material, not a pitch — it should be
+          findable without costing a screen of scroll. */}
+      <section
+        id="terms"
+        className="scroll-mt-8 px-6 py-16 md:px-10 md:py-24"
+        style={{
+          backgroundColor: "var(--st-surface-alt)",
+          borderTop: "1px solid var(--st-border)",
+        }}
+      >
+        <div className="mx-auto max-w-4xl">
+          <StudioMark num="05" label="Terms" />
+          <div style={{ borderTop: "1px solid var(--st-border)" }}>
             {faqs.map((faq, i) => (
-              <Reveal key={faq.question} delay={i * 0.05}>
-                <details className="group">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left font-medium text-stone-900 transition-colors hover:text-stone-600 [&::-webkit-details-marker]:hidden">
-                    {faq.question}
-                    <span className="shrink-0 text-stone-400 transition-transform duration-200 group-open:rotate-45">
+              <Reveal key={faq.question} delay={i * 0.04}>
+                <details
+                  className="group"
+                  style={{ borderBottom: "1px solid var(--st-border)" }}
+                >
+                  <summary className="flex cursor-pointer list-none items-baseline gap-5 py-5 text-left [&::-webkit-details-marker]:hidden">
+                    <span
+                      className="st-label tabular-nums shrink-0"
+                      style={{ color: "var(--st-accent)" }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="flex-1 text-[15px] font-medium">
+                      {faq.question}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="st-meta shrink-0 transition-transform duration-200 group-open:rotate-45"
+                    >
                       +
                     </span>
                   </summary>
-                  <p className="max-w-3xl pb-5 text-sm leading-relaxed text-stone-600">
+                  <p
+                    className="max-w-2xl pb-6 pl-[3.1rem] text-sm leading-relaxed"
+                    style={{ color: "var(--st-ink-dim)" }}
+                  >
                     {faq.answer}
                   </p>
                 </details>

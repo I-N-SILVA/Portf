@@ -84,20 +84,33 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-10 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-          <CheckCircle2 className="h-7 w-7" />
-        </span>
-        <h3 className="mt-5 font-playfair text-2xl font-bold text-stone-900">
+      <div
+        className="p-8 md:p-10"
+        style={{ border: "1px solid var(--st-night-border)" }}
+      >
+        <div className="flex items-center gap-3">
+          {/* .st-night .st-label supplies the gold that reads on this
+              ground; an inline one would undo it. */}
+          <CheckCircle2 className="h-4 w-4" style={{ color: "#c4973a" }} />
+          <span className="st-label">Filed</span>
+        </div>
+        <h3
+          className="mt-5 text-2xl font-bold tracking-tight"
+          style={{ fontFamily: "var(--st-serif)" }}
+        >
           Message sent
         </h3>
-        <p className="mt-2 max-w-sm text-sm leading-relaxed text-stone-600">
+        <p
+          className="mt-3 max-w-sm text-sm leading-relaxed"
+          style={{ color: "var(--st-night-dim)" }}
+        >
           Thanks for reaching out — {CONTACT_FORM.RESPONSE_TIME} In the meantime,
           feel free to keep exploring the work.
         </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-6 text-sm font-medium text-stone-500 underline underline-offset-4 transition-colors hover:text-stone-900"
+          className="st-label st-underline st-underline-grow mt-7"
+          style={{ color: "var(--st-night-dim)" }}
         >
           Send another message
         </button>
@@ -112,7 +125,8 @@ export default function ContactForm() {
       data-netlify="true"
       data-netlify-honeypot="bot-field"
       onSubmit={handleSubmit}
-      className="rounded-2xl bg-white p-6 text-left md:p-8"
+      className="p-6 text-left md:p-8"
+      style={{ border: "1px solid var(--st-night-border)" }}
     >
       {/* Netlify plumbing */}
       <input type="hidden" name="form-name" value={CONTACT_FORM.NAME} />
@@ -127,50 +141,47 @@ export default function ContactForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Name</span>
+          <span className="st-label">Name</span>
           <input
             type="text"
             name="name"
             required
             autoComplete="name"
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
           />
         </label>
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Email</span>
+          <span className="st-label">Email</span>
           <input
             type="email"
             name="email"
             required
             autoComplete="email"
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
           />
         </label>
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">
-            Company{" "}
-            <span className="font-normal text-stone-400">(optional)</span>
-          </span>
+          <span className="st-label">Company (optional)</span>
           <input
             type="text"
             name="company"
             autoComplete="organization"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
           />
         </label>
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">
+          <span className="st-label">
             What do you need?
           </span>
           <select
             name="projectType"
             defaultValue={CONTACT_FORM.PROJECT_TYPES[0]}
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
           >
             {CONTACT_FORM.PROJECT_TYPES.map((type) => (
               <option key={type} value={type}>
@@ -182,7 +193,7 @@ export default function ContactForm() {
       </div>
 
       <label className="mt-4 block">
-        <span className="text-sm font-medium text-stone-700">
+        <span className="st-label">
           What are you trying to solve?
         </span>
         <textarea
@@ -190,19 +201,23 @@ export default function ContactForm() {
           required
           rows={4}
           placeholder="A sentence or two about the workflow that's costing you time is plenty to start."
-          className="mt-1.5 w-full resize-y rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors placeholder:text-stone-400 focus:border-stone-900 focus:bg-white"
+          className="st-field mt-2 w-full resize-y px-0 py-2.5 text-sm outline-none"
         />
       </label>
 
       {status === "error" && (
         <div
           role="alert"
-          className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          className="mt-6 p-4 text-sm"
+          style={{
+            border: "1px solid var(--st-crimson)",
+            color: "var(--st-night-ink)",
+          }}
         >
           <p className="font-medium">
             {error ?? "That didn't send."}
           </p>
-          <p className="mt-1 text-red-600">
+          <p className="mt-1" style={{ color: "var(--st-night-dim)" }}>
             Nothing was lost on your end — the text is still in the form, so
             you can press Send again. If it keeps failing, email me directly at{" "}
             <a
@@ -219,7 +234,11 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="group mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        className="st-label mt-8 flex w-full items-center justify-center gap-2 px-6 py-4 transition-colors hover:bg-[var(--st-night-ink)] hover:text-[var(--st-night)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        style={{
+          border: "1px solid var(--st-night-ink)",
+          color: "var(--st-night-ink)",
+        }}
       >
         {status === "submitting" ? (
           <>

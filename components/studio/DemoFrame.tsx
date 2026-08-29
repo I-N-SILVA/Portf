@@ -15,21 +15,31 @@ export default function DemoFrame({ url, title }: DemoFrameProps) {
   const [ready, setReady] = useState(false);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-      <div className="flex items-center justify-between border-b border-stone-200 bg-stone-100 px-4 py-2.5">
+    <div className="overflow-hidden"
+      style={{
+        border: "1px solid var(--st-border)",
+        backgroundColor: "var(--st-surface)",
+      }}>
+      <div className="flex items-center justify-between px-4 py-2.5"
+        style={{
+          borderBottom: "1px solid var(--st-border)",
+          backgroundColor: "var(--st-surface-alt)",
+        }}>
         <div className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-stone-300" />
-          <span className="h-2.5 w-2.5 rounded-full bg-stone-300" />
-          <span className="h-2.5 w-2.5 rounded-full bg-stone-300" />
+          {/* Three ruled ticks rather than traffic lights — this is a document,
+              and the chrome should not pretend to be a different OS. */}
+          <span className="h-px w-2.5" style={{ backgroundColor: "var(--st-border)" }} />
+          <span className="h-px w-2.5" style={{ backgroundColor: "var(--st-border)" }} />
+          <span className="h-px w-2.5" style={{ backgroundColor: "var(--st-border)" }} />
         </div>
-        <span className="hidden truncate rounded-md bg-white px-3 py-1 font-space-mono text-[11px] text-stone-500 sm:block">
+        <span className="st-note hidden truncate sm:block">
           {url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
         </span>
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1 text-xs font-medium text-stone-600 transition-colors hover:text-stone-900"
+          className="st-label st-underline st-underline-grow flex items-center gap-1.5"
         >
           Open in new tab <ExternalLink className="h-3 w-3" />
         </a>
@@ -38,11 +48,10 @@ export default function DemoFrame({ url, title }: DemoFrameProps) {
       {mounted ? (
         <div className="relative">
           {!ready && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-stone-50">
-              <Loader2 className="h-6 w-6 animate-spin text-stone-400" />
-              <span className="text-xs text-stone-500">
-                Loading the live app…
-              </span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3"
+              style={{ backgroundColor: "var(--st-surface-alt)" }}>
+              <Loader2 className="h-5 w-5 animate-spin" style={{ color: "var(--st-accent)" }} />
+              <span className="st-label">Loading the live app…</span>
             </div>
           )}
           <iframe
@@ -57,17 +66,14 @@ export default function DemoFrame({ url, title }: DemoFrameProps) {
       ) : (
         <button
           onClick={() => setMounted(true)}
-          className="group flex h-[320px] w-full flex-col items-center justify-center gap-3 bg-stone-50 transition-colors hover:bg-stone-100 md:h-[420px]"
+          className="group flex h-[320px] w-full flex-col items-center justify-center gap-4 transition-colors hover:bg-[var(--st-surface-alt)] md:h-[420px]"
         >
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-900 text-stone-50 transition-transform group-hover:scale-105">
+          <span className="flex h-14 w-14 items-center justify-center transition-colors group-hover:bg-[var(--st-accent)] group-hover:text-[var(--st-surface)]"
+            style={{ border: "1px solid var(--st-ink)" }}>
             <Play className="ml-0.5 h-5 w-5" />
           </span>
-          <span className="text-sm font-medium text-stone-900">
-            Try the live product
-          </span>
-          <span className="text-xs text-stone-500">
-            Loads the real deployed app right here
-          </span>
+          <span className="st-label">Try the live product</span>
+          <span className="st-note">Loads the real deployed app right here</span>
         </button>
       )}
     </div>

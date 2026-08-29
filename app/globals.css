@@ -382,27 +382,19 @@ html[data-shaft-light] .shaft-paper-texture {
     top: 12px;
   }
 
+  /* Hide the native pointer only while a reticle is actually on screen.
+     components/ui/inverted-cursor.tsx sets data-shaft-cursor once it has
+     mounted and decided to draw, and drops it on unmount — so a page that
+     never renders <Cursor /> keeps its ordinary pointer, and so does anyone
+     on a touch device or asking for reduced motion. The attribute arrives
+     with hydration rather than first paint, which also means no window
+     where the pointer is gone and nothing has replaced it yet. */
   @media (min-width: 1024px) {
-    body {
+    html[data-shaft-cursor="on"] body,
+    html[data-shaft-cursor="on"] a,
+    html[data-shaft-cursor="on"] button,
+    html[data-shaft-cursor="on"] [role="button"] {
       cursor: none;
-    }
-
-    a,
-    button,
-    [role="button"] {
-      cursor: none;
-    }
-  }
-
-  /* The custom cursor is itself an animation, and hiding the real pointer
-     leaves nothing behind if it doesn't render. Give the native cursor back
-     to anyone who asked for less motion, and to coarse pointers. */
-  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
-    body,
-    a,
-    button,
-    [role="button"] {
-      cursor: auto;
     }
   }
 }

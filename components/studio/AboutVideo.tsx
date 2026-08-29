@@ -27,7 +27,8 @@ export default function AboutVideo({ url, label }: AboutVideoProps) {
   const embed = toEmbedUrl(url);
 
   return (
-    <div className="relative aspect-video overflow-hidden rounded-2xl border border-stone-200 bg-stone-900">
+    <div className="st-night relative aspect-video overflow-hidden"
+      style={{ border: "1px solid var(--st-border)" }}>
       {playing ? (
         <iframe
           src={`${embed}${embed.includes("?") ? "&" : "?"}autoplay=1`}
@@ -39,12 +40,15 @@ export default function AboutVideo({ url, label }: AboutVideoProps) {
       ) : (
         <button
           onClick={() => setPlaying(true)}
-          className="group absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-stone-800 to-stone-900"
+          className="st-grid group absolute inset-0 flex flex-col items-center justify-center gap-4"
         >
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-stone-900 shadow-lg transition-transform group-hover:scale-105">
-            <Play className="ml-1 h-6 w-6" />
+          <span
+            className="flex h-14 w-14 items-center justify-center transition-colors group-hover:bg-[var(--st-night-ink)] group-hover:text-[var(--st-night)]"
+            style={{ border: "1px solid var(--st-night-ink)" }}
+          >
+            <Play className="ml-0.5 h-5 w-5" />
           </span>
-          <span className="text-sm font-medium text-stone-100">{label}</span>
+          <span className="st-label">{label}</span>
         </button>
       )}
     </div>
