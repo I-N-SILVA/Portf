@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { ClientEngagement } from "@/lib/supabase/types";
 import { routes } from "@/lib/routes";
+import { supabaseConfigured } from "@/lib/env";
+import { NotConfigured } from "@/components/os/NotConfigured";
 
 export const metadata = { title: "Engagement — Shaft OS Admin" };
 
@@ -25,6 +27,10 @@ function fmtAgo(iso: string | null) {
 }
 
 export default async function EngagementPage() {
+  // The layout cannot stop this page rendering, so the check has to
+  // be here too — see components/os/NotConfigured.
+  if (!supabaseConfigured()) return <NotConfigured area="/admin/engagement" />;
+
   const supabase = await createClient();
   const { data } = await supabase.from("client_engagement").select("*");
 

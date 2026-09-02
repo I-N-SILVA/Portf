@@ -569,3 +569,44 @@ html[data-booted] .shaft-intro-overlay {
   letter-spacing: 0.16em;
   color: rgb(var(--shaft-muted));
 }
+
+/* ─── Diagnostic panel ───────────────────────────────────────────────
+   Shown inside .shaft-fallback when an admin hits a lookup that failed.
+   Monospace and boxed because it carries a Postgres error verbatim — it is
+   evidence to copy, not prose to read. */
+.os-diagnostic {
+  max-width: 60ch;
+  margin: 26px auto 0;
+  padding: 16px 18px;
+  text-align: left;
+  border: 1px solid rgb(var(--shaft-border));
+  background: rgb(var(--shaft-surface));
+  border-radius: 3px;
+}
+.os-diagnostic-label {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--shaft-muted));
+  margin: 0 0 8px;
+}
+.os-diagnostic-detail {
+  display: block;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: rgb(var(--shaft-cream));
+  word-break: break-word;
+}
+.os-diagnostic-hint {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgb(var(--shaft-muted));
+  margin: 12px 0 0;
+}
+.os-diagnostic-hint code {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.9em;
+  color: rgb(var(--shaft-cream));
+}

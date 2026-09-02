@@ -38,6 +38,12 @@ jobs:
       - name: Types match the migrations
         run: npm run check:types
 
+      # The paste-into-Supabase bundle is generated from supabase/migrations/.
+      # Adding a migration without regenerating it leaves a file that looks
+      # authoritative and silently applies a few migrations short.
+      - name: SQL bundle matches the migrations
+        run: npm run check:bundle
+
       # Before the build, because they are the fastest thing that can fail.
       - name: Tests
         run: npm run test

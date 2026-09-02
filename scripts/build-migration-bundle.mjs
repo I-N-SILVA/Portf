@@ -12,10 +12,21 @@
 // supabase/migrations/, which CI globs — a bundle in there would apply every
 // statement twice.
 
-import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 
-const [from = "0011", to = "0015"] = process.argv.slice(2);
+const args = process.argv.slice(2).filter((a) => a !== "--check");
+const check = process.argv.includes("--check");
+
+// The default range is the committed bundle's, so `--check` needs no
+// arguments and cannot drift from what is on disk.
+const committed = readdirSync(path.join(process.cwd(), "supabase"))
+  .find((f) => /^apply-\d{4}-\d{4}\.sql$/.test(f));
+const [defFrom, defTo] = committed
+  ? committed.replace("apply-", "").replace(".sql", "").split("-")
+  : ["0011", "0015"];
+
+const [from = defFrom, to = defTo] = args;
 
 const DIR = path.join(process.cwd(), "supabase", "migrations");
 const files = readdirSync(DIR)
@@ -124,9 +135,29 @@ const out = path.join(
   "supabase",
   `apply-${files[0].slice(0, 4)}-${files[files.length - 1].slice(0, 4)}.sql`,
 );
-writeFileSync(out, header + body + footer);
+const contents = header + body + footer;
+const rel = path.relative(process.cwd(), out);
+
+// --check: fail rather than write, so CI catches a bundle that has fallen
+// behind the migrations. A stale bundle is worse than none — it looks
+// authoritative, and pasting it leaves the database a few migrations short
+// with nothing to say so.
+if (check) {
+  const existing = existsSync(out) ? readFileSync(out, "utf8") : null;
+  if (existing === contents) {
+    console.log(`${rel} is up to date (${files.length} migrations).`);
+    process.exit(0);
+  }
+  console.error(
+    existing === null
+      ? `${rel} is missing.`
+      : `${rel} is stale — it does not match supabase/migrations/.`,
+  );
+  console.error(`Regenerate it:  node scripts/build-migration-bundle.mjs ${from} ${to}`);
+  process.exit(1);
+}
+
+writeFileSync(out, contents);
 console.log(
-  `wrote ${path.relative(process.cwd(), out)} (${files.length} migrations, ${
-    (header + body + footer).split("\n").length
-  } lines)`,
+  `wrote ${rel} (${files.length} migrations, ${contents.split("\n").length} lines)`,
 );

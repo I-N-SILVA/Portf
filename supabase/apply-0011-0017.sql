@@ -1,5 +1,5 @@
 -- ══════════════════════════════════════════════════════════════════════
---  Supabase migration bundle — 0011_client_preferences.sql through 0015_booking_rules_and_attachments.sql
+--  Supabase migration bundle — 0011_client_preferences.sql through 0017_contact_submissions.sql
 --
 --  Paste this whole file into the Supabase SQL editor and run it once.
 --
@@ -23,6 +23,8 @@
 --    0013_nudge_queries.sql
 --    0014_billing_event_integrity.sql
 --    0015_booking_rules_and_attachments.sql
+--    0016_pitch_view_rate_limit.sql
+--    0017_contact_submissions.sql
 -- ══════════════════════════════════════════════════════════════════════
 
 begin;
@@ -855,6 +857,262 @@ create policy "attachments_delete" on storage.objects
       or (storage.foldername(name))[1] = public.current_client_id()::text
     )
   );
+
+
+-- ══════════════════════════════════════════════════════════════════════
+--  0016_pitch_view_rate_limit.sql
+-- ══════════════════════════════════════════════════════════════════════
+
+-- ════════════════════════════════════════════════════════════════════════
+--  Phase 12 — Rate limiting on pitch views
+--
+--  record_pitch_view() throttles per visitor id, and the visitor id lives in
+--  a cookie. That answers "did this person refresh?" but not "is this one
+--  person pretending to be a hundred?" — a caller who discards the cookie
+--  between requests gets a fresh id each time, and every one of them counts
+--  as a new visitor, writes an activity_events row, and moves the number the
+--  admin console reports.
+--
+--  The fix is a second identity the caller doesn't choose: the server passes
+--  an opaque fingerprint (an HMAC of the client IP — see
+--  lib/os/actions/pitch-view.ts; the raw address is never sent or stored)
+--  and a page will accept only so many distinct visitors from one
+--  fingerprint per day. Over the cap the view is still recorded as a repeat
+--  view, so a genuinely shared office NAT keeps working; it just stops
+--  minting new "visitors".
+-- ════════════════════════════════════════════════════════════════════════
+
+-- Distinct-visitor budget per fingerprint, per page, per day.
+create or replace function public.pitch_view_visitor_cap()
+returns int language sql immutable as $$ select 8 $$;
+
+create index if not exists activity_events_pitch_fingerprint_idx
+  on public.activity_events (client_id, ((metadata->>'fp')), created_at desc)
+  where event_type = 'pitch_viewed';
+
+drop function if exists public.record_pitch_view(text, text);
+
+create or replace function public.record_pitch_view(
+  p_slug        text,
+  p_visitor     text,
+  p_fingerprint text default null
+)
+returns boolean
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_client       uuid;
+  v_recent       boolean;
+  v_is_new       boolean;
+  v_fp_visitors  int := 0;
+begin
+  if p_visitor is null or length(p_visitor) not between 8 and 64 then
+    return false;
+  end if;
+
+  -- The fingerprint is minted server-side and is always a fixed-width hex
+  -- digest. Anything else is a caller trying its luck; drop it rather than
+  -- letting an arbitrary string become a rate-limit bucket of its own.
+  if p_fingerprint is not null
+     and p_fingerprint !~ '^[0-9a-f]{32}$' then
+    p_fingerprint := null;
+  end if;
+
+  select c.id into v_client
+  from public.clients c
+  join public.client_pages p on p.client_id = c.id
+  where c.slug = p_slug and p.published = true;
+
+  if v_client is null then
+    return false;
+  end if;
+
+  -- One view per visitor per 30 minutes, so a refresh isn't a second read.
+  select exists (
+    select 1 from public.activity_events
+    where client_id  = v_client
+      and event_type = 'pitch_viewed'
+      and metadata->>'visitor' = p_visitor
+      and created_at > now() - interval '30 minutes'
+  ) into v_recent;
+
+  if v_recent then
+    return false;
+  end if;
+
+  -- Has this visitor ever been seen on this page before?
+  select not exists (
+    select 1 from public.activity_events
+    where client_id  = v_client
+      and event_type = 'pitch_viewed'
+      and metadata->>'visitor' = p_visitor
+  ) into v_is_new;
+
+  -- How many distinct visitors has this fingerprint already produced today?
+  if v_is_new and p_fingerprint is not null then
+    select count(distinct metadata->>'visitor')
+    into v_fp_visitors
+    from public.activity_events
+    where client_id  = v_client
+      and event_type = 'pitch_viewed'
+      and metadata->>'fp' = p_fingerprint
+      and created_at > now() - interval '1 day';
+
+    -- Over budget: record the read, but don't let it mint a new visitor.
+    if v_fp_visitors >= public.pitch_view_visitor_cap() then
+      v_is_new := false;
+    end if;
+  end if;
+
+  insert into public.activity_events (client_id, actor_id, event_type, metadata)
+  values (
+    v_client,
+    null,
+    'pitch_viewed',
+    jsonb_strip_nulls(
+      jsonb_build_object('visitor', p_visitor, 'fp', p_fingerprint)
+    )
+  );
+
+  update public.client_pages
+  set view_count      = view_count + 1,
+      visitor_count   = visitor_count + (case when v_is_new then 1 else 0 end),
+      first_viewed_at = coalesce(first_viewed_at, now()),
+      last_viewed_at  = now()
+  where client_id = v_client;
+
+  return true;
+end;
+$$;
+
+-- Called from a server action, but granted to anon as well: the whole point
+-- is counting people who have no account yet.
+grant execute on function public.record_pitch_view(text, text, text)
+  to anon, authenticated;
+
+
+-- ══════════════════════════════════════════════════════════════════════
+--  0017_contact_submissions.sql
+-- ══════════════════════════════════════════════════════════════════════
+
+-- ════════════════════════════════════════════════════════════════════════
+--  Phase 14 — Durable contact submissions
+--
+--  The studio contact form posted to Netlify Forms and nowhere else. That
+--  made a lead's survival depend entirely on one third party being up at the
+--  moment somebody clicked Send: if the POST failed the visitor saw
+--  "something went wrong", and the enquiry existed nowhere at all. It also
+--  meant the only record of who had asked for what lived in a dashboard
+--  outside the app, invisible to /admin.
+--
+--  Submissions now land here first, through a SECURITY DEFINER function so
+--  anonymous visitors never touch the table directly. Netlify Forms stays as
+--  the notification channel; this is the record.
+-- ════════════════════════════════════════════════════════════════════════
+
+create table if not exists public.contact_submissions (
+  id           uuid primary key default gen_random_uuid(),
+  name         text not null,
+  email        text not null,
+  company      text,
+  project_type text,
+  message      text not null,
+  -- Which pitch page or campaign the lead came from (?ref= on the studio URL).
+  ref          text,
+  -- Set once an admin has dealt with it; drives the unread count in /admin.
+  handled_at   timestamptz,
+  -- Non-null once this submission has been linked to a client record.
+  client_id    uuid references public.clients (id) on delete set null,
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists contact_submissions_time_idx
+  on public.contact_submissions (created_at desc);
+create index if not exists contact_submissions_unhandled_idx
+  on public.contact_submissions (created_at desc)
+  where handled_at is null;
+
+alter table public.contact_submissions enable row level security;
+
+-- Admins only. There is no client-facing read path: a submission is a lead,
+-- not something the person who sent it comes back to look at.
+create policy contact_submissions_admin_all on public.contact_submissions
+  for all to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+/**
+ * Record one submission. Anonymous by design — the whole point is capturing
+ * people who have no account.
+ *
+ * Everything is length-capped here rather than trusted from the caller: this
+ * is a public write path, and the only thing standing between it and the
+ * table is this function. Returns false rather than raising on bad input, so
+ * a malformed post is a quiet no-op instead of a 500 on the contact page.
+ */
+create or replace function public.submit_contact(
+  p_name         text,
+  p_email        text,
+  p_message      text,
+  p_company      text default null,
+  p_project_type text default null,
+  p_ref          text default null
+)
+returns boolean
+language plpgsql security definer set search_path = public
+as $$
+declare
+  v_recent int;
+begin
+  if coalesce(trim(p_name), '') = ''
+     or coalesce(trim(p_message), '') = ''
+     or p_email !~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' then
+    return false;
+  end if;
+
+  -- A public insert endpoint needs a ceiling. Same address, same hour: five.
+  select count(*) into v_recent
+  from public.contact_submissions
+  where lower(email) = lower(trim(p_email))
+    and created_at > now() - interval '1 hour';
+
+  if v_recent >= 5 then
+    return false;
+  end if;
+
+  insert into public.contact_submissions
+    (name, email, company, project_type, message, ref)
+  values (
+    left(trim(p_name), 120),
+    lower(left(trim(p_email), 200)),
+    nullif(left(trim(coalesce(p_company, '')), 160), ''),
+    nullif(left(trim(coalesce(p_project_type, '')), 80), ''),
+    left(trim(p_message), 5000),
+    nullif(left(trim(coalesce(p_ref, '')), 80), '')
+  );
+
+  return true;
+end;
+$$;
+
+grant execute on function
+  public.submit_contact(text, text, text, text, text, text)
+  to anon, authenticated;
+
+/** Mark a submission dealt with. Admin-only; RLS on the table enforces it. */
+create or replace function public.mark_contact_handled(p_id uuid)
+returns boolean
+language plpgsql security invoker set search_path = public
+as $$
+begin
+  update public.contact_submissions
+  set handled_at = now()
+  where id = p_id and handled_at is null;
+  return found;
+end;
+$$;
+
+grant execute on function public.mark_contact_handled(uuid) to authenticated;
 
 
 commit;

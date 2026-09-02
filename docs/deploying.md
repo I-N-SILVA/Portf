@@ -236,3 +236,15 @@ npm run verify   # typecheck + lint + dead-module scan + build
 CI runs the same, plus it applies every migration to a throwaway Postgres and
 asserts the security properties: a client cannot read `client_private`, cannot
 forge activity events, and pitch views count and throttle correctly.
+
+## Checking a deploy
+
+```bash
+npm run doctor
+```
+
+Run it against the same environment variables the site uses. It reports which
+of the preconditions for a working client space are missing — environment,
+schema, an admin, a client, a published page — rather than leaving you to infer
+it from a 404. Warnings are things you may not have done yet (nobody invited,
+no page published); FAILs are things that cannot work until fixed.

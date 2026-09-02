@@ -1,5 +1,7 @@
 import "server-only";
 
+import { serialise } from "@/lib/observability/serialise";
+
 /**
  * Where server-side errors go.
  *
@@ -24,12 +26,6 @@ const TIMEOUT_MS = 3_000;
 
 export type ErrorContext = Record<string, string | number | boolean | null | undefined>;
 
-function serialise(err: unknown) {
-  if (err instanceof Error) {
-    return { name: err.name, message: err.message, stack: err.stack ?? null };
-  }
-  return { name: "NonError", message: String(err), stack: null };
-}
 
 async function deliver(payload: unknown): Promise<void> {
   const url = process.env.ERROR_WEBHOOK_URL;

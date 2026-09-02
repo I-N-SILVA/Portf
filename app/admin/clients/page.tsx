@@ -4,6 +4,8 @@ import { adminUnreadByClient } from "@/lib/os/messages";
 import type { Client } from "@/lib/supabase/types";
 import { routes } from "@/lib/routes";
 import { NewClientForm } from "./NewClientForm";
+import { supabaseConfigured } from "@/lib/env";
+import { NotConfigured } from "@/components/os/NotConfigured";
 
 export const metadata = { title: "Clients — Shaft OS Admin" };
 
@@ -14,6 +16,10 @@ const STATUS_CLASS: Record<string, string> = {
 };
 
 export default async function ClientsPage() {
+  // The layout cannot stop this page rendering, so the check has to
+  // be here too — see components/os/NotConfigured.
+  if (!supabaseConfigured()) return <NotConfigured area="/admin/clients" />;
+
   const supabase = await createClient();
   const { data } = await supabase
     .from("clients")

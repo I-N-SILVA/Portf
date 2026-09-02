@@ -9,13 +9,15 @@
     "lint": "next lint --dir app --dir components --dir lib --dir hooks --file middleware.ts --file instrumentation.ts --file next.config.ts",
     "typecheck": "tsc --noEmit",
     "check:dead": "node scripts/find-dead-modules.mjs --check",
-    "types:gen": "supabase gen types typescript --project-id \"$SUPABASE_PROJECT_ID\" > lib/supabase/types.ts",
-    "verify": "npm run typecheck && npm run lint && npm run check:dead && npm run check:types && npm run test && npm run build",
+    "check:types": "node scripts/check-types-drift.mjs --check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:types": "node scripts/check-types-drift.mjs --check",
+    "test:e2e": "playwright test",
+    "doctor": "node scripts/doctor.mjs",
+    "types:gen": "supabase gen types typescript --project-id \"$SUPABASE_PROJECT_ID\" > lib/supabase/types.ts",
     "bundle:sql": "node scripts/build-migration-bundle.mjs",
-    "test:e2e": "playwright test"
+    "verify": "npm run typecheck && npm run lint && npm run check:dead && npm run check:types && npm run check:bundle && npm run test && npm run build",
+    "check:bundle": "node scripts/build-migration-bundle.mjs --check"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

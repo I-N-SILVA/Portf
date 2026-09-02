@@ -5,6 +5,8 @@ import { getLivePitches, pitchStatusLabel } from "@/lib/os/pitches";
 import { ACTIVITY_LABEL } from "@/lib/os/labels";
 import type { ActivityEvent, Invoice } from "@/lib/supabase/types";
 import { routes } from "@/lib/routes";
+import { supabaseConfigured } from "@/lib/env";
+import { NotConfigured } from "@/components/os/NotConfigured";
 
 export const metadata = { title: "Overview — Shaft OS Admin" };
 
@@ -18,6 +20,10 @@ function relative(iso: string, now: number): string {
 }
 
 export default async function AdminDashboard() {
+  // The layout cannot stop this page rendering, so the check has to
+  // be here too — see components/os/NotConfigured.
+  if (!supabaseConfigured()) return <NotConfigured area="/admin" />;
+
   const supabase = await createClient();
   const now = Date.now();
 

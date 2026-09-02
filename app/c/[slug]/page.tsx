@@ -16,7 +16,7 @@ export async function generateMetadata({
   if (scope.access === "public") {
     return { title: `Prepared for ${scope.page.display_name}` };
   }
-  if (scope.access === "none") return {};
+  if (scope.access === "none" || scope.access === "unavailable") return {};
   return { title: `${scope.client.company ?? scope.client.name} — Shaft OS` };
 }
 
@@ -36,6 +36,10 @@ export default async function ClientSpacePage({ params }: PageProps) {
       return <ClientDashboard client={scope.client} logVisit />;
     case "admin":
       return <ClientDashboard client={scope.client} logVisit={false} />;
+    case "unavailable":
+      // The layout above already rendered the diagnostic; this branch only
+      // exists so the switch stays exhaustive.
+      return null;
     default:
       notFound();
   }

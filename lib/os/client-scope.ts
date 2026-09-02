@@ -5,6 +5,7 @@ import { supabaseConfigured } from "@/lib/env";
 import { getSessionContext } from "@/lib/os/session";
 import { devPitchRoom } from "@/lib/client-content";
 import { isValidSlug, routes } from "@/lib/routes";
+import { reportError } from "@/lib/observability/report";
 import type {
   Client,
   ClientModules,
@@ -33,7 +34,17 @@ export type ClientScope =
       viewerIsAdmin: boolean;
     }
   | { access: "public"; slug: string; page: PublicClientPage }
-  | { access: "none"; slug: string };
+  | { access: "none"; slug: string }
+  /**
+   * The database could not answer. Distinct from "none" on purpose: a client
+   * that does not exist and a database that cannot be reached are the same
+   * blank 404 to a visitor, and were the same blank 404 to us too — every
+   * query here used to destructure `data` and drop `error` on the floor. A
+   * missing migration, an RLS policy that refuses the read, an expired key:
+   * all of them looked exactly like "no such client", which is the one
+   * explanation that sends you looking in the wrong place.
+   */
+  | { access: "unavailable"; slug: string; reason: string };
 
 /** True once Supabase env vars exist; false in a bare local checkout. */
 const configured = supabaseConfigured;
@@ -62,18 +73,22 @@ export const resolveClientScope = cache(
     // Admin, or the owning client: read the full record. RLS permits admins
     // every row and clients exactly their own, so this select is safe as-is.
     if (ctx?.isAdmin || ctx?.client?.slug === slug) {
-      const { data: client } = await supabase
+      const { data: client, error: clientError } = await supabase
         .from("clients")
         .select("*")
         .eq("slug", slug)
         .maybeSingle();
 
+      if (clientError) return unavailable(slug, "clients", clientError);
+
       if (client) {
-        const { data: page } = await supabase
+        const { data: page, error: pageError } = await supabase
           .from("client_pages")
           .select("*")
           .eq("client_id", (client as Client).id)
           .maybeSingle();
+
+        if (pageError) return unavailable(slug, "client_pages", pageError);
 
         return {
           access: ctx.isAdmin && ctx.client?.slug !== slug ? "admin" : "owner",
@@ -89,15 +104,35 @@ export const resolveClientScope = cache(
 
     // Everyone else sees the published pitch page, or nothing. Anonymous
     // visitors can't select from `clients` at all, hence the definer RPC.
-    const { data } = await supabase
+    const { data, error } = await supabase
       .rpc("get_public_client_page", { p_slug: slug })
       .maybeSingle();
+
+    if (error) return unavailable(slug, "get_public_client_page", error);
 
     return data
       ? { access: "public", slug, page: data as PublicClientPage }
       : { access: "none", slug };
   },
 );
+
+/**
+ * Record a failed lookup and describe it.
+ *
+ * The visitor still gets a 404 — whether a slug exists is not something a
+ * stranger gets to probe — but the failure now reaches the logs with the
+ * query that produced it, and a signed-in admin is shown the real reason
+ * instead of being told the client does not exist.
+ */
+function unavailable(
+  slug: string,
+  query: string,
+  error: { message: string; code?: string; hint?: string | null },
+): ClientScope {
+  reportError(error, { source: "client-scope", slug, query, code: error.code });
+  const detail = error.code ? `${error.code}: ${error.message}` : error.message;
+  return { access: "unavailable", slug, reason: `${query} — ${detail}` };
+}
 
 /**
  * Guard for every authenticated page under /c/{slug}. Sends anonymous
@@ -110,6 +145,10 @@ export async function requireClientScope(
 ): Promise<Extract<ClientScope, { access: "owner" | "admin" }>> {
   const scope = await resolveClientScope(slug);
   if (scope.access === "owner" || scope.access === "admin") return scope;
+
+  // A failed lookup must not be mistaken for "you don't belong here" and
+  // bounce someone to the login page they have just come from.
+  if (scope.access === "unavailable") throw new Error(scope.reason);
 
   const ctx = configured() ? await getSessionContext() : null;
   if (!ctx) {

@@ -55,6 +55,35 @@ The data model, drawn: **[docs/data-model.md](docs/data-model.md)**.
 
 Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.md)**.
 
+## When the portal looks broken
+
+`/c/{slug}` shows a client space only when several things are true at once,
+and when any one of them isn't, a visitor gets the same blank 404. Rather than
+guess which link is missing:
+
+```bash
+npm run doctor          # the whole install
+npm run doctor acme     # and why /c/acme in particular
+```
+
+It reads `.env.local`, connects with the service key so it can see past RLS,
+and walks the chain in order: environment variables, then every table and
+function the migrations create, then whether an admin exists, then whether any
+client does, then whether its page is published. The first `FAIL` is your
+answer.
+
+The two most common causes, in order:
+
+1. **The page isn't published.** A client row and its page exist, but
+   `published` is false, so `get_public_client_page` returns nothing and the
+   route 404s. Publish it in the admin console.
+2. **The migrations aren't all applied.** Paste
+   `supabase/apply-0011-0017.sql` into the Supabase SQL editor — it is
+   generated from `supabase/migrations/` and CI fails if the two drift.
+
+A signed-in admin who hits a lookup that *errored* (rather than came back
+empty) now sees the Postgres error on the page instead of a 404.
+
 ## Conventions worth knowing before you edit
 
 - **Build URLs with `lib/routes.ts`**, never string literals. Moving an area
@@ -88,6 +117,8 @@ Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.
 | `npm test` | Unit tests (vitest) over the pure modules |
 | `npm run test:watch` | The same, in watch mode |
 | `npm run test:e2e` | Playwright: axe accessibility pass, reduced-motion behaviour, no-JS rendering |
+| `npm run doctor` | Why is `/c/{slug}` empty? Checks env, schema, admins, clients, published pages |
+| `npm run bundle:sql` | Regenerate `supabase/apply-*.sql` after adding a migration |
 | `npm run check:dead` | Fails if any module is unreachable from a Next.js entry point |
 | `npm run check:types` | Fails if `lib/supabase/types.ts` has drifted from the migrations |
 | `npm run types:gen` | Regenerate `lib/supabase/types.ts` (needs `SUPABASE_PROJECT_ID`) |

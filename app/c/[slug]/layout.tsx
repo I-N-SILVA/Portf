@@ -7,6 +7,8 @@ import { AdminViewBanner } from "@/components/os/AdminViewBanner";
 import StudioShell from "@/components/studio/StudioShell";
 import type { Command } from "@/components/os/CommandPalette";
 import { resolveClientScope } from "@/lib/os/client-scope";
+import { getSessionContext } from "@/lib/os/session";
+import { SpaceUnavailable } from "@/components/os/SpaceUnavailable";
 import { routes } from "@/lib/routes";
 import type { ClientModules } from "@/lib/supabase/types";
 
@@ -48,6 +50,21 @@ export default async function ClientSpaceLayout({
   const scope = await resolveClientScope(slug);
 
   if (scope.access === "none") notFound();
+
+  // The lookup failed rather than came back empty. Say so, and show an admin
+  // what actually broke — see components/os/SpaceUnavailable.
+  if (scope.access === "unavailable") {
+    const ctx = await getSessionContext();
+    return (
+      <div className="shaft-os">
+        <div className="os-paper" />
+        <SpaceUnavailable
+          reason={scope.reason}
+          showReason={Boolean(ctx?.isAdmin)}
+        />
+      </div>
+    );
+  }
 
   // Public pitch page — the prospect has no account yet.
   if (scope.access === "public") {
