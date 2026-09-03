@@ -134,6 +134,7 @@ export const projects: Project[] = [
     title: "StockSnap Mobile Vehicle Stocktaking",
     description: "Mobile-first stocktaking web app designed for efficient inventory tracking, verification, and reporting in the field.",
     image: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?w=800&h=600&fit=crop",
+    bannerImage: "/projects/ai-agents.webp",
     tags: ["Bolt.new", "React", "TypeScript", "Vite", "Tailwind CSS", "Supabase"],
     link: "https://stocksnap-mobile-veh-eie0.bolt.host/",
     badge: "FEATURED",
@@ -145,7 +146,7 @@ export const projects: Project[] = [
       "Location-based audit history tracking",
       "Search, filtering & access controls"
     ],
-    category: "AI",
+    category: "Product",
     role: "Full-Stack Developer",
     duration: "Rapid Dev",
     teamSize: "Solo",
@@ -224,6 +225,13 @@ export const projects: Project[] = [
 
 
 ];
+
+/**
+ * The public portfolio and Studio must show the same current body of work.
+ * Retired records remain available to historical case-study URLs, but new
+ * public surfaces should always consume this canonical list.
+ */
+export const portfolioProjects = projects.filter((project) => !project.retired);
 
 // Skills data
 export const skills: Skill[] = [

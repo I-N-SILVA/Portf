@@ -152,7 +152,7 @@ export default function ContactForm() {
         <label className="block">
           <span className="text-sm font-medium text-stone-700">
             Company{" "}
-            <span className="font-normal text-stone-400">(optional)</span>
+            <span className="font-normal text-stone-500">(optional)</span>
           </span>
           <input
             type="text"

@@ -3,16 +3,16 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import {
   AVAILABILITY,
-  caseStudies,
   faqs,
   services,
   studioAbout,
 } from "@/lib/client-content";
 import AboutVideo from "@/components/studio/AboutVideo";
-import CaseStudyCard from "@/components/studio/CaseStudyCard";
+import StudioProjectCard from "@/components/studio/StudioProjectCard";
 import ContactSection from "@/components/studio/ContactSection";
 import Reveal from "@/components/studio/Reveal";
 import { routes } from "@/lib/routes";
+import { portfolioProjects } from "@/lib/placeholder-content";
 
 const PROCESS_STEPS = [
   {
@@ -73,6 +73,26 @@ export default function ClientStudioPage() {
         </Reveal>
       </section>
 
+      {/* The same canonical work shown in the portfolio. */}
+      <section id="work" className="scroll-mt-16 border-t border-stone-200">
+        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+          <Reveal>
+            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+              Selected Work
+            </p>
+            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
+              Projects and case studies
+            </h2>
+          </Reveal>
+          <div className="mt-12 grid gap-8 md:grid-cols-2">
+            {portfolioProjects.map((project, i) => (
+              <StudioProjectCard key={project.id} project={project} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+
       {/* Services */}
       <section id="services" className="scroll-mt-16 border-t border-stone-200 bg-white">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
@@ -111,27 +131,8 @@ export default function ClientStudioPage() {
         </div>
       </section>
 
-      {/* Case studies */}
-      <section id="work" className="scroll-mt-16 border-t border-stone-200">
-        <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
-          <Reveal>
-            <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
-              Selected Work
-            </p>
-            <h2 className="mt-3 font-playfair text-3xl font-bold md:text-4xl">
-              Case studies
-            </h2>
-          </Reveal>
-          <div className="mt-12 grid gap-8 md:grid-cols-2">
-            {caseStudies.map((cs, i) => (
-              <CaseStudyCard key={cs.slug} caseStudy={cs} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Process */}
-      <section id="process" className="scroll-mt-16 border-t border-stone-200 bg-white">
+      <section id="process" className="scroll-mt-16 border-t border-stone-200">
         <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
           <Reveal>
             <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
@@ -145,7 +146,7 @@ export default function ClientStudioPage() {
             {PROCESS_STEPS.map((item, i) => (
               <Reveal key={item.step} delay={i * 0.1}>
                 <div className="h-full rounded-2xl border border-stone-200 bg-stone-50 p-8">
-                  <span className="font-space-mono text-sm text-stone-400">
+                  <span className="font-space-mono text-sm text-stone-500">
                     {item.step}
                   </span>
                   <h3 className="mt-3 font-playfair text-xl font-bold">

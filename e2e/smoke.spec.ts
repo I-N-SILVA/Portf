@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { portfolioProjects } from "@/lib/placeholder-content";
 
 /**
  * The pages a stranger can reach must render their own content in the initial
@@ -21,6 +22,67 @@ test("the landing page ships real content without running JavaScript", async ({
   expect(html.length).toBeGreaterThan(20_000);
 
   await context.close();
+});
+
+test("the studio hero stays visible without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/studio");
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: /systems that give your team its hours back/i,
+    }),
+  ).toBeVisible();
+  await context.close();
+});
+
+test("the cinematic intro can be skipped and is remembered", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: /skip intro/i }).click();
+  await expect(page.locator("#main")).not.toHaveAttribute("inert", /.*/);
+  await expect(page.getByRole("button", { name: /skip intro/i })).toBeHidden();
+  expect(await page.evaluate(() => sessionStorage.getItem("shaft-booted"))).toBe("1");
+});
+
+test("sound is opt-in for a first-time visitor", async ({ page }) => {
+  await page.goto("/");
+  const sound = page.getByRole("button", { name: /unmute interface sound/i });
+  await expect(sound).toBeVisible();
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await expect(sound).toContainText("MUTED");
+});
+
+test("portfolio and studio put proof before supporting detail", async ({ page }) => {
+  await page.goto("/");
+  const portfolioOrder = await page
+    .locator("#shaft-archive, #shaft-identity, #shaft-offers, #shaft-call")
+    .evaluateAll((sections) => sections.map((section) => section.id));
+  expect(portfolioOrder).toEqual([
+    "shaft-archive",
+    "shaft-identity",
+    "shaft-offers",
+    "shaft-call",
+  ]);
+  for (const project of portfolioProjects) {
+    await expect(page.getByRole("heading", { name: project.title, exact: true })).toBeAttached();
+  }
+
+  await page.goto("/studio");
+  const studioOrder = await page
+    .locator("#work, #services, #process, #faq")
+    .evaluateAll((sections) => sections.map((section) => section.id));
+  expect(studioOrder).toEqual(["work", "services", "process", "faq"]);
+  for (const project of portfolioProjects) {
+    await expect(page.getByRole("heading", { name: project.title, exact: true })).toBeAttached();
+    const image = page.getByRole("img", { name: project.title, exact: true });
+    await expect(image).toBeAttached();
+    await expect(image).toHaveAttribute(
+      "src",
+      new RegExp(encodeURIComponent(project.bannerImage ?? project.image)),
+    );
+  }
 });
 
 test("every translated landing page is server-rendered in its language", async ({

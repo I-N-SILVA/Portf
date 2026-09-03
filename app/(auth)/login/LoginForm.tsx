@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { routes } from "@/lib/routes";
 
 export function LoginForm({
   next,
@@ -62,6 +64,9 @@ export function LoginForm({
       <h1 className="os-title" style={{ fontSize: "26px", marginBottom: "20px" }}>
         Sign in
       </h1>
+      <p className="os-sub" style={{ fontSize: "13px", marginBottom: "24px" }}>
+        Private workspace for active clients. Use the email attached to your project.
+      </p>
 
       {error && <p className="os-msg err">{error}</p>}
       {sent && (
@@ -113,6 +118,11 @@ export function LoginForm({
       >
         Email me a sign-in link instead
       </button>
+
+      <div className="os-auth-links">
+        <Link href={routes.studio.root}>Explore services</Link>
+        <Link href={routes.home}>View portfolio</Link>
+      </div>
     </div>
   );
 }

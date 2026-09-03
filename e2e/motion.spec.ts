@@ -25,3 +25,13 @@ test("reduced motion gives back the native cursor", async ({ page }) => {
   const cursor = await page.evaluate(() => getComputedStyle(document.body).cursor);
   expect(cursor).not.toBe("none");
 });
+
+test("reduced motion does not hide the studio reveal content", async ({ page }) => {
+  await page.goto("/studio", { waitUntil: "networkidle" });
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: /systems that give your team its hours back/i,
+    }),
+  ).toBeVisible();
+});

@@ -92,7 +92,10 @@ specifically, so moving hosts means replacing both:
   the cron it declared never ran, because the site builds with
   `@netlify/plugin-nextjs`.
 
-Confirm after the first deploy that the scheduled function appears under
+Before deploying, open **Forms → Usage and configuration → Form detection**
+and make sure automatic form detection is enabled. The static blueprint alone
+is not enough when the site-level switch is off. After the deploy, confirm that
+`studio-contact` appears under **Forms** and that `nudges-cron` appears under
 **Functions → Scheduled**.
 
 ---

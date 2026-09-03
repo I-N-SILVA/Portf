@@ -2,24 +2,9 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { projects } from "@/lib/placeholder-content";
+import { portfolioProjects } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
 import Image from "next/image";
-import ShaftRedact from "./ShaftRedact";
-
-/* Map project IDs to generated images */
-const PROJECT_IMAGES: Record<string, string> = {
-  "11": "/projects/terminal-dj.webp",
-  "10": "/projects/muski.webp",
-  "9": "/projects/notchy.webp",
-  "8": "/projects/ai-agents.webp",
-};
-
-/**
- * Retired projects keep their records for the studio case studies that point
- * at them (see Project.retired), but they are off the portfolio.
- */
-const SHOWN = projects.filter((p) => !p.retired);
 
 /**
  * Derived from what is actually on the list rather than hardcoded, so a
@@ -29,19 +14,18 @@ const SHOWN = projects.filter((p) => !p.retired);
  */
 const CATEGORIES = [
   "ALL",
-  ...Array.from(new Set(SHOWN.map((p) => p.category.toUpperCase()))).sort(),
+  ...Array.from(new Set(portfolioProjects.map((p) => p.category.toUpperCase()))).sort(),
 ];
 
 export default function ShaftArchive() {
   const [filter, setFilter]     = useState("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [hovered, setHovered]   = useState<string | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
 
-  const filtered = SHOWN.filter(
+  const filtered = portfolioProjects.filter(
     (p) => filter === "ALL" || p.category.toUpperCase() === filter
   );
 
@@ -63,7 +47,7 @@ export default function ShaftArchive() {
           y: watermarkY,
         }}
       >
-        04
+        02
       </motion.div>
 
       <div className="px-8 md:px-16 lg:px-24 relative z-10">
@@ -105,7 +89,7 @@ export default function ShaftArchive() {
               className="relative font-space-mono text-[9px] tracking-[0.45em] uppercase transition-all duration-100 pb-1"
               style={{ color: filter === cat ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-muted))" }}
             >
-              {cat}
+              {cat === "ALL" ? t("archive.filter.all") : cat}
               {filter === cat && (
                 <motion.div
                   layoutId="arch-underline"
@@ -127,8 +111,6 @@ export default function ShaftArchive() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.2, delay: Math.min(index * 0.05, 0.25) }}
-              onMouseEnter={() => setHovered(project.id)}
-              onMouseLeave={() => setHovered(null)}
             >
               {/* Rule */}
               <div className="h-px" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
@@ -145,18 +127,19 @@ export default function ShaftArchive() {
                 }}
                 aria-expanded={expanded === project.id}
               >
-                <div className="flex items-start justify-between gap-6">
+                <div className="flex items-start justify-between gap-4 md:gap-6">
 
                   {/* Left: case number + title */}
-                  <div className="flex items-baseline gap-5 min-w-0 flex-1">
+                  <div className="flex items-start gap-3 md:gap-5 min-w-0 flex-1">
                     <span
-                      className="font-space-mono text-[8px] tracking-[0.2em] uppercase shrink-0"
+                      className="font-space-mono text-[9px] tracking-[0.14em] uppercase shrink-0 pt-1.5"
                       style={{ color: "rgb(var(--shaft-muted))" }}
                     >
                       CASE_{String(index + 1).padStart(3, "0")}
                     </span>
+                    <div className="min-w-0">
                     <h3
-                      className="font-playfair font-bold truncate transition-colors duration-100"
+                      className="font-playfair font-bold leading-tight transition-colors duration-100"
                       style={{
                         fontSize: "clamp(18px, 2.2vw, 30px)",
                         color: expanded === project.id
@@ -166,16 +149,18 @@ export default function ShaftArchive() {
                     >
                       {t(`projects.${project.id}.title`)}
                     </h3>
+                    <p className="mt-2 max-w-3xl text-sm md:text-base leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                      {t(`projects.${project.id}.desc`)}
+                    </p>
+                    </div>
                   </div>
 
                   {/* Right: badge + category + toggle */}
                   <div className="flex items-center gap-4 shrink-0">
                     <div className="hidden lg:flex items-center gap-3 mr-4">
-                      <ShaftRedact
-                        text={project.role}
-                        className="text-[7px] tracking-[0.1em]"
-                        revealed={hovered === project.id || expanded === project.id}
-                      />
+                      <span className="font-space-mono text-[9px] tracking-[0.08em] uppercase" style={{ color: "rgb(var(--shaft-muted))" }}>
+                        {project.role}
+                      </span>
                     </div>
                     {project.badge && (
                       <span
@@ -206,11 +191,11 @@ export default function ShaftArchive() {
                 </div>
 
                 {/* Tag row */}
-                <div className="flex flex-wrap items-center gap-4 mt-2 pl-[calc(1.5rem+1.25rem+1.25rem)]">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 pl-0 md:pl-[calc(1.5rem+1.25rem+1.25rem)]">
                   {project.tags.slice(0, 5).map((tag) => (
                     <span
                       key={tag}
-                      className="font-space-mono text-[7px] tracking-[0.2em] uppercase"
+                      className="font-space-mono text-[9px] tracking-[0.12em] uppercase"
                       style={{ color: "rgb(var(--shaft-border) / 0.8)", filter: "brightness(1.8)" }}
                     >
                       {tag}
@@ -230,7 +215,7 @@ export default function ShaftArchive() {
                     className="overflow-hidden"
                   >
                     <div
-                      className="mb-6 ml-[calc(1.5rem+1.25rem+1.25rem)] border-l-2 pl-6 py-2"
+                      className="mb-6 ml-0 md:ml-[calc(1.5rem+1.25rem+1.25rem)] border-l-2 pl-4 md:pl-6 py-2"
                       style={{ borderColor: "rgb(var(--shaft-crimson))" }}
                     >
                       <p
@@ -241,7 +226,7 @@ export default function ShaftArchive() {
                       </p>
 
                       {/* ── Cinematic project image ── */}
-                      {PROJECT_IMAGES[project.id] && (
+                      {(project.bannerImage || project.image) && (
                         <motion.div
                           initial={{ opacity: 0, scale: 0.98 }}
                           animate={{ opacity: 1, scale: 1 }}
@@ -250,7 +235,7 @@ export default function ShaftArchive() {
                           style={{ maxHeight: "280px" }}
                         >
                           <Image
-                            src={PROJECT_IMAGES[project.id]}
+                            src={project.bannerImage ?? project.image}
                             alt={project.title}
                             width={800}
                             height={400}
@@ -320,17 +305,9 @@ export default function ShaftArchive() {
                           </a>
                         )}
                         <div className="flex items-center gap-2">
-                          <ShaftRedact
-                            text={project.role}
-                            className="text-[8px] tracking-[0.2em] uppercase"
-                            revealed={hovered === project.id || expanded === project.id}
-                          />
+                          <span className="font-space-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "rgb(var(--shaft-muted))" }}>{project.role}</span>
                           <span style={{ color: "rgb(var(--shaft-muted))" }}>·</span>
-                          <ShaftRedact
-                            text={project.duration}
-                            className="text-[8px] tracking-[0.2em] uppercase"
-                            revealed={hovered === project.id || expanded === project.id}
-                          />
+                          <span className="font-space-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "rgb(var(--shaft-muted))" }}>{project.duration}</span>
                         </div>
                       </div>
                     </div>
