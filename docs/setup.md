@@ -71,20 +71,64 @@ get the portal working. `CRON_SECRET` is worth setting early, because
 
 Nobody can open `/admin` yet, so nobody can create a client.
 
-1. Go to `/login` on your site and sign up with your email. Supabase Auth
-   creates the user; a trigger creates a matching `profiles` row with role
-   `client`.
-2. In Supabase: **Authentication** → **Users** → copy your user's UID.
-3. **SQL Editor**, with your UID:
+Being an admin is **two** facts in two places, and setting only one of them
+looks exactly like the setup having failed:
 
-```sql
-update public.profiles
-set role = 'admin'
-where id = '<paste-your-uid>';
+| where | who reads it | if it's missing |
+| --- | --- | --- |
+| `public.profiles.role` | Postgres, via `is_admin()` in every RLS policy | `/admin` opens and every panel is empty |
+| `app_metadata.role` on the auth user | `middleware.ts`, out of the JWT | `/admin` redirects you to `/portal` |
+
+There is also no signup trigger in this schema. Signing in creates an auth
+user and **no `profiles` row at all**, so this inserts one rather than
+assuming there is a row to update.
+
+### First, get an auth user
+
+Either sign in once at `/login` with your address — the magic-link button
+creates the user — or add it under Supabase → **Authentication** → **Users**
+→ **Add user**.
+
+### Then promote it
+
+With `.env.local` filled in (step 3), from a checkout:
+
+```bash
+npm run admin -- you@example.com
 ```
 
-4. Sign out and back in. The role is also read from the JWT, so the session
-   needs to be reissued before `/admin` opens.
+It sets both facts, refuses to half-finish, and tells you how many admins
+exist afterwards. `-- --create` invites the address first if it has never
+signed in; `-- --revoke` puts it back to `client`.
+
+No checkout to hand? The same thing in the **SQL Editor**, which needs no
+UID because it joins on the address:
+
+```sql
+insert into public.profiles (id, role)
+select id, 'admin' from auth.users
+where lower(email) = lower('you@example.com')
+on conflict (id) do update set role = 'admin';
+
+update auth.users
+set raw_app_meta_data =
+      coalesce(raw_app_meta_data, '{}'::jsonb) || '{"role":"admin"}'::jsonb
+where lower(email) = lower('you@example.com');
+```
+
+Check both landed — every column should say `admin`:
+
+```sql
+select u.email,
+       p.role                        as rls_role,
+       u.raw_app_meta_data->>'role'  as jwt_role
+from auth.users u
+left join public.profiles p on p.id = u.id
+where lower(u.email) = lower('you@example.com');
+```
+
+Finally, **sign out and back in**. The role travels in the JWT, and the token
+in your browser still says what it said when it was issued.
 
 ---
 

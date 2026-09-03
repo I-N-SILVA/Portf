@@ -14,6 +14,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "doctor": "node scripts/doctor.mjs",
+    "admin": "node scripts/grant-admin.mjs",
     "types:gen": "supabase gen types typescript --project-id \"$SUPABASE_PROJECT_ID\" > lib/supabase/types.ts",
     "bundle:sql": "node scripts/build-migration-bundle.mjs",
     "verify": "npm run typecheck && npm run lint && npm run check:dead && npm run check:types && npm run check:bundle && npm run test && npm run build",

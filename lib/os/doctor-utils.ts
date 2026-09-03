@@ -83,7 +83,9 @@ export function diagnoseInstall(counts: {
       message: "no admin profile",
       detail:
         "Nobody can open /admin, so nobody can create a client or publish a " +
-        "page. Sign up once, then set profiles.role = 'admin' for that user.",
+        "page. Sign in once at /login, then run `npm run admin -- you@example.com`. " +
+        "Setting profiles.role alone is not enough: middleware gates /admin on " +
+        "the role claim in the JWT. See docs/setup.md step 4.",
     });
   } else {
     out.push({ severity: "ok", message: `${counts.admins} admin` });

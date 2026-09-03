@@ -150,8 +150,12 @@ for (const f of installFindings) {
   render(f.message, f.detail);
 }
 if (admins?.length === 0) {
-  console.log(`        ${D}Sign up once through Supabase Auth, then in the SQL editor:${X}`);
-  console.log(`        ${D}  update public.profiles set role = 'admin' where id = '<your-auth-user-id>';${X}`);
+  // Not just profiles.role: middleware gates /admin on the JWT claim, so
+  // setting one without the other leaves you redirected or looking at an
+  // empty console. scripts/grant-admin.mjs sets both.
+  console.log(`        ${D}Sign in once at /login, then from a checkout:${X}`);
+  console.log(`        ${D}  npm run admin -- you@example.com${X}`);
+  console.log(`        ${D}(SQL alternative, and why it is two statements: docs/setup.md step 4)${X}`);
 }
 
 /* ── 4. clients and their pages ──────────────────────────────────────── */

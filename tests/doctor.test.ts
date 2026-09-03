@@ -71,6 +71,19 @@ describe("diagnoseInstall", () => {
     expect(first.message).toContain("admin");
   });
 
+  it("does not tell anyone that setting profiles.role alone is enough", () => {
+    // It isn't: middleware.ts gates /admin on app_metadata.role from the JWT,
+    // so a profile-only promotion is redirected to /portal and the setup
+    // looks broken. This advice was wrong once; it should stay fixed.
+    const [first] = diagnoseInstall({
+      admins: 0,
+      clients: 0,
+      publishedPages: 0,
+      invitedClients: 0,
+    });
+    expect(first.detail).toMatch(/JWT|claim/);
+  });
+
   it("stops after 'no clients' rather than piling on consequences", () => {
     const out = diagnoseInstall({
       admins: 1,
