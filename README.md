@@ -69,6 +69,11 @@ make yourself an admin.
 and when any one of them isn't, a visitor gets the same blank 404. Rather than
 guess which link is missing:
 
+Open **`/admin/health`** on the deployed site — it reports the same checks
+against the environment actually serving it, and needs nothing set up locally.
+
+From a terminal:
+
 ```bash
 npm run doctor          # the whole install
 npm run doctor acme     # and why /c/acme in particular
@@ -125,7 +130,7 @@ empty) now sees the Postgres error on the page instead of a 404.
 | `npm test` | Unit tests (vitest) over the pure modules |
 | `npm run test:watch` | The same, in watch mode |
 | `npm run test:e2e` | Playwright: axe accessibility pass, reduced-motion behaviour, no-JS rendering |
-| `npm run doctor` | Why is `/c/{slug}` empty? Checks env, schema, admins, clients, published pages |
+| `npm run doctor` | Why is `/c/{slug}` empty? Checks env, schema, admins, clients, published pages. Also at `/admin/health` |
 | `npm run bundle:sql` | Regenerate `supabase/apply-*.sql` after adding a migration |
 | `npm run check:dead` | Fails if any module is unreachable from a Next.js entry point |
 | `npm run check:types` | Fails if `lib/supabase/types.ts` has drifted from the migrations |

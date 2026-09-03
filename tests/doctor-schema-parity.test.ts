@@ -14,6 +14,7 @@ import { describe, expect, it } from "vitest";
  */
 const ROOT = path.resolve(__dirname, "..");
 const script = readFileSync(path.join(ROOT, "scripts", "doctor.mjs"), "utf8");
+const healthPage = readFileSync(path.join(ROOT, "lib", "os", "health.ts"), "utf8");
 
 const sql = readdirSync(path.join(ROOT, "supabase", "migrations"))
   .filter((f) => f.endsWith(".sql"))
@@ -64,5 +65,14 @@ describe("the doctor's schema list", () => {
     const probed = [...list.matchAll(/\["([a-z_]+)"/g)].map((m) => m[1]);
     const phantom = probed.filter((f) => !created.has(f));
     expect(phantom, `doctor probes functions that don't exist: ${phantom}`).toEqual([]);
+  });
+
+  it("the /admin/health page probes the same tables as the CLI", () => {
+    // Two lists of the same thing drift. The page and the script must agree,
+    // or the deploy and the terminal give different diagnoses of one problem.
+    const block = healthPage.slice(healthPage.indexOf("const TABLES = ["));
+    const list = block.slice(0, block.indexOf("] as const"));
+    const pageTables = [...list.matchAll(/"([a-z_]+)"/g)].map((m) => m[1]);
+    expect(pageTables.sort()).toEqual(probedTables().sort());
   });
 });

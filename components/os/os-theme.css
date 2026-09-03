@@ -1018,6 +1018,58 @@
   text-align: center;
 }
 
+/* ─── health report ────────────────────────────────────────────────── */
+/* A findings list, not prose: severity reads first, at a glance, from the
+   badge column — which is the whole reason the page exists. */
+.shaft-os .os-health {
+  list-style: none;
+  margin: 0 0 26px;
+  padding: 0;
+  border: 1px solid var(--os-border);
+  border-radius: 2px;
+}
+.shaft-os .os-health-row {
+  display: flex;
+  gap: 12px;
+  padding: 11px 14px;
+  align-items: baseline;
+}
+.shaft-os .os-health-row + .os-health-row {
+  border-top: 1px solid var(--os-border);
+}
+.shaft-os .os-health-badge {
+  font-family: var(--os-sans);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 3px 6px;
+  border-radius: 2px;
+  flex: 0 0 46px;
+  text-align: center;
+}
+.shaft-os .os-health-ok   { color: #2c6b4a; background: rgba(44, 107, 74, 0.12); }
+.shaft-os .os-health-warn { color: #8a5410; background: rgba(138, 84, 16, 0.14); }
+.shaft-os .os-health-fail { color: #9e332a; background: rgba(158, 51, 42, 0.14); }
+.shaft-os .os-health-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.shaft-os .os-health-message {
+  font-family: var(--os-sans);
+  font-size: 13.5px;
+  color: var(--os-ink);
+  word-break: break-word;
+}
+.shaft-os .os-health-detail {
+  font-family: var(--os-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--os-muted);
+  max-width: 68ch;
+}
+
 /* ─── inline text states ───────────────────────────────────────────── */
 .shaft-os .os-dim {
   color: var(--os-muted);

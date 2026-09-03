@@ -34,6 +34,7 @@ const COMMANDS: Command[] = [
   { label: "Overview", href: routes.admin.root, hint: "nav" },
   { label: "All clients", href: routes.admin.clients, hint: "nav" },
   { label: "Enquiries", href: routes.admin.enquiries, hint: "nav" },
+  { label: "Health", href: routes.admin.health, hint: "nav" },
   { label: "Engagement dashboard", href: routes.admin.engagement, hint: "nav" },
   { label: "Nudge rules", href: routes.admin.nudges, hint: "nav" },
   { label: "Analytics", href: routes.admin.analytics, hint: "nav" },

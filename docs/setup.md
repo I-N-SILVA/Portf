@@ -90,6 +90,12 @@ where id = '<paste-your-uid>';
 
 ## Checking it worked
 
+Sign in and open **`/admin/health`**. It runs the checks below against the
+environment actually serving the site — which is the one that tends to be
+wrong, and the one you can't reproduce by setting variables on your laptop.
+
+The same thing from a terminal, if you'd rather:
+
 ```bash
 npm run doctor
 ```

@@ -99,6 +99,7 @@ export const routes = {
     analytics: "/admin/analytics",
     analyticsExport: (range: string) => `/admin/analytics/export?range=${range}`,
     settings: "/admin/settings",
+    health: "/admin/health",
   },
 
   auth: {
