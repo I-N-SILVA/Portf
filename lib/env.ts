@@ -29,18 +29,48 @@ export const publicEnv = {
 } as const;
 
 /**
+ * The public Supabase config as the *running process* has it.
+ *
+ * Deliberately computed keys. Next substitutes `process.env.NEXT_PUBLIC_X`
+ * for a literal only when X is set during the build; a computed key is never
+ * substituted, so on the server this reads whatever the deployed function
+ * actually has in its environment — which is how a build that ran without
+ * credentials can still serve a working page once they're added to the host.
+ *
+ * In the browser there is no environment to read (Next shims `process.env` to
+ * an object), so this falls back to `publicEnv` — the build-time values, which
+ * there are the only ones that exist. That asymmetry is the whole reason
+ * `diagnoseSupabaseConfig` in ./env-diagnosis exists.
+ */
+export function runtimeSupabaseConfig(): { url: string; anonKey: string } {
+  return {
+    url: process.env["NEXT_PUBLIC_SUPABASE_URL"] || publicEnv.supabaseUrl,
+    anonKey:
+      process.env["NEXT_PUBLIC_SUPABASE_ANON_KEY"] || publicEnv.supabaseAnonKey,
+  };
+}
+
+/**
+ * Whether the build that produced this bundle had Supabase configured. Set
+ * from `env` in next.config.ts, which — unlike NEXT_PUBLIC_* — is always
+ * inlined, so this is a true constant in both bundles.
+ *
+ * False with `supabaseConfigured()` true means the browser half is broken
+ * even though the server half works: the anon key never made it into the
+ * client bundle, and only a rebuild can put it there.
+ */
+export function buildTimeSupabaseConfigured(): boolean {
+  return process.env.BUILD_SUPABASE_CONFIGURED === "true";
+}
+
+/**
  * True once Supabase is reachable. Every auth-aware code path checks this
  * first so a bare checkout still renders the portfolio and the sample pitch
  * rooms.
  */
 export function supabaseConfigured(): boolean {
-  // Literal `process.env.X` reads again, for the same build-time-inlining
-  // reason as `publicEnv` — and reading them here rather than through the
-  // frozen object means a test (or a runtime override) can change the answer.
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-  );
+  const { url, anonKey } = runtimeSupabaseConfig();
+  return Boolean(url && anonKey);
 }
 
 export function isProduction(): boolean {

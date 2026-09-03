@@ -98,6 +98,8 @@ const jsonLd = {
 };
 
 import { Providers } from "./providers";
+import { SupabaseRuntimeConfig } from "@/components/SupabaseRuntimeConfig";
+import { runtimeSupabaseConfig } from "@/lib/env";
 
 /**
  * The CSP nonce for this request, or undefined.
@@ -154,7 +156,15 @@ export default async function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Providers>{children}</Providers>
+        {/*
+          Hands the browser the credentials the *server* can see right now,
+          rather than only the ones compiled in when this bundle was built.
+          Without it, a deploy built before the environment variables existed
+          serves a login form that throws on first use. See the component.
+        */}
+        <SupabaseRuntimeConfig {...runtimeSupabaseConfig()}>
+          <Providers>{children}</Providers>
+        </SupabaseRuntimeConfig>
       </body>
     </html>
   );

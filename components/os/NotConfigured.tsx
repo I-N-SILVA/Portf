@@ -1,3 +1,9 @@
+import {
+  buildTimeSupabaseConfigured,
+  runtimeSupabaseConfig,
+} from "@/lib/env";
+import { detectHost, diagnoseSupabaseConfig } from "@/lib/env-diagnosis";
+
 /**
  * Shown instead of an error page when Supabase credentials are missing.
  *
@@ -7,22 +13,33 @@
  * throws, so the careful explanation in the layout never reached anybody. The
  * error boundary caught it and said "that didn't load", which is true and
  * useless.
+ *
+ * It used to say "set these variables", which was the same sentence whether
+ * they had never been set, were set with the wrong scope, or were set after
+ * this bundle was built. Those need three different actions, so it works out
+ * which one it is looking at. Names only — never a value, set or unset.
  */
 export function NotConfigured({ area }: { area: string }) {
+  const { url, anonKey } = runtimeSupabaseConfig();
+  const diagnosis = diagnoseSupabaseConfig({
+    runtime: Boolean(url && anonKey),
+    build: buildTimeSupabaseConfigured(),
+    host: detectHost(process.env),
+  });
+
   return (
     <main className="os-stage">
       <p className="os-eyebrow">{area}</p>
       <h1 className="os-title">Not configured.</h1>
+      <p className="os-sub">{diagnosis.headline}</p>
+      <ol className="os-sub os-steps">
+        {diagnosis.steps.map((step) => (
+          <li key={step}>{step}</li>
+        ))}
+      </ol>
       <p className="os-sub">
-        This area needs a Supabase project. Set{" "}
-        <code>NEXT_PUBLIC_SUPABASE_URL</code>,{" "}
-        <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> and{" "}
-        <code>SUPABASE_SERVICE_ROLE_KEY</code>, then apply the migrations in{" "}
-        <code>supabase/migrations/</code>.
-      </p>
-      <p className="os-sub">
-        <code>npm run doctor</code> checks all of that and tells you which part
-        is missing.
+        <code>npm run doctor</code> runs the same checks against whatever your{" "}
+        <code>.env.local</code> points at, and can also see past RLS.
       </p>
     </main>
   );

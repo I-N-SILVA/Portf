@@ -3,6 +3,28 @@ import { CSP_STRICT, contentSecurityPolicy } from './lib/security/csp';
 
 const nextConfig: NextConfig = {
   /**
+   * A build-time snapshot of whether Supabase was configured when this bundle
+   * was produced, so a running deploy can tell the two failure modes apart.
+   *
+   * Next only substitutes `process.env.NEXT_PUBLIC_X` for a literal when X is
+   * actually set during the build; when it isn't, the expression survives into
+   * the server bundle and reads the runtime environment instead. So the server
+   * can recover from a build that had no credentials — but the *browser*
+   * bundle cannot: there the substitution is all there is, and an absent value
+   * is an empty string forever. Comparing this constant against the runtime
+   * read is what separates "never set anywhere" from "set after this build,
+   * so redeploy". `env` entries, unlike NEXT_PUBLIC_*, are always inlined.
+   */
+  env: {
+    BUILD_SUPABASE_CONFIGURED: String(
+      Boolean(
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      ),
+    ),
+  },
+
+  /**
    * lib/og.tsx reads the hero plates off disk to inline them into the share
    * cards. File tracing cannot see through `path.join`, so name them here or
    * they are absent from the serverless bundle and every card 500s.

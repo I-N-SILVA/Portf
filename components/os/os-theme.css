@@ -232,6 +232,16 @@
   margin: 0 0 40px;
   max-width: 60ch;
 }
+/* Ordered recovery steps under a "Not configured" headline. Numbered because
+   the order matters: setting the variables and rebuilding are two actions and
+   doing only the first is the failure this screen exists to explain. */
+.shaft-os .os-steps {
+  padding-left: 1.3em;
+  margin: 0 0 32px;
+}
+.shaft-os .os-steps li {
+  margin: 0 0 10px;
+}
 .shaft-os .os-sec {
   display: flex;
   align-items: center;
