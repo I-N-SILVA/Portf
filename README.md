@@ -45,7 +45,8 @@ npm install
 npm run dev                  # http://localhost:3000
 ```
 
-Then apply `supabase/migrations/*.sql` in order. Full setup, environment
+First time? **[docs/setup.md](docs/setup.md)** walks the whole thing.
+Otherwise apply `supabase/migrations/*.sql` in order. Environment
 variables, DNS and verification steps: **[docs/deploying.md](docs/deploying.md)**.
 
 Architecture, data model, and how each module works:
@@ -54,6 +55,13 @@ Architecture, data model, and how each module works:
 The data model, drawn: **[docs/data-model.md](docs/data-model.md)**.
 
 Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.md)**.
+
+## Nothing works yet?
+
+If every signed-in area says **"Not configured."** there is no database behind
+the site. **[docs/setup.md](docs/setup.md)** is the fifteen minutes that fixes
+it: create a Supabase project, paste one SQL file, set four Netlify variables,
+make yourself an admin.
 
 ## When the portal looks broken
 

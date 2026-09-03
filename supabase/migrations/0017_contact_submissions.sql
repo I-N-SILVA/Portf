@@ -39,6 +39,9 @@ alter table public.contact_submissions enable row level security;
 
 -- Admins only. There is no client-facing read path: a submission is a lead,
 -- not something the person who sent it comes back to look at.
+-- Drop-then-create, like every other policy in this schema: `create policy`
+-- has no `if not exists`, so without this the migration is not re-runnable.
+drop policy if exists contact_submissions_admin_all on public.contact_submissions;
 create policy contact_submissions_admin_all on public.contact_submissions
   for all to authenticated
   using (public.is_admin())
