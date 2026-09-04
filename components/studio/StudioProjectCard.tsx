@@ -5,6 +5,7 @@ import type { Project } from "@/lib/placeholder-content";
 import { caseStudies } from "@/lib/client-content";
 import Reveal from "@/components/studio/Reveal";
 import { routes } from "@/lib/routes";
+import ProjectSpotlight from "@/components/studio/ProjectSpotlight";
 
 interface StudioProjectCardProps {
   project: Project;
@@ -24,12 +25,13 @@ export default function StudioProjectCard({
 
   return (
     <Reveal delay={index * 0.08} className={featured ? "md:col-span-2" : undefined}>
-      <Link
-        href={href}
-        className={`group block h-full overflow-hidden border border-stone-300 bg-white transition duration-300 hover:border-stone-950 hover:shadow-[8px_8px_0_0_#d6d3d1] ${
-          featured ? "md:grid md:grid-cols-[1.35fr_0.65fr]" : ""
-        }`}
-      >
+      <ProjectSpotlight>
+        <Link
+          href={href}
+          className={`group block h-full overflow-hidden border border-stone-300 bg-white transition duration-300 hover:border-stone-950 hover:shadow-[8px_8px_0_0_#d6d3d1] ${
+            featured ? "md:grid md:grid-cols-[1.35fr_0.65fr]" : ""
+          }`}
+        >
         <div className={`relative overflow-hidden bg-stone-100 ${featured ? "aspect-[16/10] md:aspect-auto md:min-h-[440px]" : "aspect-[16/10]"}`}>
           <Image
             src={project.bannerImage ?? project.image}
@@ -93,7 +95,8 @@ export default function StudioProjectCard({
             </span>
           </div>
         </div>
-      </Link>
+        </Link>
+      </ProjectSpotlight>
     </Reveal>
   );
 }

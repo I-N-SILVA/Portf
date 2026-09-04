@@ -1,0 +1,46 @@
+.section{background:#eeede7;color:#23251f;padding:90px 24px;scroll-margin-top:80px;border-block:1px solid #d9dbd1}
+.inner{max-width:1152px;margin:auto}
+.heading{max-width:740px;margin-bottom:60px}
+.eyebrow,.smallLabel{font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:#5b6255}
+.heading h2{font-size:clamp(2.35rem,4.2vw,3.7rem);line-height:1.08;letter-spacing:-.04em;margin:20px 0}
+.heading>p:last-child{max-width:490px;font-size:16px;line-height:1.75;color:#5a6054}
+.layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.stickyColumn{height:100%;min-width:0}
+.stickyPanel{position:sticky;top:120px}
+.artifactStack{display:grid}
+.artifactLayer{grid-area:1/1;opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .4s ease,transform .4s ease,visibility .4s}
+.artifactLayer[data-active=true]{opacity:1;visibility:visible;transform:none}
+.artifact{background:#fafaf6;border:1px solid #bfc5b6;box-shadow:0 20px 40px -30px #25351c45;overflow:hidden}
+.artifactBar{border-bottom:1px solid #dce0d5;padding:18px 20px;font-size:10px;letter-spacing:.04em;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.windowDots{display:flex;gap:4px}.windowDots i{width:4px;height:4px;border-radius:50%;background:#89947e}
+.artifactBody{min-height:350px;padding:30px;background-image:radial-gradient(#58694c22 .75px,transparent .75px);background-size:16px 16px}
+.artifactFooter{border-top:1px solid #dce0d5;font-size:9px;letter-spacing:.03em;color:#5d6655;padding:13px 20px;display:flex;gap:8px;align-items:center}
+.statusDot{height:5px;width:5px;background:#507553;border-radius:50%}
+.workflow .smallLabel,.evaluation .smallLabel{margin-bottom:25px}
+.workflowNode{display:flex;align-items:center;gap:14px;border:1px solid #c8d0c0;padding:15px 20px;background:#fafaf6;font-size:13px;margin-inline:14px;color:#37452d}
+.workflowNode small,.branchNodes small,.evaluationRow small{display:block;font-size:10px;color:#4e5747;margin-top:4px;line-height:1.5}
+.emphasisNode{border-color:#769668;background:#e5eedb}
+.connector{display:block;color:#819173;margin:8px auto}
+.fork{height:28px;display:grid;grid-template-columns:1fr 1fr;margin-inline:25%}
+.fork span{border-top:1px solid #9aaa8b;margin-top:14px}.fork span:first-child{border-left:1px solid #9aaa8b}.fork span:last-child{border-right:1px solid #9aaa8b}
+.branchNodes{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;text-align:center}
+.branchNodes>div{padding:14px 5px;border:1px solid #c8d0c0;background:#f5f6ef}
+.evaluation h4,.documentCover h4{font-size:30px;line-height:1.15;letter-spacing:-.04em;font-weight:500;margin-bottom:20px}
+.evaluationRow{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #dce0d5;font-size:12px}
+.checkBox{width:21px;height:21px;border:1px solid #91a185;background:#e5eedb;display:grid;place-items:center;color:#49673a}
+.artifactNote{font-size:9px;color:#626b5c;margin-top:18px;line-height:1.6}
+.handover{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center;min-height:290px}
+.documentCover{border:1px solid #c2cbb7;background:#e8eedf;padding:18px 16px;align-self:stretch;display:flex;flex-direction:column;justify-content:space-between;color:#3e5031}
+.documentCover .smallLabel{font-size:8px;line-height:1.8}.documentCover h4{font-size:25px;margin-bottom:0}.documentList>div{display:flex;gap:8px;align-items:center;padding:18px 0;border-bottom:1px solid #dce0d5;font-size:10px;line-height:1.5}.documentList>div>span{font-size:8px;color:#68765b}.documentList svg{margin-left:auto;flex-shrink:0}
+.progress{display:flex;gap:16px;justify-content:space-between;margin-top:22px;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#606956}.progress span{display:flex;gap:8px;align-items:center}.progress i{height:1px;width:16px;background:#b3bba8}.progress span[data-active=true]{color:#2d592d}.progress span[data-active=true] i{background:#376d38}
+.stage{display:grid;grid-template-columns:30px 1fr;gap:18px;border-top:1px solid #c8cdbf;padding:35px 0 48px;position:relative}
+.stage:last-child{padding-bottom:0}.stage:before{content:"";position:absolute;inset:-1px auto auto 0;width:0;height:2px;background:#54733d;transition:width .45s ease}.stage[data-active=true]:before{width:64px}
+.stageNumber{font-size:11px;color:#4e5747;padding-top:10px}.stage h3{font-size:34px;letter-spacing:-.025em;line-height:1.1;margin:0 0 18px}.question{font-size:16px;font-weight:500;line-height:1.6;margin-bottom:12px}.body{font-size:14px;line-height:1.85;color:#555c4e}
+.deliverable{display:flex;gap:10px;margin-top:24px;color:#405334;align-items:center}.deliverable p{font-size:12px;line-height:1.7}.deliverable span{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:#626e57;margin-bottom:3px}
+.inlineArtifact{display:none;grid-column:1/-1}
+@media(min-width:1024px){.stage{min-height:340px}}
+@media(max-width:1100px){.layout{gap:45px}.artifactBody{padding:22px}.handover{gap:10px}.documentCover{padding:16px 10px}.documentCover h4{font-size:23px}}
+@media(max-width:767px){.section{padding:64px 24px}.heading{margin-bottom:36px}.heading h2{font-size:38px}.desktopBreak{display:none}.layout{display:block}.stickyColumn{display:none}.stage{padding:28px 0 36px;gap:12px}.stage:last-child{padding-bottom:0}.stage h3{font-size:31px}.inlineArtifact{display:block;margin-top:14px}.artifactBody{min-height:0;padding:24px}.workflow{max-width:360px;margin:auto}.handover{min-height:260px}.documentCover{padding:20px 14px}.stage:before{width:64px}.artifact{box-shadow:none}}
+@media(max-width:380px){.section{padding-inline:18px}.artifactBody{padding:20px 15px}.artifactBar{padding:15px;font-size:9px}.artifactFooter{padding:12px 15px;font-size:8px}.workflowNode{margin-inline:0}.documentList>div{gap:6px;font-size:9px}}
+@media(prefers-reduced-motion:reduce){.stickyColumn{display:none}.layout{display:block}.stages{display:block}.stage{display:grid;min-height:0}.inlineArtifact{display:block;margin-top:24px}.artifactBody{min-height:0}.artifactLayer,.stage:before{transition:none}.stage:before{width:64px}}
+@media(prefers-reduced-motion:reduce) and (max-width:1023px){.stages{display:block}.artifactBody{min-height:0}.handover{display:grid}.documentCover{min-height:240px}.workflow{max-width:360px;margin:auto}.branchNodes{grid-template-columns:1fr 1fr}.fork{display:grid}.branchNodes>div{margin-top:0}}

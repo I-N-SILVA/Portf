@@ -1,0 +1,259 @@
+.finder {
+  margin-top: 4rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  border: 1px solid #d6d3c9;
+  background: #f6f4ed;
+  color: #292524;
+}
+
+.intro {
+  max-width: 37rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #326451;
+  font-size: 0.625rem;
+  line-height: 1.6;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin: 0.75rem 0 0;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.introCopy {
+  margin: 0.875rem 0 0;
+  color: #57534e;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+  margin-top: 2rem;
+}
+
+.choices {
+  display: grid;
+  border-top: 1px solid #c9c6bb;
+}
+
+.choice {
+  display: flex;
+  width: 100%;
+  min-height: 6rem;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.125rem 0.875rem;
+  border: 0;
+  border-bottom: 1px solid #c9c6bb;
+  background: transparent;
+  color: #292524;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.choice:hover {
+  background: #edece2;
+}
+
+.choice[aria-pressed="true"] {
+  background: #e5e9dc;
+  box-shadow: inset 3px 0 0 #326451;
+}
+
+.choice:focus-visible,
+.cta:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 2px solid #326451;
+  outline-offset: 4px;
+}
+
+.number {
+  align-self: flex-start;
+  margin-top: 0.2rem;
+  color: #66645d;
+  font-size: 0.625rem;
+  line-height: 1.6;
+}
+
+.choiceText {
+  display: grid;
+  flex: 1;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.choiceLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.choiceContext {
+  color: #57534e;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.indicator {
+  display: grid;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 1px solid #a8a69b;
+  border-radius: 50%;
+  color: transparent;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.indicator svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.choice[aria-pressed="true"] .indicator {
+  border-color: #326451;
+  background: #326451;
+  color: #fff;
+}
+
+.result {
+  min-height: 21.5rem;
+  padding: 1.25rem 0 0;
+  border-top: 1px solid #326451;
+}
+
+.resultContent {
+  animation: enter 260ms ease both;
+}
+
+.recommendation {
+  margin: 0.75rem 0 0;
+  font-size: clamp(1.5rem, 2.7vw, 2rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.description {
+  margin: 0.875rem 0 0;
+  color: #57534e;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.bring {
+  margin-top: 1.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid #c8ccbf;
+  color: #57534e;
+  font-size: 0.75rem;
+  line-height: 1.7;
+}
+
+.bring p {
+  margin: 0;
+}
+
+.bring .bringLabel {
+  margin-bottom: 0.35rem;
+  color: #44403c;
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cta {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #326451;
+  color: #24523f;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.cta svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 180ms ease;
+}
+
+.cta:hover svg {
+  transform: translateX(3px);
+}
+
+@keyframes enter {
+  from {
+    opacity: 0.65;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 700px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+
+  .result {
+    min-height: 0;
+  }
+
+  .choice {
+    min-height: 5.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resultContent {
+    animation: none;
+  }
+
+  .choice,
+  .indicator,
+  .cta svg {
+    transition: none;
+  }
+
+  .cta:hover svg {
+    transform: none;
+  }
+}

@@ -11,8 +11,8 @@ interface ContactCTAProps {
 }
 
 export default function ContactCTA({
-  heading = "Have a problem worth automating?",
-  subheading = "Tell me what's eating your team's time. I'll come back with a concrete plan — usually with a working prototype attached.",
+  heading = "Have a workflow worth improving?",
+  subheading = "Tell me where the work slows down. I'll give you a direct view on where AI fits and what a sensible first step looks like.",
   contactHref = routes.studio.section("contact"),
 }: ContactCTAProps) {
   return (
@@ -29,7 +29,7 @@ export default function ContactCTA({
             href={contactHref}
             className="group flex items-center gap-2 rounded-full bg-stone-50 px-6 py-3 text-sm font-semibold text-stone-900 transition-colors hover:bg-stone-200"
           >
-            Start a project
+            Discuss your workflow
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
           <a

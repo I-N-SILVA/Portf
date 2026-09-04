@@ -105,10 +105,17 @@ Further additions should use evidence that can be substantiated:
 - Replace the generic availability pill with an accurate capacity window when scheduling data is available.
 - Keep the restrained editorial system and let project imagery provide the color; adding more gradients or ambient animation would weaken the proof-first hierarchy.
 
+## AI consultant experience
+
+Studio now positions Ian as an independent AI consultant who can diagnose a workflow, prove a focused system, and embed it into everyday work. The language describes human review, evaluation, ownership, and handover instead of presenting agents as an automatic answer to every problem.
+
+The hero uses an interactive consulting canvas to demonstrate three illustrative workflows without claiming customer results. A restrained pointer spotlight, animated signal path, scroll-linked canvas movement, and navigation progress rail add depth while preserving the native cursor and browser scrolling. The process section uses a sticky artifact panel on desktop and a complete inline sequence on mobile or when reduced motion is requested. Scroll reveals begin from visible server-rendered content, so JavaScript failure never makes the page unreadable.
+
+An engagement finder helps visitors choose between exploring AI, proving a specific workflow, and putting a prototype into everyday use. It recommends a starting point, explains what to bring, and carries that choice into the contact form. Project cards add a subtle spotlight on pointer hover or keyboard focus. Decorative signals stop after two cycles; reduced motion disables the pointer and movement effects.
+
 ## Validation
 
 - `npm run verify`: type checking, lint, dead-module check, schema parity, migration bundle parity, 116 unit tests, and the production build passed.
-- `npx playwright test --workers=1`: all 22 browser tests passed, including WCAG A/AA scans, visible native cursor behavior, portal redirect preservation, intro and sound preferences, proof-first section order, JavaScript-free Studio content, and reduced-motion rendering.
+- `npx playwright test --workers=1`: all 25 browser tests passed. Coverage includes WCAG A/AA scans, the consulting canvas interaction, engagement-to-contact prefilling, a 320px Studio layout, visible native cursor behavior, portal redirect preservation, intro and sound preferences, proof-first section order, JavaScript-free Studio content, and reduced-motion rendering.
 - Production-build browser checks at 1440 × 1000 and 390 × 844: no horizontal overflow on the portfolio or Studio; the work CTA, project expansion, and responsive navigation passed.
-- The default five-worker browser run timed out on six navigation waits on this host. The single-worker run completed in 37 seconds with all tests passing.
 - Authenticated client/admin workflows were not exercised because this checkout has no service credentials.

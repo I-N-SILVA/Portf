@@ -13,11 +13,32 @@ import type { PublicClientPage } from "@/lib/supabase/types";
 
 export const CLIENT_SITE = {
   NAME: "Ian N. Silva — Studio",
-  TITLE: "Ian N. Silva — AI Automation & Product Studio",
+  TITLE: "Ian N. Silva — Independent AI Consultant",
   DESCRIPTION:
-    "I design and ship AI automation systems and web products for businesses — from first prototype to production. See the work, the process, and the results.",
+    "Independent AI consulting for practical workflows. I help teams identify useful opportunities, build automation and agent systems, and take them into everyday use.",
   EMAIL: "iannogueira@proton.me",
   PORTFOLIO_URL: "/",
+} as const;
+
+export const studioHero = {
+  eyebrow: "Independent AI consultant · Builder",
+  heading: "AI that earns its place in your workflow.",
+  body: "I help teams find where AI is useful, build the right system, and put it to work. From a first workflow audit to agents and internal tools, you work directly with the person building it.",
+  primaryCta: "Discuss your workflow",
+  workingModel: [
+    {
+      title: "Find the opportunity",
+      body: "Map the work, the friction, and where AI can make a useful difference.",
+    },
+    {
+      title: "Test a focused system",
+      body: "Build around your tools, with clear checks and human review.",
+    },
+    {
+      title: "Make it everyday practice",
+      body: "Deploy, document, and give your team a clear way to run it.",
+    },
+  ],
 } as const;
 
 // Shown as a status pill in the hero — keep it current.
@@ -29,9 +50,9 @@ export const CONTACT_FORM = {
   RESPONSE_TIME: "I usually reply within one business day.",
   PROJECT_TYPES: [
     "General enquiry",
-    "AI Automation",
-    "Internal Tools & Dashboards",
-    "MVP & Product Build",
+    "Workflow audit & AI opportunities",
+    "Automation & agent systems",
+    "Implementation & handover",
     "Not sure yet",
   ],
 } as const;
@@ -46,39 +67,39 @@ export interface Service {
 
 export const services: Service[] = [
   {
-    title: "AI Automation",
-    body: "The repetitive work your team does every week — reporting, content operations, data entry, triage — turned into systems that run themselves.",
+    title: "Workflow audit & roadmap",
+    body: "Start with the work your team actually does. I map the repetitive steps, assess where AI fits, and define a focused first project with clear measures of success.",
     engagement: "Automation sprint",
-    bestFor: "Teams losing time to repeatable manual work",
+    bestFor: "Teams deciding where to start with AI",
     deliverables: [
-      "Workflow audit & automation roadmap",
-      "Claude / LLM-powered pipelines",
-      "Integrations with your existing tools",
-      "Monitoring so you know it keeps working",
+      "Workflow and tooling review",
+      "Prioritised opportunities and constraints",
+      "Pilot scope and success criteria",
+      "Implementation roadmap",
     ],
   },
   {
-    title: "Internal Tools & Dashboards",
-    body: "Purpose-built software for the workflows spreadsheets can't handle — capture in the field, see it aggregated live, act on exceptions.",
-    engagement: "Focused internal build",
-    bestFor: "Operational teams outgrowing spreadsheets",
+    title: "Automation & agent systems",
+    body: "Turn a clear use case into a working system: document processing, research, reporting, or internal tools. Give agents defined tasks, connected tools, and human review where decisions matter.",
+    engagement: "Focused pilot",
+    bestFor: "Teams ready to test a specific workflow",
     deliverables: [
-      "Mobile-first web apps, no install",
-      "Live dashboards & one-click exports",
-      "Role-based access for your team",
-      "Deployed on your infrastructure",
+      "Working automation or agent prototype",
+      "Connections to your existing tools",
+      "Review steps and exception handling",
+      "Evaluation against real examples",
     ],
   },
   {
-    title: "MVP & Product Builds",
-    body: "An idea taken to a working product fast — designed, built, and shipped so you can put it in front of real users instead of a pitch deck.",
-    engagement: "Prototype to launch",
-    bestFor: "Founders validating a real product",
+    title: "Implementation & handover",
+    body: "Take a useful prototype into daily use. I build the interface, access controls, and operational checks around it, then document how your team can run and improve it.",
+    engagement: "Pilot to production",
+    bestFor: "Teams putting a validated system into use",
     deliverables: [
-      "Working prototype in days",
-      "Full-stack production build",
-      "Modern, maintainable stack",
-      "Documentation & clean handover",
+      "Production build in your accounts",
+      "Access controls and monitoring",
+      "Team walkthrough and documentation",
+      "Handover and agreed support plan",
     ],
   },
 ];
@@ -90,42 +111,42 @@ export interface Faq {
 
 export const faqs: Faq[] = [
   {
+    question: "Where should we start if we are new to AI?",
+    answer:
+      "Start with one workflow: what comes in, what your team does with it, and where time or information gets lost. I review the tools and constraints with you, then recommend a focused pilot. Sometimes a simpler automation is the right answer.",
+  },
+  {
     question: "How does pricing work?",
     answer:
-      "Fixed-scope quotes, agreed before work starts. After a short discovery call I'll send a written proposal with the scope, timeline, and price — no hourly meters running, no surprises. Small automations start small; product builds are quoted per milestone.",
+      "I quote a defined scope before work starts. After discovery, you receive a written proposal with the deliverables, timeline, and price. Larger implementations can be split into milestones, and any scope changes are agreed together.",
   },
   {
-    question: "How fast will I see something working?",
+    question: "Will agents make decisions without our team?",
     answer:
-      "Days, not months. My process is built around getting a working prototype in front of you in the first week, then iterating against your real workflow. Production builds typically run a few weeks depending on scope.",
+      "We define what the system can do, what needs approval, and when it should stop and ask for help. The pilot includes examples from your workflow so we can examine its output and failure cases before deciding what to put into daily use.",
   },
   {
-    question: "Who owns the code and the IP?",
+    question: "Can you work with our existing tools and data?",
     answer:
-      "You do — completely. Everything ships to your accounts and your infrastructure, with documentation your team (or any future developer) can pick up. No lock-in, no proprietary black boxes.",
+      "I review your systems, access requirements, and data constraints before choosing an approach. Integrations, model providers, and any third-party costs are discussed as part of the scope. Sensitive data handling is a design decision we make explicitly.",
   },
   {
-    question: "What happens after launch?",
+    question: "Who owns the work, and what happens after launch?",
     answer:
-      "Every project includes a handover period for fixes and adjustments. After that you can run it yourself, or keep me on a light retainer for iteration — your choice, never a requirement.",
+      "The project code and documentation are handed over to you, with deployment in your accounts. Third-party services keep their own licences and usage costs. We agree the handover period and support arrangements before launch, including who will monitor and maintain the system.",
   },
   {
-    question: "How do we communicate during a project?",
+    question: "Who will I work with?",
     answer:
-      "Async-first: regular written updates with links to the work in progress, plus a weekly call if you want one. You'll always know what's done, what's next, and what I need from you.",
-  },
-  {
-    question: "What if my problem doesn't fit a category above?",
-    answer:
-      "Tell me anyway. The first call is free and diagnostic — if I'm not the right person for it, I'll say so and point you somewhere better.",
+      "You work directly with me, from discovery through implementation. I share written progress updates and working previews, with calls when they help move the project forward. The first conversation is free: bring a workflow or problem, even if you are still figuring out the brief.",
   },
 ];
 
 export const studioAbout = {
-  heading: "The person behind the work",
+  heading: "Your consultant. The person building it.",
   paragraphs: [
-    "I'm Ian — an AI automation engineer and full-stack developer with a BSc in Economics and a Masters in Psychology. That mix matters: I don't just build systems that work technically, I build them around how your team actually behaves.",
-    "I work solo, which means the person you talk to on the first call is the person designing, building, and shipping your project. No account managers, no hand-offs, no telephone game.",
+    "I'm Ian, an independent AI consultant, automation engineer, and full-stack developer with a BSc in Economics and a Masters in Psychology. I bring that mix to understanding the business problem, how people work, and what a useful system needs to do.",
+    "I work solo and stay involved from the first workflow conversation to the build and handover. My role is to help you make a sound decision about AI, test it against real work, and leave your team with something they understand and can use.",
   ],
   portrait: "/hero-portrait.webp",
   // Paste a Loom or YouTube URL here to show a short intro video in the

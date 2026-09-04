@@ -19,11 +19,19 @@ export default function ContactForm() {
   // /studio?company=Acme&ref=acme#contact so the form arrives personalized.
   const [company, setCompany] = useState("");
   const [ref, setRef] = useState("");
+  const [projectType, setProjectType] = useState<string>(CONTACT_FORM.PROJECT_TYPES[0]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setCompany(params.get("company") ?? "");
     setRef(params.get("ref") ?? "");
+    const requestedType = params.get("projectType");
+    if (
+      requestedType &&
+      (CONTACT_FORM.PROJECT_TYPES as readonly string[]).includes(requestedType)
+    ) {
+      setProjectType(requestedType);
+    }
   }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -169,7 +177,8 @@ export default function ContactForm() {
           </span>
           <select
             name="projectType"
-            defaultValue={CONTACT_FORM.PROJECT_TYPES[0]}
+            value={projectType}
+            onChange={(event) => setProjectType(event.target.value)}
             className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
           >
             {CONTACT_FORM.PROJECT_TYPES.map((type) => (

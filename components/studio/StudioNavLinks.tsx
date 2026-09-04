@@ -32,7 +32,7 @@ export default function StudioNavLinks() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]) setActive(visible[0].target.id);
       },
-      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] },
+      { rootMargin: "-24% 0px -64% 0px", threshold: [0, 0.25, 0.5, 1] },
     );
 
     sections.forEach((el) => observer.observe(el));

@@ -12,14 +12,14 @@ export default function ContactSection() {
       <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
         <Reveal>
           <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-400">
-            Start a project
+            Discuss your workflow
           </p>
           <h2 className="mt-3 font-playfair text-3xl font-bold leading-tight md:text-4xl">
-            Tell me what&apos;s eating your team&apos;s time.
+            Bring me the workflow that should work better.
           </h2>
           <p className="mt-5 max-w-md leading-relaxed text-stone-400">
-            No obligation and no sales pitch — just a straight answer on whether
-            I can help and what it would take. {CONTACT_FORM.RESPONSE_TIME}
+            Start with the work, the constraints, and what a useful result would change.
+            I&apos;ll give you a direct view on where AI fits and what it would take. {CONTACT_FORM.RESPONSE_TIME}
           </p>
           <a
             href={`mailto:${CLIENT_SITE.EMAIL}`}

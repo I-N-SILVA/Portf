@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 interface RevealProps {
   children: ReactNode;
@@ -10,18 +9,56 @@ interface RevealProps {
 }
 
 export default function Reveal({ children, delay = 0, className }: RevealProps) {
+  const element = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = element.current;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!node || motionPreference.matches) return;
+
+    let animation: Animation | null = null;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        animation = node.animate(
+          [
+            { opacity: 0.38, transform: "translateY(18px)" },
+            { opacity: 1, transform: "translateY(0)" },
+          ],
+          {
+            duration: 560,
+            delay: delay * 1000,
+            easing: "cubic-bezier(.21,.47,.32,.98)",
+            fill: "none",
+          },
+        );
+        observer.disconnect();
+      },
+      { rootMargin: "0px 0px -12%", threshold: 0.08 },
+    );
+
+    const handleMotionPreference = (event: MediaQueryListEvent) => {
+      if (!event.matches) return;
+      observer.disconnect();
+      animation?.cancel();
+    };
+
+    observer.observe(node);
+    motionPreference.addEventListener("change", handleMotionPreference);
+    return () => {
+      observer.disconnect();
+      animation?.cancel();
+      motionPreference.removeEventListener("change", handleMotionPreference);
+    };
+  }, [delay]);
+
   return (
-    <motion.div
+    <div
+      ref={element}
       className={className}
-      // Keep server-rendered content visible. A hidden initial state made every
-      // Reveal permanently blank when JavaScript was unavailable and, in some
-      // browsers, when reduced motion was enabled.
-      initial={false}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
