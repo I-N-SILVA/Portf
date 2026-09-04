@@ -90,6 +90,10 @@ The portal should behave like a work surface, so it now opens immediately, names
 
 Studio and the portfolio now consume one canonical active-project list. Studio shows the same project titles, descriptions, tags, roles, and banner images; projects with written case studies retain their deeper Studio route, while the rest link to their full project record.
 
+Studio's visual system now feels like a working product studio rather than a stack of generic cards: a dark technical hero sets the proposition and portal entry, the first and last projects act as wide editorial features, services are divided like a capabilities sheet, and the process reads as a numbered production timeline. On mobile, the repeated working-model detail collapses to one line so selected work arrives sooner.
+
+Portal entry now has one visible path from Studio and one resolver at `/portal`. Password setup continues there, all current Supabase callback formats are handled, expired links produce a useful error, and an authenticated account without a client or admin profile sees the exact linking problem instead of landing back on the homepage.
+
 The strongest next Studio additions need real evidence rather than more interface treatment:
 
 - Add one verified outcome to each project card, such as release status, adoption, time saved, or repository activity.
@@ -100,8 +104,8 @@ The strongest next Studio additions need real evidence rather than more interfac
 
 ## Validation
 
-- `npm run verify`: type checking, lint, dead-module check, schema parity, migration bundle parity, 109 unit tests, and production build passed.
-- `npx playwright test --workers=1`: all 20 browser tests passed, including WCAG A/AA scans, intro and sound preference behavior, proof-first section order, JavaScript-free Studio content, and reduced-motion rendering.
-- Production browser checks at 1440 × 1000 and 390 × 844: no horizontal overflow on the portfolio or Studio; the work CTA, project expansion, and responsive navigation passed.
+- `npm run verify`: type checking, lint, dead-module check, schema parity, migration bundle parity, 113 unit tests, and the production build passed.
+- `npx playwright test --workers=1`: all 22 browser tests passed, including WCAG A/AA scans, visible native cursor behavior, portal redirect preservation, intro and sound preferences, proof-first section order, JavaScript-free Studio content, and reduced-motion rendering.
+- Production-build browser checks at 1440 × 1000 and 390 × 844: no horizontal overflow on the portfolio or Studio; the work CTA, project expansion, and responsive navigation passed.
 - The default five-worker browser run timed out on six navigation waits on this host. The single-worker run completed in 37 seconds with all tests passing.
 - Authenticated client/admin workflows were not exercised because this checkout has no service credentials.

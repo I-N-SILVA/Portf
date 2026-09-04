@@ -9,11 +9,13 @@ import { routes } from "@/lib/routes";
 interface StudioProjectCardProps {
   project: Project;
   index?: number;
+  featured?: boolean;
 }
 
 export default function StudioProjectCard({
   project,
   index = 0,
+  featured = false,
 }: StudioProjectCardProps) {
   const caseStudy = caseStudies.find((study) => study.projectId === project.id);
   const href = caseStudy
@@ -21,18 +23,20 @@ export default function StudioProjectCard({
     : `/projects/${project.id}`;
 
   return (
-    <Reveal delay={index * 0.08}>
+    <Reveal delay={index * 0.08} className={featured ? "md:col-span-2" : undefined}>
       <Link
         href={href}
-        className="group block h-full overflow-hidden rounded-2xl border border-stone-200 bg-white transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-200/60"
+        className={`group block h-full overflow-hidden border border-stone-300 bg-white transition duration-300 hover:border-stone-950 hover:shadow-[8px_8px_0_0_#d6d3d1] ${
+          featured ? "md:grid md:grid-cols-[1.35fr_0.65fr]" : ""
+        }`}
       >
-        <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
+        <div className={`relative overflow-hidden bg-stone-100 ${featured ? "aspect-[16/10] md:aspect-auto md:min-h-[440px]" : "aspect-[16/10]"}`}>
           <Image
             src={project.bannerImage ?? project.image}
             alt={project.title}
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            sizes={featured ? "(max-width: 768px) 100vw, 65vw" : "(max-width: 768px) 100vw, 50vw"}
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.025]"
           />
           <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/70 to-transparent p-4 pt-12 text-white">
             <span className="font-space-mono text-[10px] uppercase tracking-[0.18em]">
@@ -45,8 +49,12 @@ export default function StudioProjectCard({
             )}
           </div>
         </div>
-        <div className="p-6 md:p-8">
-          <h3 className="font-playfair text-2xl font-bold leading-snug text-stone-900">
+        <div className={`flex flex-col p-6 md:p-8 ${featured ? "md:justify-between md:p-10" : ""}`}>
+          <div>
+            <span className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-500">
+              Project {String(index + 1).padStart(2, "0")}
+            </span>
+          <h3 className={`mt-3 font-playfair font-bold leading-snug text-stone-900 ${featured ? "text-3xl md:text-4xl" : "text-2xl"}`}>
             {project.title}
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-stone-600">
@@ -56,11 +64,12 @@ export default function StudioProjectCard({
             {project.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="rounded-full border border-stone-200 px-3 py-1 text-xs text-stone-600"
+                className="border border-stone-200 px-3 py-1 font-space-mono text-[10px] uppercase tracking-[0.08em] text-stone-600"
               >
                 {tag}
               </span>
             ))}
+          </div>
           </div>
           <div className="mt-6 flex items-center justify-between border-t border-stone-200 pt-5">
             <span className="text-xs text-stone-500">{project.role}</span>

@@ -18,10 +18,8 @@ test("reduced motion skips the intro and shows the content", async ({ page }) =>
   await expect(page.locator("#main")).not.toHaveAttribute("inert", /.*/);
 });
 
-test("reduced motion gives back the native cursor", async ({ page }) => {
+test("reduced motion keeps the native cursor", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
-  // `cursor: none` is global on desktop with a JavaScript cursor as the only
-  // fallback — which is nothing at all if it hasn't rendered.
   const cursor = await page.evaluate(() => getComputedStyle(document.body).cursor);
   expect(cursor).not.toBe("none");
 });

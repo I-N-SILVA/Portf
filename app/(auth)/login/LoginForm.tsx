@@ -19,7 +19,11 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(
-    initialError === "forbidden" ? "That account can't access this area." : "",
+    initialError === "forbidden"
+      ? "That account can't access this area."
+      : initialError === "auth"
+        ? "That sign-in link expired or could not be verified. Request a fresh link and open it in this browser."
+        : "",
   );
   const [sent, setSent] = useState(false);
 
@@ -65,13 +69,14 @@ export function LoginForm({
         Sign in
       </h1>
       <p className="os-sub" style={{ fontSize: "13px", marginBottom: "24px" }}>
-        Private workspace for active clients. Use the email attached to your project.
+        Use the exact email on your project invitation. After sign-in, we will
+        open your client workspace automatically.
       </p>
 
-      {error && <p className="os-msg err">{error}</p>}
+      {error && <p className="os-msg err" role="alert">{error}</p>}
       {sent && (
         <p className="os-msg ok">
-          Check your inbox — we sent a sign-in link to {email}.
+          Check your inbox — we sent a sign-in link to {email}. Open it in this browser.
         </p>
       )}
 
@@ -120,6 +125,7 @@ export function LoginForm({
       </button>
 
       <div className="os-auth-links">
+        <Link href={routes.auth.resetPassword}>Reset password</Link>
         <Link href={routes.studio.root}>Explore services</Link>
         <Link href={routes.home}>View portfolio</Link>
       </div>

@@ -403,28 +403,14 @@ html[data-shaft-light] .shaft-paper-texture {
     top: 12px;
   }
 
-  @media (min-width: 1024px) {
-    body {
-      cursor: none;
-    }
-
-    a,
-    button,
-    [role="button"] {
-      cursor: none;
-    }
-  }
-
-  /* The custom cursor is itself an animation, and hiding the real pointer
-     leaves nothing behind if it doesn't render. Give the native cursor back
-     to anyone who asked for less motion, and to coarse pointers. */
-  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
-    body,
-    a,
-    button,
-    [role="button"] {
-      cursor: auto;
-    }
+  /* Keep the operating-system pointer visible on every surface. The previous
+     animated cursor hid it at desktop widths, leaving no pointer at all when
+     the overlay failed to mount or blended into an image. */
+  a,
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
   }
 }
 

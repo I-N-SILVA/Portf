@@ -29,6 +29,12 @@ export default function StudioNav() {
         <div className="flex items-center gap-4 sm:gap-6">
           <StudioNavLinks />
           <Link
+            href={routes.portal}
+            className="hidden text-sm text-stone-600 transition-colors hover:text-stone-950 sm:block"
+          >
+            Client portal
+          </Link>
+          <Link
             href={routes.studio.section("contact")}
             className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-stone-50 transition-colors hover:bg-stone-700"
           >

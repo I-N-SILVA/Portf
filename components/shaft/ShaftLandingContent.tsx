@@ -16,7 +16,6 @@ import ShaftMobileCTA from "./ShaftMobileCTA";
 import ShaftStatusStrip from "./ShaftStatusStrip";
 import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
 import BootSequence from "@/components/ui/BootSequence";
-import Cursor from "@/components/ui/inverted-cursor";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LocaleProvider, useTranslation, type Locale } from "@/lib/i18n";
 
@@ -112,7 +111,6 @@ export default function ShaftLandingContent({
 
   return (
     <LocaleProvider initialLocale={locale}>
-      <Cursor />
       <div className="shaft-paper-texture" />
       {stage !== "main" && <IntroSkip onSkip={completeIntro} />}
 

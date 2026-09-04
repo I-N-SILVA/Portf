@@ -54,6 +54,18 @@ test("sound is opt-in for a first-time visitor", async ({ page }) => {
   await expect(sound).toContainText("MUTED");
 });
 
+test("the native pointer remains visible on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  const cursors = await page.evaluate(() => ({
+    body: getComputedStyle(document.body).cursor,
+    link: getComputedStyle(document.querySelector("a")!).cursor,
+  }));
+  expect(cursors.body).not.toBe("none");
+  expect(cursors.link).toBe("pointer");
+});
+
 test("portfolio and studio put proof before supporting detail", async ({ page }) => {
   await page.goto("/");
   const portfolioOrder = await page
@@ -119,6 +131,12 @@ test("private areas are noindex at the header level", async ({ request }) => {
     const res = await request.get(path);
     expect(res.headers()["x-robots-tag"], path).toContain("noindex");
   }
+});
+
+test("portal entry preserves its destination through sign-in", async ({ request }) => {
+  const response = await request.get("/portal", { maxRedirects: 0 });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toBe("/login?next=%2Fportal");
 });
 
 test("security headers are present on every response", async ({ request }) => {

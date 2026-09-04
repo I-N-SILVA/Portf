@@ -64,6 +64,9 @@ export function isValidSlug(slug: string): boolean {
 export const routes = {
   home: "/",
 
+  /** Post-login resolver for client and admin workspaces. */
+  portal: "/portal",
+
   /** Public, indexable. The studio sells; it never shows client data. */
   studio: {
     root: "/studio",
@@ -116,7 +119,10 @@ export const routes = {
  * (which a browser reads as protocol-relative), would let a crafted login
  * link bounce a signed-in client straight off the site.
  */
-export function safeNext(next: string | undefined, fallback = "/portal"): string {
+export function safeNext(
+  next: string | undefined,
+  fallback: string = routes.portal,
+): string {
   if (!next) return fallback;
   if (!next.startsWith("/") || next.startsWith("//")) return fallback;
   return next;
@@ -138,7 +144,7 @@ export function siteUrl(path = "/"): string {
  * existing DNS records, bookmarks and links sent to clients keep working.
  */
 export const LEGACY_SUBDOMAIN_AREAS: Record<string, string> = {
-  portal: "/portal", // resolved to /c/{slug} by app/portal/[[...rest]]
+  portal: routes.portal, // resolved to /c/{slug} by app/portal/[[...rest]]
   admin: "/admin",
   clients: "/studio",
   work: "/studio",
