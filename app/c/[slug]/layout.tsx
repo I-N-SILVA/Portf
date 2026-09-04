@@ -2,7 +2,6 @@ import "@/components/os/os-theme.css";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { OSChrome, type NavItem } from "@/components/os/OSChrome";
-import { BootGate } from "@/components/os/BootGate";
 import { AdminViewBanner } from "@/components/os/AdminViewBanner";
 import StudioShell from "@/components/studio/StudioShell";
 import type { Command } from "@/components/os/CommandPalette";
@@ -92,9 +91,11 @@ export default async function ClientSpaceLayout({
   return (
     <div className="shaft-os">
       <div className="os-paper" />
-      <BootGate label="opening session" />
+      <a href="#os-main-content" className="os-skip">
+        Skip to workspace
+      </a>
       <OSChrome
-        label={`/c/${slug}`}
+        label={`${scope.client.company ?? scope.client.name} workspace`}
         basePath={routes.client.root(slug)}
         nav={nav}
         commands={commands}
@@ -105,7 +106,7 @@ export default async function ClientSpaceLayout({
           adminHref={routes.admin.client(scope.client.id)}
         />
       )}
-      {children}
+      <div id="os-main-content">{children}</div>
     </div>
   );
 }

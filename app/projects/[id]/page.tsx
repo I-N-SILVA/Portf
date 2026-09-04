@@ -6,7 +6,6 @@ import { projects } from "@/lib/placeholder-content";
 import { ArrowLeft, ExternalLink, Github, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import Cursor from "@/components/ui/inverted-cursor";
 import Image from "next/image";
 
 interface PageProps {
@@ -24,8 +23,6 @@ export default function ProjectPage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-background text-foreground relative selection:bg-primary selection:text-primary-foreground">
-            <Cursor />
-
             {/* Navigation */}
             <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 md:py-6 pointer-events-none">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">

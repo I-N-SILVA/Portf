@@ -8,12 +8,14 @@ export const ja: Record<string, string> = {
   "hero.tagline2": "行動経済学者",
   "hero.marker": "AIと人間行動の交差点で構築",
   "hero.cta": "通話を予約する",
+  "hero.viewWork": "制作実績を見る",
   "hero.scroll": "スクロール",
   "hero.scene": "[ 01 / オープニング ]",
+  "intro.skip": "イントロをスキップ",
 
   // ── Identity ──
-  "identity.section": "02 / アイデンティティ",
-  "identity.pretitle": "// 02",
+  "identity.section": "03 / アイデンティティ",
+  "identity.pretitle": "// 03",
   "identity.line1": "問題は",
   "identity.line2": "何を作るかではない。",
   "identity.line3": "私なしでは",
@@ -41,7 +43,7 @@ export const ja: Record<string, string> = {
   "insight.cta": "ケーススタディを見る",
 
   // ── Archive ──
-  "archive.section": "03 / アーカイブ",
+  "archive.section": "02 / 制作実績",
   "archive.filter.all": "すべて",
   "archive.viewProject": "プロジェクトを見る →",
   "archive.source": "ソース →",
@@ -71,7 +73,7 @@ export const ja: Record<string, string> = {
   // ── Gateway (スタジオ + クライアントポータル) ──
   "gateway.studio.aria": "スタジオを開く — サービス・実績・お問い合わせ",
   "gateway.portal.aria": "クライアントポータルにサインイン",
-  "gateway.studio": "スタジオ",
+  "gateway.studio": "サービス",
   "gateway.portal": "ポータル",
 
   // ── Projects (archive) ──
@@ -90,7 +92,7 @@ export const ja: Record<string, string> = {
 
   // ── Added on the improvement branch ──
   "nav.offers": "サービス",
-  "offers.section": "03 / 提供できること",
+  "offers.section": "04 / 提供できること",
   "offers.title": "2〜4週間でお作りできるもの。",
   "offers.subtitle": "3つのサービス：",
   "offers.1.title": "すぐ触れるMVPプロトタイプ",

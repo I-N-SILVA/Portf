@@ -1,36 +1,13 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { CSP_STRICT } from "@/lib/security/csp";
-import { Inter, Syne, Playfair_Display, Space_Mono } from "next/font/google";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/syne";
+import "@fontsource-variable/playfair-display";
+import "@fontsource/space-mono/400.css";
+import "@fontsource/space-mono/700.css";
 import "./globals.css";
 import { SITE } from "@/lib/constants";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-syne",
-  display: "swap",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-playfair",
-  display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-space-mono",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.URL),
@@ -149,7 +126,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${syne.variable} ${playfair.variable} ${spaceMono.variable} font-sans antialiased bg-background text-foreground overflow-x-hidden`}
+        className="font-sans antialiased bg-background text-foreground overflow-x-hidden"
       >
         {/* First stop in the tab order: skips the nav, the social dock and
             the ticker, which is otherwise a long walk to the content. */}

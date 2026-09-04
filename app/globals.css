@@ -4,6 +4,11 @@
 
 /* ─── Shaft / Shinbo Design System ────────────────────────────────────── */
 :root {
+  /* Bundled with the app so builds never depend on Google Fonts being online. */
+  --font-inter: "Inter Variable";
+  --font-syne: "Syne Variable";
+  --font-playfair: "Playfair Display Variable";
+  --font-space-mono: "Space Mono";
   --shaft-bg: 8 8 8;
   --shaft-surface: 14 14 14;
   --shaft-surface-alt: 20 20 20;
@@ -56,6 +61,22 @@ html[data-shaft-light] body {
 html[data-shaft-light] .shaft-paper-texture {
   opacity: 0.04;
 }
+
+.shaft-control {
+  min-height: 40px;
+  min-width: 40px;
+}
+
+[id^="shaft-"] {
+  scroll-margin-top: 7rem;
+}
+
+@media (min-width: 768px) {
+  [id^="shaft-"] {
+    scroll-margin-top: 0;
+  }
+}
+
 
 /* ─── Ticker ──────────────────────────────────────────────────────────── */
 @keyframes shaft-ticker {
@@ -382,28 +403,14 @@ html[data-shaft-light] .shaft-paper-texture {
     top: 12px;
   }
 
-  @media (min-width: 1024px) {
-    body {
-      cursor: none;
-    }
-
-    a,
-    button,
-    [role="button"] {
-      cursor: none;
-    }
-  }
-
-  /* The custom cursor is itself an animation, and hiding the real pointer
-     leaves nothing behind if it doesn't render. Give the native cursor back
-     to anyone who asked for less motion, and to coarse pointers. */
-  @media (prefers-reduced-motion: reduce), (pointer: coarse) {
-    body,
-    a,
-    button,
-    [role="button"] {
-      cursor: auto;
-    }
+  /* Keep the operating-system pointer visible on every surface. The previous
+     animated cursor hid it at desktop widths, leaving no pointer at all when
+     the overlay failed to mount or blended into an image. */
+  a,
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
   }
 }
 

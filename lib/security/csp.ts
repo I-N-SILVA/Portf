@@ -52,13 +52,17 @@ const FRAMES = [
 ];
 
 export function contentSecurityPolicy(nonce?: string): string {
+  // Next's development runtime evaluates its generated chunks. Blocking
+  // `unsafe-eval` here prevents React from hydrating and leaves the portfolio
+  // behind its initial opacity: 0 state. Production keeps the stricter policy.
+  const devEval = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
   const script = nonce
     ? // 'strict-dynamic' lets Next's nonced bootstrap load the chunks it needs
       // without every chunk URL having to be listed. The https: and
       // 'unsafe-inline' fallbacks are ignored by browsers that understand
       // 'strict-dynamic' and keep older ones working.
-      `'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'`
-    : "'self' 'unsafe-inline'";
+      `'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${devEval}`
+    : `'self' 'unsafe-inline'${devEval}`;
 
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],

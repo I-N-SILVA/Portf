@@ -173,6 +173,24 @@ To turn the pitch page into a portal, open the client → **Invite**. Supabase
 emails them a link; the same `/c/{slug}` URL then resolves to their dashboard
 instead of the pitch. Nothing to re-send.
 
+The universal entry point is `/login?next=%2Fportal`. A client must use the
+exact email stored on their client record; after authentication, `/portal`
+looks up that email's profile and forwards to `/c/{slug}`. An admin is sent to
+`/admin`. A signed-in account without either link now gets a precise recovery
+screen instead of being silently sent to the public homepage.
+
+In Supabase → **Authentication → URL Configuration**, set **Site URL** to
+`https://iamnsilva.me` and add this exact production redirect URL:
+
+```
+https://iamnsilva.me/auth/callback
+```
+
+For deploy previews, also allow `https://**--portfolioiam.netlify.app/**`.
+Supabase only honours the `redirectTo` value in invite and magic-link requests
+when it matches this allow list. After changing it, send a fresh invitation;
+old or already-used links are not repaired retroactively.
+
 ## If something is still wrong
 
 Signed in as an admin, a `/c/{slug}` lookup that *errors* now shows you the

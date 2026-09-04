@@ -11,7 +11,7 @@ export default function ContactSection() {
     >
       <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
         <Reveal>
-          <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+          <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-400">
             Start a project
           </p>
           <h2 className="mt-3 font-playfair text-3xl font-bold leading-tight md:text-4xl">

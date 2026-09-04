@@ -73,14 +73,15 @@ export function OSChrome({
               key={item.href}
               href={item.href}
               data-active={isActive(item.href)}
+              aria-current={isActive(item.href) ? "page" : undefined}
             >
               {item.label}
             </Link>
           ))}
         </nav>
-        <span className="os-clock">{clock}</span>
+        <span className="os-clock" aria-label={`Local time ${clock}`}>{clock}</span>
         <NotificationBell />
-        <button className="os-chip" onClick={() => setPalOpen(true)}>
+        <button className="os-chip" onClick={() => setPalOpen(true)} aria-label="Open command palette">
           ⌘K
         </button>
         <SignOutButton />

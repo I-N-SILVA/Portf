@@ -8,12 +8,14 @@ export const es: Record<string, string> = {
   "hero.tagline2": "Economista Conductual",
   "hero.marker": "Construyendo en la intersección de IA y comportamiento humano",
   "hero.cta": "AGENDAR UNA LLAMADA",
+  "hero.viewWork": "Ver proyectos destacados",
   "hero.scroll": "DESPLAZAR",
   "hero.scene": "[ 01 / APERTURA ]",
+  "intro.skip": "Saltar introducción",
 
   // ── Identity ──
-  "identity.section": "02 / IDENTIDAD",
-  "identity.pretitle": "// 02",
+  "identity.section": "03 / IDENTIDAD",
+  "identity.pretitle": "// 03",
   "identity.line1": "La pregunta no es",
   "identity.line2": "qué construyo.",
   "identity.line3": "Es lo que se rompe",
@@ -41,7 +43,7 @@ export const es: Record<string, string> = {
   "insight.cta": "VER ESTUDIOS DE CASO",
 
   // ── Archive ──
-  "archive.section": "03 / EL ARCHIVO",
+  "archive.section": "02 / TRABAJOS DESTACADOS",
   "archive.filter.all": "TODOS",
   "archive.viewProject": "VER PROYECTO →",
   "archive.source": "CÓDIGO →",
@@ -71,7 +73,7 @@ export const es: Record<string, string> = {
   // ── Gateway (estudio + portal de clientes) ──
   "gateway.studio.aria": "Abrir el estudio — servicios, casos y contacto",
   "gateway.portal.aria": "Entrar al portal de clientes",
-  "gateway.studio": "ESTUDIO",
+  "gateway.studio": "SERVICIOS",
   "gateway.portal": "PORTAL",
 
   // ── Projects (archive) ──
@@ -90,7 +92,7 @@ export const es: Record<string, string> = {
 
   // ── Added on the improvement branch ──
   "nav.offers": "SERVICIOS",
-  "offers.section": "03 / CAPACIDADES",
+  "offers.section": "04 / CAPACIDADES",
   "offers.title": "Lo que puedo construir para ti en 2–4 semanas.",
   "offers.subtitle": "Tres servicios concretos:",
   "offers.1.title": "PROTOTIPOS MVP LISTOS PARA PROBAR",

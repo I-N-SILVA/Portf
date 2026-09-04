@@ -18,10 +18,18 @@ test("reduced motion skips the intro and shows the content", async ({ page }) =>
   await expect(page.locator("#main")).not.toHaveAttribute("inert", /.*/);
 });
 
-test("reduced motion gives back the native cursor", async ({ page }) => {
+test("reduced motion keeps the native cursor", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
-  // `cursor: none` is global on desktop with a JavaScript cursor as the only
-  // fallback — which is nothing at all if it hasn't rendered.
   const cursor = await page.evaluate(() => getComputedStyle(document.body).cursor);
   expect(cursor).not.toBe("none");
+});
+
+test("reduced motion does not hide the studio reveal content", async ({ page }) => {
+  await page.goto("/studio", { waitUntil: "networkidle" });
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: /systems that give your team its hours back/i,
+    }),
+  ).toBeVisible();
 });

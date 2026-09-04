@@ -16,9 +16,8 @@ import ShaftMobileCTA from "./ShaftMobileCTA";
 import ShaftStatusStrip from "./ShaftStatusStrip";
 import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
 import BootSequence from "@/components/ui/BootSequence";
-import Cursor from "@/components/ui/inverted-cursor";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
-import { LocaleProvider, type Locale } from "@/lib/i18n";
+import { LocaleProvider, useTranslation, type Locale } from "@/lib/i18n";
 
 /**
  * `sessionStorage` key set once the intro has played. A companion inline
@@ -27,6 +26,19 @@ import { LocaleProvider, type Locale } from "@/lib/i18n";
  * boot overlay while React hydrates.
  */
 const BOOTED_KEY = "shaft-booted";
+
+function IntroSkip({ onSkip }: { onSkip: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <button
+      type="button"
+      onClick={onSkip}
+      className="fixed bottom-6 right-6 z-[260] min-h-11 border border-white/25 bg-black/40 px-4 py-2 font-space-mono text-[10px] uppercase tracking-[0.2em] text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+    >
+      {t("intro.skip")} →
+    </button>
+  );
+}
 
 export default function ShaftLandingContent({
   locale,
@@ -40,8 +52,8 @@ export default function ShaftLandingContent({
   const reduceMotion = useReducedMotion();
 
   // Play the intro once per session, not once per navigation — and not at
-  // all for someone who has asked for less motion, since it is two
-  // unskippable full-screen animations standing between them and the page.
+  // all for someone who has asked for less motion. Everyone else can skip
+  // either of the two full-screen animations with the visible control.
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setStage("main");
@@ -69,7 +81,7 @@ export default function ShaftLandingContent({
     setStage("intertitle");
   }, []);
 
-  const handleIntertitleComplete = useCallback(() => {
+  const completeIntro = useCallback(() => {
     setStage("main");
     try {
       sessionStorage.setItem(BOOTED_KEY, "1");
@@ -77,8 +89,7 @@ export default function ShaftLandingContent({
     } catch {
       // Nothing to remember it with; the intro plays again next time.
     }
-    setTimeout(() => playSound("hum"), 100);
-  }, [playSound]);
+  }, []);
 
   // Handle global "Negative Flash" event
   useEffect(() => {
@@ -100,8 +111,8 @@ export default function ShaftLandingContent({
 
   return (
     <LocaleProvider initialLocale={locale}>
-      <Cursor />
       <div className="shaft-paper-texture" />
+      {stage !== "main" && <IntroSkip onSkip={completeIntro} />}
 
       {/* Signal Interference / Glitch Overlay */}
       <motion.div 
@@ -130,7 +141,7 @@ export default function ShaftLandingContent({
         )}
         
         {stage === "intertitle" && (
-          <ShaftIntertitle key="intertitle" onComplete={handleIntertitleComplete} />
+          <ShaftIntertitle key="intertitle" onComplete={completeIntro} />
         )}
       </AnimatePresence>
 
@@ -146,9 +157,7 @@ export default function ShaftLandingContent({
       <motion.main
         id="main"
         inert={stage !== "main" ? true : undefined}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
+        initial={false}
         className="w-full min-h-screen overflow-x-hidden relative"
         style={{
           backgroundColor: "rgb(var(--shaft-bg))",
@@ -167,15 +176,15 @@ export default function ShaftLandingContent({
           <ShaftTicker />
 
           <ShaftPerspectiveSection>
+            <ShaftArchive />
+          </ShaftPerspectiveSection>
+
+          <ShaftPerspectiveSection>
             <ShaftIdentity />
           </ShaftPerspectiveSection>
 
           <ShaftPerspectiveSection>
             <ShaftOffers />
-          </ShaftPerspectiveSection>
-
-          <ShaftPerspectiveSection>
-            <ShaftArchive />
           </ShaftPerspectiveSection>
 
 
