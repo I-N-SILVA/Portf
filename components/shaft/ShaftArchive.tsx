@@ -295,8 +295,8 @@ export default function ShaftArchive() {
                         {project.link && (
                           <a
                             href={project.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            target={project.link.startsWith("/") ? undefined : "_blank"}
+                            rel={project.link.startsWith("/") ? undefined : "noopener noreferrer"}
                             className="font-space-mono text-[8px] tracking-[0.35em] uppercase border-b pb-0.5 transition-opacity hover:opacity-70"
                             style={{
                               color: "rgb(var(--shaft-cream))",
