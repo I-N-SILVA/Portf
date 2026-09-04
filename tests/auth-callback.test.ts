@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 const auth = vi.hoisted(() => ({
@@ -14,8 +14,13 @@ import { GET } from "@/app/auth/callback/route";
 
 describe("auth callback", () => {
   beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://iamnsilva.me");
     auth.exchangeCodeForSession.mockReset();
     auth.verifyOtp.mockReset();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("exchanges a PKCE code and preserves the requested destination", async () => {
@@ -47,7 +52,9 @@ describe("auth callback", () => {
 
   it("hands implicit invitation fragments to the browser completion page", async () => {
     const response = await GET(
-      new NextRequest("https://iamnsilva.me/auth/callback?next=%2Fset-password"),
+      new NextRequest(
+        "https://deploy-id--portfolioiam.netlify.app/auth/callback?next=%2Fset-password",
+      ),
     );
 
     expect(response.headers.get("location")).toBe(
