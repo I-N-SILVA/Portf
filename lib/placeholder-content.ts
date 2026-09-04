@@ -153,7 +153,7 @@ export const projects: Project[] = [
     image: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?w=800&h=600&fit=crop",
     bannerImage: "/projects/stocksnap.png",
     tags: ["Bolt.new", "React", "TypeScript", "Vite", "Tailwind CSS", "Supabase"],
-    link: "https://stocksnap-mobile-veh-eie0.bolt.host/",
+    link: "/studio/work/stocksnap-field-inventory",
     badge: "FEATURED",
     fullDescription: "StockSnap is a mobile-first stocktaking dashboard that enables users to capture on-site inventory checks and instantly see aggregated results by location and date. The app provides at-a-glance metrics (total items checked, number of checks, in-stock vs not-in-stock), searchable recent audits, and one-click exports for exceptions or full stock lists, streamlining inventory reconciliation and reporting for multi-site operations.",
     features: [
