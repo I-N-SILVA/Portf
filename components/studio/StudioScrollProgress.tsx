@@ -14,7 +14,7 @@ export default function StudioScrollProgress() {
   return (
     <motion.div
       aria-hidden="true"
-      className="absolute inset-x-0 bottom-0 h-px origin-left bg-emerald-500"
+      className="absolute inset-x-0 bottom-0 h-0.5 origin-left bg-[#e84735]"
       style={{ scaleX: reduceMotion ? scrollYProgress : scaleX }}
     />
   );

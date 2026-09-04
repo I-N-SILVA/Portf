@@ -47,7 +47,7 @@ export default function EngagementFinder() {
     <section className={styles.finder} aria-labelledby={headingId}>
       <div className={styles.intro}>
         <p className={`${styles.eyebrow} font-space-mono`}>A place to begin</p>
-        <h3 id={headingId} className={`${styles.heading} font-playfair`}>
+        <h3 id={headingId} className={styles.heading}>
           Where are you starting?
         </h3>
         <p className={styles.introCopy}>
@@ -99,7 +99,7 @@ export default function EngagementFinder() {
             <p className={`${styles.eyebrow} font-space-mono`}>
               Suggested starting point
             </p>
-            <h4 className={`${styles.recommendation} font-playfair`}>
+            <h4 className={styles.recommendation}>
               {current.recommendation}
             </h4>
             <p className={styles.description}>{current.description}</p>

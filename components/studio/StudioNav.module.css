@@ -1,0 +1,29 @@
+.header { position: sticky; z-index: 50; top: 0; border-bottom: 1px solid #c9c8c4; background: rgba(242,240,235,.9); backdrop-filter: blur(16px); }
+.bar { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; max-width: 1160px; min-height: 72px; margin: auto; padding: .65rem 1rem; }
+.brandGroup, .actions { display: flex; align-items: center; gap: .7rem; }
+.back { display: grid; width: 34px; height: 34px; place-items: center; color: #55524d; }
+.brand { display: flex; align-items: center; gap: .65rem; color: #11110f; font-family: var(--font-syne); font-size: .82rem; font-weight: 800; letter-spacing: -.02em; text-transform: uppercase; }
+.brandMark { display: grid; width: 32px; height: 32px; place-items: center; background: #e84735; font-size: .62rem; transition: transform 220ms cubic-bezier(.2,.8,.2,1); }
+.brand:hover .brandMark { transform: rotate(-8deg); }
+.navPill { display: flex; gap: .2rem; padding: .3rem; border: 1px solid #282824; border-radius: 999px; background: #11110f; box-shadow: 0 8px 22px rgba(17,17,15,.12); }
+.navItem { position: relative; display: grid; min-height: 35px; place-items: center; padding: .5rem .85rem; border-radius: 999px; color: #e7e4dc; font: 600 .67rem/1 var(--font-space-mono); letter-spacing: .05em; }
+.navItem > span:last-child { position: relative; z-index: 1; }
+.navItem[aria-current="location"] { color: #11110f; }
+.navMarker { position: absolute; inset: 0; border-radius: inherit; background: #e84735; }
+.actions { justify-self: end; }
+.portal { color: #4f4c47; font-size: .74rem; }
+.contact { display: flex; min-height: 40px; align-items: center; gap: .55rem; padding: .65rem .9rem; border: 1px solid #11110f; color: #11110f; font-size: .72rem; font-weight: 750; transition: background 160ms ease, color 160ms ease; }
+.contact:hover { background: #11110f; color: white; }
+.contact svg { width: .9rem; }
+.contactShort { display: none; }
+@media (max-width: 960px) { .portal { display: none; } }
+@media (max-width: 720px) {
+  .header { background: #f2f0eb; backdrop-filter: none; }
+  .bar { display: flex; justify-content: space-between; min-height: 66px; padding-inline: .75rem; }
+  .brandMark { display: none; } .back { width: 24px; } .brand { font-size: .76rem; }
+  .navPill { position: fixed; right: 50%; bottom: max(14px, env(safe-area-inset-bottom)); z-index: 60; width: min(calc(100vw - 28px), 390px); justify-content: space-between; transform: translateX(50%); }
+  .navItem { flex: 1; padding-inline: .45rem; font-size: .57rem; }
+  .contactLong { display: none; } .contactShort { display: inline; }
+}
+@media (max-width: 360px) { .brand > span:last-child { display: none; } }
+@media (prefers-reduced-motion: reduce) { .brandMark, .contact { transition: none; } .brand:hover .brandMark { transform: none; } }

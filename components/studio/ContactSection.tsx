@@ -7,23 +7,23 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="scroll-mt-16 border-t border-stone-800 bg-stone-900 text-stone-50"
+      className="relative scroll-mt-16 overflow-hidden border-t-2 border-stone-950 bg-[#e84735] text-stone-950"
     >
       <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
         <Reveal>
-          <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-400">
-            Discuss your workflow
+          <p className="font-space-mono text-xs font-bold uppercase tracking-[0.25em] text-black">
+            06 / Discuss your workflow
           </p>
-          <h2 className="mt-3 font-playfair text-3xl font-bold leading-tight md:text-4xl">
+          <h2 className="mt-4 font-syne text-4xl font-extrabold uppercase leading-[.9] tracking-[-0.06em] md:text-6xl">
             Bring me the workflow that should work better.
           </h2>
-          <p className="mt-5 max-w-md leading-relaxed text-stone-400">
+          <p className="mt-5 max-w-md font-medium leading-relaxed text-black">
             Start with the work, the constraints, and what a useful result would change.
             I&apos;ll give you a direct view on where AI fits and what it would take. {CONTACT_FORM.RESPONSE_TIME}
           </p>
           <a
             href={`mailto:${CLIENT_SITE.EMAIL}`}
-            className="mt-8 inline-flex items-center gap-2 text-sm text-stone-300 transition-colors hover:text-stone-50"
+            className="mt-8 inline-flex items-center gap-2 border-b border-stone-950 pb-1 text-sm font-semibold text-stone-950"
           >
             <Mail className="h-4 w-4" />
             Prefer email? {CLIENT_SITE.EMAIL}

@@ -111,7 +111,7 @@ export default function ConsultingProcess() {
       <div className={styles.inner}>
         <div className={styles.heading}>
           <p className={`${styles.eyebrow} font-space-mono`}>The engagement / 01 — 03</p>
-          <h2 id="consulting-process-title" className="font-playfair">From opportunity to<br className={styles.desktopBreak} /> a working system.</h2>
+          <h2 id="consulting-process-title">From opportunity to<br className={styles.desktopBreak} /> a working system.</h2>
           <p>A practical path from an open question to something your team can use and own.</p>
         </div>
         <div className={styles.layout}>
@@ -132,7 +132,7 @@ export default function ConsultingProcess() {
               <div className={styles.stage} key={stage.title} data-stage={index} data-active={index === activeStage} ref={(element) => { stageRefs.current[index] = element; }}>
                 <div className={`${styles.stageNumber} font-space-mono`}>0{index + 1}</div>
                 <div className={styles.stageCopy}>
-                  <h3 className="font-playfair">{stage.title}</h3>
+                  <h3>{stage.title}</h3>
                   <p className={styles.question}>{stage.question}</p>
                   <p className={styles.body}>{stage.body}</p>
                   <div className={styles.deliverable}><ArrowUpRight size={16} aria-hidden="true" /><p><span className="font-space-mono">You leave with</span>{stage.deliverable}</p></div>
