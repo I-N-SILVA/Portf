@@ -94,9 +94,12 @@ Studio's visual system now feels like a working product studio rather than a sta
 
 Portal entry now has one visible path from Studio and one resolver at `/portal`. Password setup continues there, all current Supabase callback formats are handled, expired links produce a useful error, and an authenticated account without a client or admin profile sees the exact linking problem instead of landing back on the homepage.
 
-The strongest next Studio additions need real evidence rather than more interface treatment:
+The strongest Studio additions need real evidence rather than more interface treatment. This pass adds the evidence already present in the products: each featured project now carries three verified proof points, and the portfolio archive reads from the same source. StockSnap also uses a current screenshot rendered from its private source project instead of the generic AI image.
 
-- Add one verified outcome to each project card, such as release status, adoption, time saved, or repository activity.
+Services now state both the engagement shape and who it suits, helping a visitor self-qualify before booking. The client dashboard opens with one data-driven next action, prioritizing feedback, overdue billing, pending sessions, unread messages, active work, and then messaging.
+
+Further additions should use evidence that can be substantiated:
+
 - Add one short client quote beside the most commercially relevant case study.
 - Show a concrete artifact in each process step: workflow map, working prototype, and handover document.
 - Replace the generic availability pill with an accurate capacity window when scheduling data is available.
@@ -104,7 +107,7 @@ The strongest next Studio additions need real evidence rather than more interfac
 
 ## Validation
 
-- `npm run verify`: type checking, lint, dead-module check, schema parity, migration bundle parity, 113 unit tests, and the production build passed.
+- `npm run verify`: type checking, lint, dead-module check, schema parity, migration bundle parity, 116 unit tests, and the production build passed.
 - `npx playwright test --workers=1`: all 22 browser tests passed, including WCAG A/AA scans, visible native cursor behavior, portal redirect preservation, intro and sound preferences, proof-first section order, JavaScript-free Studio content, and reduced-motion rendering.
 - Production-build browser checks at 1440 × 1000 and 390 × 844: no horizontal overflow on the portfolio or Studio; the work CTA, project expansion, and responsive navigation passed.
 - The default five-worker browser run timed out on six navigation waits on this host. The single-worker run completed in 37 seconds with all tests passing.

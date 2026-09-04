@@ -60,6 +60,20 @@ export default function StudioProjectCard({
           <p className="mt-3 text-sm leading-relaxed text-stone-600">
             {project.description}
           </p>
+          {project.proof && (
+            <dl className="mt-6 grid grid-cols-3 border-y border-stone-200">
+              {project.proof.map((item) => (
+                <div key={item.label} className="py-4 pr-2">
+                  <dt className="font-space-mono text-[9px] uppercase tracking-[0.12em] text-stone-500">
+                    {item.label}
+                  </dt>
+                  <dd className="mt-1 font-playfair text-lg font-bold text-stone-950">
+                    {item.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
           <div className="mt-5 flex flex-wrap gap-2">
             {project.tags.slice(0, 3).map((tag) => (
               <span

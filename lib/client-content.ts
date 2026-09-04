@@ -39,6 +39,8 @@ export const CONTACT_FORM = {
 export interface Service {
   title: string;
   body: string;
+  engagement: string;
+  bestFor: string;
   deliverables: string[];
 }
 
@@ -46,6 +48,8 @@ export const services: Service[] = [
   {
     title: "AI Automation",
     body: "The repetitive work your team does every week — reporting, content operations, data entry, triage — turned into systems that run themselves.",
+    engagement: "Automation sprint",
+    bestFor: "Teams losing time to repeatable manual work",
     deliverables: [
       "Workflow audit & automation roadmap",
       "Claude / LLM-powered pipelines",
@@ -56,6 +60,8 @@ export const services: Service[] = [
   {
     title: "Internal Tools & Dashboards",
     body: "Purpose-built software for the workflows spreadsheets can't handle — capture in the field, see it aggregated live, act on exceptions.",
+    engagement: "Focused internal build",
+    bestFor: "Operational teams outgrowing spreadsheets",
     deliverables: [
       "Mobile-first web apps, no install",
       "Live dashboards & one-click exports",
@@ -66,6 +72,8 @@ export const services: Service[] = [
   {
     title: "MVP & Product Builds",
     body: "An idea taken to a working product fast — designed, built, and shipped so you can put it in front of real users instead of a pitch deck.",
+    engagement: "Prototype to launch",
+    bestFor: "Founders validating a real product",
     deliverables: [
       "Working prototype in days",
       "Full-stack production build",

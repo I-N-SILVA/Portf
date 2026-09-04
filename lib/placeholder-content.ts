@@ -16,6 +16,8 @@ export interface Project {
   teamSize?: string;
   caseStudyLink?: string;
   fullDescription?: string;
+  /** Compact, source-backed product facts. Avoid estimated business metrics. */
+  proof?: { value: string; label: string }[];
   /**
    * Off the portfolio archive, but still a live record.
    *
@@ -80,6 +82,11 @@ export const projects: Project[] = [
     role: "Creator & Swift Developer",
     duration: "Ongoing",
     teamSize: "Solo",
+    proof: [
+      { value: "8", label: "AI providers" },
+      { value: "<10MB", label: "Native app" },
+      { value: "0", label: "Telemetry" },
+    ],
   },
   {
     id: "10",
@@ -105,6 +112,11 @@ export const projects: Project[] = [
     role: "Creator & Full-Stack Developer",
     duration: "Ongoing",
     teamSize: "Solo",
+    proof: [
+      { value: "Local", label: "Music library" },
+      { value: "R128", label: "Loudness engine" },
+      { value: "Rust", label: "Audio core" },
+    ],
   },
   {
     id: "11",
@@ -128,13 +140,18 @@ export const projects: Project[] = [
     role: "Creator & Rust Developer",
     duration: "Ongoing",
     teamSize: "Solo",
+    proof: [
+      { value: "Live", label: "FFT spectrum" },
+      { value: "3", label: "Visual modes" },
+      { value: "Keys", label: "Full control" },
+    ],
   },
   {
     id: "8",
     title: "StockSnap Mobile Vehicle Stocktaking",
     description: "Mobile-first stocktaking web app designed for efficient inventory tracking, verification, and reporting in the field.",
     image: "https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?w=800&h=600&fit=crop",
-    bannerImage: "/projects/ai-agents.webp",
+    bannerImage: "/projects/stocksnap.png",
     tags: ["Bolt.new", "React", "TypeScript", "Vite", "Tailwind CSS", "Supabase"],
     link: "https://stocksnap-mobile-veh-eie0.bolt.host/",
     badge: "FEATURED",
@@ -150,6 +167,11 @@ export const projects: Project[] = [
     role: "Full-Stack Developer",
     duration: "Rapid Dev",
     teamSize: "Solo",
+    proof: [
+      { value: "1-click", label: "Exports" },
+      { value: "Multi-site", label: "Audit history" },
+      { value: "0", label: "Installs" },
+    ],
   },
   {
     id: "7",

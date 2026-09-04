@@ -276,6 +276,21 @@ export default function ShaftArchive() {
                         </div>
                       )}
 
+                      {project.proof && (
+                        <dl className="mb-6 grid grid-cols-3 border-y" style={{ borderColor: "rgb(var(--shaft-border))" }}>
+                          {project.proof.map((item) => (
+                            <div key={item.label} className="py-3 pr-3">
+                              <dt className="font-space-mono text-[8px] uppercase tracking-[0.14em]" style={{ color: "rgb(var(--shaft-muted))" }}>
+                                {item.label}
+                              </dt>
+                              <dd className="mt-1 font-playfair text-lg font-bold" style={{ color: "rgb(var(--shaft-cream))" }}>
+                                {item.value}
+                              </dd>
+                            </div>
+                          ))}
+                        </dl>
+                      )}
+
                       <div className="flex items-center gap-6">
                         {project.link && (
                           <a

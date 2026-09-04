@@ -94,7 +94,14 @@ test("portfolio and studio put proof before supporting detail", async ({ page })
       "src",
       new RegExp(encodeURIComponent(project.bannerImage ?? project.image)),
     );
+    const card = page
+      .getByRole("heading", { name: project.title, exact: true })
+      .locator("xpath=ancestor::a[1]");
+    expect(await card.locator("dd").allTextContents()).toEqual(
+      (project.proof ?? []).map((proof) => proof.value),
+    );
   }
+  await expect(page.getByText("Automation sprint", { exact: true })).toBeAttached();
 });
 
 test("every translated landing page is server-rendered in its language", async ({

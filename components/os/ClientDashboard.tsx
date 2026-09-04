@@ -14,6 +14,7 @@ import {
 import { unreadForClient } from "@/lib/os/messages";
 import { ActivityBeacon } from "@/components/os/ActivityBeacon";
 import { routes } from "@/lib/routes";
+import { workspaceNextAction } from "@/lib/os/next-action";
 import type { Client, ClientModules } from "@/lib/supabase/types";
 
 /**
@@ -83,6 +84,16 @@ export async function ClientDashboard({
     (billingSum?.overdueCount ?? 0) +
     (bookingSum?.pending ?? 0) +
     unread;
+  const nextAction = workspaceNextAction({
+    slug,
+    flaggedProjects: projectSummary?.flagged ?? 0,
+    overdueInvoices: billingSum?.overdueCount ?? 0,
+    pendingBookings: bookingSum?.pending ?? 0,
+    unreadMessages: unread,
+    activeProjects: projectSummary?.active ?? 0,
+    modules,
+    enabled,
+  });
 
   return (
     <main className="os-stage">
@@ -98,6 +109,15 @@ export async function ClientDashboard({
           ? `${attentionCount} ${attentionCount === 1 ? "item needs" : "items need"} your attention. Open a flagged area below to keep things moving.`
           : "Everything is up to date. Projects, invoices, sessions and messages stay together here."}
       </p>
+
+      {nextAction && (
+        <Link className="os-next" href={nextAction.href}>
+          <span className="os-next-kicker">Next action</span>
+          <strong>{nextAction.label}</strong>
+          <span className="os-next-detail">{nextAction.detail}</span>
+          <span className="os-next-open">Open →</span>
+        </Link>
+      )}
 
       <div className="os-statline" aria-label="Workspace summary">
         {modules.projects && (

@@ -174,6 +174,24 @@ export default function ClientStudioPage() {
                   <p className="mt-3 text-sm leading-relaxed text-stone-600">
                     {service.body}
                   </p>
+                  <dl className="mt-7 space-y-3 border-y border-stone-200 py-5">
+                    <div>
+                      <dt className="font-space-mono text-[9px] uppercase tracking-[0.16em] text-stone-500">
+                        Engagement
+                      </dt>
+                      <dd className="mt-1 text-sm font-semibold text-stone-900">
+                        {service.engagement}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-space-mono text-[9px] uppercase tracking-[0.16em] text-stone-500">
+                        Best for
+                      </dt>
+                      <dd className="mt-1 text-sm leading-relaxed text-stone-700">
+                        {service.bestFor}
+                      </dd>
+                    </div>
+                  </dl>
                   <ul className="mt-8 space-y-3 border-t border-stone-200 pt-6">
                     {service.deliverables.map((item) => (
                       <li key={item} className="flex items-start gap-2.5">
