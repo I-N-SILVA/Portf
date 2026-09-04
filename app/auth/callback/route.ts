@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { routes, safeNext } from "@/lib/routes";
+import { routes, safeNext, siteUrl } from "@/lib/routes";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
 const EMAIL_TYPES = new Set<EmailOtpType>([
@@ -13,7 +13,7 @@ const EMAIL_TYPES = new Set<EmailOtpType>([
  * only a browser can read that, so those continue at /auth/complete.
  */
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const tokenHash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     ? routes.auth.setPassword
     : routes.portal;
   const next = safeNext(searchParams.get("next") ?? undefined, fallback);
-  const failure = `${origin}${routes.auth.loginNext(next)}&error=auth`;
+  const failure = `${siteUrl(routes.auth.loginNext(next))}&error=auth`;
 
   if (searchParams.has("error")) return NextResponse.redirect(failure);
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(siteUrl(next));
     }
     return NextResponse.redirect(failure);
   }
@@ -37,12 +37,12 @@ export async function GET(request: NextRequest) {
   if (tokenHash && type && EMAIL_TYPES.has(type)) {
     const supabase = await createClient();
     const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
-    return NextResponse.redirect(error ? failure : `${origin}${next}`);
+    return NextResponse.redirect(error ? failure : siteUrl(next));
   }
 
   // Browsers retain the original #fragment across a redirect whose Location
   // has no fragment. Tokens never enter server logs or query parameters.
   return NextResponse.redirect(
-    `${origin}/auth/complete?next=${encodeURIComponent(next)}`,
+    siteUrl(`/auth/complete?next=${encodeURIComponent(next)}`),
   );
 }
