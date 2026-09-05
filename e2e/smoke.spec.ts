@@ -31,10 +31,53 @@ test("the studio hero stays visible without JavaScript", async ({ browser }) => 
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /systems that give your team its hours back/i,
+      name: /AI that earns its place in your workflow/i,
     }),
   ).toBeVisible();
+  await expect(page.getByText("New request arrives", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Diagnose" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Prove" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Embed" })).toBeVisible();
   await context.close();
+});
+
+test("the studio consulting canvas demonstrates human-controlled workflows", async ({
+  page,
+}) => {
+  await page.goto("/studio", { waitUntil: "networkidle" });
+
+  await page.getByRole("button", { name: "Reporting" }).click();
+  await expect(page.getByText("Analyst checks the brief", { exact: true })).toBeVisible();
+  await expect(page.getByText("Weekly report delivered", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Illustrative pattern/i)).toBeVisible();
+});
+
+test("the engagement finder prefills the recommended contact path", async ({ page }) => {
+  await page.goto("/studio", { waitUntil: "networkidle" });
+
+  await page.getByRole("button", { name: /One clear workflow/i }).click();
+  const recommendation = page.getByRole("region", { name: /Where are you starting/i });
+  await expect(recommendation.getByText("Automation & agent systems", { exact: true })).toBeVisible();
+  await recommendation.getByRole("link", { name: /Discuss this starting point/i }).click();
+
+  await expect(page.locator('select[name="projectType"]')).toHaveValue(
+    "Automation & agent systems",
+  );
+  await expect(page.locator("#contact")).toBeInViewport();
+});
+
+test("the studio remains usable at a 320px viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.goto("/studio", { waitUntil: "networkidle" });
+
+  const dimensions = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    document: document.documentElement.scrollWidth,
+    cursor: getComputedStyle(document.body).cursor,
+  }));
+  expect(dimensions.document).toBe(dimensions.viewport);
+  expect(dimensions.cursor).not.toBe("none");
+  await expect(page.getByRole("link", { name: "Discuss a workflow" })).toBeVisible();
 });
 
 test("the cinematic intro can be skipped and is remembered", async ({ page }) => {

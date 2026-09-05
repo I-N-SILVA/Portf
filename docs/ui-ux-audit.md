@@ -90,7 +90,7 @@ The portal should behave like a work surface, so it now opens immediately, names
 
 Studio and the portfolio now consume one canonical active-project list. Studio shows the same project titles, descriptions, tags, roles, and banner images; projects with written case studies retain their deeper Studio route, while the rest link to their full project record.
 
-Studio's visual system now feels like a working product studio rather than a stack of generic cards: a dark technical hero sets the proposition and portal entry, the first and last projects act as wide editorial features, services are divided like a capabilities sheet, and the process reads as a numbered production timeline. On mobile, the repeated working-model detail collapses to one line so selected work arrives sooner.
+Studio's visual system uses a bold editorial-poster direction: oversized Syne typography, outlined echoes, hard rules, generous paper space, and one vermilion accent. The first and last projects remain wide editorial features, services read as a concise capabilities index, and the process acts as the main scroll narrative.
 
 Portal entry now has one visible path from Studio and one resolver at `/portal`. Password setup continues there, all current Supabase callback formats are handled, expired links produce a useful error, and an authenticated account without a client or admin profile sees the exact linking problem instead of landing back on the homepage.
 
@@ -105,10 +105,19 @@ Further additions should use evidence that can be substantiated:
 - Replace the generic availability pill with an accurate capacity window when scheduling data is available.
 - Keep the restrained editorial system and let project imagery provide the color; adding more gradients or ambient animation would weaken the proof-first hierarchy.
 
+## AI consultant experience
+
+Studio now positions Ian as an independent AI consultant who can diagnose a workflow, prove a focused system, and embed it into everyday work. The language describes human review, evaluation, ownership, and handover instead of presenting agents as an automatic answer to every problem.
+
+The hero adapts the supplied graphic-design reference through solid and outlined kinetic typography, a vertical vermilion slab, registration marks, and a collage made from the existing portfolio imagery. Its interactive workflow line lets visitors move through input, AI assistance, human review, and output across three examples. The language stays literal underneath the expressive display so the offer remains immediately understandable.
+
+The navigation is a black capsule with a spring-driven vermilion section marker. It becomes a bottom dock on small screens while the brand and contact action stay at the top. The process section uses a sticky artifact panel on desktop and a complete inline sequence on mobile or when reduced motion is requested. Scroll reveals begin from visible server-rendered content, so JavaScript failure never makes the page unreadable.
+
+An engagement finder helps visitors choose between exploring AI, proving a specific workflow, and putting a prototype into everyday use. It recommends a starting point, explains what to bring, and carries that choice into the contact form. Project cards retain a subtle pointer or keyboard spotlight, while the new poster geometry provides the main visual identity. Reduced-motion users receive static state changes and complete inline content.
+
 ## Validation
 
 - `npm run verify`: type checking, lint, dead-module check, schema parity, migration bundle parity, 116 unit tests, and the production build passed.
-- `npx playwright test --workers=1`: all 22 browser tests passed, including WCAG A/AA scans, visible native cursor behavior, portal redirect preservation, intro and sound preferences, proof-first section order, JavaScript-free Studio content, and reduced-motion rendering.
+- `npx playwright test --workers=1`: all 25 browser tests passed. Coverage includes WCAG A/AA scans, the consulting canvas interaction, engagement-to-contact prefilling, a 320px Studio layout, visible native cursor behavior, portal redirect preservation, intro and sound preferences, proof-first section order, JavaScript-free Studio content, and reduced-motion rendering.
 - Production-build browser checks at 1440 × 1000 and 390 × 844: no horizontal overflow on the portfolio or Studio; the work CTA, project expansion, and responsive navigation passed.
-- The default five-worker browser run timed out on six navigation waits on this host. The single-worker run completed in 37 seconds with all tests passing.
 - Authenticated client/admin workflows were not exercised because this checkout has no service credentials.

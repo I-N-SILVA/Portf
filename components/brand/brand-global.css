@@ -1,0 +1,14 @@
+/* Motion preference applies to Studio and the public client-facing shell. */
+[data-brand-motion="off"] *, [data-brand-motion="off"] *::before, [data-brand-motion="off"] *::after {
+  animation: none !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+html:has([data-brand-motion="off"]) { scroll-behavior: auto !important; }
+.studio-brand { color-scheme: light; }
+.studio-brand :focus-visible { outline: 2px solid var(--brand-cobalt); outline-offset: 4px; }
+.studio-brand footer :focus-visible { outline-color: var(--brand-paper); }
+@media (prefers-reduced-motion: reduce) {
+  .studio-brand *, .studio-brand *::before, .studio-brand *::after { animation: none !important; transition-duration: 0s !important; }
+  html:has(.studio-brand) { scroll-behavior: auto !important; }
+}

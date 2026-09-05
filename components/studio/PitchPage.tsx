@@ -26,14 +26,14 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
       {/* Personalized hero */}
       <section className="mx-auto max-w-4xl px-6 pb-16 pt-20 md:pt-28">
         <Reveal>
-          <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+          <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-[var(--brand-muted)]">
             Prepared for
           </p>
-          <h1 className="mt-4 font-playfair text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="mt-4 font-syne text-4xl font-bold tracking-tight md:text-5xl">
             {page.display_name}
           </h1>
           {page.headline && (
-            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-stone-600">
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--brand-muted)]">
               {page.headline}
             </p>
           )}
@@ -42,7 +42,7 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
               {page.services.map((s) => (
                 <span
                   key={s}
-                  className="rounded-full border border-stone-300 px-3 py-1 text-xs text-stone-600"
+                  className="rounded-full border border-[var(--brand-border-strong)] px-3 py-1 text-xs text-[var(--brand-muted)]"
                 >
                   {s}
                 </span>
@@ -50,11 +50,11 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
             </div>
           )}
           {page.note && (
-            <div className="mt-8 rounded-2xl border border-stone-200 bg-white p-8">
-              <p className="whitespace-pre-line leading-relaxed text-stone-700">
+            <div className="mt-8 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-paper-raised)] p-8">
+              <p className="whitespace-pre-line leading-relaxed text-[var(--brand-muted)]">
                 {page.note}
               </p>
-              <p className="mt-6 font-playfair text-lg italic text-stone-900">
+              <p className="mt-6 font-syne text-lg italic text-[var(--brand-ink)]">
                 — Ian
               </p>
             </div>
@@ -64,13 +64,13 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
 
       {/* Curated work */}
       {curated.length > 0 && (
-        <section className="border-t border-stone-200 bg-white">
+        <section className="border-t border-[var(--brand-border)] bg-[var(--brand-paper-raised)]">
           <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
             <Reveal>
-              <h2 className="font-playfair text-2xl font-bold md:text-3xl">
+              <h2 className="font-syne text-2xl font-bold md:text-3xl">
                 Work I&apos;d point you to first
               </h2>
-              <p className="mt-3 max-w-2xl text-sm text-stone-600">
+              <p className="mt-3 max-w-2xl text-sm text-[var(--brand-muted)]">
                 Hand-picked for what we discussed — each one links to a full case
                 study, and several have live demos you can try.
               </p>

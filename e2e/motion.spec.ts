@@ -29,7 +29,12 @@ test("reduced motion does not hide the studio reveal content", async ({ page }) 
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /systems that give your team its hours back/i,
+      name: /AI that earns its place in your workflow/i,
     }),
   ).toBeVisible();
+  const processArtifacts = page.locator("#process [class*='inlineArtifact']");
+  await expect(processArtifacts).toHaveCount(3);
+  for (const artifact of await processArtifacts.all()) {
+    await expect(artifact).toBeVisible();
+  }
 });

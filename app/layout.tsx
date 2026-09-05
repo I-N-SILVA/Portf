@@ -7,6 +7,8 @@ import "@fontsource-variable/playfair-display";
 import "@fontsource/space-mono/400.css";
 import "@fontsource/space-mono/700.css";
 import "./globals.css";
+import "@/components/brand/tokens.css";
+import "@/components/brand/brand-global.css";
 import { SITE } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -50,8 +52,8 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#dae9f0" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a2c3a" },
+    { media: "(prefers-color-scheme: light)", color: "#F1EFE7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A0B0A" },
   ],
 };
 

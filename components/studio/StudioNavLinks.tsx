@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useBrandMotion } from "@/components/brand/BrandMotion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { routes } from "@/lib/routes";
+import styles from "./StudioNav.module.css";
 
 const LINKS: [label: string, id: string][] = [
   ["Work", "work"],
@@ -14,50 +17,51 @@ const LINKS: [label: string, id: string][] = [
 
 export default function StudioNavLinks() {
   const pathname = usePathname();
+  const { enabled } = useBrandMotion();
   const onLanding = pathname === routes.studio.root;
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState(onLanding ? "work" : "");
 
   useEffect(() => {
     if (!onLanding) return;
-
     const sections = LINKS.map(([, id]) => document.getElementById(id)).filter(
-      (el): el is HTMLElement => el !== null,
+      (element): element is HTMLElement => element !== null,
     );
-
-    // Treat the section crossing the middle third of the viewport as active.
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
-          .filter((e) => e.isIntersecting)
+          .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
         if (visible[0]) setActive(visible[0].target.id);
       },
-      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] },
+      { rootMargin: "-24% 0px -64% 0px", threshold: [0, 0.25, 0.5, 1] },
     );
-
-    sections.forEach((el) => observer.observe(el));
+    sections.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, [onLanding]);
 
   return (
-    <>
+    <nav className={styles.navPill} aria-label="Studio sections">
       {LINKS.map(([label, id]) => {
         const isActive = onLanding && active === id;
         return (
           <Link
             key={id}
             href={`${routes.studio.root}#${id}`}
-            aria-current={isActive ? "true" : undefined}
-            className={`hidden text-sm transition-colors md:block ${
-              isActive
-                ? "font-medium text-stone-900"
-                : "text-stone-600 hover:text-stone-900"
-            }`}
+            aria-current={isActive ? "location" : undefined}
+            className={styles.navItem}
           >
-            {label}
+            {isActive && (
+              <motion.span
+                layoutId="studio-nav-marker"
+                className={styles.navMarker}
+                transition={!enabled ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34 }}
+                aria-hidden="true"
+              />
+            )}
+            <span>{label}</span>
           </Link>
         );
       })}
-    </>
+    </nav>
   );
 }

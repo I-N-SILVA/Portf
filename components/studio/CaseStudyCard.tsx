@@ -18,9 +18,9 @@ export default function CaseStudyCard({ caseStudy, index = 0 }: CaseStudyCardPro
     <Reveal delay={index * 0.08}>
       <Link
         href={routes.studio.work(caseStudy.slug)}
-        className="group block overflow-hidden rounded-2xl border border-stone-200 bg-white transition-shadow duration-300 hover:shadow-xl hover:shadow-stone-200/60"
+        className="group block overflow-hidden rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-paper-raised)] transition-shadow duration-300 hover:shadow-xl hover:shadow-stone-200/60"
       >
-        <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
+        <div className="relative aspect-[16/9] overflow-hidden bg-[var(--brand-paper-shade)]">
           <Image
             src={project.image}
             alt={project.title}
@@ -30,13 +30,13 @@ export default function CaseStudyCard({ caseStudy, index = 0 }: CaseStudyCardPro
           />
         </div>
         <div className="p-6 md:p-8">
-          <p className="font-space-mono text-[11px] uppercase tracking-[0.2em] text-stone-500">
+          <p className="font-space-mono text-[11px] uppercase tracking-[0.2em] text-[var(--brand-muted)]">
             {caseStudy.industry}
           </p>
-          <h3 className="mt-2 font-playfair text-xl font-bold leading-snug text-stone-900 md:text-2xl">
+          <h3 className="mt-2 font-syne text-xl font-bold leading-snug text-[var(--brand-ink)] md:text-2xl">
             {caseStudy.headline}
           </h3>
-          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-stone-600">
+          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-[var(--brand-muted)]">
             {caseStudy.problem}
           </p>
           <div className="mt-5 flex items-center justify-between">
@@ -44,13 +44,13 @@ export default function CaseStudyCard({ caseStudy, index = 0 }: CaseStudyCardPro
               {caseStudy.services.slice(0, 2).map((service) => (
                 <span
                   key={service}
-                  className="rounded-full border border-stone-200 px-3 py-1 text-xs text-stone-600"
+                  className="rounded-full border border-[var(--brand-border)] px-3 py-1 text-xs text-[var(--brand-muted)]"
                 >
                   {service}
                 </span>
               ))}
             </div>
-            <span className="flex items-center gap-1 text-sm font-medium text-stone-900">
+            <span className="flex items-center gap-1 text-sm font-medium text-[var(--brand-ink)]">
               Read case study
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </span>

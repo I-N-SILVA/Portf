@@ -1,0 +1,8 @@
+.header { position: relative; min-height: 15rem; overflow: hidden; padding-top: 1rem; border-top: 2px solid var(--brand-ink); }
+.echo { position: absolute; top: -.1em; right: 0; color: transparent; font-family: var(--font-syne); font-size: clamp(5rem, 15vw, 11rem); font-weight: 800; line-height: .8; letter-spacing: -.08em; text-transform: uppercase; -webkit-text-stroke: 1px rgba(10,11,10,.2); }
+.meta { position: relative; z-index: 1; display: flex; gap: 1rem; color: var(--brand-muted); font: 700 .63rem/1.5 var(--font-space-mono); letter-spacing: .15em; text-transform: uppercase; }
+.meta span { color: var(--brand-olive-ink); }
+.copy { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, .55fr); gap: 2rem; align-items: end; margin-top: 5rem; }
+.copy h2 { max-width: 44rem; margin: 0; font-family: var(--font-syne); font-size: clamp(2.4rem, 5.3vw, 4.8rem); font-weight: 800; line-height: .92; letter-spacing: -.065em; text-transform: uppercase; }
+.copy p { max-width: 30rem; margin: 0; color: var(--brand-muted); font-size: .9rem; line-height: 1.7; }
+@media (max-width: 700px) { .header { min-height: 13rem; } .echo { top: .25rem; font-size: 5.2rem; } .copy { grid-template-columns: 1fr; gap: 1rem; margin-top: 4rem; } .copy h2 { font-size: 2.7rem; } }

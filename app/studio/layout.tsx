@@ -31,9 +31,9 @@ const jsonLd = {
   founder: { "@type": "Person", name: "Ian N. Silva" },
   areaServed: "Worldwide",
   serviceType: [
-    "AI Automation",
-    "Internal Tools & Dashboards",
-    "MVP & Product Development",
+    "AI workflow consulting",
+    "Automation and agent systems",
+    "AI implementation and handover",
   ],
 };
 
