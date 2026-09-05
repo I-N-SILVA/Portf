@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import BrandLoading from "@/components/brand/BrandLoading";
+import BrandMark from "@/components/brand/BrandMark";
+import { ArrowRight } from "lucide-react";
 import { CONTACT_FORM, CLIENT_SITE } from "@/lib/client-content";
 import { submitContact } from "@/lib/os/actions/contact";
 
@@ -57,14 +59,15 @@ export default function ContactForm() {
     // Our own record first. This is the one that decides whether the enquiry
     // survives: Netlify Forms was previously the only copy, so an outage at
     // exactly the wrong moment lost the lead with nothing to recover from.
-    const saved = await submitContact({
+    let saved: { ok: boolean; error?: string } = { ok: false };
+    try { saved = await submitContact({
       name: payload.name ?? "",
       email: payload.email ?? "",
       message: payload.message ?? "",
       company: payload.company,
       projectType: payload.projectType,
       ref: payload.ref,
-    });
+    }); } catch { saved = { ok: false, error: "Please try again or email me directly." }; }
 
     // Netlify Forms is now the notification channel, not the record. It is
     // what emails you that someone got in touch, so it is still worth
@@ -92,20 +95,20 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl bg-white p-10 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-          <CheckCircle2 className="h-7 w-7" />
+      <div className="flex flex-col items-center justify-center rounded-2xl bg-[var(--brand-paper-raised)] p-10 text-center">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-paper)] text-[var(--brand-olive-ink)]">
+          <BrandMark size={54} />
         </span>
-        <h3 className="mt-5 font-playfair text-2xl font-bold text-stone-900">
+        <h3 className="mt-5 font-syne text-2xl font-bold text-[var(--brand-ink)]">
           Message sent
         </h3>
-        <p className="mt-2 max-w-sm text-sm leading-relaxed text-stone-600">
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--brand-muted)]">
           Thanks for reaching out — {CONTACT_FORM.RESPONSE_TIME} In the meantime,
           feel free to keep exploring the work.
         </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-6 text-sm font-medium text-stone-500 underline underline-offset-4 transition-colors hover:text-stone-900"
+          className="mt-6 text-sm font-medium text-[var(--brand-muted)] underline underline-offset-4 transition-colors hover:text-[var(--brand-ink)]"
         >
           Send another message
         </button>
@@ -120,7 +123,8 @@ export default function ContactForm() {
       data-netlify="true"
       data-netlify-honeypot="bot-field"
       onSubmit={handleSubmit}
-      className="rounded-2xl bg-white p-6 text-left md:p-8"
+      aria-busy={status === "submitting"}
+      className="rounded-2xl bg-[var(--brand-paper-raised)] p-6 text-left md:p-8"
     >
       {/* Netlify plumbing */}
       <input type="hidden" name="form-name" value={CONTACT_FORM.NAME} />
@@ -135,32 +139,32 @@ export default function ContactForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Name</span>
+          <span className="text-sm font-medium text-[var(--brand-muted)]">Name</span>
           <input
             type="text"
             name="name"
             required
             autoComplete="name"
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           />
         </label>
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">Email</span>
+          <span className="text-sm font-medium text-[var(--brand-muted)]">Email</span>
           <input
             type="email"
             name="email"
             required
             autoComplete="email"
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           />
         </label>
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">
+          <span className="text-sm font-medium text-[var(--brand-muted)]">
             Company{" "}
-            <span className="font-normal text-stone-500">(optional)</span>
+            <span className="font-normal text-[var(--brand-muted)]">(optional)</span>
           </span>
           <input
             type="text"
@@ -168,18 +172,18 @@ export default function ContactForm() {
             autoComplete="organization"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           />
         </label>
         <label className="block">
-          <span className="text-sm font-medium text-stone-700">
+          <span className="text-sm font-medium text-[var(--brand-muted)]">
             What do you need?
           </span>
           <select
             name="projectType"
             value={projectType}
             onChange={(event) => setProjectType(event.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors focus:border-stone-900 focus:bg-white"
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           >
             {CONTACT_FORM.PROJECT_TYPES.map((type) => (
               <option key={type} value={type}>
@@ -191,7 +195,7 @@ export default function ContactForm() {
       </div>
 
       <label className="mt-4 block">
-        <span className="text-sm font-medium text-stone-700">
+        <span className="text-sm font-medium text-[var(--brand-muted)]">
           What are you trying to solve?
         </span>
         <textarea
@@ -199,7 +203,7 @@ export default function ContactForm() {
           required
           rows={4}
           placeholder="A sentence or two about the workflow that's costing you time is plenty to start."
-          className="mt-1.5 w-full resize-y rounded-lg border border-stone-300 bg-stone-50 px-3.5 py-2.5 text-sm text-stone-900 outline-none transition-colors placeholder:text-stone-400 focus:border-stone-900 focus:bg-white"
+          className="mt-1.5 w-full resize-y rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors placeholder:text-stone-400 focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
         />
       </label>
 
@@ -225,6 +229,7 @@ export default function ContactForm() {
         </div>
       )}
 
+      {status === "submitting" && <BrandLoading compact label="Sending your message" />}
       <button
         type="submit"
         disabled={status === "submitting"}
@@ -232,7 +237,7 @@ export default function ContactForm() {
       >
         {status === "submitting" ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="inline-block h-2 w-2 bg-[var(--brand-olive)]" aria-hidden="true" />
             Sending…
           </>
         ) : (

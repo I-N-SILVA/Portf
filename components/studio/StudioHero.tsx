@@ -1,5 +1,7 @@
 "use client";
 
+import WorkflowOperator from "@/components/brand/WorkflowOperator";
+import BrandMark from "@/components/brand/BrandMark";
 import type { CSSProperties } from "react";
 import { useState } from "react";
 import Image from "next/image";
@@ -130,6 +132,7 @@ export default function StudioHero() {
               </button>
             ))}
           </div>
+          <WorkflowOperator stage={activeStage} workflow={workflow.name} />
           <p className={styles.disclaimer}>Illustrative pattern · every control is designed around the people doing the work</p>
         </div>
 
@@ -140,7 +143,7 @@ export default function StudioHero() {
               <Image src={item.src} alt={item.alt} fill sizes="(max-width: 700px) 44vw, 280px" className="object-cover" />
             </div>
           ))}
-          <div className={styles.redCard} aria-hidden="true"><span>AI</span><small>Useful by design</small></div>
+          <div className={styles.redCard} aria-hidden="true"><BrandMark size={116} /><small>Ian Silva<br />Useful by design</small></div>
         </div>
 
         <div className={styles.bottomline}>

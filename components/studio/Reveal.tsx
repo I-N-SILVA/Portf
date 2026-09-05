@@ -1,5 +1,6 @@
 "use client";
 
+import { useBrandMotion } from "@/components/brand/BrandMotion";
 import { ReactNode, useEffect, useRef } from "react";
 
 interface RevealProps {
@@ -9,12 +10,13 @@ interface RevealProps {
 }
 
 export default function Reveal({ children, delay = 0, className }: RevealProps) {
+  const { enabled } = useBrandMotion();
   const element = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const node = element.current;
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!node || motionPreference.matches) return;
+    if (!node || !enabled || motionPreference.matches) return;
 
     let animation: Animation | null = null;
 
@@ -51,7 +53,7 @@ export default function Reveal({ children, delay = 0, className }: RevealProps) 
       animation?.cancel();
       motionPreference.removeEventListener("change", handleMotionPreference);
     };
-  }, [delay]);
+  }, [delay, enabled]);
 
   return (
     <div

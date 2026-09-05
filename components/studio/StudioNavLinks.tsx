@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
+import { useBrandMotion } from "@/components/brand/BrandMotion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { routes } from "@/lib/routes";
 import styles from "./StudioNav.module.css";
@@ -16,7 +17,7 @@ const LINKS: [label: string, id: string][] = [
 
 export default function StudioNavLinks() {
   const pathname = usePathname();
-  const reduceMotion = useReducedMotion();
+  const { enabled } = useBrandMotion();
   const onLanding = pathname === routes.studio.root;
   const [active, setActive] = useState(onLanding ? "work" : "");
 
@@ -53,7 +54,7 @@ export default function StudioNavLinks() {
               <motion.span
                 layoutId="studio-nav-marker"
                 className={styles.navMarker}
-                transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34 }}
+                transition={!enabled ? { duration: 0 } : { type: "spring", stiffness: 420, damping: 34 }}
                 aria-hidden="true"
               />
             )}

@@ -1,0 +1,15 @@
+/* Ian Silva — approved AA / Operator identity.
+   Olive anchors the brand; cobalt identifies interactive details.
+   Use ink on olive, paper on ink/cobalt, and olive-ink for small text on paper. */
+:root {
+  --brand-ink: #0A0B0A;
+  --brand-olive: #6F9554;
+  --brand-paper: #F1EFE7;
+  --brand-cobalt: #3047E8;
+  --brand-olive-ink: #3F5B2B;
+  --brand-muted: #5E6259;
+  --brand-paper-raised: #FAF9F4;
+  --brand-paper-shade: #E3E5D9;
+  --brand-border: #CCCFC3;
+  --brand-border-strong: #9B9F90;
+}

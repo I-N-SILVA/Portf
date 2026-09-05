@@ -1,3 +1,4 @@
+import BrandMark from "@/components/brand/BrandMark";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import StudioNavLinks from "@/components/studio/StudioNavLinks";
@@ -11,8 +12,8 @@ export default function StudioNav() {
       <div className={styles.bar}>
         <div className={styles.brandGroup}>
           <Link href={routes.home} className={styles.back} aria-label="Back to the portfolio">←</Link>
-          <Link href={routes.studio.root} className={styles.brand}>
-            <span className={styles.brandMark} aria-hidden="true">IS</span>
+          <Link href={routes.studio.root} className={styles.brand} aria-label="Ian Silva Studio">
+            <BrandMark size={38} />
             <span>Ian N. Silva</span>
           </Link>
         </div>

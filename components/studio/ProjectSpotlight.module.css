@@ -11,7 +11,7 @@
   opacity: 0;
   background: radial-gradient(
     520px circle at var(--light-x, 50%) var(--light-y, 50%),
-    rgba(16, 185, 129, 0.1),
+    rgb(111 149 84 / .12),
     transparent 55%
   );
   transition: opacity 220ms ease;

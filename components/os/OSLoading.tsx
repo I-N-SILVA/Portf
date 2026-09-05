@@ -1,3 +1,5 @@
+import BrandLoading from "@/components/brand/BrandLoading";
+
 /**
  * The shared skeleton behind every loading.tsx under /c and /admin.
  *
@@ -8,7 +10,7 @@
 export function OSLoading({ label, lines = 4 }: { label: string; lines?: number }) {
   return (
     <main className="os-stage" aria-busy="true" aria-live="polite">
-      <p className="os-eyebrow">{label}</p>
+      <BrandLoading compact label={`Loading ${label}`} />
       <div className="os-skeleton" style={{ height: 38, maxWidth: 420 }} />
       <div className="os-skeleton" style={{ height: 15, maxWidth: 560, marginTop: 22 }} />
       <div style={{ marginTop: 40 }}>

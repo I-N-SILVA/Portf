@@ -1,3 +1,4 @@
+import Operator from "@/components/brand/Operator";
 import { Mail } from "lucide-react";
 import { CLIENT_SITE, CONTACT_FORM } from "@/lib/client-content";
 import ContactForm from "@/components/studio/ContactForm";
@@ -7,7 +8,7 @@ export default function ContactSection() {
   return (
     <section
       id="contact"
-      className="relative scroll-mt-16 overflow-hidden border-t-2 border-stone-950 bg-[#e84735] text-stone-950"
+      className="relative scroll-mt-16 overflow-hidden border-t-2 border-[var(--brand-ink)] bg-[var(--brand-olive)] text-[var(--brand-ink)]"
     >
       <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2 md:py-28">
         <Reveal>
@@ -23,11 +24,12 @@ export default function ContactSection() {
           </p>
           <a
             href={`mailto:${CLIENT_SITE.EMAIL}`}
-            className="mt-8 inline-flex items-center gap-2 border-b border-stone-950 pb-1 text-sm font-semibold text-stone-950"
+            className="mt-8 inline-flex items-center gap-2 border-b border-[var(--brand-ink)] pb-1 text-sm font-semibold text-[var(--brand-ink)]"
           >
             <Mail className="h-4 w-4" />
             Prefer email? {CLIENT_SITE.EMAIL}
           </a>
+          <div className="mt-8"><Operator size={190} pose="idle" /></div>
         </Reveal>
 
         <Reveal delay={0.1}>

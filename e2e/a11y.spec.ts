@@ -13,6 +13,7 @@ const PUBLIC_PAGES = [
   { path: "/", name: "portfolio" },
   { path: "/ja", name: "portfolio (Japanese)" },
   { path: "/studio", name: "studio" },
+  { path: "/studio/brand", name: "brand library" },
   { path: "/c/acme", name: "sample pitch page" },
 ];
 

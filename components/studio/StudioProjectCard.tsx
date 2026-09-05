@@ -28,11 +28,11 @@ export default function StudioProjectCard({
       <ProjectSpotlight>
         <Link
           href={href}
-          className={`group block h-full overflow-hidden border-2 border-stone-950 bg-[#f8f6ef] transition duration-300 hover:shadow-[8px_8px_0_0_#e84735] ${
+          className={`group block h-full overflow-hidden border-2 border-[var(--brand-ink)] bg-[var(--brand-paper-raised)] transition duration-300 hover:shadow-[8px_8px_0_0_var(--brand-olive)] ${
             featured ? "md:grid md:grid-cols-[1.35fr_0.65fr]" : ""
           }`}
         >
-        <div className={`relative overflow-hidden bg-stone-100 ${featured ? "aspect-[16/10] md:aspect-auto md:min-h-[440px]" : "aspect-[16/10]"}`}>
+        <div className={`relative overflow-hidden bg-[var(--brand-paper-shade)] ${featured ? "aspect-[16/10] md:aspect-auto md:min-h-[440px]" : "aspect-[16/10]"}`}>
           <Image
             src={project.bannerImage ?? project.image}
             alt={project.title}
@@ -53,23 +53,23 @@ export default function StudioProjectCard({
         </div>
         <div className={`flex flex-col p-6 md:p-8 ${featured ? "md:justify-between md:p-10" : ""}`}>
           <div>
-            <span className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
+            <span className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-[var(--brand-muted)]">
               Project {String(index + 1).padStart(2, "0")}
             </span>
-          <h3 className={`mt-3 font-syne font-extrabold uppercase leading-[.95] tracking-[-0.045em] text-stone-900 ${featured ? "text-3xl md:text-5xl" : "text-2xl"}`}>
+          <h3 className={`mt-3 font-syne font-extrabold uppercase leading-[.95] tracking-[-0.045em] text-[var(--brand-ink)] ${featured ? "text-3xl md:text-5xl" : "text-2xl"}`}>
             {project.title}
           </h3>
-          <p className="mt-3 text-sm leading-relaxed text-stone-600">
+          <p className="mt-3 text-sm leading-relaxed text-[var(--brand-muted)]">
             {project.description}
           </p>
           {project.proof && (
-            <dl className="mt-6 grid grid-cols-3 border-y border-stone-200">
+            <dl className="mt-6 grid grid-cols-3 border-y border-[var(--brand-border)]">
               {project.proof.map((item) => (
                 <div key={item.label} className="py-4 pr-2">
-                  <dt className="font-space-mono text-[9px] uppercase tracking-[0.12em] text-stone-600">
+                  <dt className="font-space-mono text-[9px] uppercase tracking-[0.12em] text-[var(--brand-muted)]">
                     {item.label}
                   </dt>
-                  <dd className="mt-1 font-syne text-lg font-extrabold text-stone-950">
+                  <dd className="mt-1 font-syne text-lg font-extrabold text-[var(--brand-ink)]">
                     {item.value}
                   </dd>
                 </div>
@@ -80,16 +80,16 @@ export default function StudioProjectCard({
             {project.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className="border border-stone-200 px-3 py-1 font-space-mono text-[10px] uppercase tracking-[0.08em] text-stone-600"
+                className="border border-[var(--brand-border)] px-3 py-1 font-space-mono text-[10px] uppercase tracking-[0.08em] text-[var(--brand-muted)]"
               >
                 {tag}
               </span>
             ))}
           </div>
           </div>
-          <div className="mt-6 flex items-center justify-between border-t border-stone-200 pt-5">
-            <span className="text-xs text-stone-600">{project.role}</span>
-            <span className="flex items-center gap-1 text-sm font-medium text-stone-900">
+          <div className="mt-6 flex items-center justify-between border-t border-[var(--brand-border)] pt-5">
+            <span className="text-xs text-[var(--brand-muted)]">{project.role}</span>
+            <span className="flex items-center gap-1 text-sm font-medium text-[var(--brand-ink)]">
               {caseStudy ? "Read case study" : "View project"}
               <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </span>
