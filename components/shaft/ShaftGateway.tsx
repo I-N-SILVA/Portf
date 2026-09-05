@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation } from "@/lib/i18n";
-import { routes } from "@/lib/routes";
+import { routes, STUDIO_SITE_URL } from "@/lib/routes";
 
 /**
  * The way out of the portfolio.
@@ -25,7 +25,7 @@ import { routes } from "@/lib/routes";
  */
 
 const GATEWAYS = [
-  { href: routes.studio.root, key: "gateway.studio", mark: "→" },
+  { href: STUDIO_SITE_URL, key: "gateway.studio", mark: "→" },
   { href: routes.auth.login, key: "gateway.portal", mark: "⌸" },
 ] as const;
 
