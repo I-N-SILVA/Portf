@@ -52,17 +52,10 @@ test("the studio consulting canvas demonstrates human-controlled workflows", asy
   await expect(page.getByText(/Illustrative pattern/i)).toBeVisible();
 });
 
-test("the engagement finder prefills the recommended contact path", async ({ page }) => {
+test("the services section offers a direct contact path", async ({ page }) => {
   await page.goto("/studio", { waitUntil: "networkidle" });
 
-  await page.getByRole("button", { name: /One clear workflow/i }).click();
-  const recommendation = page.getByRole("region", { name: /Where are you starting/i });
-  await expect(recommendation.getByText("Automation & agent systems", { exact: true })).toBeVisible();
-  await recommendation.getByRole("link", { name: /Discuss this starting point/i }).click();
-
-  await expect(page.locator('select[name="projectType"]')).toHaveValue(
-    "Automation & agent systems",
-  );
+  await page.getByRole("link", { name: /Start a conversation/i }).click();
   await expect(page.locator("#contact")).toBeInViewport();
 });
 
