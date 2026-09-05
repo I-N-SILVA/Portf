@@ -25,6 +25,7 @@
  */
 /** Fallback origin when NEXT_PUBLIC_SITE_URL is unset. */
 export const DEFAULT_SITE_URL = "https://iamnsilva.me";
+export const STUDIO_SITE_URL = "https://ian-silva-studio.netlify.app";
 
 export const RESERVED_SLUGS = [
   "admin",
