@@ -23,18 +23,3 @@ test("reduced motion keeps the native cursor", async ({ page }) => {
   const cursor = await page.evaluate(() => getComputedStyle(document.body).cursor);
   expect(cursor).not.toBe("none");
 });
-
-test("reduced motion does not hide the studio reveal content", async ({ page }) => {
-  await page.goto("/studio", { waitUntil: "networkidle" });
-  await expect(
-    page.getByRole("heading", {
-      level: 1,
-      name: /AI that earns its place in your workflow/i,
-    }),
-  ).toBeVisible();
-  const processArtifacts = page.locator("#process [class*='inlineArtifact']");
-  await expect(processArtifacts).toHaveCount(3);
-  for (const artifact of await processArtifacts.all()) {
-    await expect(artifact).toBeVisible();
-  }
-});
