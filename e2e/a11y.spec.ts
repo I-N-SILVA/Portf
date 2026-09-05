@@ -12,14 +12,16 @@ import { introFinished } from "./helpers";
 const PUBLIC_PAGES = [
   { path: "/", name: "portfolio" },
   { path: "/ja", name: "portfolio (Japanese)" },
-  { path: "/studio", name: "studio" },
-  { path: "/studio/brand", name: "brand library" },
   { path: "/c/acme", name: "sample pitch page" },
 ];
 
 for (const page of PUBLIC_PAGES) {
   test(`${page.name} has no WCAG A/AA violations`, async ({ page: p }) => {
-    await p.goto(page.path, { waitUntil: "networkidle" });
+    // Audit the settled visual state. Transitional opacity blends text with
+    // its background and can create contrast failures that disappear once
+    // the entrance animation completes.
+    await p.emulateMedia({ reducedMotion: "reduce" });
+    await p.goto(page.path, { waitUntil: "domcontentloaded" });
     // The landing page opens on an intro; let it finish so axe sees the page
     // a visitor actually reads rather than the boot screen.
     await introFinished(p);

@@ -26,7 +26,7 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
       {/* Personalized hero */}
       <section className="mx-auto max-w-4xl px-6 pb-16 pt-20 md:pt-28">
         <Reveal>
-          <p className="font-space-mono text-xs uppercase tracking-[0.25em] text-[var(--brand-muted)]">
+          <p className="font-space-mono text-xs font-bold uppercase tracking-[0.25em] text-[var(--brand-ink)]">
             Prepared for
           </p>
           <h1 className="mt-4 font-syne text-4xl font-bold tracking-tight md:text-5xl">

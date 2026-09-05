@@ -24,55 +24,6 @@ test("the landing page ships real content without running JavaScript", async ({
   await context.close();
 });
 
-test("the studio hero stays visible without JavaScript", async ({ browser }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
-  const page = await context.newPage();
-  await page.goto("/studio");
-  await expect(
-    page.getByRole("heading", {
-      level: 1,
-      name: /AI that earns its place in your workflow/i,
-    }),
-  ).toBeVisible();
-  await expect(page.getByText("New request arrives", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Diagnose" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Prove" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Embed" })).toBeVisible();
-  await context.close();
-});
-
-test("the studio consulting canvas demonstrates human-controlled workflows", async ({
-  page,
-}) => {
-  await page.goto("/studio", { waitUntil: "networkidle" });
-
-  await page.getByRole("button", { name: "Reporting" }).click();
-  await expect(page.getByText("Analyst checks the brief", { exact: true })).toBeVisible();
-  await expect(page.getByText("Weekly report delivered", { exact: true })).toBeVisible();
-  await expect(page.getByText(/Illustrative pattern/i)).toBeVisible();
-});
-
-test("the services section offers a direct contact path", async ({ page }) => {
-  await page.goto("/studio", { waitUntil: "networkidle" });
-
-  await page.getByRole("link", { name: /Start a conversation/i }).click();
-  await expect(page.locator("#contact")).toBeInViewport();
-});
-
-test("the studio remains usable at a 320px viewport", async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 760 });
-  await page.goto("/studio", { waitUntil: "networkidle" });
-
-  const dimensions = await page.evaluate(() => ({
-    viewport: document.documentElement.clientWidth,
-    document: document.documentElement.scrollWidth,
-    cursor: getComputedStyle(document.body).cursor,
-  }));
-  expect(dimensions.document).toBe(dimensions.viewport);
-  expect(dimensions.cursor).not.toBe("none");
-  await expect(page.getByRole("link", { name: "Discuss a workflow" })).toBeVisible();
-});
-
 test("the cinematic intro can be skipped and is remembered", async ({ page }) => {
   await page.goto("/");
 
@@ -102,7 +53,7 @@ test("the native pointer remains visible on desktop", async ({ page }) => {
   expect(cursors.link).toBe("pointer");
 });
 
-test("portfolio and studio put proof before supporting detail", async ({ page }) => {
+test("portfolio puts proof before supporting detail", async ({ page }) => {
   await page.goto("/");
   const portfolioOrder = await page
     .locator("#shaft-archive, #shaft-identity, #shaft-offers, #shaft-call")
@@ -117,27 +68,16 @@ test("portfolio and studio put proof before supporting detail", async ({ page })
     await expect(page.getByRole("heading", { name: project.title, exact: true })).toBeAttached();
   }
 
-  await page.goto("/studio");
-  const studioOrder = await page
-    .locator("#work, #services, #process, #faq")
-    .evaluateAll((sections) => sections.map((section) => section.id));
-  expect(studioOrder).toEqual(["work", "services", "process", "faq"]);
-  for (const project of portfolioProjects) {
-    await expect(page.getByRole("heading", { name: project.title, exact: true })).toBeAttached();
-    const image = page.getByRole("img", { name: project.title, exact: true });
-    await expect(image).toBeAttached();
-    await expect(image).toHaveAttribute(
-      "src",
-      new RegExp(encodeURIComponent(project.bannerImage ?? project.image)),
-    );
-    const card = page
-      .getByRole("heading", { name: project.title, exact: true })
-      .locator("xpath=ancestor::a[1]");
-    expect(await card.locator("dd").allTextContents()).toEqual(
-      (project.proof ?? []).map((proof) => proof.value),
-    );
-  }
-  await expect(page.getByText("Automation sprint", { exact: true })).toBeAttached();
+});
+
+test("studio URLs hand off to the standalone site", async ({ request }) => {
+  const response = await request.get("/studio/work/stocksnap-field-inventory", {
+    maxRedirects: 0,
+  });
+  expect(response.status()).toBe(308);
+  expect(response.headers().location).toBe(
+    "https://ian-silva-studio.netlify.app/work/stocksnap-field-inventory",
+  );
 });
 
 test("every translated landing page is server-rendered in its language", async ({
