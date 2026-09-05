@@ -9,7 +9,6 @@ import StudioProjectCard from "@/components/studio/StudioProjectCard";
 import ContactSection from "@/components/studio/ContactSection";
 import StudioHero from "@/components/studio/StudioHero";
 import ConsultingProcess from "@/components/studio/ConsultingProcess";
-import EngagementFinder from "@/components/studio/EngagementFinder";
 import StudioSectionHeading from "@/components/studio/StudioSectionHeading";
 import Reveal from "@/components/studio/Reveal";
 import { portfolioProjects } from "@/lib/placeholder-content";
@@ -52,7 +51,7 @@ export default function ClientStudioPage() {
               word="Services"
               eyebrow="Independent AI consulting"
               title="Three ways to move the work forward."
-              description="Start with the problem you can see. We will choose the smallest useful engagement from there."
+              description="Choose the closest fit, or bring me the problem as it is. We can shape the right engagement together."
             />
           </Reveal>
           <div className="mt-12 grid border-y border-[var(--brand-border)] md:grid-cols-3">
@@ -94,7 +93,17 @@ export default function ClientStudioPage() {
               </Reveal>
             ))}
           </div>
-          <EngagementFinder />
+          <div className="mt-10 flex flex-col items-start justify-between gap-5 border-t border-[var(--brand-ink)] pt-6 sm:flex-row sm:items-center">
+            <p className="max-w-xl text-sm leading-relaxed text-[var(--brand-muted)]">
+              Not sure which one fits? Describe the workflow, bottleneck, or idea in plain language. I&apos;ll recommend the smallest useful next step.
+            </p>
+            <a
+              href="#contact"
+              className="shrink-0 border border-[var(--brand-ink)] bg-[var(--brand-ink)] px-5 py-3 font-space-mono text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--brand-paper)] transition-transform hover:-translate-y-0.5"
+            >
+              Start a conversation ↗
+            </a>
+          </div>
         </div>
       </section>
 
