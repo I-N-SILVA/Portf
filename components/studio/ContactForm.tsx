@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
+import BrandLoading from "@/components/brand/BrandLoading";
+import BrandMark from "@/components/brand/BrandMark";
+import { ArrowRight } from "lucide-react";
 import { CONTACT_FORM, CLIENT_SITE } from "@/lib/client-content";
 import { submitContact } from "@/lib/os/actions/contact";
 
@@ -19,11 +21,19 @@ export default function ContactForm() {
   // /studio?company=Acme&ref=acme#contact so the form arrives personalized.
   const [company, setCompany] = useState("");
   const [ref, setRef] = useState("");
+  const [projectType, setProjectType] = useState<string>(CONTACT_FORM.PROJECT_TYPES[0]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setCompany(params.get("company") ?? "");
     setRef(params.get("ref") ?? "");
+    const requestedType = params.get("projectType");
+    if (
+      requestedType &&
+      (CONTACT_FORM.PROJECT_TYPES as readonly string[]).includes(requestedType)
+    ) {
+      setProjectType(requestedType);
+    }
   }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -49,14 +59,15 @@ export default function ContactForm() {
     // Our own record first. This is the one that decides whether the enquiry
     // survives: Netlify Forms was previously the only copy, so an outage at
     // exactly the wrong moment lost the lead with nothing to recover from.
-    const saved = await submitContact({
+    let saved: { ok: boolean; error?: string } = { ok: false };
+    try { saved = await submitContact({
       name: payload.name ?? "",
       email: payload.email ?? "",
       message: payload.message ?? "",
       company: payload.company,
       projectType: payload.projectType,
       ref: payload.ref,
-    });
+    }); } catch { saved = { ok: false, error: "Please try again or email me directly." }; }
 
     // Netlify Forms is now the notification channel, not the record. It is
     // what emails you that someone got in touch, so it is still worth
@@ -84,33 +95,20 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div
-        className="p-8 md:p-10"
-        style={{ border: "1px solid var(--st-night-border)" }}
-      >
-        <div className="flex items-center gap-3">
-          {/* .st-night .st-label supplies the gold that reads on this
-              ground; an inline one would undo it. */}
-          <CheckCircle2 className="h-4 w-4" style={{ color: "#c4973a" }} />
-          <span className="st-label">Filed</span>
-        </div>
-        <h3
-          className="mt-5 text-2xl font-bold tracking-tight"
-          style={{ fontFamily: "var(--st-serif)" }}
-        >
+      <div className="flex flex-col items-center justify-center rounded-2xl bg-[var(--brand-paper-raised)] p-10 text-center">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-paper)] text-[var(--brand-olive-ink)]">
+          <BrandMark size={54} />
+        </span>
+        <h3 className="mt-5 font-syne text-2xl font-bold text-[var(--brand-ink)]">
           Message sent
         </h3>
-        <p
-          className="mt-3 max-w-sm text-sm leading-relaxed"
-          style={{ color: "var(--st-night-dim)" }}
-        >
+        <p className="mt-2 max-w-sm text-sm leading-relaxed text-[var(--brand-muted)]">
           Thanks for reaching out — {CONTACT_FORM.RESPONSE_TIME} In the meantime,
           feel free to keep exploring the work.
         </p>
         <button
           onClick={() => setStatus("idle")}
-          className="st-label st-underline st-underline-grow mt-7"
-          style={{ color: "var(--st-night-dim)" }}
+          className="mt-6 text-sm font-medium text-[var(--brand-muted)] underline underline-offset-4 transition-colors hover:text-[var(--brand-ink)]"
         >
           Send another message
         </button>
@@ -125,8 +123,8 @@ export default function ContactForm() {
       data-netlify="true"
       data-netlify-honeypot="bot-field"
       onSubmit={handleSubmit}
-      className="p-6 text-left md:p-8"
-      style={{ border: "1px solid var(--st-night-border)" }}
+      aria-busy={status === "submitting"}
+      className="rounded-2xl bg-[var(--brand-paper-raised)] p-6 text-left md:p-8"
     >
       {/* Netlify plumbing */}
       <input type="hidden" name="form-name" value={CONTACT_FORM.NAME} />
@@ -141,47 +139,51 @@ export default function ContactForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="st-label">Name</span>
+          <span className="text-sm font-medium text-[var(--brand-muted)]">Name</span>
           <input
             type="text"
             name="name"
             required
             autoComplete="name"
-            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           />
         </label>
         <label className="block">
-          <span className="st-label">Email</span>
+          <span className="text-sm font-medium text-[var(--brand-muted)]">Email</span>
           <input
             type="email"
             name="email"
             required
             autoComplete="email"
-            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           />
         </label>
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="block">
-          <span className="st-label">Company (optional)</span>
+          <span className="text-sm font-medium text-[var(--brand-muted)]">
+            Company{" "}
+            <span className="font-normal text-[var(--brand-muted)]">(optional)</span>
+          </span>
           <input
             type="text"
             name="company"
             autoComplete="organization"
             value={company}
             onChange={(e) => setCompany(e.target.value)}
-            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           />
         </label>
         <label className="block">
-          <span className="st-label">
+          <span className="text-sm font-medium text-[var(--brand-muted)]">
             What do you need?
           </span>
           <select
             name="projectType"
-            defaultValue={CONTACT_FORM.PROJECT_TYPES[0]}
-            className="st-field mt-2 w-full px-0 py-2.5 text-sm outline-none"
+            value={projectType}
+            onChange={(event) => setProjectType(event.target.value)}
+            className="mt-1.5 w-full rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
           >
             {CONTACT_FORM.PROJECT_TYPES.map((type) => (
               <option key={type} value={type}>
@@ -193,7 +195,7 @@ export default function ContactForm() {
       </div>
 
       <label className="mt-4 block">
-        <span className="st-label">
+        <span className="text-sm font-medium text-[var(--brand-muted)]">
           What are you trying to solve?
         </span>
         <textarea
@@ -201,23 +203,19 @@ export default function ContactForm() {
           required
           rows={4}
           placeholder="A sentence or two about the workflow that's costing you time is plenty to start."
-          className="st-field mt-2 w-full resize-y px-0 py-2.5 text-sm outline-none"
+          className="mt-1.5 w-full resize-y rounded-lg border border-[var(--brand-border-strong)] bg-[var(--brand-paper)] px-3.5 py-2.5 text-sm text-[var(--brand-ink)] outline-none transition-colors placeholder:text-stone-400 focus:border-stone-900 focus:bg-[var(--brand-paper-raised)]"
         />
       </label>
 
       {status === "error" && (
         <div
           role="alert"
-          className="mt-6 p-4 text-sm"
-          style={{
-            border: "1px solid var(--st-crimson)",
-            color: "var(--st-night-ink)",
-          }}
+          className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
         >
           <p className="font-medium">
             {error ?? "That didn't send."}
           </p>
-          <p className="mt-1" style={{ color: "var(--st-night-dim)" }}>
+          <p className="mt-1 text-red-600">
             Nothing was lost on your end — the text is still in the form, so
             you can press Send again. If it keeps failing, email me directly at{" "}
             <a
@@ -231,18 +229,15 @@ export default function ContactForm() {
         </div>
       )}
 
+      {status === "submitting" && <BrandLoading compact label="Sending your message" />}
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="st-label mt-8 flex w-full items-center justify-center gap-2 px-6 py-4 transition-colors hover:bg-[var(--st-night-ink)] hover:text-[var(--st-night)] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-        style={{
-          border: "1px solid var(--st-night-ink)",
-          color: "var(--st-night-ink)",
-        }}
+        className="group mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-stone-900 px-6 py-3 text-sm font-semibold text-stone-50 transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
         {status === "submitting" ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="inline-block h-2 w-2 bg-[var(--brand-olive)]" aria-hidden="true" />
             Sending…
           </>
         ) : (

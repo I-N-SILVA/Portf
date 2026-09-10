@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createRawClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
-import { publicEnv, requireEnv } from "@/lib/env";
+import { requireEnv } from "@/lib/env";
 import type { Database } from "./types";
 
 /**
@@ -14,9 +14,12 @@ import type { Database } from "./types";
 export async function createClient() {
   const cookieStore = await cookies();
 
+  // Named explicitly rather than passed through as empty strings: Supabase's
+  // own message ("Your project's URL and Key are required") doesn't say which
+  // variable, or where to set it.
   return createServerClient<Database>(
-    publicEnv.supabaseUrl,
-    publicEnv.supabaseAnonKey,
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL", "Run `npm run doctor` to check the setup."),
+    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "Run `npm run doctor` to check the setup."),
     {
       cookies: {
         getAll() {

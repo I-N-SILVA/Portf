@@ -9,9 +9,9 @@ import { ShaftGatewayControls } from "./ShaftGateway";
 
 const chapters = [
   { id: "shaft-hero",     key: "nav.opening",  num: "01" },
-  { id: "shaft-identity", key: "nav.identity", num: "02" },
-  { id: "shaft-offers",   key: "nav.offers",   num: "03" },
-  { id: "shaft-archive",  key: "nav.archive",  num: "04" },
+  { id: "shaft-archive",  key: "nav.archive",  num: "02" },
+  { id: "shaft-identity", key: "nav.identity", num: "03" },
+  { id: "shaft-offers",   key: "nav.offers",   num: "04" },
   { id: "shaft-call",     key: "nav.call",     num: "05" },
 ];
 
@@ -101,7 +101,8 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
             /* Capped on small screens so the gateway pair wraps to a second row
                instead of running into the hero's [ 01 / OPENING ] marker,
                which is pinned to the opposite corner of the same band. */
-            className="fixed top-5 left-5 md:top-8 md:left-8 z-[101] flex flex-wrap items-center gap-y-1 gap-x-2 max-w-[58vw] sm:max-w-none"
+            className="fixed top-3 left-3 right-3 md:top-6 md:left-8 md:right-auto z-[101] flex flex-wrap items-center gap-y-1 gap-x-1 md:gap-x-2 max-w-none md:max-w-[calc(100vw-12rem)] border md:border-transparent px-1.5 py-1 md:p-0 backdrop-blur-xl md:backdrop-blur-none"
+            style={{ backgroundColor: "rgb(var(--shaft-bg) / 0.88)", borderColor: "rgb(var(--shaft-border) / 0.7)" }}
           >
             {/* Sound toggle.
                 Sits first because it's the control someone reaches for in a
@@ -115,16 +116,16 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                   if (next) playSound("click");
                   setSoundOn(next);
                 }}
-                className="flex items-center gap-2 px-3 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+                className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
                 style={{ backgroundColor: "transparent" }}
-                aria-pressed={!soundOn}
+                aria-pressed={soundOn}
                 aria-label={soundOn ? "Mute interface sound" : "Unmute interface sound"}
               >
                 <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
                   {soundOn ? "◈" : "◇"}
                 </span>
                 <span
-                  className="font-space-mono text-[8px] tracking-[0.25em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
+                  className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
                   style={{ color: "rgb(var(--shaft-muted))" }}
                 >
                   {soundOn ? "SOUND" : "MUTED"}
@@ -134,7 +135,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
             {/* Theme toggle — prominent pill button */}
               <button
                 onClick={toggleTheme}
-                className="flex items-center gap-2 px-3 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+                className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
                 style={{
                   backgroundColor: "transparent",
                 }}
@@ -145,7 +146,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                   {isLight ? "◐" : "◑"}
                 </span>
                 <span
-                  className="font-space-mono text-[8px] tracking-[0.25em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
+                  className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
                   style={{ color: "rgb(var(--shaft-muted))" }}
                 >
                   {isLight ? "DARK" : "LIGHT"}
@@ -156,7 +157,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               <div className="relative">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+                  className="shaft-control flex items-center gap-1.5 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
                   style={{
                     backgroundColor: "transparent",
                   }}

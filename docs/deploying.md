@@ -92,7 +92,10 @@ specifically, so moving hosts means replacing both:
   the cron it declared never ran, because the site builds with
   `@netlify/plugin-nextjs`.
 
-Confirm after the first deploy that the scheduled function appears under
+Before deploying, open **Forms → Usage and configuration → Form detection**
+and make sure automatic form detection is enabled. The static blueprint alone
+is not enough when the site-level switch is off. After the deploy, confirm that
+`studio-contact` appears under **Forms** and that `nudges-cron` appears under
 **Functions → Scheduled**.
 
 ---
@@ -236,3 +239,15 @@ npm run verify   # typecheck + lint + dead-module scan + build
 CI runs the same, plus it applies every migration to a throwaway Postgres and
 asserts the security properties: a client cannot read `client_private`, cannot
 forge activity events, and pitch views count and throttle correctly.
+
+## Checking a deploy
+
+```bash
+npm run doctor
+```
+
+Run it against the same environment variables the site uses. It reports which
+of the preconditions for a working client space are missing — environment,
+schema, an admin, a client, a published page — rather than leaving you to infer
+it from a 404. Warnings are things you may not have done yet (nobody invited,
+no page published); FAILs are things that cannot work until fixed.

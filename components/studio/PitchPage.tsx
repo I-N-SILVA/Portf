@@ -1,7 +1,6 @@
 import { getCaseStudy } from "@/lib/client-content";
 import { routes } from "@/lib/routes";
 import CaseStudyCard from "@/components/studio/CaseStudyCard";
-import StudioMark from "@/components/studio/StudioMark";
 import ContactCTA from "@/components/studio/ContactCTA";
 import Reveal from "@/components/studio/Reveal";
 import { PitchViewBeacon } from "@/components/studio/PitchViewBeacon";
@@ -24,57 +23,38 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
     <main>
       <PitchViewBeacon slug={page.slug} />
 
-      {/* Addressed to one prospect: the whole point of this page is that it
-          reads like a document prepared for them, not a landing page with
-          their name substituted in. */}
-      <section className="mx-auto max-w-4xl px-6 pb-14 pt-14 md:px-10 md:pt-20">
+      {/* Personalized hero */}
+      <section className="mx-auto max-w-4xl px-6 pb-16 pt-20 md:pt-28">
         <Reveal>
-          <div
-            className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-5"
-            style={{ borderBottom: "1px solid var(--st-border)" }}
-          >
-            <span className="st-label">Prepared for</span>
-            <span className="st-meta ml-auto">Private link · Not indexed</span>
-          </div>
-          <h1
-            className="mt-8 font-black tracking-tight"
-            style={{
-              fontFamily: "var(--st-serif)",
-              fontSize: "clamp(34px, 5.6vw, 68px)",
-              lineHeight: 1.02,
-            }}
-          >
+          <p className="font-space-mono text-xs font-bold uppercase tracking-[0.25em] text-[var(--brand-ink)]">
+            Prepared for
+          </p>
+          <h1 className="mt-4 font-syne text-4xl font-bold tracking-tight md:text-5xl">
             {page.display_name}
           </h1>
           {page.headline && (
-            <p
-              className="mt-5 max-w-2xl text-lg leading-relaxed"
-              style={{ color: "var(--st-ink-dim)" }}
-            >
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-[var(--brand-muted)]">
               {page.headline}
             </p>
           )}
           {page.services.length > 0 && (
-            <p className="st-label mt-6">{page.services.join("  ·  ")}</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {page.services.map((s) => (
+                <span
+                  key={s}
+                  className="rounded-full border border-[var(--brand-border-strong)] px-3 py-1 text-xs text-[var(--brand-muted)]"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
           )}
           {page.note && (
-            <div
-              className="mt-10 p-7 md:p-9"
-              style={{
-                border: "1px solid var(--st-border)",
-                backgroundColor: "var(--st-surface)",
-              }}
-            >
-              <p
-                className="whitespace-pre-line leading-relaxed"
-                style={{ color: "var(--st-ink-dim)" }}
-              >
+            <div className="mt-8 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-paper-raised)] p-8">
+              <p className="whitespace-pre-line leading-relaxed text-[var(--brand-muted)]">
                 {page.note}
               </p>
-              <p
-                className="mt-7 text-lg italic"
-                style={{ fontFamily: "var(--st-serif)" }}
-              >
+              <p className="mt-6 font-syne text-lg italic text-[var(--brand-ink)]">
                 — Ian
               </p>
             </div>
@@ -84,35 +64,18 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
 
       {/* Curated work */}
       {curated.length > 0 && (
-        <section
-          className="px-6 py-16 md:px-10 md:py-24"
-          style={{
-            borderTop: "1px solid var(--st-border)",
-            backgroundColor: "var(--st-surface-alt)",
-          }}
-        >
-          <div className="mx-auto max-w-6xl">
-            <StudioMark num="01" label="Selected for you" />
+        <section className="border-t border-[var(--brand-border)] bg-[var(--brand-paper-raised)]">
+          <div className="mx-auto max-w-6xl px-6 py-16 md:py-24">
             <Reveal>
-              <h2
-                className="max-w-2xl font-black tracking-tight"
-                style={{
-                  fontFamily: "var(--st-serif)",
-                  fontSize: "clamp(28px, 4vw, 46px)",
-                  lineHeight: 1.04,
-                }}
-              >
+              <h2 className="font-syne text-2xl font-bold md:text-3xl">
                 Work I&apos;d point you to first
               </h2>
-              <p
-                className="mt-4 max-w-2xl text-sm leading-relaxed"
-                style={{ color: "var(--st-ink-dim)" }}
-              >
-                Hand-picked for what we discussed — each one links to a full
-                record, and several have live demos you can try.
+              <p className="mt-3 max-w-2xl text-sm text-[var(--brand-muted)]">
+                Hand-picked for what we discussed — each one links to a full case
+                study, and several have live demos you can try.
               </p>
             </Reveal>
-            <div className="mt-12 grid gap-px md:grid-cols-2">
+            <div className="mt-10 grid gap-8 md:grid-cols-2">
               {curated.map((cs, i) => (
                 <CaseStudyCard key={cs.slug} caseStudy={cs} index={i} />
               ))}

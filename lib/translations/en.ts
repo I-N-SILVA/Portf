@@ -9,12 +9,14 @@ export const en: Record<string, string> = {
   "hero.tagline2": "Behavioral Economist",
   "hero.marker": "I help founders and small teams turn vague ideas into working automations, landing pages, and MVPs you can test with real users in weeks, not months.",
   "hero.cta": "SCHEDULE A CALL",
+  "hero.viewWork": "View selected work",
   "hero.scroll": "SCROLL",
   "hero.scene": "[ 01 / OPENING ]",
+  "intro.skip": "Skip intro",
 
   // ── Identity ──
-  "identity.section": "02 / IDENTITY",
-  "identity.pretitle": "// 02",
+  "identity.section": "03 / IDENTITY",
+  "identity.pretitle": "// 03",
   "identity.line1": "The question isn't",
   "identity.line2": "what I build.",
   "identity.line3": "It's what becomes",
@@ -42,7 +44,7 @@ export const en: Record<string, string> = {
   "insight.cta": "VIEW CASE STUDIES",
 
   // ── Archive ──
-  "archive.section": "04 / THE ARCHIVE",
+  "archive.section": "02 / SELECTED WORK",
   "archive.filter.all": "ALL",
   "archive.viewProject": "VIEW PROJECT →",
   "archive.source": "SOURCE →",
@@ -76,7 +78,7 @@ export const en: Record<string, string> = {
   // ── Gateway (studio + client portal) ──
   "gateway.studio.aria": "Open the studio — services, case studies and contact",
   "gateway.portal.aria": "Sign in to the client portal",
-  "gateway.studio": "STUDIO",
+  "gateway.studio": "SERVICES",
   "gateway.portal": "PORTAL",
 
   // ── Projects ──
@@ -105,7 +107,7 @@ export const en: Record<string, string> = {
 
 
   // ── Offers ──
-  "offers.section": "03 / CAPABILITIES",
+  "offers.section": "04 / CAPABILITIES",
   "offers.title": "What I can build for you in 2–4 weeks.",
   "offers.subtitle": "Three focused offers:",
   "offers.1.title": "CLICK‑READY MVP PROTOTYPES",

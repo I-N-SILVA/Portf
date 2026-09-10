@@ -1,0 +1,32 @@
+.surface {
+  position: relative;
+  height: 100%;
+  transition: transform 250ms ease;
+}
+
+.light {
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    520px circle at var(--light-x, 50%) var(--light-y, 50%),
+    rgb(111 149 84 / .12),
+    transparent 55%
+  );
+  transition: opacity 220ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .surface:hover { transform: translateY(-3px); }
+  .surface:hover .light { opacity: 1; }
+}
+
+.surface:focus-within .light {
+  opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface { transform: none !important; transition: none; }
+  .light { display: none; }
+}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { routes } from "@/lib/routes";
 
 export function SetPasswordForm() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export function SetPasswordForm() {
       setError(error.message);
       return;
     }
-    router.replace("/");
+    router.replace(routes.portal);
     router.refresh();
   };
 

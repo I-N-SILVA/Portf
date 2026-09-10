@@ -38,11 +38,11 @@ const listeners = new Set<(on: boolean) => void>();
 
 function readPreference(): boolean {
   if (enabled !== null) return enabled;
-  if (typeof window === "undefined") return true;
+  if (typeof window === "undefined") return false;
   try {
-    enabled = localStorage.getItem(STORAGE_KEY) !== "off";
+    enabled = localStorage.getItem(STORAGE_KEY) === "on";
   } catch {
-    enabled = true;
+    enabled = false;
   }
   return enabled;
 }
@@ -64,10 +64,10 @@ export function setSoundEnabled(on: boolean) {
  * re-renders every consumer when any of them flips it.
  */
 export function useSoundPreference(): [boolean, (on: boolean) => void] {
-  // Start from `true` on the server and on the very first client render, then
+  // Start silent on the server and on the very first client render, then
   // correct in an effect — reading localStorage during render would make the
   // markup differ between the two and React would discard the whole tree.
-  const [on, setOn] = useState(true);
+  const [on, setOn] = useState(false);
 
   useEffect(() => {
     setOn(readPreference());

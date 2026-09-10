@@ -9,12 +9,14 @@ export const pt: Record<string, string> = {
   "hero.tagline2": "Economista Comportamental",
   "hero.marker": "Ajudo fundadores e pequenas equipas a transformar ideias vagas em automações funcionais, landing pages e MVPs que podem ser testados com utilizadores reais em semanas, não meses.",
   "hero.cta": "AGENDAR UMA CHAMADA",
+  "hero.viewWork": "Ver projetos selecionados",
   "hero.scroll": "ROLAR",
   "hero.scene": "[ 01 / ABERTURA ]",
+  "intro.skip": "Saltar introdução",
 
   // ── Identity ──
-  "identity.section": "02 / IDENTIDADE",
-  "identity.pretitle": "// 02",
+  "identity.section": "03 / IDENTIDADE",
+  "identity.pretitle": "// 03",
   "identity.line1": "A questão não é",
   "identity.line2": "o que eu construo.",
   "identity.line3": "É o que se torna",
@@ -42,7 +44,7 @@ export const pt: Record<string, string> = {
   "insight.cta": "VER ESTUDOS DE CASO",
 
   // ── Archive ──
-  "archive.section": "04 / O ARQUIVO",
+  "archive.section": "02 / TRABALHOS SELECIONADOS",
   "archive.filter.all": "TODOS",
   "archive.viewProject": "VER PROJETO →",
   "archive.source": "CÓDIGO →",
@@ -73,7 +75,7 @@ export const pt: Record<string, string> = {
   // ── Gateway (estúdio + portal do cliente) ──
   "gateway.studio.aria": "Abrir o estúdio — serviços, casos e contacto",
   "gateway.portal.aria": "Entrar no portal do cliente",
-  "gateway.studio": "ESTÚDIO",
+  "gateway.studio": "SERVIÇOS",
   "gateway.portal": "PORTAL",
 
   // ── Projetos ──
@@ -100,7 +102,7 @@ export const pt: Record<string, string> = {
   "projects.3.full": "O Promptuous é um sistema de gestão de prompts projetado para profissionais de IA e criadores de conteúdo. Oferece um espaço de trabalho centralizado para armazenar, categorizar e iterar em prompts, garantindo performance otimizada e workflows de implementação sem falhas.",
 
   // ── Offers ──
-  "offers.section": "03 / CAPACIDADES",
+  "offers.section": "04 / CAPACIDADES",
   "offers.title": "O que posso construir para você em 2–4 semanas.",
   "offers.subtitle": "Três ofertas focadas:",
   "offers.1.title": "PROTÓTIPOS MVP PRONTOS A TESTAR",

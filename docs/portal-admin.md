@@ -142,8 +142,10 @@ All of this is UI now; none of it needs the SQL editor.
    renamed slug), then *Save & publish*. Copy the link and send it. Status
    defaults to `prospect`.
 3. **Convert** — *Send invite*. Supabase emails them; the callback drops them
-   on `/set-password`, and `/portal` forwards them to their space. The same URL
-   now serves their dashboard instead of the pitch page.
+   on `/set-password`; after they choose a password, `/portal` forwards them
+   to their space. The callback accepts code, token-hash, and Supabase's
+   default fragment-based admin invitation formats. The same URL now serves
+   their dashboard instead of the pitch page.
 4. **Notes** — anything in the private notes box lives in `client_private`,
    which has one policy and it is admin-only. See below.
 

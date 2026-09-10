@@ -159,8 +159,9 @@ per-component:
   page — `StudioShell` styles it for `/studio` and nothing did for the front
   door, while two components removed the browser default outright.
 - A skip link, and the `#main` landmark for it to target.
-- The native cursor is restored under reduced motion and on coarse pointers;
-  `cursor: none` was global on desktop with a JS cursor as the only fallback.
+- The animated cursor and global `cursor: none` rule are gone. The native
+  pointer remains visible for every visitor, at every viewport and motion
+  preference, while links and controls use the expected pointer shape.
 - `aria-pressed` on the archive filter group; the tripled ticker marked
   `aria-hidden`, since it read every item three times.
 

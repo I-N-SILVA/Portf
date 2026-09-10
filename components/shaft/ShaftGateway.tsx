@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation } from "@/lib/i18n";
-import { routes } from "@/lib/routes";
+import { routes, STUDIO_SITE_URL } from "@/lib/routes";
 
 /**
  * The way out of the portfolio.
@@ -25,7 +25,7 @@ import { routes } from "@/lib/routes";
  */
 
 const GATEWAYS = [
-  { href: routes.studio.root, key: "gateway.studio", mark: "→" },
+  { href: STUDIO_SITE_URL, key: "gateway.studio", mark: "→" },
   { href: routes.auth.login, key: "gateway.portal", mark: "⌸" },
 ] as const;
 
@@ -46,14 +46,14 @@ export function ShaftGatewayControls() {
           key={href}
           href={href}
           onClick={() => playSound("click")}
-          className="flex items-center gap-2 px-3 py-1.5 border border-transparent transition-colors duration-200 group hover:border-[rgb(var(--shaft-crimson))] focus-visible:outline-none focus-visible:border-[rgb(var(--shaft-crimson))]"
+          className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent transition-colors duration-200 group hover:border-[rgb(var(--shaft-crimson))] focus-visible:outline-none focus-visible:border-[rgb(var(--shaft-crimson))]"
           aria-label={t(`${key}.aria`)}
         >
           <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
             {mark}
           </span>
           <span
-            className="font-space-mono text-[8px] tracking-[0.25em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
+            className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
             style={{ color: "rgb(var(--shaft-muted))" }}
           >
             {t(key)}

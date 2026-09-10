@@ -12,27 +12,43 @@
 // supabase/migrations/, which CI globs — a bundle in there would apply every
 // statement twice.
 
-import { readFileSync, writeFileSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 
-const [from = "0011", to = "0015"] = process.argv.slice(2);
+const args = process.argv.slice(2).filter((a) => a !== "--check");
+const check = process.argv.includes("--check");
+
+// The default range is the committed bundle's, so `--check` needs no
+// arguments and cannot drift from what is on disk.
+const committed = readdirSync(path.join(process.cwd(), "supabase"))
+  .find((f) => /^apply-\d{4}-\d{4}\.sql$/.test(f));
+const [defFrom, defTo] = committed
+  ? committed.replace("apply-", "").replace(".sql", "").split("-")
+  : ["0011", "0015"];
+
+const [from = defFrom, to = defTo] = args;
 
 const DIR = path.join(process.cwd(), "supabase", "migrations");
-const files = readdirSync(DIR)
+
+/**
+ * Build one bundle in memory. Called to write a file, and again per
+ * committed bundle by --check, which needs to compare without writing.
+ */
+function buildBundle(from, to) {
+  const files = readdirSync(DIR)
   .filter((f) => f.endsWith(".sql"))
   .sort()
   .filter((f) => {
     const n = f.slice(0, 4);
     return n >= from && n <= to;
   });
+  if (files.length === 0) {
+    console.error(`no migrations between ${from} and ${to}`);
+    process.exit(1);
+  }
 
-if (files.length === 0) {
-  console.error(`no migrations between ${from} and ${to}`);
-  process.exit(1);
-}
-
-const rule = "═".repeat(70);
-const header = `-- ${rule}
+  const rule = "═".repeat(70);
+  const header = `-- ${rule}
 --  Supabase migration bundle — ${files[0]} through ${files[files.length - 1]}
 --
 --  Paste this whole file into the Supabase SQL editor and run it once.
@@ -42,14 +58,25 @@ const header = `-- ${rule}
 --  regenerate, or the SQL you run in production stops matching the SQL CI
 --  tests.
 --
---  Safe to re-run. Every statement is guarded (create or replace, if not
---  exists, drop-then-create for triggers and policies), so applying it twice
---  changes nothing the second time.
+--  ${
+    Number(from) <= 1
+      ? "Run this ONCE, on an empty database. It creates enum types, which\n" +
+        "--  Postgres has no `create type if not exists` for — so a second run\n" +
+        "--  stops at the first one. That is harmless (the whole thing is in a\n" +
+        "--  transaction and rolls back), but it is not a no-op."
+      : "Safe to re-run. Every statement is guarded (create or replace, if not\n" +
+        "--  exists, drop-then-create for triggers and policies), so applying it\n" +
+        "--  twice changes nothing the second time."
+  }
 --
 --  It runs in one transaction: if any statement fails, nothing is applied and
 --  you can fix and re-paste.
 --
---  Assumes migrations 0001 through ${String(Number(from) - 1).padStart(4, "0")} are already applied.
+--  ${
+    Number(from) <= 1
+      ? "This is the complete schema. Run it on a brand-new project."
+      : `Assumes migrations 0001 through ${String(Number(from) - 1).padStart(4, "0")} are already applied.`
+  }
 --
 --  Contains:
 ${files.map((f) => `--    ${f}`).join("\n")}
@@ -59,7 +86,7 @@ begin;
 
 `;
 
-const body = files
+  const body = files
   .map(
     (f) => `
 -- ${rule}
@@ -71,7 +98,7 @@ ${readFileSync(path.join(DIR, f), "utf8").trim()}
   )
   .join("\n");
 
-const footer = `
+  const footer = `
 
 commit;
 
@@ -119,14 +146,52 @@ union all select 'functions the app calls',
        then 'ok' else 'MISSING ONE OR MORE' end;
 `;
 
+  return { files, contents: header + body + footer };
+}
+
+const { files, contents } = buildBundle(from, to);
+
 const out = path.join(
   process.cwd(),
   "supabase",
   `apply-${files[0].slice(0, 4)}-${files[files.length - 1].slice(0, 4)}.sql`,
 );
-writeFileSync(out, header + body + footer);
+const rel = path.relative(process.cwd(), out);
+
+// --check: fail rather than write, so CI catches a bundle that has fallen
+// behind the migrations. A stale bundle is worse than none — it looks
+// authoritative, and pasting it leaves the database a few migrations short
+// with nothing to say so.
+if (check) {
+  // Verify every committed bundle, not just this range. There are two by
+  // design — a full one for a fresh project and a tail for a database already
+  // on 0010 — and checking only one would let the other rot unnoticed.
+  const bundles = readdirSync(path.join(process.cwd(), "supabase"))
+    .filter((f) => /^apply-\d{4}-\d{4}\.sql$/.test(f))
+    .sort();
+
+  if (bundles.length === 0) {
+    console.error("no supabase/apply-*.sql bundle is committed.");
+    process.exit(1);
+  }
+
+  let stale = 0;
+  for (const name of bundles) {
+    const [f, t] = name.replace("apply-", "").replace(".sql", "").split("-");
+    const expected = buildBundle(f, t).contents;
+    const actual = readFileSync(path.join(process.cwd(), "supabase", name), "utf8");
+    if (expected === actual) {
+      console.log(`supabase/${name} is up to date.`);
+    } else {
+      stale++;
+      console.error(`supabase/${name} is stale — it does not match supabase/migrations/.`);
+      console.error(`  Regenerate:  node scripts/build-migration-bundle.mjs ${f} ${t}`);
+    }
+  }
+  process.exit(stale ? 1 : 0);
+}
+
+writeFileSync(out, contents);
 console.log(
-  `wrote ${path.relative(process.cwd(), out)} (${files.length} migrations, ${
-    (header + body + footer).split("\n").length
-  } lines)`,
+  `wrote ${rel} (${files.length} migrations, ${contents.split("\n").length} lines)`,
 );

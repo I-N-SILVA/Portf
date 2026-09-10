@@ -1,44 +1,33 @@
+import BrandMark from "@/components/brand/BrandMark";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import StudioNavLinks from "@/components/studio/StudioNavLinks";
+import StudioScrollProgress from "@/components/studio/StudioScrollProgress";
 import { routes } from "@/lib/routes";
+import styles from "./StudioNav.module.css";
 
-/**
- * A single ruled line across the top of the document, not a floating
- * capsule. It stays put rather than following the scroll: the page is short
- * enough that a persistent bar would cost more than it returns, and the
- * contact block ends the page anyway.
- */
 export default function StudioNav() {
   return (
-    <header
-      className="st-night relative z-50"
-      style={{ borderBottom: "1px solid var(--st-night-border)" }}
-    >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 md:px-10">
-        <Link
-          href={routes.studio.root}
-          className="flex items-baseline gap-3 whitespace-nowrap"
-        >
-          <span
-            className="text-base font-bold tracking-tight"
-            style={{ fontFamily: "var(--st-serif)" }}
-          >
-            Ian N. Silva
-          </span>
-          <span className="st-label">Studio</span>
-        </Link>
-
-        <div className="flex items-center gap-5 sm:gap-7">
-          <StudioNavLinks />
-          <Link
-            href={routes.studio.section("contact")}
-            className="st-label border px-4 py-2.5 transition-colors hover:bg-[var(--st-night-ink)] hover:text-[var(--st-night)]"
-            style={{ borderColor: "var(--st-night-border)" }}
-          >
-            Start
+    <header className={styles.header}>
+      <div className={styles.bar}>
+        <div className={styles.brandGroup}>
+          <Link href={routes.home} className={styles.back} aria-label="Back to the portfolio">←</Link>
+          <Link href={routes.studio.root} className={styles.brand} aria-label="Ian Silva Studio">
+            <BrandMark size={38} />
+            <span>Ian N. Silva</span>
           </Link>
         </div>
-      </nav>
+        <StudioNavLinks />
+        <div className={styles.actions}>
+          <Link href={routes.portal} className={styles.portal}>Client portal</Link>
+          <Link href={routes.studio.section("contact")} className={styles.contact} aria-label="Discuss a workflow">
+            <span className={styles.contactLong}>Discuss a workflow</span>
+            <span className={styles.contactShort}>Discuss AI</span>
+            <ArrowRight aria-hidden="true" />
+          </Link>
+        </div>
+      </div>
+      <StudioScrollProgress />
     </header>
   );
 }

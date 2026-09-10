@@ -8,12 +8,14 @@ export const zh: Record<string, string> = {
   "hero.tagline2": "行为经济学家",
   "hero.marker": "在AI与人类行为的交汇处构建",
   "hero.cta": "预约通话",
+  "hero.viewWork": "查看精选项目",
   "hero.scroll": "滚动",
   "hero.scene": "[ 01 / 开场 ]",
+  "intro.skip": "跳过开场",
 
   // ── Identity ──
-  "identity.section": "02 / 身份",
-  "identity.pretitle": "// 02",
+  "identity.section": "03 / 身份",
+  "identity.pretitle": "// 03",
   "identity.line1": "问题不在于",
   "identity.line2": "我构建了什么。",
   "identity.line3": "而在于没有我",
@@ -41,7 +43,7 @@ export const zh: Record<string, string> = {
   "insight.cta": "查看案例研究",
 
   // ── Archive ──
-  "archive.section": "03 / 档案",
+  "archive.section": "02 / 精选项目",
   "archive.filter.all": "全部",
   "archive.viewProject": "查看项目 →",
   "archive.source": "源代码 →",
@@ -71,7 +73,7 @@ export const zh: Record<string, string> = {
   // ── Gateway (工作室 + 客户端口) ──
   "gateway.studio.aria": "打开工作室 — 服务、案例与联系方式",
   "gateway.portal.aria": "登录客户端口",
-  "gateway.studio": "工作室",
+  "gateway.studio": "服务",
   "gateway.portal": "客户端口",
 
   // ── Projects (archive) ──
@@ -90,7 +92,7 @@ export const zh: Record<string, string> = {
 
   // ── Added on the improvement branch ──
   "nav.offers": "服务",
-  "offers.section": "03 / 能力范围",
+  "offers.section": "04 / 能力范围",
   "offers.title": "我能在 2–4 周内为你做出来的东西。",
   "offers.subtitle": "三项明确的服务：",
   "offers.1.title": "可直接演示的 MVP 原型",

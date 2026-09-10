@@ -1,5 +1,6 @@
 import "@/components/os/os-theme.css";
 import { supabaseConfigured } from "@/lib/env";
+import { NotConfigured } from "@/components/os/NotConfigured";
 
 // These pages construct a Supabase browser client during render. Force
 // dynamic rendering so Next.js never tries to prerender them at build time —
@@ -20,16 +21,7 @@ export default function AuthLayout({
     return (
       <div className="shaft-os">
         <div className="os-paper" />
-        <main className="os-stage">
-          <p className="os-eyebrow">sign in</p>
-          <h1 className="os-title">Not configured.</h1>
-          <p className="os-sub">
-            Authentication needs a Supabase project. Set{" "}
-            <code>NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-            <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, then apply the
-            migrations in <code>supabase/migrations/</code>.
-          </p>
-        </main>
+        <NotConfigured area="sign in" />
       </div>
     );
   }

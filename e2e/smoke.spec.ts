@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { portfolioProjects } from "@/lib/placeholder-content";
 
 /**
  * The pages a stranger can reach must render their own content in the initial
@@ -21,6 +22,62 @@ test("the landing page ships real content without running JavaScript", async ({
   expect(html.length).toBeGreaterThan(20_000);
 
   await context.close();
+});
+
+test("the cinematic intro can be skipped and is remembered", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: /skip intro/i }).click();
+  await expect(page.locator("#main")).not.toHaveAttribute("inert", /.*/);
+  await expect(page.getByRole("button", { name: /skip intro/i })).toBeHidden();
+  expect(await page.evaluate(() => sessionStorage.getItem("shaft-booted"))).toBe("1");
+});
+
+test("sound is opt-in for a first-time visitor", async ({ page }) => {
+  await page.goto("/");
+  const sound = page.getByRole("button", { name: /unmute interface sound/i });
+  await expect(sound).toBeVisible();
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await expect(sound).toContainText("MUTED");
+});
+
+test("the native pointer remains visible on desktop", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+
+  const cursors = await page.evaluate(() => ({
+    body: getComputedStyle(document.body).cursor,
+    link: getComputedStyle(document.querySelector("a")!).cursor,
+  }));
+  expect(cursors.body).not.toBe("none");
+  expect(cursors.link).toBe("pointer");
+});
+
+test("portfolio puts proof before supporting detail", async ({ page }) => {
+  await page.goto("/");
+  const portfolioOrder = await page
+    .locator("#shaft-archive, #shaft-identity, #shaft-offers, #shaft-call")
+    .evaluateAll((sections) => sections.map((section) => section.id));
+  expect(portfolioOrder).toEqual([
+    "shaft-archive",
+    "shaft-identity",
+    "shaft-offers",
+    "shaft-call",
+  ]);
+  for (const project of portfolioProjects) {
+    await expect(page.getByRole("heading", { name: project.title, exact: true })).toBeAttached();
+  }
+
+});
+
+test("studio URLs hand off to the standalone site", async ({ request }) => {
+  const response = await request.get("/studio/work/stocksnap-field-inventory", {
+    maxRedirects: 0,
+  });
+  expect(response.status()).toBe(308);
+  expect(response.headers().location).toBe(
+    "https://ian-silva-studio.netlify.app/work/stocksnap-field-inventory",
+  );
 });
 
 test("every translated landing page is server-rendered in its language", async ({
@@ -57,6 +114,12 @@ test("private areas are noindex at the header level", async ({ request }) => {
     const res = await request.get(path);
     expect(res.headers()["x-robots-tag"], path).toContain("noindex");
   }
+});
+
+test("portal entry preserves its destination through sign-in", async ({ request }) => {
+  const response = await request.get("/portal", { maxRedirects: 0 });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toBe("/login?next=%2Fportal");
 });
 
 test("security headers are present on every response", async ({ request }) => {

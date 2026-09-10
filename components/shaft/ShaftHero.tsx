@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import { useRef, useEffect } from "react";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
@@ -10,12 +10,13 @@ import Image from "next/image";
 
 /* ─── Effect 1: Cinematic Blur Reveal (Active) ─────────────────────────── */
 function CinematicBlurName({ text, delay = 0 }: { text: string; delay?: number }) {
+  const reduceMotion = useReducedMotion();
   return (
     <span className="inline-flex" aria-label={text}>
       {text.split("").map((char, i) => (
         <motion.span
           key={`${char}-${i}`}
-          initial={{ opacity: 0, filter: "blur(16px)", scale: 1.1, x: -10 }}
+          initial={reduceMotion ? false : { opacity: 0, filter: "blur(16px)", scale: 1.1, x: -10 }}
           animate={{ opacity: 1, filter: "blur(0px)", scale: 1, x: 0 }}
           transition={{ duration: 0.9, delay: delay + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
           className="inline-block will-change-transform"
@@ -62,6 +63,7 @@ function HUDShard({ img, top, left, size, delay, rot, index, springX, springY }:
         src={img}
         alt="Shard"
         fill
+        sizes={size}
         className="object-cover opacity-60"
       />
       <div className="absolute inset-0 shaft-scanline opacity-40" />
@@ -73,6 +75,7 @@ export default function ShaftHero() {
   const sectionRef = useRef<HTMLElement>(null);
   const { playSound } = useSoundEffects();
   const { t } = useTranslation();
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
   
   // Vertical Parallax
@@ -171,6 +174,7 @@ export default function ShaftHero() {
               alt="Ian N. Silva"
               fill
               priority
+              sizes="(min-width: 768px) 38vw, 1px"
               className="absolute inset-0 w-full h-full object-contain object-bottom opacity-90 drop-shadow-2xl transition-all duration-1000 group-hover:scale-105"
             />
             <div className="absolute inset-0 shaft-scanline opacity-20" />
@@ -243,6 +247,7 @@ export default function ShaftHero() {
             alt="Ian N. Silva"
             fill
             priority
+            sizes="(max-width: 767px) 75vw, 1px"
             className="object-contain object-bottom opacity-80"
           />
           <div
@@ -258,7 +263,7 @@ export default function ShaftHero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.1, delay: 0.35 }}
-        className="absolute top-6 right-6 md:top-8 md:right-8 font-space-mono text-[8px] md:text-[9px] tracking-[0.45em] uppercase z-20"
+        className="absolute top-6 right-6 md:top-8 md:right-8 font-space-mono text-[8px] md:text-[9px] tracking-[0.45em] uppercase z-20 hidden md:block"
         style={{ color: "rgb(var(--shaft-muted))" }}
       >
         {t("hero.scene")}
@@ -270,10 +275,10 @@ export default function ShaftHero() {
 
           {/* Pre-title annotation */}
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.1, delay: 0.15 }}
-            className="font-space-mono text-[8px] md:text-[9px] tracking-[0.4em] uppercase mb-4 md:mb-6"
+            className="font-space-mono text-[10px] md:text-[11px] tracking-[0.3em] uppercase mb-4 md:mb-6"
             style={{ color: "rgb(var(--shaft-crimson))" }}
           >
             {t("hero.pretitle")}
@@ -315,10 +320,10 @@ export default function ShaftHero() {
 
           {/* Tagline */}
           <motion.p
-            initial={{ opacity: 0, y: 8 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 0.8 }}
-            className="font-space-mono text-[9px] md:text-[12px] tracking-[0.25em] md:tracking-[0.35em] uppercase"
+            className="font-space-mono text-[11px] md:text-[13px] leading-relaxed tracking-[0.16em] md:tracking-[0.24em] uppercase"
             style={{ color: "rgb(var(--shaft-muted))" }}
           >
             {t("hero.tagline")}{" "}
@@ -329,7 +334,7 @@ export default function ShaftHero() {
 
           {/* Episode marker */}
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={reduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2, delay: 0.95 }}
             className="mt-6 md:mt-8 flex items-center gap-3"
@@ -339,51 +344,49 @@ export default function ShaftHero() {
               style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
             />
             <span
-              className="font-space-mono text-[8px] md:text-[9px] tracking-[0.2em] md:tracking-[0.25em] uppercase"
+              className="font-space-mono text-[10px] md:text-[11px] leading-relaxed tracking-[0.14em] md:tracking-[0.2em] uppercase max-w-2xl"
               style={{ color: "rgb(var(--shaft-muted))" }}
             >
               {t("hero.marker")}
             </span>
           </motion.div>
 
-          {/* Primary CTA — scroll to The Call */}
-          <motion.button
-            initial={{ opacity: 0, y: 8 }}
+          {/* Primary routes: inspect the work or start a conversation. */}
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, delay: 1.1 }}
-            onClick={() => {
-              playSound("click");
-              document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="mt-8 md:mt-10 group flex items-center gap-0 border transition-all duration-150 relative z-20"
-            style={{
-              borderColor: "rgb(var(--shaft-crimson))",
-              backgroundColor: "transparent",
-            }}
-            whileHover={{ backgroundColor: "rgb(204 17 34 / 0.08)" }}
+            className="mt-8 md:mt-10 flex flex-wrap items-center gap-3 relative z-20"
           >
-            <span
-              className="font-space-mono text-[8px] md:text-[9px] tracking-[0.35em] md:tracking-[0.45em] uppercase px-4 md:px-6 py-2.5 md:py-3 border-r"
-              style={{
-                color: "rgb(var(--shaft-cream))",
-                borderColor: "rgb(var(--shaft-crimson))",
+            <button
+              onClick={() => {
+                playSound("click");
+                document.getElementById("shaft-archive")?.scrollIntoView({ behavior: "smooth" });
               }}
+              className="shaft-control group flex items-center border px-5 py-3 transition-colors text-[rgb(var(--shaft-cream))] hover:bg-[rgb(var(--shaft-cream))] hover:text-[rgb(var(--shaft-bg))]"
+              style={{ borderColor: "rgb(var(--shaft-cream))" }}
             >
-              <ShaftDecipher text={t("hero.cta")} />
-            </span>
-            <span
-              className="font-space-mono text-[11px] px-3 md:px-4 py-2.5 md:py-3 transition-transform duration-150 group-hover:translate-x-1"
-              style={{ color: "rgb(var(--shaft-crimson))" }}
+              <span className="font-space-mono text-[10px] tracking-[0.24em] uppercase">{t("hero.viewWork")}</span>
+              <span className="ml-4 transition-transform group-hover:translate-x-1">↓</span>
+            </button>
+            <button
+              onClick={() => {
+                playSound("click");
+                document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="shaft-control group flex items-center border px-5 py-3 transition-colors hover:bg-[rgb(var(--shaft-crimson))]"
+              style={{ borderColor: "rgb(var(--shaft-crimson))", color: "rgb(var(--shaft-cream))" }}
             >
-              →
-            </span>
-          </motion.button>
+              <span className="font-space-mono text-[10px] tracking-[0.24em] uppercase"><ShaftDecipher text={t("hero.cta")} /></span>
+              <span className="ml-4 text-[rgb(var(--shaft-crimson))] transition-all group-hover:translate-x-1 group-hover:text-[rgb(var(--shaft-cream))]">→</span>
+            </button>
+          </motion.div>
         </div>
       </div>
 
       {/* ── Scroll indicator ── */}
       <motion.button
-        initial={{ opacity: 0 }}
+        initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2, delay: 1.3 }}
         onClick={scrollToNext}

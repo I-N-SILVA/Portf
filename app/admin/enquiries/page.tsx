@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { ContactSubmission } from "@/lib/supabase/types";
 import { MarkHandledButton } from "./EnquiryActions";
+import { supabaseConfigured } from "@/lib/env";
+import { NotConfigured } from "@/components/os/NotConfigured";
 
 export const metadata = { title: "Enquiries — Shaft OS Admin" };
 
@@ -22,6 +24,10 @@ function fmt(iso: string) {
  * and if the post to Netlify failed, wasn't anywhere at all.
  */
 export default async function EnquiriesPage() {
+  // The layout cannot stop this page rendering, so the check has to
+  // be here too — see components/os/NotConfigured.
+  if (!supabaseConfigured()) return <NotConfigured area="/admin/enquiries" />;
+
   const supabase = await createClient();
   const { data } = await supabase
     .from("contact_submissions")

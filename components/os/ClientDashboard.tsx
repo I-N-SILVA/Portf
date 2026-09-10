@@ -14,6 +14,7 @@ import {
 import { unreadForClient } from "@/lib/os/messages";
 import { ActivityBeacon } from "@/components/os/ActivityBeacon";
 import { routes } from "@/lib/routes";
+import { workspaceNextAction } from "@/lib/os/next-action";
 import type { Client, ClientModules } from "@/lib/supabase/types";
 
 /**
@@ -63,33 +64,89 @@ export async function ClientDashboard({
     (m) => modules[m],
   );
 
-  const projectSummary = modules.projects
-    ? summarise(await getProjectsForClient(client.id))
-    : null;
+  // These panels are independent. Fetch them together so the dashboard waits
+  // for the slowest module instead of adding four network round trips in a row.
+  const [projectRows, billing, bookingRows, unread] = await Promise.all([
+    modules.projects ? getProjectsForClient(client.id) : Promise.resolve(null),
+    modules.billing ? getBillingForClient(client.id) : Promise.resolve(null),
+    modules.bookings ? getBookingsForClient(client.id) : Promise.resolve(null),
+    modules.messaging ? unreadForClient(client.id) : Promise.resolve(0),
+  ]);
 
-  const billing = modules.billing ? await getBillingForClient(client.id) : null;
+  const projectSummary = projectRows ? summarise(projectRows) : null;
   const billingSum = billing ? billingSummary(billing.invoices) : null;
-
-  const bookingSum = modules.bookings
-    ? summariseBookings(
-        partitionBookings(await getBookingsForClient(client.id)).upcoming,
-      )
+  const bookingPartitions = bookingRows ? partitionBookings(bookingRows) : null;
+  const bookingSum = bookingPartitions
+    ? summariseBookings(bookingPartitions.upcoming)
     : null;
-
-  const unread = modules.messaging ? await unreadForClient(client.id) : 0;
+  const attentionCount =
+    (projectSummary?.flagged ?? 0) +
+    (billingSum?.overdueCount ?? 0) +
+    (bookingSum?.pending ?? 0) +
+    unread;
+  const nextAction = workspaceNextAction({
+    slug,
+    flaggedProjects: projectSummary?.flagged ?? 0,
+    overdueInvoices: billingSum?.overdueCount ?? 0,
+    pendingBookings: bookingSum?.pending ?? 0,
+    unreadMessages: unread,
+    activeProjects: projectSummary?.active ?? 0,
+    modules,
+    enabled,
+  });
 
   return (
     <main className="os-stage">
       {logVisit && <ActivityBeacon eventType="login" />}
-      <p className="os-eyebrow">{routes.client.root(slug)}</p>
+      <p className="os-eyebrow">
+        {client.company ?? client.name} · client workspace
+      </p>
       <h1 className="os-title">
         Welcome, <em>{firstName}</em>.
       </h1>
       <p className="os-sub">
-        This is your workspace. Everything we&apos;re building together — projects,
-        invoices, sessions and messages — lives here. When something needs you,
-        it&apos;ll be flagged.
+        {attentionCount > 0
+          ? `${attentionCount} ${attentionCount === 1 ? "item needs" : "items need"} your attention. Open a flagged area below to keep things moving.`
+          : "Everything is up to date. Projects, invoices, sessions and messages stay together here."}
       </p>
+
+      {nextAction && (
+        <Link className="os-next" href={nextAction.href}>
+          <span className="os-next-kicker">Next action</span>
+          <strong>{nextAction.label}</strong>
+          <span className="os-next-detail">{nextAction.detail}</span>
+          <span className="os-next-open">Open →</span>
+        </Link>
+      )}
+
+      <div className="os-statline" aria-label="Workspace summary">
+        {modules.projects && (
+          <div className="os-stat">
+            <div className="n">{projectSummary?.active ?? 0}</div>
+            <div className="k">Active projects</div>
+          </div>
+        )}
+        {modules.projects && (
+          <div className="os-stat">
+            <div className={`n ${(projectSummary?.flagged ?? 0) > 0 ? "accent" : ""}`}>
+              {projectSummary?.flagged ?? 0}
+            </div>
+            <div className="k">Awaiting you</div>
+          </div>
+        )}
+        {modules.bookings && (
+          <div className="os-stat">
+            <div className="n gold">{bookingPartitions?.upcoming.length ?? 0}</div>
+            <div className="k">Upcoming sessions</div>
+          </div>
+        )}
+        {modules.messaging && (
+          <div className="os-stat">
+            <div className={`n ${unread > 0 ? "accent" : ""}`}>{unread}</div>
+            <div className="k">Unread messages</div>
+          </div>
+        )}
+      </div>
 
       <div className="os-sec">Your workspace</div>
       <div className="os-grid">

@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { EngagementRule, NudgeLogEntry } from "@/lib/supabase/types";
 import { NewRuleForm, RuleControls, RunNowButton } from "./NudgeAdmin";
+import { supabaseConfigured } from "@/lib/env";
+import { NotConfigured } from "@/components/os/NotConfigured";
 
 export const metadata = { title: "Nudges — Shaft OS Admin" };
 
@@ -21,6 +23,10 @@ function fmt(iso: string) {
 }
 
 export default async function NudgesPage() {
+  // The layout cannot stop this page rendering, so the check has to
+  // be here too — see components/os/NotConfigured.
+  if (!supabaseConfigured()) return <NotConfigured area="/admin/nudges" />;
+
   const supabase = await createClient();
   const [{ data: rules }, { data: log }] = await Promise.all([
     supabase.from("engagement_rules").select("*").order("created_at", { ascending: true }),

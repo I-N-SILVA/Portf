@@ -51,7 +51,7 @@ export default function ShaftIdentity() {
           y: watermarkY,
         }}
       >
-        02
+        03
       </motion.div>
 
       {/* ── Section intertitle ── */}

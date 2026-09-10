@@ -4,6 +4,11 @@
 
 /* ─── Shaft / Shinbo Design System ────────────────────────────────────── */
 :root {
+  /* Bundled with the app so builds never depend on Google Fonts being online. */
+  --font-inter: "Inter Variable";
+  --font-syne: "Syne Variable";
+  --font-playfair: "Playfair Display Variable";
+  --font-space-mono: "Space Mono";
   --shaft-bg: 8 8 8;
   --shaft-surface: 14 14 14;
   --shaft-surface-alt: 20 20 20;
@@ -17,38 +22,6 @@
   --shaft-muted: 130 130 130;
   --shaft-border: 38 38 38;
   --shaft-white: 245 245 240;
-}
-
-/* ─── The paper palette ───────────────────────────────────────────────
-   One definition of the parchment for the two surfaces built on it: the
-   studio (components/studio/studio-theme.css) and the client + admin apps
-   (components/os/os-theme.css). Both alias these rather than restating
-   them.
-
-   It exists because os-theme.css used to carry the same colours as its own
-   literals and claimed in a comment to mirror the light palette below — but
-   the contrast corrections made there never reached it, leaving its gold at
-   4.42:1 and its muted grey, the colour of most secondary text in both
-   apps, at 3.56:1. Aliasing makes that drift impossible.
-
-   The light mode below is the same family but is not an alias of this: it
-   stores space-separated RGB triples so Tailwind can compose them with an
-   alpha, and its surface and border steps are its own. globals.css is
-   imported by the root layout, so these are defined on every route.  */
-:root {
-  --paper-bg: #f8f4ea;
-  --paper-surface: #fdfbf5;
-  --paper-surface-alt: #f0eadc;
-  --paper-ink: #18140e;
-  --paper-ink-dim: #484034;
-  --paper-accent: #1c40a8; /* Pilot Pen Blue */
-  /* Set against --paper-surface-alt, the darkest of the three parchment
-     steps, not against --paper-bg: the studio's alternating bands and the
-     apps' panels both put 9px gold labels on it, where the light palette's
-     own value only reached 4.48:1. */
-  --paper-gold: #875f0b; /* 4.77:1 on --paper-surface-alt, 5.21:1 on --paper-bg */
-  --paper-muted: #6e6455; /* 4.84:1 on --paper-surface-alt, 5.29:1 on --paper-bg */
-  --paper-border: #d8cfba;
 }
 
 /* ─── Light Mode (parchment / archival document) ─────────────────────── */
@@ -88,6 +61,22 @@ html[data-shaft-light] body {
 html[data-shaft-light] .shaft-paper-texture {
   opacity: 0.04;
 }
+
+.shaft-control {
+  min-height: 40px;
+  min-width: 40px;
+}
+
+[id^="shaft-"] {
+  scroll-margin-top: 7rem;
+}
+
+@media (min-width: 768px) {
+  [id^="shaft-"] {
+    scroll-margin-top: 0;
+  }
+}
+
 
 /* ─── Ticker ──────────────────────────────────────────────────────────── */
 @keyframes shaft-ticker {
@@ -414,20 +403,14 @@ html[data-shaft-light] .shaft-paper-texture {
     top: 12px;
   }
 
-  /* Hide the native pointer only while a reticle is actually on screen.
-     components/ui/inverted-cursor.tsx sets data-shaft-cursor once it has
-     mounted and decided to draw, and drops it on unmount — so a page that
-     never renders <Cursor /> keeps its ordinary pointer, and so does anyone
-     on a touch device or asking for reduced motion. The attribute arrives
-     with hydration rather than first paint, which also means no window
-     where the pointer is gone and nothing has replaced it yet. */
-  @media (min-width: 1024px) {
-    html[data-shaft-cursor="on"] body,
-    html[data-shaft-cursor="on"] a,
-    html[data-shaft-cursor="on"] button,
-    html[data-shaft-cursor="on"] [role="button"] {
-      cursor: none;
-    }
+  /* Keep the operating-system pointer visible on every surface. The previous
+     animated cursor hid it at desktop widths, leaving no pointer at all when
+     the overlay failed to mount or blended into an image. */
+  a,
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
   }
 }
 
@@ -592,4 +575,45 @@ html[data-booted] .shaft-intro-overlay {
   font-size: 10px;
   letter-spacing: 0.16em;
   color: rgb(var(--shaft-muted));
+}
+
+/* ─── Diagnostic panel ───────────────────────────────────────────────
+   Shown inside .shaft-fallback when an admin hits a lookup that failed.
+   Monospace and boxed because it carries a Postgres error verbatim — it is
+   evidence to copy, not prose to read. */
+.os-diagnostic {
+  max-width: 60ch;
+  margin: 26px auto 0;
+  padding: 16px 18px;
+  text-align: left;
+  border: 1px solid rgb(var(--shaft-border));
+  background: rgb(var(--shaft-surface));
+  border-radius: 3px;
+}
+.os-diagnostic-label {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgb(var(--shaft-muted));
+  margin: 0 0 8px;
+}
+.os-diagnostic-detail {
+  display: block;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: rgb(var(--shaft-cream));
+  word-break: break-word;
+}
+.os-diagnostic-hint {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgb(var(--shaft-muted));
+  margin: 12px 0 0;
+}
+.os-diagnostic-hint code {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.9em;
+  color: rgb(var(--shaft-cream));
 }
