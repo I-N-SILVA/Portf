@@ -1,5 +1,4 @@
-import { getCaseStudy } from "@/lib/client-content";
-import { routes } from "@/lib/routes";
+import { CLIENT_SITE, getCaseStudy } from "@/lib/client-content";
 import CaseStudyCard from "@/components/studio/CaseStudyCard";
 import ContactCTA from "@/components/studio/ContactCTA";
 import Reveal from "@/components/studio/Reveal";
@@ -87,9 +86,9 @@ export default function PitchPage({ page }: { page: PublicClientPage }) {
       <ContactCTA
         heading={`Ready when you are, ${page.display_name.split(" ")[0]}.`}
         subheading="Grab a slot and we'll turn this into a concrete scope — or just reply by email with questions."
-        contactHref={`${routes.studio.root}?company=${encodeURIComponent(
-          page.display_name,
-        )}&ref=${encodeURIComponent(page.slug)}#contact`}
+        contactHref={`mailto:${CLIENT_SITE.EMAIL}?subject=${encodeURIComponent(
+          `${page.display_name} — following up`,
+        )}`}
       />
     </main>
   );

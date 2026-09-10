@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 import { CLIENT_SITE } from "@/lib/client-content";
 import Reveal from "@/components/studio/Reveal";
-import { routes } from "@/lib/routes";
 
 interface ContactCTAProps {
   heading?: string;
@@ -13,7 +12,9 @@ interface ContactCTAProps {
 export default function ContactCTA({
   heading = "Have a workflow worth improving?",
   subheading = "Tell me where the work slows down. I'll give you a direct view on where AI fits and what a sensible first step looks like.",
-  contactHref = routes.studio.section("contact"),
+  // The studio landing carried the contact form; with it gone, the
+  // direct address is the destination.
+  contactHref = `mailto:${CLIENT_SITE.EMAIL}`,
 }: ContactCTAProps) {
   return (
     <section className="border-t border-[var(--brand-border)] bg-stone-900 text-stone-50">

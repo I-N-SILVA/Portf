@@ -45,12 +45,16 @@ export default async function CaseStudyPage({ params }: PageProps) {
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-6 pt-12 md:pt-20">
         <Reveal>
+          {/* This used to point at the studio landing's #work section. That
+              page is gone and there is no index of these records any more —
+              they are reached from a client's pitch page — so the way back
+              is the portfolio. */}
           <Link
-            href={routes.studio.section("work")}
+            href={routes.home}
             className="group inline-flex items-center gap-2 text-sm text-stone-500 transition-colors hover:text-stone-900"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
-            All case studies
+            Back to the portfolio
           </Link>
           <p className="mt-8 font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
             {cs.industry}

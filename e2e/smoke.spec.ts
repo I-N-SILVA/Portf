@@ -70,14 +70,17 @@ test("portfolio puts proof before supporting detail", async ({ page }) => {
 
 });
 
-test("studio URLs hand off to the standalone site", async ({ request }) => {
-  const response = await request.get("/studio/work/stocksnap-field-inventory", {
-    maxRedirects: 0,
-  });
-  expect(response.status()).toBe(308);
-  expect(response.headers().location).toBe(
-    "https://ian-silva-studio.netlify.app/work/stocksnap-field-inventory",
-  );
+test("case-study records serve, and the retired studio landing does not", async ({
+  request,
+}) => {
+  // The records are still reachable — a client's pitch page links to them.
+  const record = await request.get("/studio/work/stocksnap-field-inventory");
+  expect(record.status()).toBe(200);
+
+  // The landing they used to sit under is gone, and nothing redirects
+  // anywhere on its behalf.
+  const landing = await request.get("/studio", { maxRedirects: 0 });
+  expect(landing.status()).toBe(404);
 });
 
 test("every translated landing page is server-rendered in its language", async ({

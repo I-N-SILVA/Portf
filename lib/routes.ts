@@ -7,7 +7,7 @@
  * `<Link href>` correct without any host-aware translation layer.
  *
  *   /                    marketing portfolio
- *   /studio              public studio: services, case studies, process, FAQ
+ *   /studio/work/{slug}  a case-study record, linked from a pitch page
  *   /c/{slug}            one client's whole space (pitch page → portal)
  *   /admin               ops console
  *   /login …             auth
@@ -67,11 +67,12 @@ export const routes = {
   /** Post-login resolver for client and admin workspaces. */
   portal: "/portal",
 
-  /** Public, indexable. The studio sells; it never shows client data. */
+  /**
+   * What survives of the studio: the case-study records. The landing that
+   * `root` and `section()` addressed is gone, so both are too — a helper
+   * that builds a URL which 404s is worse than no helper.
+   */
   studio: {
-    root: "/studio",
-    section: (id: "services" | "work" | "process" | "about" | "faq" | "contact") =>
-      `/studio#${id}`,
     work: (caseSlug: string) => `/studio/work/${caseSlug}`,
   },
 
@@ -146,6 +147,8 @@ export function siteUrl(path = "/"): string {
 export const LEGACY_SUBDOMAIN_AREAS: Record<string, string> = {
   portal: routes.portal, // resolved to /c/{slug} by app/portal/[[...rest]]
   admin: "/admin",
-  clients: "/studio",
-  work: "/studio",
+  // Both of these subdomains fronted the studio landing. It no longer
+  // exists, so they land on the portfolio rather than a 404.
+  clients: "/",
+  work: "/",
 };

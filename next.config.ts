@@ -101,7 +101,9 @@ const nextConfig: NextConfig = {
    */
   async redirects() {
     return [
-      { source: '/clients', destination: '/studio', permanent: true },
+      // /clients fronted the studio landing, which no longer exists; the
+      // portfolio is the nearest thing anyone following that link wanted.
+      { source: '/clients', destination: '/', permanent: true },
       {
         source: '/clients/work/:study',
         destination: '/studio/work/:study',
@@ -112,10 +114,6 @@ const nextConfig: NextConfig = {
       // On the old clients.* subdomain a pitch room was just /p/<slug>, so the
       // legacy-host redirect lands those on /studio/p/<slug>. Finish the hop.
       { source: '/studio/p/:slug', destination: '/c/:slug', permanent: true },
-      // Studio is now maintained and deployed as a standalone project. Keep
-      // every existing bookmark working while taking the surface out of this app.
-      { source: '/studio', destination: 'https://ian-silva-studio.netlify.app', permanent: true },
-      { source: '/studio/:path*', destination: 'https://ian-silva-studio.netlify.app/:path*', permanent: true },
     ];
   },
 };

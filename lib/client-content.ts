@@ -1,9 +1,11 @@
 import { projects, type Project } from "@/lib/placeholder-content";
 import type { PublicClientPage } from "@/lib/supabase/types";
 
-// ─── Client Studio (/studio) content ────────────────────────────────────
+// ─── Client-facing content ──────────────────────────────────────────────
 // Everything the client-facing view needs that the main portfolio doesn't
-// carry: services, FAQs, and outcome-first case studies.
+// carry. The studio landing that used to live here is gone, and its
+// services, FAQ and about copy went with it; what remains is what the pitch
+// pages and the case-study records still read.
 //
 // Case studies live in code because they're portfolio content — they change
 // when the work changes, not when a client does. Per-client pitch pages are
@@ -39,120 +41,6 @@ export const studioHero = {
       body: "Deploy, document, and give your team a clear way to run it.",
     },
   ],
-} as const;
-
-// Shown as a status pill in the hero — keep it current.
-export const AVAILABILITY = "Taking on new projects";
-
-// Contact form (Netlify Forms). The form-name must match public/__forms.html.
-export const CONTACT_FORM = {
-  NAME: "studio-contact",
-  RESPONSE_TIME: "I usually reply within one business day.",
-  PROJECT_TYPES: [
-    "General enquiry",
-    "Workflow audit & AI opportunities",
-    "Automation & agent systems",
-    "Implementation & handover",
-    "Not sure yet",
-  ],
-} as const;
-
-export interface Service {
-  title: string;
-  body: string;
-  engagement: string;
-  bestFor: string;
-  deliverables: string[];
-}
-
-export const services: Service[] = [
-  {
-    title: "Workflow audit & roadmap",
-    body: "Start with the work your team actually does. I map the repetitive steps, assess where AI fits, and define a focused first project with clear measures of success.",
-    engagement: "Automation sprint",
-    bestFor: "Teams deciding where to start with AI",
-    deliverables: [
-      "Workflow and tooling review",
-      "Prioritised opportunities and constraints",
-      "Pilot scope and success criteria",
-      "Implementation roadmap",
-    ],
-  },
-  {
-    title: "Automation & agent systems",
-    body: "Turn a clear use case into a working system: document processing, research, reporting, or internal tools. Give agents defined tasks, connected tools, and human review where decisions matter.",
-    engagement: "Focused pilot",
-    bestFor: "Teams ready to test a specific workflow",
-    deliverables: [
-      "Working automation or agent prototype",
-      "Connections to your existing tools",
-      "Review steps and exception handling",
-      "Evaluation against real examples",
-    ],
-  },
-  {
-    title: "Implementation & handover",
-    body: "Take a useful prototype into daily use. I build the interface, access controls, and operational checks around it, then document how your team can run and improve it.",
-    engagement: "Pilot to production",
-    bestFor: "Teams putting a validated system into use",
-    deliverables: [
-      "Production build in your accounts",
-      "Access controls and monitoring",
-      "Team walkthrough and documentation",
-      "Handover and agreed support plan",
-    ],
-  },
-];
-
-export interface Faq {
-  question: string;
-  answer: string;
-}
-
-export const faqs: Faq[] = [
-  {
-    question: "Where should we start if we are new to AI?",
-    answer:
-      "Start with one workflow: what comes in, what your team does with it, and where time or information gets lost. I review the tools and constraints with you, then recommend a focused pilot. Sometimes a simpler automation is the right answer.",
-  },
-  {
-    question: "How does pricing work?",
-    answer:
-      "I quote a defined scope before work starts. After discovery, you receive a written proposal with the deliverables, timeline, and price. Larger implementations can be split into milestones, and any scope changes are agreed together.",
-  },
-  {
-    question: "Will agents make decisions without our team?",
-    answer:
-      "We define what the system can do, what needs approval, and when it should stop and ask for help. The pilot includes examples from your workflow so we can examine its output and failure cases before deciding what to put into daily use.",
-  },
-  {
-    question: "Can you work with our existing tools and data?",
-    answer:
-      "I review your systems, access requirements, and data constraints before choosing an approach. Integrations, model providers, and any third-party costs are discussed as part of the scope. Sensitive data handling is a design decision we make explicitly.",
-  },
-  {
-    question: "Who owns the work, and what happens after launch?",
-    answer:
-      "The project code and documentation are handed over to you, with deployment in your accounts. Third-party services keep their own licences and usage costs. We agree the handover period and support arrangements before launch, including who will monitor and maintain the system.",
-  },
-  {
-    question: "Who will I work with?",
-    answer:
-      "You work directly with me, from discovery through implementation. I share written progress updates and working previews, with calls when they help move the project forward. The first conversation is free: bring a workflow or problem, even if you are still figuring out the brief.",
-  },
-];
-
-export const studioAbout = {
-  heading: "Your consultant. The person building it.",
-  paragraphs: [
-    "I'm Ian, an independent AI consultant, automation engineer, and full-stack developer with a BSc in Economics and a Masters in Psychology. I bring that mix to understanding the business problem, how people work, and what a useful system needs to do.",
-    "I work solo and stay involved from the first workflow conversation to the build and handover. My role is to help you make a sound decision about AI, test it against real work, and leave your team with something they understand and can use.",
-  ],
-  portrait: "/hero-portrait.webp",
-  // Paste a Loom or YouTube URL here to show a short intro video in the
-  // About section. Leave empty to show just the portrait + text.
-  videoUrl: "",
-  videoLabel: "Watch a 2-minute intro",
 } as const;
 
 export interface CaseStudyMetric {

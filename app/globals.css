@@ -137,7 +137,6 @@ html[data-shaft-light] .shaft-paper-texture {
   animation: shaft-drift 12s infinite ease-in-out;
 }
 
-/* ─── Blob animations (shared across hero + contact card) ─────────────── */
 
 @layer base {
   :root {
@@ -296,12 +295,6 @@ html[data-shaft-light] .shaft-paper-texture {
     background-attachment: fixed;
   }
 
-  /* Magazine Typography Utilities */
-  .magazine-title {
-    @apply font-black tracking-tighter uppercase leading-[0.8] font-syne;
-    text-shadow: 2px 2px 0px rgba(var(--primary), 0.2);
-  }
-
   /* ─── Focus ──────────────────────────────────────────────────────────
      Keyboard focus was invisible on the landing page: StudioShell styles it
      for /studio, but nothing did for the shaft pages, and two components
@@ -343,68 +336,6 @@ html[data-shaft-light] .shaft-paper-texture {
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
-  .glass-window {
-    @apply bg-background/40 backdrop-blur-xl border border-white/10;
-  }
-
-  .subtle-hover-effect {
-    @apply transition-all duration-300 ease-in-out;
-
-    &:hover {
-      transform: translateY(-2px) scale(1.01);
-      /* Slight lift and scale */
-      box-shadow: 0 8px 20px rgba(var(--color-accent-primary), 0.15), 0 0 0 1px rgba(var(--color-accent-primary), 0.1);
-      /* Subtle glow/shadow */
-    }
-  }
-}
-
-/* ─── Blob animations (shared across hero + contact card) ─────────────── */
-@keyframes blob-1 {
-
-  0%,
-  100% {
-    transform: scale(1) translate(0, 0);
-  }
-
-  33% {
-    transform: scale(1.2) translate(50px, 30px);
-  }
-
-  66% {
-    transform: scale(1.1) translate(20px, -20px);
-  }
-}
-
-@keyframes blob-2 {
-
-  0%,
-  100% {
-    transform: scale(1.2) translate(0, 0);
-  }
-
-  33% {
-    transform: scale(1) translate(-50px, -40px);
-  }
-
-  66% {
-    transform: scale(1.1) translate(-20px, 20px);
-  }
-}
-
-.animate-blob-1 {
-  animation: blob-1 15s infinite linear;
-}
-
-.animate-blob-2 {
-  animation: blob-2 18s infinite linear;
-}
-
 /* ─── Intro overlays ─────────────────────────────────────────────────── */
 /*
  * Stamped on <html> before first paint by the inline script in layout.tsx
@@ -418,11 +349,6 @@ html[data-booted] .shaft-intro-overlay {
 
 /* ─── Respect user motion preferences ────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-
-  .animate-blob-1,
-  .animate-blob-2 {
-    animation: none;
-  }
 
   * {
     animation-duration: 0.01ms !important;
