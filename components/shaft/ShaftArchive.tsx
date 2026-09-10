@@ -43,7 +43,9 @@ export default function ShaftArchive() {
         className="absolute right-0 top-0 font-playfair font-black leading-none pointer-events-none select-none"
         style={{
           fontSize: "clamp(120px, 22vw, 320px)",
-          color: "rgb(16 16 16)",
+          // Same hardcoded near-black as the other two watermarks: a
+          // watermark on the dark ground, a solid slab on parchment.
+          color: "rgb(var(--shaft-surface))",
           lineHeight: 1,
           y: watermarkY,
         }}

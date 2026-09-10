@@ -47,12 +47,15 @@ export default function ShaftCall() {
             className="absolute left-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none"
             style={{
               fontSize: "clamp(120px, 22vw, 320px)",
-              color: "rgb(16 16 16)",
+              // Hardcoded near-black: a watermark on the dark ground, a solid
+              // slab on parchment. --shaft-surface is one step off the
+              // background in either theme.
+              color: "rgb(var(--shaft-surface))",
               lineHeight: 1,
               y: watermarkY,
             }}
           >
-            05
+            04
           </motion.div>
 
           {/* Faint crimson horizontal stripe */}
