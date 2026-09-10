@@ -101,7 +101,9 @@ export default function ShaftHero() {
 
   const scrollToNext = () => {
     playSound("click");
-    document.getElementById("shaft-identity")?.scrollIntoView({ behavior: "smooth" });
+    // This pointed at #shaft-identity, which was neither the next section
+    // (the archive is) nor, now, a section at all.
+    document.getElementById("shaft-archive")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -279,35 +281,34 @@ export default function ShaftHero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.1, delay: 0.15 }}
             className="font-space-mono text-[10px] md:text-[11px] tracking-[0.3em] uppercase mb-4 md:mb-6"
-            style={{ color: "rgb(var(--shaft-crimson))" }}
+            style={{ color: "rgb(var(--shaft-crimson-text))" }}
           >
             {t("hero.pretitle")}
           </motion.div>
 
-          {/* Name — letter-by-letter kinetic reveal */}
-          <div className="overflow-hidden">
-            <h1
-              className="font-playfair font-black leading-[0.83] tracking-tighter"
-              style={{
-                color: "rgb(var(--shaft-cream))",
-                fontSize: "clamp(52px, 13vw, 200px)",
-              }}
-            >
-            <CinematicBlurName text="IAN N." delay={0.1} />
-            </h1>
-          </div>
+          {/*
+            Name — letter-by-letter kinetic reveal.
 
-          <div className="overflow-hidden" style={{ marginLeft: "3vw" }}>
-            <h1
-              className="font-playfair font-black leading-[0.83] tracking-tighter"
-              style={{
-                color: "rgb(var(--shaft-cream))",
-                fontSize: "clamp(52px, 13vw, 200px)",
-              }}
-            >
+            One <h1> across both lines. It used to be two, which told a screen
+            reader the page had two top-level headings, neither of which was a
+            whole name: "Ian N." and then, separately, "Silva.". The two
+            overflow clips still do the reveal, they are just inside the
+            heading now instead of wrapping one each.
+          */}
+          <h1
+            className="font-playfair font-black leading-[0.83] tracking-tighter"
+            style={{
+              color: "rgb(var(--shaft-cream))",
+              fontSize: "clamp(52px, 13vw, 200px)",
+            }}
+          >
+            <span className="block overflow-hidden">
+              <CinematicBlurName text="IAN N." delay={0.1} />
+            </span>
+            <span className="block overflow-hidden" style={{ marginLeft: "3vw" }}>
               <CinematicBlurName text="SILVA." delay={1.0} />
-            </h1>
-          </div>
+            </span>
+          </h1>
 
           {/* Animated underline that traces under the name */}
           <motion.div
@@ -378,7 +379,7 @@ export default function ShaftHero() {
               style={{ borderColor: "rgb(var(--shaft-crimson))", color: "rgb(var(--shaft-cream))" }}
             >
               <span className="font-space-mono text-[10px] tracking-[0.24em] uppercase"><ShaftDecipher text={t("hero.cta")} /></span>
-              <span className="ml-4 text-[rgb(var(--shaft-crimson))] transition-all group-hover:translate-x-1 group-hover:text-[rgb(var(--shaft-cream))]">→</span>
+              <span className="ml-4 text-[rgb(var(--shaft-crimson-text))] transition-all group-hover:translate-x-1 group-hover:text-[rgb(var(--shaft-cream))]">→</span>
             </button>
           </motion.div>
         </div>

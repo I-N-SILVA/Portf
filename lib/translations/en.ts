@@ -13,46 +13,15 @@ export const en: Record<string, string> = {
   "hero.scroll": "SCROLL",
   "hero.scene": "[ 01 / OPENING ]",
   "intro.skip": "Skip intro",
-
-  // ── Identity ──
-  "identity.section": "03 / IDENTITY",
-  "identity.pretitle": "// 03",
-  "identity.line1": "The question isn't",
-  "identity.line2": "what I build.",
-  "identity.line3": "It's what becomes",
-  "identity.line4": "possible when it exists.",
-  "identity.meta.background.label": "BACKGROUND",
-  "identity.meta.background.value": "BSc Economics · MSc Psychology",
-  "identity.meta.location.label": "LOCATION",
-  "identity.meta.focus.label": "CURRENT FOCUS",
-  "identity.meta.focus.value": "AI Agents · Automation Workflows · Conversion‑Driven MVPs",
-  "identity.meta.status.label": "STATUS",
-  "identity.meta.status.value": "Accepting 1–2 new projects per month (remote)",
-  "identity.available": "Available for collaboration",
-  "identity.bio": "Building intelligent systems and economic frameworks at the intersection of AI, Web3, and behavioral psychology. Specializing in rapid prototyping, automation workflows, and strategic product development.",
-
-  // ── Insight ──
-  "insight.section": "03 / INSIGHT",
-  "insight.badge": "Portfolio Insight",
-  "insight.subtitle": "Partnering with future-facing teams to build interfaces that feel cinematic yet effortless.",
-  "insight.highlight1.title": "COLLABORATIONS",
-  "insight.highlight1.desc": "AI agent platforms, SaaS automation tools, and early-stage founders crafting premium digital launches.",
-  "insight.highlight2.title": "LATEST DROP",
-  "insight.highlight2.desc": "Shaft / Shinbo motion system — kinetic typography, adaptive design tokens, and cinematic UI storyboard.",
-  "insight.highlight3.title": "AVAILABILITY",
-  "insight.highlight3.desc": "2 advisory spots for Q4 · Remote friendly across EU & US time zones.",
-  "insight.cta": "VIEW CASE STUDIES",
-
   // ── Archive ──
   "archive.section": "02 / SELECTED WORK",
+  "archive.reelHint": "DRAG THE REEL · OR USE ← →",
   "archive.filter.all": "ALL",
   "archive.viewProject": "VIEW PROJECT →",
   "archive.source": "SOURCE →",
 
-
-
   // ── The Call ──
-  "call.section": "05 / THE CALL",
+  "call.section": "04 / THE CALL",
   "call.title1": "SCHEDULE",
   "call.title2": "THE CALL.",
   "call.line1": "30 minutes.",
@@ -66,8 +35,14 @@ export const en: Record<string, string> = {
   "call.copyright": "ALL RIGHTS RESERVED",
 
   // ── Nav ──
+  // Carried over from the removed identity section.
+  "standing.background": "BACKGROUND",
+  "standing.background.value": "BSc Economics · MSc Psychology",
+  "standing.focus": "CURRENT FOCUS",
+  "standing.focus.value": "AI Agents · Automation Workflows · Conversion‑Driven MVPs",
+  "standing.status": "STATUS",
+  "standing.status.value": "Accepting 1–2 new projects per month (remote)",
   "nav.opening": "OPENING",
-  "nav.identity": "IDENTITY",
   "nav.offers": "OFFERS",
   "nav.archive": "ARCHIVE",
 
@@ -102,10 +77,8 @@ export const en: Record<string, string> = {
   "projects.3.desc": "AI Prompt Management Platform - a full-featured prompt library for organizing, refining, and deploying AI prompts efficiently",
   "projects.3.full": "Promptuous is a full-featured prompt library and management system designed for AI practitioners, developers, and content creators who need to organize, refine, and deploy AI prompts efficiently. The platform provides a centralized workspace for storing, categorizing, and iterating on prompts across different use cases, from creative applications to general-purpose workflows.",
 
-
-
   // ── Offers ──
-  "offers.section": "04 / CAPABILITIES",
+  "offers.section": "03 / CAPABILITIES",
   "offers.title": "What I can build for you in 2–4 weeks.",
   "offers.subtitle": "Three focused offers:",
   "offers.1.title": "CLICK‑READY MVP PROTOTYPES",

@@ -13,44 +13,15 @@ export const pt: Record<string, string> = {
   "hero.scroll": "ROLAR",
   "hero.scene": "[ 01 / ABERTURA ]",
   "intro.skip": "Saltar introdução",
-
-  // ── Identity ──
-  "identity.section": "03 / IDENTIDADE",
-  "identity.pretitle": "// 03",
-  "identity.line1": "A questão não é",
-  "identity.line2": "o que eu construo.",
-  "identity.line3": "É o que se torna",
-  "identity.line4": "possível quando existe.",
-  "identity.meta.background.label": "FORMAÇÃO",
-  "identity.meta.background.value": "BSc Economia · MSc Psicologia",
-  "identity.meta.location.label": "LOCALIZAÇÃO",
-  "identity.meta.focus.label": "FOCO ATUAL",
-  "identity.meta.focus.value": "Agentes IA · Workflows de Automação · MVPs Focados em Conversão",
-  "identity.meta.status.label": "STATUS",
-  "identity.meta.status.value": "A aceitar 1–2 novos projetos por mês (remoto)",
-  "identity.available": "Disponível para colaboração",
-  "identity.bio": "Construindo sistemas inteligentes e frameworks económicos na interseção de IA, Web3 e psicologia comportamental. Especializado em prototipagem rápida, automação de fluxos de trabalho e desenvolvimento estratégico de produtos.",
-
-  // ── Insight ──
-  "insight.section": "03 / PERSPETIVA",
-  "insight.badge": "Perspetiva do Portfólio",
-  "insight.subtitle": "Parceria com equipas visionárias para construir interfaces cinematográficas e sem esforço.",
-  "insight.highlight1.title": "COLABORAÇÕES",
-  "insight.highlight1.desc": "Plataformas de agentes IA, ferramentas SaaS de automação e fundadores em fase inicial a criar lançamentos digitais premium.",
-  "insight.highlight2.title": "ÚLTIMO LANÇAMENTO",
-  "insight.highlight2.desc": "Sistema de movimento Shaft / Shinbo — tipografia cinética, tokens de design adaptáveis e storyboard de UI cinemática.",
-  "insight.highlight3.title": "DISPONIBILIDADE",
-  "insight.highlight3.desc": "2 vagas de consultoria para Q4 · Trabalho remoto nos fusos da UE e EUA.",
-  "insight.cta": "VER ESTUDOS DE CASO",
-
   // ── Archive ──
   "archive.section": "02 / TRABALHOS SELECIONADOS",
+  "archive.reelHint": "ARRASTE O ROLO · OU USE ← →",
   "archive.filter.all": "TODOS",
   "archive.viewProject": "VER PROJETO →",
   "archive.source": "CÓDIGO →",
 
   // ── The Call ──
-  "call.section": "05 / A CHAMADA",
+  "call.section": "04 / A CHAMADA",
   "call.title1": "AGENDAR",
   "call.title2": "A CHAMADA.",
   "call.line1": "30 minutos.",
@@ -64,8 +35,14 @@ export const pt: Record<string, string> = {
   "call.copyright": "TODOS OS DIREITOS RESERVADOS",
 
   // ── Nav ──
+  // Carried over from the removed identity section.
+  "standing.background": "FORMAÇÃO",
+  "standing.background.value": "BSc Economia · MSc Psicologia",
+  "standing.focus": "FOCO ATUAL",
+  "standing.focus.value": "Agentes IA · Workflows de Automação · MVPs Focados em Conversão",
+  "standing.status": "STATUS",
+  "standing.status.value": "A aceitar 1–2 novos projetos por mês (remoto)",
   "nav.opening": "ABERTURA",
-  "nav.identity": "IDENTIDADE",
   "nav.offers": "OFERTAS",
   "nav.archive": "ARQUIVO",
   "nav.call": "A CHAMADA",
@@ -100,7 +77,7 @@ export const pt: Record<string, string> = {
   "projects.3.full": "O Promptuous é um sistema de gestão de prompts projetado para profissionais de IA e criadores de conteúdo. Oferece um espaço de trabalho centralizado para armazenar, categorizar e iterar em prompts, garantindo performance otimizada e workflows de implementação sem falhas.",
 
   // ── Offers ──
-  "offers.section": "04 / CAPACIDADES",
+  "offers.section": "03 / CAPACIDADES",
   "offers.title": "O que posso construir para você em 2–4 semanas.",
   "offers.subtitle": "Três ofertas focadas:",
   "offers.1.title": "PROTÓTIPOS MVP PRONTOS A TESTAR",

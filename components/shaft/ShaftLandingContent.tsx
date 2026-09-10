@@ -6,7 +6,6 @@ import ShaftIntertitle from "./ShaftIntertitle";
 import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
 import ShaftTicker from "./ShaftTicker";
-import ShaftIdentity from "./ShaftIdentity";
 import ShaftOffers from "./ShaftOffers";
 import ShaftArchive from "./ShaftArchive";
 
@@ -119,7 +118,10 @@ export default function ShaftLandingContent({
         id="main"
         inert={stage !== "main" ? true : undefined}
         initial={false}
-        className="w-full min-h-screen overflow-x-hidden relative"
+        // pb on small screens only: the section dots and the booking pill are
+        // fixed to the bottom edge there, and without it the last lines of
+        // the page could never be scrolled out from under them.
+        className="w-full min-h-screen overflow-x-hidden relative pb-28 md:pb-0"
         style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
       >
           <ShaftStatusStrip />
@@ -135,10 +137,6 @@ export default function ShaftLandingContent({
 
           <ShaftPerspectiveSection>
             <ShaftArchive />
-          </ShaftPerspectiveSection>
-
-          <ShaftPerspectiveSection>
-            <ShaftIdentity />
           </ShaftPerspectiveSection>
 
           <ShaftPerspectiveSection>

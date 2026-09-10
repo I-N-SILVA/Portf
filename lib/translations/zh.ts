@@ -12,44 +12,15 @@ export const zh: Record<string, string> = {
   "hero.scroll": "滚动",
   "hero.scene": "[ 01 / 开场 ]",
   "intro.skip": "跳过开场",
-
-  // ── Identity ──
-  "identity.section": "03 / 身份",
-  "identity.pretitle": "// 03",
-  "identity.line1": "问题不在于",
-  "identity.line2": "我构建了什么。",
-  "identity.line3": "而在于没有我",
-  "identity.line4": "什么会崩溃。",
-  "identity.meta.background.label": "教育背景",
-  "identity.meta.background.value": "经济学学士 · 心理学硕士",
-  "identity.meta.location.label": "位置",
-  "identity.meta.focus.label": "当前重点",
-  "identity.meta.focus.value": "AI代理 · MCP · 自动化",
-  "identity.meta.status.label": "状态",
-  "identity.meta.status.value": "接受新项目 — 2026年Q4",
-  "identity.available": "可进行合作",
-  "identity.bio": "在AI、Web3与行为心理学的交叉点构建智能系统和经济框架。专注于快速原型设计、自动化工作流程和战略性产品开发。",
-
-  // ── Insight ──
-  "insight.section": "03 / 洞察",
-  "insight.badge": "作品集洞察",
-  "insight.subtitle": "与前瞻性团队合作，构建电影感十足且毫不费力的界面。",
-  "insight.highlight1.title": "合作",
-  "insight.highlight1.desc": "AI代理平台、SaaS自动化工具，以及打造高端数字发布的初创创始人。",
-  "insight.highlight2.title": "最新发布",
-  "insight.highlight2.desc": "Shaft / Shinbo运动系统 — 动态排版、自适应设计令牌和电影级UI故事板。",
-  "insight.highlight3.title": "可用性",
-  "insight.highlight3.desc": "Q4有2个顾问名额 · 支持欧盟和美国时区远程工作。",
-  "insight.cta": "查看案例研究",
-
   // ── Archive ──
   "archive.section": "02 / 精选项目",
+  "archive.reelHint": "拖动胶片 · 或使用 ← →",
   "archive.filter.all": "全部",
   "archive.viewProject": "查看项目 →",
   "archive.source": "源代码 →",
 
   // ── Domains ──
-  "call.section": "05 / 通话",
+  "call.section": "04 / 通话",
   "call.title1": "预约",
   "call.title2": "通话。",
   "call.line1": "30分钟。",
@@ -63,8 +34,14 @@ export const zh: Record<string, string> = {
   "call.copyright": "版权所有",
 
   // ── Nav ──
+  // Carried over from the removed identity section.
+  "standing.background": "教育背景",
+  "standing.background.value": "经济学学士 · 心理学硕士",
+  "standing.focus": "当前重点",
+  "standing.focus.value": "AI代理 · MCP · 自动化",
+  "standing.status": "状态",
+  "standing.status.value": "接受新项目 — 2026年Q4",
   "nav.opening": "开场",
-  "nav.identity": "身份",
   "nav.archive": "档案",
   "nav.call": "通话",
   "nav.theme.dark": "[ 暗色 ]",
@@ -90,7 +67,7 @@ export const zh: Record<string, string> = {
 
   // ── Added on the improvement branch ──
   "nav.offers": "服务",
-  "offers.section": "04 / 能力范围",
+  "offers.section": "03 / 能力范围",
   "offers.title": "我能在 2–4 周内为你做出来的东西。",
   "offers.subtitle": "三项明确的服务：",
   "offers.1.title": "可直接演示的 MVP 原型",

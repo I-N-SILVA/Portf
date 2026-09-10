@@ -12,44 +12,15 @@ export const es: Record<string, string> = {
   "hero.scroll": "DESPLAZAR",
   "hero.scene": "[ 01 / APERTURA ]",
   "intro.skip": "Saltar introducción",
-
-  // ── Identity ──
-  "identity.section": "03 / IDENTIDAD",
-  "identity.pretitle": "// 03",
-  "identity.line1": "La pregunta no es",
-  "identity.line2": "qué construyo.",
-  "identity.line3": "Es lo que se rompe",
-  "identity.line4": "sin mí.",
-  "identity.meta.background.label": "FORMACIÓN",
-  "identity.meta.background.value": "BSc Economía · MSc Psicología",
-  "identity.meta.location.label": "UBICACIÓN",
-  "identity.meta.focus.label": "ENFOQUE ACTUAL",
-  "identity.meta.focus.value": "Agentes IA · MCP · Automatización",
-  "identity.meta.status.label": "ESTADO",
-  "identity.meta.status.value": "Aceptando nuevos proyectos — Q4 2026",
-  "identity.available": "Disponible para colaboración",
-  "identity.bio": "Construyendo sistemas inteligentes y marcos económicos en la intersección de IA, Web3 y psicología conductual. Especializado en prototipado rápido, automatización de flujos de trabajo y desarrollo estratégico de productos.",
-
-  // ── Insight ──
-  "insight.section": "03 / PERSPECTIVA",
-  "insight.badge": "Perspectiva del Portafolio",
-  "insight.subtitle": "Colaborando con equipos visionarios para construir interfaces cinematográficas y sin esfuerzo.",
-  "insight.highlight1.title": "COLABORACIONES",
-  "insight.highlight1.desc": "Plataformas de agentes IA, herramientas SaaS de automatización y fundadores en etapa temprana creando lanzamientos digitales premium.",
-  "insight.highlight2.title": "ÚLTIMO LANZAMIENTO",
-  "insight.highlight2.desc": "Sistema de movimiento Shaft / Shinbo — tipografía cinética, tokens de diseño adaptativos y storyboard de UI cinemática.",
-  "insight.highlight3.title": "DISPONIBILIDAD",
-  "insight.highlight3.desc": "2 plazas de asesoría para Q4 · Trabajo remoto en zonas horarias de UE y EUA.",
-  "insight.cta": "VER ESTUDIOS DE CASO",
-
   // ── Archive ──
   "archive.section": "02 / TRABAJOS DESTACADOS",
+  "archive.reelHint": "ARRASTRA EL CARRETE · O USA ← →",
   "archive.filter.all": "TODOS",
   "archive.viewProject": "VER PROYECTO →",
   "archive.source": "CÓDIGO →",
 
   // ── Domains ──
-  "call.section": "05 / LA LLAMADA",
+  "call.section": "04 / LA LLAMADA",
   "call.title1": "AGENDAR",
   "call.title2": "LA LLAMADA.",
   "call.line1": "30 minutos.",
@@ -63,8 +34,14 @@ export const es: Record<string, string> = {
   "call.copyright": "TODOS LOS DERECHOS RESERVADOS",
 
   // ── Nav ──
+  // Carried over from the removed identity section.
+  "standing.background": "FORMACIÓN",
+  "standing.background.value": "BSc Economía · MSc Psicología",
+  "standing.focus": "ENFOQUE ACTUAL",
+  "standing.focus.value": "Agentes IA · MCP · Automatización",
+  "standing.status": "ESTADO",
+  "standing.status.value": "Aceptando nuevos proyectos — Q4 2026",
   "nav.opening": "APERTURA",
-  "nav.identity": "IDENTIDAD",
   "nav.archive": "ARCHIVO",
   "nav.call": "LA LLAMADA",
   "nav.theme.dark": "[ OSCURO ]",
@@ -90,7 +67,7 @@ export const es: Record<string, string> = {
 
   // ── Added on the improvement branch ──
   "nav.offers": "SERVICIOS",
-  "offers.section": "04 / CAPACIDADES",
+  "offers.section": "03 / CAPACIDADES",
   "offers.title": "Lo que puedo construir para ti en 2–4 semanas.",
   "offers.subtitle": "Tres servicios concretos:",
   "offers.1.title": "PROTOTIPOS MVP LISTOS PARA PROBAR",

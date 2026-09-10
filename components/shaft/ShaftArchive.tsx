@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { portfolioProjects } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
 import Image from "next/image";
+import ShaftProjectReel from "./ShaftProjectReel";
 
 /**
  * Derived from what is actually on the list rather than hardcoded, so a
@@ -61,9 +62,9 @@ export default function ShaftArchive() {
           className="flex items-center gap-4 mb-14"
         >
           <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
-          <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
+          <h2 className="font-space-mono text-[9px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
             {t("archive.section")}
-          </span>
+          </h2>
           <motion.div 
             className="h-px flex-1 origin-left" 
             initial={{ scaleX: 0 }}
@@ -101,6 +102,8 @@ export default function ShaftArchive() {
             </button>
           ))}
         </motion.div>
+
+        <ShaftProjectReel projects={filtered} />
 
         {/* Dossier list */}
         <div>
@@ -195,8 +198,15 @@ export default function ShaftArchive() {
                   {project.tags.slice(0, 5).map((tag) => (
                     <span
                       key={tag}
-                      className="font-space-mono text-[9px] tracking-[0.12em] uppercase"
-                      style={{ color: "rgb(var(--shaft-border) / 0.8)", filter: "brightness(1.8)" }}
+                      // --shaft-border is the colour of hairlines, and using
+                      // it as type put the stack — the thing a technical
+                      // visitor scans this list for — at 1.32:1 on the dark
+                      // ground and 1.71:1 on parchment. --shaft-muted is the
+                      // contrast-checked secondary text colour: 5.21:1 and
+                      // 5.29:1. The brightness filter was compensating for
+                      // exactly this and could not reach far enough.
+                      className="font-space-mono text-[10px] tracking-[0.12em] uppercase"
+                      style={{ color: "rgb(var(--shaft-muted))" }}
                     >
                       {tag}
                     </span>
@@ -261,7 +271,7 @@ export default function ShaftArchive() {
                             <div key={feat} className="flex items-start gap-2">
                               <span
                                 className="font-space-mono text-[10px] shrink-0 mt-px"
-                                style={{ color: "rgb(var(--shaft-crimson))" }}
+                                style={{ color: "rgb(var(--shaft-crimson-text))" }}
                               >
                                 —
                               </span>

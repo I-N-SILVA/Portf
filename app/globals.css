@@ -22,6 +22,12 @@
   --shaft-muted: 130 130 130;
   --shaft-border: 38 38 38;
   --shaft-white: 245 245 240;
+  /* --shaft-crimson is the display red: it is 3.5:1 on this ground, which is
+     right for rules, frames and 56px numerals and unreadable for the 9-13px
+     labels that were also using it. This is the same red lifted until small
+     text clears AA (4.85:1). Use it for any crimson *type*; keep
+     --shaft-crimson for anything that is a shape. */
+  --shaft-crimson-text: 224 66 86;
 }
 
 /* ─── Light Mode (parchment / archival document) ─────────────────────── */
@@ -36,6 +42,10 @@ html[data-shaft-light] {
   --shaft-muted: 110 100 85;
   --shaft-border: 198 188 168;
   --shaft-white: 10 8 6;
+  /* On parchment the accent is already pilot blue at 8.14:1, so the text
+     variant is the same colour — the token exists so components can ask for
+     "accent, safe as type" without knowing which theme is on. */
+  --shaft-crimson-text: 28 64 168;
 }
 
 /* ─── Ink Bleed Typography (Light Mode Only) ─── */

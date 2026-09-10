@@ -86,44 +86,50 @@ export default function ShaftCall() {
 
         <div className="relative z-10">
           {/* Title block */}
-          <motion.h2
+          {/*
+            One <h2> for one sentence. It was two — "SCHEDULE" and "THE CALL."
+            as separate top-level section headings — because the crimson rule
+            animates between them. The rule is decoration, so it lives inside
+            the heading and is hidden from assistive tech instead.
+          */}
+          <h2
             className="font-playfair font-black leading-[0.85] tracking-tighter"
             style={{
               color: "rgb(var(--shaft-cream))",
               fontSize: "clamp(56px, 11vw, 160px)",
             }}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            {t("call.title1")}
-          </motion.h2>
+            <motion.span
+              className="block"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {t("call.title1")}
+            </motion.span>
 
-          {/* Crimson rule */}
-          <motion.div
-            className="h-0.5 w-full my-2 origin-left"
-            style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.35, delay: 0.15 }}
-          />
+            <motion.span
+              aria-hidden="true"
+              className="block h-0.5 w-full my-2 origin-left"
+              style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.35, delay: 0.15 }}
+            />
 
-          <motion.h2
-            className="font-playfair font-black leading-[0.85] tracking-tighter"
-            style={{
-              color: "rgb(var(--shaft-cream))",
-              fontSize: "clamp(56px, 11vw, 160px)",
-              marginLeft: "3vw",
-            }}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {t("call.title2")}
-          </motion.h2>
+            <motion.span
+              className="block"
+              style={{ marginLeft: "3vw" }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {t("call.title2")}
+            </motion.span>
+          </h2>
 
           {/* Dialogue text — sparse, pause-heavy */}
           <motion.div
@@ -179,7 +185,7 @@ export default function ShaftCall() {
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
                 className="font-space-mono text-[13px] px-6 py-5"
-                style={{ color: "rgb(var(--shaft-crimson))" }}
+                style={{ color: "rgb(var(--shaft-crimson-text))" }}
               >
                 → ]
               </motion.span>
@@ -211,6 +217,43 @@ export default function ShaftCall() {
               iannogueira@proton.me
             </a>
           </motion.div>
+
+          {/*
+            Credentials and availability, rescued from the identity section
+            when it was removed. They are the two things on a freelance
+            portfolio that actually decide whether someone writes to you, and
+            deleting the section that held them would have taken them off the
+            site entirely. Here they sit against the address, which is where
+            a reader has already decided to get in touch.
+          */}
+          <motion.dl
+            variants={fadeUp(0.85)}
+            initial="hidden"
+            whileInView="visible"
+            viewport={vpOpts}
+            className="mt-10 grid max-w-xl gap-x-10 gap-y-5 sm:grid-cols-2"
+          >
+            {[
+              ["standing.background", "standing.background.value"],
+              ["standing.focus", "standing.focus.value"],
+              ["standing.status", "standing.status.value"],
+            ].map(([labelKey, valueKey]) => (
+              <div key={labelKey}>
+                <dt
+                  className="font-space-mono text-[8px] tracking-[0.3em] uppercase"
+                  style={{ color: "rgb(var(--shaft-muted))" }}
+                >
+                  {t(labelKey)}
+                </dt>
+                <dd
+                  className="mt-2 text-[13px] leading-relaxed"
+                  style={{ color: "rgb(var(--shaft-cream-dim))" }}
+                >
+                  {t(valueKey)}
+                </dd>
+              </div>
+            ))}
+          </motion.dl>
         </div>
 
         {/* FIN. marker */}

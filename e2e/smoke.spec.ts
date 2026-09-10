@@ -56,11 +56,10 @@ test("the native pointer remains visible on desktop", async ({ page }) => {
 test("portfolio puts proof before supporting detail", async ({ page }) => {
   await page.goto("/");
   const portfolioOrder = await page
-    .locator("#shaft-archive, #shaft-identity, #shaft-offers, #shaft-call")
+    .locator("#shaft-archive, #shaft-offers, #shaft-call")
     .evaluateAll((sections) => sections.map((section) => section.id));
   expect(portfolioOrder).toEqual([
     "shaft-archive",
-    "shaft-identity",
     "shaft-offers",
     "shaft-call",
   ]);

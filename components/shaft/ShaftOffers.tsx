@@ -29,12 +29,16 @@ export default function ShaftOffers() {
         className="absolute right-0 top-20 font-playfair font-black leading-none pointer-events-none select-none shaft-glitch"
         style={{
           fontSize: "clamp(120px, 22vw, 320px)",
-          color: "rgb(8 8 8)",
+          // Was a hardcoded rgb(8 8 8): correct against the dark ground and a
+          // solid black slab on the parchment theme. --shaft-surface is the
+          // one-step-off-the-background token, so it stays a watermark in
+          // both.
+          color: "rgb(var(--shaft-surface))",
           lineHeight: 1,
           y: watermarkY,
         }}
       >
-        04
+        03
       </motion.div>
 
       <div className="px-8 md:px-16 lg:px-24 relative z-10">
@@ -89,75 +93,79 @@ export default function ShaftOffers() {
           </motion.p>
         </div>
 
-        {/* Offers list */}
-        <div className="flex flex-col gap-px" style={{ backgroundColor: "rgb(var(--shaft-border))" }}>
+        {/*
+          A drawer of catalogue slips rather than three stacked essays.
+
+          The old form was one full-width prose block per offer, which meant
+          the three could only be compared by scrolling between them — and
+          they exist to be compared. Side by side with the same four parts in
+          the same order (index, title, what it is, who it is for), the
+          comparison is the layout. The punch at the foot of each slip is the
+          detail that makes it a card and not a box.
+        */}
+        <div className="grid gap-px md:grid-cols-3" style={{ backgroundColor: "rgb(var(--shaft-border))" }}>
           {offers.map((offer, i) => (
-             <motion.div
-               key={offer.num}
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true, margin: "-60px" }}
-               transition={{ duration: 0.4, delay: 0.1 * i }}
-               className="group relative p-8 md:p-12 lg:p-16 flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-24 items-start"
-               style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
-             >
-               {/* Number */}
-               <div className="overflow-hidden flex-shrink-0">
-                  <motion.span
-                    initial={{ y: "100%" }}
-                    whileInView={{ y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: 0.2 + i * 0.1 }}
-                    className="font-playfair font-black leading-none block"
-                    style={{
-                      fontSize: "clamp(32px, 4vw, 56px)",
-                      color: "rgb(var(--shaft-border))",
-                    }}
-                  >
-                    {offer.num}
-                  </motion.span>
-               </div>
+            <motion.article
+              key={offer.num}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: 0.08 * i }}
+              className="group relative flex flex-col p-8 lg:p-10"
+              style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
+            >
+              {/* Filing rule — drawn on hover, and always on for touch. */}
+              <span
+                aria-hidden="true"
+                className="absolute left-0 top-0 h-0.5 w-0 transition-all duration-500 ease-out group-hover:w-full group-focus-within:w-full"
+                style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
+              />
 
-               {/* Content */}
-               <div className="max-w-2xl">
-                 <div className="overflow-hidden mb-5">
-                   <motion.h3
-                     initial={{ y: "100%" }}
-                     whileInView={{ y: 0 }}
-                     viewport={{ once: true }}
-                     transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-                     className="font-playfair font-black leading-tight"
-                     style={{
-                       fontSize: "clamp(24px, 2.5vw, 36px)",
-                       color: "rgb(var(--shaft-cream))",
-                     }}
-                   >
-                     {offer.title}
-                   </motion.h3>
-                 </div>
+              <div className="flex items-baseline gap-4">
+                <span
+                  className="font-space-mono text-[10px] tracking-[0.3em]"
+                  style={{ color: "rgb(var(--shaft-crimson-text))" }}
+                >
+                  [ {offer.num} ]
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="h-px flex-1"
+                  style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+                />
+              </div>
 
-                 <motion.div
-                   initial={{ opacity: 0 }}
-                   whileInView={{ opacity: 1 }}
-                   viewport={{ once: true }}
-                   transition={{ duration: 0.6, delay: 0.4 + i * 0.1 }}
-                   className="space-y-4"
-                 >
-                   <p className="text-base lg:text-lg leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
-                     {offer.body1}
-                   </p>
-                   <p className="text-sm lg:text-base leading-relaxed italic" style={{ color: "rgb(var(--shaft-muted))" }}>
-                     {offer.body2}
-                   </p>
-                 </motion.div>
-               </div>
-               
-               {/* Accent line */}
-               <div
-                 className="absolute bottom-0 left-0 h-0.5 w-0 transition-all duration-700 ease-in-out group-hover:w-full"
-                 style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-               />
-             </motion.div>
+              <h3
+                className="mt-6 font-playfair font-black leading-[1.06]"
+                style={{
+                  fontSize: "clamp(22px, 2vw, 30px)",
+                  color: "rgb(var(--shaft-cream))",
+                }}
+              >
+                {offer.title}
+              </h3>
+
+              <p
+                className="mt-5 text-[15px] leading-relaxed"
+                style={{ color: "rgb(var(--shaft-cream-dim))" }}
+              >
+                {offer.body1}
+              </p>
+
+              <p
+                className="mt-auto pt-8 text-[12px] leading-relaxed"
+                style={{ color: "rgb(var(--shaft-muted))" }}
+              >
+                {offer.body2}
+              </p>
+
+              {/* The punch: what makes a catalogue card a catalogue card. */}
+              <span
+                aria-hidden="true"
+                className="mx-auto mt-8 block h-2.5 w-2.5 rounded-full border"
+                style={{ borderColor: "rgb(var(--shaft-border))" }}
+              />
+            </motion.article>
           ))}
         </div>
 

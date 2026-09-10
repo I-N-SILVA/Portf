@@ -12,44 +12,15 @@ export const ja: Record<string, string> = {
   "hero.scroll": "スクロール",
   "hero.scene": "[ 01 / オープニング ]",
   "intro.skip": "イントロをスキップ",
-
-  // ── Identity ──
-  "identity.section": "03 / アイデンティティ",
-  "identity.pretitle": "// 03",
-  "identity.line1": "問題は",
-  "identity.line2": "何を作るかではない。",
-  "identity.line3": "私なしでは",
-  "identity.line4": "何が壊れるかだ。",
-  "identity.meta.background.label": "学歴",
-  "identity.meta.background.value": "経済学学士 · 心理学修士",
-  "identity.meta.location.label": "所在地",
-  "identity.meta.focus.label": "現在の焦点",
-  "identity.meta.focus.value": "AIエージェント · MCP · 自動化",
-  "identity.meta.status.label": "ステータス",
-  "identity.meta.status.value": "新規プロジェクト受付中 — 2026年Q4",
-  "identity.available": "コラボレーション可能",
-  "identity.bio": "AI、Web3、行動心理学の交差点でインテリジェントシステムと経済的フレームワークを構築。ラピッドプロトタイピング、自動化ワークフロー、戦略的製品開発を専門とする。",
-
-  // ── Insight ──
-  "insight.section": "03 / インサイト",
-  "insight.badge": "ポートフォリオインサイト",
-  "insight.subtitle": "未来志向のチームと提携し、映画的で自然なインターフェースを構築。",
-  "insight.highlight1.title": "コラボレーション",
-  "insight.highlight1.desc": "AIエージェントプラットフォーム、SaaS自動化ツール、プレミアムデジタルローンチを実現する初期段階の創業者たち。",
-  "insight.highlight2.title": "最新リリース",
-  "insight.highlight2.desc": "Shaft / Shinboモーションシステム — キネティックタイポグラフィ、適応型デザイントークン、映画的UIストーリーボード。",
-  "insight.highlight3.title": "空き状況",
-  "insight.highlight3.desc": "Q4のアドバイザリー枠2件 · EU/USタイムゾーンでリモート対応。",
-  "insight.cta": "ケーススタディを見る",
-
   // ── Archive ──
   "archive.section": "02 / 制作実績",
+  "archive.reelHint": "ドラッグ · または ← → キー",
   "archive.filter.all": "すべて",
   "archive.viewProject": "プロジェクトを見る →",
   "archive.source": "ソース →",
 
   // ── Domains ──
-  "call.section": "05 / ザ・コール",
+  "call.section": "04 / ザ・コール",
   "call.title1": "予約",
   "call.title2": "ザ・コール。",
   "call.line1": "30分間。",
@@ -63,8 +34,14 @@ export const ja: Record<string, string> = {
   "call.copyright": "全著作権所有",
 
   // ── Nav ──
+  // Carried over from the removed identity section.
+  "standing.background": "学歴",
+  "standing.background.value": "経済学学士 · 心理学修士",
+  "standing.focus": "現在の焦点",
+  "standing.focus.value": "AIエージェント · MCP · 自動化",
+  "standing.status": "ステータス",
+  "standing.status.value": "新規プロジェクト受付中 — 2026年Q4",
   "nav.opening": "オープニング",
-  "nav.identity": "アイデンティティ",
   "nav.archive": "アーカイブ",
   "nav.call": "ザ・コール",
   "nav.theme.dark": "[ ダーク ]",
@@ -90,7 +67,7 @@ export const ja: Record<string, string> = {
 
   // ── Added on the improvement branch ──
   "nav.offers": "サービス",
-  "offers.section": "04 / 提供できること",
+  "offers.section": "03 / 提供できること",
   "offers.title": "2〜4週間でお作りできるもの。",
   "offers.subtitle": "3つのサービス：",
   "offers.1.title": "すぐ触れるMVPプロトタイプ",

@@ -35,7 +35,11 @@ export default function ShaftSocialDock() {
   };
 
   return (
-    <div className="fixed left-6 md:left-8 bottom-8 z-[100] flex flex-col items-start gap-4">
+    // Hidden below md. On a 390px screen this sat in the bottom-left corner
+    // directly over the archive's body text, and every link it opens is
+    // already in the footer — so it was costing readable lines to duplicate
+    // an affordance the page offers again a screen later.
+    <div className="fixed left-6 md:left-8 bottom-8 z-[100] hidden md:flex flex-col items-start gap-4">
       {/* ── Expanded social links — flow upwards from dog ── */}
       <AnimatePresence>
         {expanded && (
@@ -68,7 +72,7 @@ export default function ShaftSocialDock() {
                     backgroundColor: "rgb(var(--shaft-surface))"
                   }}
                 >
-                  <Icon className="h-3 w-3" style={{ color: "rgb(var(--shaft-crimson))" }} />
+                  <Icon className="h-3 w-3" style={{ color: "rgb(var(--shaft-crimson-text))" }} />
                   <span 
                     className="font-space-mono text-[8px] tracking-[0.2em] uppercase transition-colors"
                     style={{ color: "rgb(var(--shaft-muted))" }}
@@ -104,7 +108,12 @@ export default function ShaftSocialDock() {
         
         {/* Status text */}
         <div className="absolute -top-6 left-0 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <span className="font-space-mono text-[7px] tracking-widest text-crimson uppercase">
+          {/* `text-crimson` is not a class this project defines, so this
+              inherited whatever was above it — 1.05:1 on parchment. */}
+          <span
+            className="font-space-mono text-[7px] tracking-widest uppercase"
+            style={{ color: "rgb(var(--shaft-crimson-text))" }}
+          >
             UNIT-01 // BIT-KO
           </span>
         </div>

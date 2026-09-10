@@ -102,7 +102,11 @@ export default function ShaftStatusStrip() {
             >
                 UPTIME
             </span>
-            <span className="font-space-mono text-[7px] text-white/60">
+            {/* Hardcoded white: invisible on the parchment theme (1.1:1). */}
+            <span
+              className="font-space-mono text-[7px]"
+              style={{ color: "rgb(var(--shaft-muted))" }}
+            >
                 {String(uptime).padStart(4, "0")}s
             </span>
         </div>
