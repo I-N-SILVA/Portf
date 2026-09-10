@@ -15,6 +15,7 @@ export const zh: Record<string, string> = {
   // ── Archive ──
   // ── Glyph portal ──
   "portal.word": "WORK",
+  "portal.hint": "向下滚动，穿过去。",
   "portal.enter": "前往作品档案",
   "portal.landing": "从这里往下，每一件都真正做出来、上线了，并且仍在运行。",
   "archive.section": "02 / 精选项目",

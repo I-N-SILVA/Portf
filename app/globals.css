@@ -486,3 +486,23 @@ html[data-booted] .shaft-intro-overlay {
   font-size: 0.9em;
   color: rgb(var(--shaft-cream));
 }
+
+/*
+  Page instrumentation that has to recede while the word portal's field owns
+  the viewport. The field is warm cream in both themes, and these tokens are
+  painted for the dark page behind it, so left as-is they sit at roughly
+  1.5:1 for the length of the dive.
+
+  ShaftWordPortal drives --shaft-chrome from its own scroll progress; the
+  fallback of 1 is what every other page and every no-JS render gets, so
+  nothing here can hide the instrumentation on its own.
+*/
+[data-shaft-chrome] {
+  opacity: var(--shaft-chrome, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-shaft-chrome] {
+    opacity: 1;
+  }
+}

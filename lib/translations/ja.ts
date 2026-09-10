@@ -15,6 +15,7 @@ export const ja: Record<string, string> = {
   // ── Archive ──
   // ── Glyph portal ──
   "portal.word": "WORK",
+  "portal.hint": "スクロールして通り抜ける。",
   "portal.enter": "アーカイブへ",
   "portal.landing": "ここから先はすべて、実際に作られ、公開され、今も動いています。",
   "archive.section": "02 / 制作実績",

@@ -16,6 +16,7 @@ export const pt: Record<string, string> = {
   // ── Archive ──
   // ── Glyph portal ──
   "portal.word": "OBRA",
+  "portal.hint": "Atravesse.",
   "portal.enter": "Ir para o arquivo",
   "portal.landing": "Tudo daqui para a frente foi construído, publicado, e continua a correr.",
   "archive.section": "02 / TRABALHOS SELECIONADOS",

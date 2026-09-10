@@ -16,6 +16,7 @@ export const en: Record<string, string> = {
   // ── Archive ──
   // ── Glyph portal ──
   "portal.word": "WORK",
+  "portal.hint": "Scroll through.",
   "portal.enter": "Skip to the archive",
   "portal.landing": "Everything past this point was built, shipped, and is still running.",
   "archive.section": "02 / SELECTED WORK",

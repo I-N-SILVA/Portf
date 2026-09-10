@@ -8,10 +8,10 @@ import ShaftDecipher from "./ShaftDecipher";
 import { ShaftGatewayControls } from "./ShaftGateway";
 
 const chapters = [
-  { id: "shaft-hero",    key: "nav.opening", num: "01" },
+  { id: "shaft-hero", key: "nav.opening", num: "01" },
   { id: "shaft-archive", key: "nav.archive", num: "02" },
-  { id: "shaft-offers",  key: "nav.offers",  num: "03" },
-  { id: "shaft-call",    key: "nav.call",    num: "04" },
+  { id: "shaft-offers", key: "nav.offers", num: "03" },
+  { id: "shaft-call", key: "nav.call", num: "04" },
 ];
 
 interface ShaftNavProps {
@@ -19,7 +19,7 @@ interface ShaftNavProps {
 }
 
 export default function ShaftNav({ visible }: ShaftNavProps) {
-  const [active, setActive]   = useState("shaft-hero");
+  const [active, setActive] = useState("shaft-hero");
   const [isLight, setIsLight] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { playSound } = useSoundEffects();
@@ -27,7 +27,11 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
   const { locale, setLocale, t } = useTranslation();
 
   const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 80, damping: 22, restDelta: 0.001 });
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 80,
+    damping: 22,
+    restDelta: 0.001,
+  });
 
   /* Read saved theme on mount */
   useEffect(() => {
@@ -40,13 +44,13 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => { 
+        entries.forEach((e) => {
           if (e.isIntersecting) {
             setActive(e.target.id);
           }
         });
       },
-      { threshold: 0.35 }
+      { threshold: 0.35 },
     );
     chapters.forEach(({ id }) => {
       const el = document.getElementById(id);
@@ -101,7 +105,10 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                instead of running into the hero's [ 01 / OPENING ] marker,
                which is pinned to the opposite corner of the same band. */
             className="fixed top-3 left-3 right-3 md:top-6 md:left-8 md:right-auto z-[101] flex flex-wrap items-center gap-y-1 gap-x-1 md:gap-x-2 max-w-none md:max-w-[calc(100vw-12rem)] border md:border-transparent px-1.5 py-1 md:p-0 backdrop-blur-xl md:backdrop-blur-none"
-            style={{ backgroundColor: "rgb(var(--shaft-bg) / 0.88)", borderColor: "rgb(var(--shaft-border) / 0.7)" }}
+            style={{
+              backgroundColor: "rgb(var(--shaft-bg) / 0.88)",
+              borderColor: "rgb(var(--shaft-border) / 0.7)",
+            }}
           >
             {/* Sound toggle.
                 Sits first because it's the control someone reaches for in a
@@ -109,60 +116,71 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                 and until now there was no way to stop it. Clicking it off is
                 itself silent — playing a click to confirm you want silence is
                 the wrong answer. */}
-              <button
-                onClick={() => {
-                  const next = !soundOn;
-                  if (next) playSound("click");
-                  setSoundOn(next);
-                }}
-                className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
-                style={{ backgroundColor: "transparent" }}
-                aria-pressed={soundOn}
-                aria-label={soundOn ? "Mute interface sound" : "Unmute interface sound"}
+            <button
+              onClick={() => {
+                const next = !soundOn;
+                if (next) playSound("click");
+                setSoundOn(next);
+              }}
+              className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+              style={{ backgroundColor: "transparent" }}
+              aria-pressed={soundOn}
+              aria-label={
+                soundOn ? "Mute interface sound" : "Unmute interface sound"
+              }
+            >
+              <span
+                className="text-[10px]"
+                style={{ color: "rgb(var(--shaft-gold))" }}
               >
-                <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
-                  {soundOn ? "◈" : "◇"}
-                </span>
-                <span
-                  className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
-                  style={{ color: "rgb(var(--shaft-muted))" }}
-                >
-                  {soundOn ? "SOUND" : "MUTED"}
-                </span>
-              </button>
+                {soundOn ? "◈" : "◇"}
+              </span>
+              <span
+                className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
+                style={{ color: "rgb(var(--shaft-muted))" }}
+              >
+                {soundOn ? "SOUND" : "MUTED"}
+              </span>
+            </button>
 
             {/* Theme toggle — prominent pill button */}
+            <button
+              onClick={toggleTheme}
+              className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+              style={{
+                backgroundColor: "transparent",
+              }}
+              aria-label="Toggle theme"
+            >
+              {/* Sun/Moon icon */}
+              <span
+                className="text-[10px]"
+                style={{ color: "rgb(var(--shaft-gold))" }}
+              >
+                {isLight ? "◐" : "◑"}
+              </span>
+              <span
+                className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
+                style={{ color: "rgb(var(--shaft-muted))" }}
+              >
+                {isLight ? "DARK" : "LIGHT"}
+              </span>
+            </button>
+
+            {/* Language selector — dropdown */}
+            <div className="relative">
               <button
-                onClick={toggleTheme}
-                className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
+                onClick={() => setLangOpen(!langOpen)}
+                className="shaft-control flex items-center gap-1.5 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
                 style={{
                   backgroundColor: "transparent",
                 }}
-                aria-label="Toggle theme"
+                aria-label="Change language"
               >
-                {/* Sun/Moon icon */}
-                <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
-                  {isLight ? "◐" : "◑"}
-                </span>
                 <span
-                  className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
-                  style={{ color: "rgb(var(--shaft-muted))" }}
+                  className="text-[10px]"
+                  style={{ color: "rgb(var(--shaft-gold))" }}
                 >
-                  {isLight ? "DARK" : "LIGHT"}
-                </span>
-              </button>
-
-              {/* Language selector — dropdown */}
-              <div className="relative">
-                <button
-                  onClick={() => setLangOpen(!langOpen)}
-                  className="shaft-control flex items-center gap-1.5 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
-                  style={{
-                    backgroundColor: "transparent",
-                  }}
-                  aria-label="Change language"
-                >
-                <span className="text-[10px]" style={{ color: "rgb(var(--shaft-gold))" }}>
                   ⌐
                 </span>
                 <span
@@ -202,14 +220,21 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                         onClick={() => selectLang(l.code)}
                         className="w-full flex items-center justify-between px-3 py-2 transition-all duration-100 hover:pl-4"
                         style={{
-                          backgroundColor: locale === l.code ? "rgb(var(--shaft-crimson) / 0.15)" : "transparent",
-                          borderBottom: "1px solid rgb(var(--shaft-border) / 0.5)",
+                          backgroundColor:
+                            locale === l.code
+                              ? "rgb(var(--shaft-crimson) / 0.15)"
+                              : "transparent",
+                          borderBottom:
+                            "1px solid rgb(var(--shaft-border) / 0.5)",
                         }}
                       >
                         <span
                           className="font-space-mono text-[8px] tracking-[0.2em] uppercase"
                           style={{
-                            color: locale === l.code ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-muted))",
+                            color:
+                              locale === l.code
+                                ? "rgb(var(--shaft-cream))"
+                                : "rgb(var(--shaft-muted))",
                           }}
                         >
                           {l.label}
@@ -217,7 +242,10 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                         <span
                           className="font-space-mono text-[7px] tracking-[0.15em]"
                           style={{
-                            color: locale === l.code ? "rgb(var(--shaft-crimson))" : "rgb(var(--shaft-muted) / 0.5)",
+                            color:
+                              locale === l.code
+                                ? "rgb(var(--shaft-crimson))"
+                                : "rgb(var(--shaft-muted) / 0.5)",
                           }}
                         >
                           {l.native}
@@ -238,63 +266,78 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
       {/* ═══════════════════════════════════════════════════════════════
           DESKTOP: Right-side vertical chapter list
           ═══════════════════════════════════════════════════════════════ */}
-      <AnimatePresence>
-        {visible && (
-          <motion.nav
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 16 }}
-            transition={{ duration: 0.25, delay: 0.15 }}
-            className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] hidden lg:flex flex-col items-end"
-            aria-label="Chapter navigation"
-          >
-            {/* Base connector line */}
-            <div
-              className="absolute right-0 top-2 bottom-2 w-px"
-              style={{ backgroundColor: "rgb(var(--shaft-border))" }}
-            />
-            {/* Scroll-progress fill */}
-            <motion.div
-              className="absolute right-0 top-2 bottom-2 w-px origin-top"
-              style={{
-                backgroundColor: "rgb(var(--shaft-crimson))",
-                scaleY: progress,
-              }}
-            />
+      {/*
+        The wrapper carries the portal's chrome fade because framer writes
+        opacity inline on the nav itself, and an inline style beats the
+        stylesheet rule that reads --shaft-chrome. Opacity alone does not
+        make this a containing block, so the fixed child still anchors to
+        the viewport.
+      */}
+      <div data-shaft-chrome>
+        <AnimatePresence>
+          {visible && (
+            <motion.nav
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 16 }}
+              transition={{ duration: 0.25, delay: 0.15 }}
+              className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] hidden lg:flex flex-col items-end"
+              aria-label="Chapter navigation"
+            >
+              {/* Base connector line */}
+              <div
+                className="absolute right-0 top-2 bottom-2 w-px"
+                style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+              />
+              {/* Scroll-progress fill */}
+              <motion.div
+                className="absolute right-0 top-2 bottom-2 w-px origin-top"
+                style={{
+                  backgroundColor: "rgb(var(--shaft-crimson))",
+                  scaleY: progress,
+                }}
+              />
 
-            {/* Chapter items */}
-            {chapters.map((ch) => {
-              const isActive = active === ch.id;
-              return (
-                <button
-                  key={ch.id}
-                  onClick={() => scrollTo(ch.id)}
-                  className="relative flex items-center gap-2.5 pr-4 py-2.5 group"
-                  aria-label={`Go to ${t(ch.key)}`}
-                >
-                  <span
-                    className="font-space-mono text-[8px] tracking-[0.3em] uppercase transition-all duration-100"
-                    style={{
-                      color: isActive ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-muted))",
-                      opacity: isActive ? 1 : 0.6,
-                    }}
+              {/* Chapter items */}
+              {chapters.map((ch) => {
+                const isActive = active === ch.id;
+                return (
+                  <button
+                    key={ch.id}
+                    onClick={() => scrollTo(ch.id)}
+                    className="relative flex items-center gap-2.5 pr-4 py-2.5 group"
+                    aria-label={`Go to ${t(ch.key)}`}
                   >
-                    {ch.num} <ShaftDecipher text={t(ch.key)} />
-                  </span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="shaft-nav-bar"
-                      className="absolute right-0 top-0 bottom-0 w-0.5"
-                      style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-                      transition={{ type: "spring", stiffness: 450, damping: 40 }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </motion.nav>
-        )}
-      </AnimatePresence>
+                    <span
+                      className="font-space-mono text-[8px] tracking-[0.3em] uppercase transition-all duration-100"
+                      style={{
+                        color: isActive
+                          ? "rgb(var(--shaft-cream))"
+                          : "rgb(var(--shaft-muted))",
+                        opacity: isActive ? 1 : 0.6,
+                      }}
+                    >
+                      {ch.num} <ShaftDecipher text={t(ch.key)} />
+                    </span>
+                    {isActive && (
+                      <motion.div
+                        layoutId="shaft-nav-bar"
+                        className="absolute right-0 top-0 bottom-0 w-0.5"
+                        style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 450,
+                          damping: 40,
+                        }}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </motion.nav>
+          )}
+        </AnimatePresence>
+      </div>
 
       {/* ═══════════════════════════════════════════════════════════════
           MOBILE: Fixed bottom strip — chapter nav only
@@ -321,14 +364,18 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
                   onClick={() => scrollTo(ch.id)}
                   className="relative px-3 py-2.5 transition-colors duration-100"
                   style={{
-                    backgroundColor: isActive ? "rgb(var(--shaft-crimson))" : "transparent",
+                    backgroundColor: isActive
+                      ? "rgb(var(--shaft-crimson))"
+                      : "transparent",
                   }}
                   aria-label={t(ch.key)}
                 >
                   <span
                     className="font-space-mono text-[8px] tracking-[0.2em]"
                     style={{
-                      color: isActive ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-muted))",
+                      color: isActive
+                        ? "rgb(var(--shaft-cream))"
+                        : "rgb(var(--shaft-muted))",
                     }}
                   >
                     {ch.num}
