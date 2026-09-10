@@ -21,3 +21,6 @@ build
 
 # Local Supabase CLI state
 supabase/.temp/
+
+# Scratch screenshots from local verification runs.
+shots/
