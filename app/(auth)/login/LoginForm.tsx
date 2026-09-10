@@ -126,7 +126,6 @@ export function LoginForm({
 
       <div className="os-auth-links">
         <Link href={routes.auth.resetPassword}>Reset password</Link>
-        <Link href={routes.studio.root}>Explore services</Link>
         <Link href={routes.home}>View portfolio</Link>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { getSessionContext } from "@/lib/os/session";
+import { CLIENT_SITE } from "@/lib/client-content";
 import { routes } from "@/lib/routes";
 import { supabaseConfigured } from "@/lib/env";
 import { signOut } from "@/app/(auth)/actions";
@@ -43,9 +43,12 @@ export default async function LegacyPortalRedirect({
         exact email from the client record, then use the new invitation link.
       </p>
       <div className="shaft-fallback-actions">
-        <Link className="shaft-fallback-link" href={routes.studio.section("contact")}>
+        {/* A mailto rather than the studio's contact form: the studio is a
+            separate site now and this page is the one place where someone
+            who cannot get in still needs a way to reach him. */}
+        <a className="shaft-fallback-link" href={`mailto:${CLIENT_SITE.EMAIL}`}>
           Contact Ian
-        </Link>
+        </a>
         <form action={signOut}>
           <button className="shaft-fallback-link" type="submit">
             Sign out and try another email

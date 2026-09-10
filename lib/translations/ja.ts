@@ -71,9 +71,7 @@ export const ja: Record<string, string> = {
   "nav.theme.light": "[ ライト ]",
 
   // ── Gateway (スタジオ + クライアントポータル) ──
-  "gateway.studio.aria": "スタジオを開く — サービス・実績・お問い合わせ",
   "gateway.portal.aria": "クライアントポータルにサインイン",
-  "gateway.studio": "サービス",
   "gateway.portal": "ポータル",
 
   // ── Projects (archive) ──

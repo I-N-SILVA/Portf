@@ -20,8 +20,8 @@ export default function NotFound() {
         <Link className="shaft-fallback-link" href={routes.home}>
           Portfolio
         </Link>
-        <Link className="shaft-fallback-link" href={routes.studio.root}>
-          Studio
+        <Link className="shaft-fallback-link" href={routes.auth.login}>
+          Client portal
         </Link>
       </div>
     </main>

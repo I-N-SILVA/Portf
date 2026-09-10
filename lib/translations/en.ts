@@ -76,9 +76,7 @@ export const en: Record<string, string> = {
   "nav.theme.light": "[ LIGHT ]",
 
   // ── Gateway (studio + client portal) ──
-  "gateway.studio.aria": "Open the studio — services, case studies and contact",
   "gateway.portal.aria": "Sign in to the client portal",
-  "gateway.studio": "SERVICES",
   "gateway.portal": "PORTAL",
 
   // ── Projects ──

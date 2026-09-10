@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useVelocity, useTransform, useSpring, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import ShaftIntertitle from "./ShaftIntertitle";
 import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
@@ -47,9 +47,7 @@ export default function ShaftLandingContent({
   locale?: Locale;
 } = {}) {
   const [stage, setStage] = useState<"boot" | "intertitle" | "main">("boot");
-  const [isInverted, setIsInverted] = useState(false);
   const { playSound } = useSoundEffects();
-  const reduceMotion = useReducedMotion();
 
   // Play the intro once per session, not once per navigation — and not at
   // all for someone who has asked for less motion. Everyone else can skip
@@ -66,17 +64,6 @@ export default function ShaftLandingContent({
     }
   }, []);
 
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
-  
-  // Map high velocity to a glitch intensity
-  const glitchOpacity = useTransform(
-    smoothVelocity,
-    [-3000, -1500, 0, 1500, 3000],
-    reduceMotion ? [0, 0, 0, 0, 0] : [0.4, 0, 0, 0, 0.4],
-  );
-
   const handleBootComplete = useCallback(() => {
     setStage("intertitle");
   }, []);
@@ -91,49 +78,23 @@ export default function ShaftLandingContent({
     }
   }, []);
 
-  // Handle global "Negative Flash" event
+  // `shaft-flash` is dispatched by every nav click, theme toggle, language
+  // change and archive row. It used to invert the entire screen for 120ms —
+  // a genuine full-page flash on the most ordinary interactions there are,
+  // and the thing that made the site feel like it was flickering. Only the
+  // shutter sound remains: that is feedback, not motion, and it is what
+  // those interactions were really being acknowledged by.
   useEffect(() => {
-    const triggerFlash = () => {
-      // A full-screen inversion, fired by every nav click, theme toggle,
-      // language change and archive row. It is driven by React state rather
-      // than a CSS animation, so the blanket `animation-duration: 0.01ms`
-      // rule in globals.css never suppressed it — this does. The shutter
-      // sound is not motion and still plays.
-      playSound("shutter");
-      if (reduceMotion) return;
-      setIsInverted(true);
-      setTimeout(() => setIsInverted(false), 120);
-    };
-
-    window.addEventListener("shaft-flash", triggerFlash);
-    return () => window.removeEventListener("shaft-flash", triggerFlash);
-  }, [playSound, reduceMotion]);
+    const shutter = () => playSound("shutter");
+    window.addEventListener("shaft-flash", shutter);
+    return () => window.removeEventListener("shaft-flash", shutter);
+  }, [playSound]);
 
   return (
     <LocaleProvider initialLocale={locale}>
       <div className="shaft-paper-texture" />
       {stage !== "main" && <IntroSkip onSkip={completeIntro} />}
 
-      {/* Signal Interference / Glitch Overlay */}
-      <motion.div 
-        style={{ opacity: glitchOpacity }}
-        className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-[rgb(var(--shaft-crimson)/0.05)] mix-blend-screen" />
-        <div className="absolute inset-0 shaft-scanline opacity-50" />
-      </motion.div>
-
-      {/* Negative Flash Overlay */}
-      <AnimatePresence>
-        {isInverted && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[10000] bg-white mix-blend-difference pointer-events-none"
-          />
-        )}
-      </AnimatePresence>
       
       <AnimatePresence mode="wait">
         {stage === "boot" && (
@@ -159,10 +120,7 @@ export default function ShaftLandingContent({
         inert={stage !== "main" ? true : undefined}
         initial={false}
         className="w-full min-h-screen overflow-x-hidden relative"
-        style={{
-          backgroundColor: "rgb(var(--shaft-bg))",
-          filter: isInverted ? "invert(1)" : "none",
-        }}
+        style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
       >
           <ShaftStatusStrip />
           <ShaftNav visible={true} />

@@ -71,9 +71,7 @@ export const es: Record<string, string> = {
   "nav.theme.light": "[ CLARO ]",
 
   // ── Gateway (estudio + portal de clientes) ──
-  "gateway.studio.aria": "Abrir el estudio — servicios, casos y contacto",
   "gateway.portal.aria": "Entrar al portal de clientes",
-  "gateway.studio": "SERVICIOS",
   "gateway.portal": "PORTAL",
 
   // ── Projects (archive) ──

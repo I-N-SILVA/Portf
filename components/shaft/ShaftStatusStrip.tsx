@@ -50,23 +50,21 @@ export default function ShaftStatusStrip() {
       
       {/* Top indicator */}
       <div className="relative mb-auto flex flex-col items-center">
-        <motion.div 
-          animate={{ 
-            opacity: [0.4, 1, 0.4],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        {/* Both of these used to move. The dot blinked between 0.4 and full
+            opacity on a 2s loop, and the label shook +/-0.5px five times a
+            second, forever — a permanent jitter on a piece of running text,
+            which is the one thing on the page that has to stay still to be
+            read at all. The strip reads as instrumentation without either. */}
+        <div
           className="w-1.5 h-1.5 mb-4"
           style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
         />
-        <motion.span 
-          animate={{ x: [0, 0.5, -0.5, 0] }}
-          transition={{ duration: 0.2, repeat: Infinity, repeatType: "mirror" }}
+        <span
           className="font-space-mono text-[7px] tracking-[0.5em] uppercase rotate-180"
           style={{ writingMode: "vertical-rl", color: "rgb(var(--shaft-muted))" }}
         >
           SYSTEM_ACTIVE
-        </motion.span>
+        </span>
       </div>
 
       {/* Middle — Diagnostics (The "Alive" part) */}
