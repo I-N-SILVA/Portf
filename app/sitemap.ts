@@ -1,28 +1,56 @@
 import { MetadataRoute } from "next";
-import { siteUrl } from "@/lib/routes";
+import { caseStudies } from "@/lib/client-content";
 import { ROUTED_LOCALES, localePath } from "@/lib/locales";
+import { routes, siteUrl } from "@/lib/routes";
 
 /**
- * Public portfolio surface only. Studio now has its own repository and sitemap. Client spaces (/c/*),
- * the portal and the admin console are intentionally absent — they're
- * noindexed and Disallowed in robots.txt.
+ * The indexable surface.
+ *
+ * Client spaces (/c/*), the portal and the admin console are absent on
+ * purpose — they are noindexed and Disallowed in app/robots.ts.
+ *
+ * This used to list four in-page anchors: /#about, /#projects, /#expertise
+ * and /#contact. Not one of them existed — the sections are #shaft-hero,
+ * #shaft-archive, #shaft-offers and #shaft-call — so all four were dead
+ * links. They are gone rather than corrected, because a fragment is not a
+ * separate URL to a crawler and listing one has never affected indexing.
+ *
+ * What replaces them is the thing that was genuinely missing: the
+ * case-study records. They are full, indexable pages about real work, they
+ * carry the most detail of anything on the site, and nothing pointed a
+ * crawler at them.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
+  /** Every locale of the landing page, as hreflang alternates. */
+  const languages = Object.fromEntries([
+    ["en", siteUrl("/")],
+    ...ROUTED_LOCALES.map((code) => [code, siteUrl(localePath(code))]),
+    // Tells Google which version to serve where it has no better match.
+    ["x-default", siteUrl("/")],
+  ]);
+
   return [
-    { url: siteUrl("/"), lastModified: now, changeFrequency: "monthly", priority: 1 },
-    // The translated landings. Slightly lower priority than the English one,
-    // which is the canonical entry point.
+    {
+      url: siteUrl("/"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 1,
+      alternates: { languages },
+    },
     ...ROUTED_LOCALES.map((code) => ({
       url: siteUrl(localePath(code)),
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.9,
+      alternates: { languages },
     })),
-    { url: siteUrl("/#about"), lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: siteUrl("/#projects"), lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: siteUrl("/#expertise"), lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: siteUrl("/#contact"), lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    ...caseStudies.map((study) => ({
+      url: siteUrl(routes.studio.work(study.slug)),
+      lastModified: now,
+      changeFrequency: "yearly" as const,
+      priority: 0.7,
+    })),
   ];
 }

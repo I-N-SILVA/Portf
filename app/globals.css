@@ -38,7 +38,11 @@ html[data-shaft-light] {
   --shaft-cream: 24 20 14;
   --shaft-cream-dim: 72 64 52;
   --shaft-crimson: 28 64 168; /* Pilot Pen Blue */
-  --shaft-gold: 140 99 12; /* 4.42:1 -> 4.86:1 on parchment */
+  /* Measured against --shaft-surface-alt, the darkest of the three light
+     steps, not against --shaft-bg. The section labels sit on the background
+     but the capability slips sit on the surfaces, where the previous value
+     fell to 4.48:1 and 4.13:1. This clears all three: 5.54, 5.07, 4.67. */
+  --shaft-gold: 130 91 10;
   --shaft-muted: 110 100 85;
   --shaft-border: 198 188 168;
   --shaft-white: 10 8 6;

@@ -36,6 +36,12 @@ export interface IntakeTerminalProps {
   typeSpeed?: number;
   /** Shown under the options before anything is picked. */
   hint?: string;
+  /**
+   * Once answered, print the question and the chosen answer as one settled
+   * line and stop offering the list. A terminal keeps what you typed; this
+   * is what lets a caller stack several of these into a transcript.
+   */
+  collapseOnAnswer?: boolean;
   /** Label for the control that clears the selection. */
   resetLabel?: string;
   /**
@@ -77,6 +83,7 @@ export function IntakeTerminal({
   typewriter = true,
   typeSpeed = 22,
   hint,
+  collapseOnAnswer = false,
   resetLabel,
   globalHotkeys = false,
   className,
@@ -204,6 +211,39 @@ export function IntakeTerminal({
       &gt;
     </span>
   );
+
+  const chosen = keyed.find((option) => option.value === selected);
+
+  // ── the settled line ───────────────────────────────────────────────────
+  if (collapseOnAnswer && chosen) {
+    return (
+      <div className={cn("font-space-mono", className)}>
+        <p
+          data-part="prompt"
+          className="flex flex-wrap items-baseline gap-x-3 text-[11px] uppercase tracking-[0.28em] md:text-[13px]"
+        >
+          {caret}
+          <span>{prompt}</span>
+          <span aria-hidden="true" data-part="arrow">
+            →
+          </span>
+          <span data-part="answer" className="normal-case tracking-[0.08em]">
+            {chosen.label}
+          </span>
+        </p>
+        {resetLabel && (
+          <button
+            type="button"
+            data-part="reset"
+            onClick={() => select(null)}
+            className="mt-4 min-h-11 text-[9px] uppercase tracking-[0.35em] underline-offset-4 hover:underline"
+          >
+            {resetLabel}
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div ref={rootRef} className={cn("font-space-mono", className)}>

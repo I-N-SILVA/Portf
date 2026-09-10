@@ -10,6 +10,8 @@ import "./globals.css";
 import "@/components/brand/tokens.css";
 import "@/components/brand/brand-global.css";
 import { SITE } from "@/lib/constants";
+import { INTAKE_FAQ, OFFERS } from "@/lib/offers";
+import { socialLinks } from "@/lib/placeholder-content";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.URL),
@@ -57,23 +59,65 @@ export const viewport = {
   ],
 };
 
+/**
+ * What an answer engine repeats when it summarises this site.
+ *
+ * That is the reason this block is kept honest rather than aspirational: a
+ * model asked "what does Ian Silva do" quotes the schema, not the prose. It
+ * used to say Web3 & Blockchain and Machine Learning while the page sold
+ * automations, prototypes and landing pages — so the summary and the
+ * offering disagreed, and the schema won.
+ *
+ * `sameAs` is the strongest signal there is for tying a name to a person;
+ * it listed GitHub only, while lib/placeholder-content.ts had LinkedIn all
+ * along, so the two profiles were never connected.
+ */
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: SITE.NAME,
   jobTitle: "AI Automation Engineer & Full-Stack Developer",
-  description:
-    "Building intelligent systems at the intersection of AI, Web3, and behavioral psychology. Specializing in rapid prototyping, automation workflows, and strategic product development.",
+  description: SITE.DESCRIPTION,
   url: SITE.URL,
-  sameAs: ["https://github.com/I-N-SILVA"],
+  email: `mailto:${SITE.EMAIL}`,
+  sameAs: socialLinks.map((link) => link.url),
   knowsAbout: [
-    "AI Agents",
-    "Machine Learning",
-    "Full-Stack Development",
-    "Web3 & Blockchain",
-    "Behavioral Economics",
-    "Product Strategy",
+    "AI automation",
+    "AI agents and LLM workflows",
+    "Rapid prototyping and MVPs",
+    "Conversion-focused landing pages",
+    "Full-stack development",
+    "Behavioral economics",
   ],
+  makesOffer: OFFERS.map(({ name, description }) => ({
+    "@type": "Offer",
+    itemOffered: {
+      "@type": "Service",
+      name,
+      description,
+      provider: { "@type": "Person", name: SITE.NAME, url: SITE.URL },
+      areaServed: "Worldwide",
+      serviceType: name,
+    },
+  })),
+};
+
+/**
+ * The intake terminal's four questions, as FAQPage.
+ *
+ * Answer engines lift question-shaped content, and since the studio's FAQ
+ * left with the studio this site had none. These are not new copy — they are
+ * the questions the capabilities section already asks, in the shape a machine
+ * can quote.
+ */
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: INTAKE_FAQ.map(({ question, answer }) => ({
+    "@type": "Question",
+    name: question,
+    acceptedAnswer: { "@type": "Answer", text: answer },
+  })),
 };
 
 import { Providers } from "./providers";
@@ -125,6 +169,10 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
       <body

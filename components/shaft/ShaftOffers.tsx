@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { IntakeTerminal } from "@/components/ui/intake-terminal";
+import { INTAKE_ROUTES } from "@/lib/offers";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 /** Where the studio can be reached once the triage has named a problem. */
@@ -14,18 +15,15 @@ const EMAIL = "iannogueira@proton.me";
  * answer, which resolves to all of them — that is a real outcome, not a
  * failure to choose, and it is the one the closing line already speaks to.
  */
-const ROUTES: Record<string, string | null> = {
-  a: "03",
-  b: "01",
-  c: "02",
-  d: null,
-};
+const ROUTES = INTAKE_ROUTES;
 
 export default function ShaftOffers() {
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
   const { playSound } = useSoundEffects();
   const [answer, setAnswer] = useState<string | null>(null);
+  /** The second question. Only asked once the first has been answered. */
+  const [when, setWhen] = useState<string | null>(null);
 
   /**
    * The terminal only exists once the JavaScript that drives it does.
@@ -39,12 +37,24 @@ export default function ShaftOffers() {
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
   const offers = [
-    { num: "01", title: t("offers.1.title"), body1: t("offers.1.body1"), body2: t("offers.1.body2") },
-    { num: "02", title: t("offers.2.title"), body1: t("offers.2.body1"), body2: t("offers.2.body2") },
-    { num: "03", title: t("offers.3.title"), body1: t("offers.3.body1"), body2: t("offers.3.body2") },
+    { num: "01", title: t("offers.1.title"), body1: t("offers.1.body1"), body2: t("offers.1.body2"), window: t("offers.1.window") },
+    { num: "02", title: t("offers.2.title"), body1: t("offers.2.body1"), body2: t("offers.2.body2"), window: t("offers.2.window") },
+    { num: "03", title: t("offers.3.title"), body1: t("offers.3.body1"), body2: t("offers.3.body2"), window: t("offers.3.window") },
   ];
 
   const routed = answer ? ROUTES[answer] : undefined;
+
+  /**
+   * The mail already says what it is about, in the reader's own words: the
+   * offer, the problem they picked, and — once they have answered the
+   * follow-up — when they want it.
+   */
+  const mailto = (subject: string) => {
+    const parts = [subject];
+    if (answer) parts.push(t(`intake.${answer}`));
+    if (when) parts.push(t(`intake.q2.${when}`));
+    return `mailto:${EMAIL}?subject=${encodeURIComponent(parts.join(" — "))}`;
+  };
   /** True once an answer has narrowed the drawer to one slip. */
   const narrowed = answer !== null && routed !== null;
 
@@ -127,13 +137,16 @@ export default function ShaftOffers() {
 
         {live && (
           <IntakeTerminal
-            className="mb-16 md:mb-20 [&_[data-part=hint]]:text-[rgb(var(--shaft-muted))] [&_[data-part=prompt]]:text-[rgb(var(--shaft-cream))] [&_button:last-of-type]:text-[rgb(var(--shaft-muted))]"
+            className="mb-16 md:mb-20 [&_[data-part=answer]]:text-[rgb(var(--shaft-cream-dim))] [&_[data-part=arrow]]:text-[rgb(var(--shaft-crimson-text))] [&_[data-part=hint]]:text-[rgb(var(--shaft-muted))] [&_[data-part=prompt]]:text-[rgb(var(--shaft-cream))] [&_[data-part=reset]]:text-[rgb(var(--shaft-muted))]"
             prompt={t("intake.prompt")}
             hint={t("intake.hint")}
-            resetLabel={t("intake.reset")}
+            resetLabel={when ? undefined : t("intake.reset")}
             value={answer}
+            collapseOnAnswer
             onChange={(next) => {
               setAnswer(next);
+              // A different problem deserves the timing question again.
+              setWhen(null);
               if (next) playSound("click");
             }}
             options={[
@@ -141,6 +154,34 @@ export default function ShaftOffers() {
               { value: "b", label: t("intake.b") },
               { value: "c", label: t("intake.c") },
               { value: "d", label: t("intake.d") },
+            ]}
+            optionClassName="text-[rgb(var(--shaft-cream-dim))] hover:text-[rgb(var(--shaft-cream))] data-[active=true]:text-[rgb(var(--shaft-cream))] [&_[data-tab]]:bg-[rgb(var(--shaft-crimson))] [&>span:nth-child(2)]:text-[rgb(var(--shaft-crimson-text))]"
+          />
+        )}
+
+        {/*
+          The follow-up. A terminal accumulates: the first question settles
+          into a transcript line and this one appears beneath it, so two
+          clicks describe a problem and a timeline rather than one click
+          describing a category. Both answers ride the mailto subject, which
+          is the difference between an enquiry and a qualified one.
+        */}
+        {live && answer && (
+          <IntakeTerminal
+            className="-mt-6 mb-16 md:mb-20 [&_[data-part=hint]]:text-[rgb(var(--shaft-muted))] [&_[data-part=prompt]]:text-[rgb(var(--shaft-cream))] [&_[data-part=reset]]:text-[rgb(var(--shaft-muted))] [&_[data-part=answer]]:text-[rgb(var(--shaft-cream-dim))] [&_[data-part=arrow]]:text-[rgb(var(--shaft-crimson-text))]"
+            prompt={t("intake.q2")}
+            resetLabel={t("intake.reset")}
+            typewriter={false}
+            collapseOnAnswer
+            value={when}
+            onChange={(next) => {
+              setWhen(next);
+              if (next) playSound("click");
+            }}
+            options={[
+              { value: "a", label: t("intake.q2.a") },
+              { value: "b", label: t("intake.q2.b") },
+              { value: "c", label: t("intake.q2.c") },
             ]}
             optionClassName="text-[rgb(var(--shaft-cream-dim))] hover:text-[rgb(var(--shaft-cream))] data-[active=true]:text-[rgb(var(--shaft-cream))] [&_[data-tab]]:bg-[rgb(var(--shaft-crimson))] [&>span:nth-child(2)]:text-[rgb(var(--shaft-crimson-text))]"
           />
@@ -200,6 +241,17 @@ export default function ShaftOffers() {
                   className="h-px flex-1"
                   style={{ backgroundColor: "rgb(var(--shaft-border))" }}
                 />
+                {/*
+                  The headline promises two to four weeks and then nothing on
+                  the page stood behind it. Each slip now says where in that
+                  window it lands.
+                */}
+                <span
+                  className="shrink-0 font-space-mono text-[9px] uppercase tracking-[0.2em]"
+                  style={{ color: "rgb(var(--shaft-muted))" }}
+                >
+                  {offer.window}
+                </span>
               </div>
 
               <h3
@@ -219,12 +271,20 @@ export default function ShaftOffers() {
                 {offer.body1}
               </p>
 
-              <p
-                className="mt-auto pt-8 text-[12px] leading-relaxed"
-                style={{ color: "rgb(var(--shaft-muted))" }}
-              >
-                {offer.body2}
-              </p>
+              <div className="mt-auto pt-8">
+                <span
+                  className="font-space-mono text-[9px] uppercase tracking-[0.28em]"
+                  style={{ color: "rgb(var(--shaft-gold))" }}
+                >
+                  {t("offers.bestWhen")}
+                </span>
+                <p
+                  className="mt-2 text-[12px] leading-relaxed"
+                  style={{ color: "rgb(var(--shaft-muted))" }}
+                >
+                  {offer.body2}
+                </p>
+              </div>
 
               {/*
                 The answer carries into the subject line, so the first mail
@@ -233,9 +293,7 @@ export default function ShaftOffers() {
               */}
               {narrowed && routed === offer.num && (
                 <a
-                  href={`mailto:${EMAIL}?subject=${encodeURIComponent(
-                    `${offer.title} — ${answer ? t(`intake.${answer}`) : ""}`,
-                  )}`}
+                  href={mailto(offer.title)}
                   className="mt-8 inline-flex min-h-11 items-center border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em] transition-colors"
                   style={{
                     borderColor: "rgb(var(--shaft-crimson-text))",
@@ -289,7 +347,7 @@ export default function ShaftOffers() {
           </p>
           {answer === "d" && (
             <a
-              href={`mailto:${EMAIL}?subject=${encodeURIComponent(t("intake.d"))}`}
+              href={mailto(t("offers.section"))}
               className="mt-8 inline-flex min-h-11 items-center border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em]"
               style={{
                 borderColor: "rgb(var(--shaft-crimson-text))",
