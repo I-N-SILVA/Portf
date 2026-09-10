@@ -1,4 +1,4 @@
-import { siteUrl } from "@/lib/routes";
+import { routes, siteUrl } from "@/lib/routes";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -55,7 +55,8 @@ export default function BrandPage() {
 
     <section className={styles.next} aria-labelledby="next-title"><p className={styles.eyebrow}>05 / Where the identity goes next</p><h2 id="next-title">Make the work<br />the main event.</h2>
       <ol><li><strong>Show decisions, not just screenshots.</strong> Give each flagship case study a before/after workflow, a live example and measured outcomes where evidence exists.</li><li><strong>Give the Operator a small vocabulary.</strong> Build layered vector poses for arriving, framing, connecting and handing over. Keep the mouthless face and low cap consistent.</li><li><strong>Let one interaction lead.</strong> Expand the workflow rail into a genuine explorable demo. Keep reading, navigation and contact fast.</li><li><strong>Keep the feed recognisable.</strong> Publish useful field notes, project decisions and lessons using the same four templates. Change the content more often than the layout.</li></ol>
-      <Link href="/studio">Back to the Studio ↗</Link>
+      {/* /studio is retired; the portfolio is where this points now. */}
+      <Link href={routes.home}>Back to the portfolio ↗</Link>
     </section>
   </main>;
 }
