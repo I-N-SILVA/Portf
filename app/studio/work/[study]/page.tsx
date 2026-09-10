@@ -51,12 +51,12 @@ export default async function CaseStudyPage({ params }: PageProps) {
               is the portfolio. */}
           <Link
             href={routes.home}
-            className="group inline-flex items-center gap-2 text-sm text-stone-500 transition-colors hover:text-stone-900"
+            className="group inline-flex items-center gap-2 text-sm text-stone-600 transition-colors hover:text-stone-900"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
             Back to the portfolio
           </Link>
-          <p className="mt-8 font-space-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+          <p className="mt-8 font-space-mono text-xs uppercase tracking-[0.25em] text-stone-600">
             {cs.industry}
           </p>
           <h1 className="mt-4 max-w-4xl font-playfair text-3xl font-bold leading-[1.15] tracking-tight md:text-5xl">
@@ -105,7 +105,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                   <p className="font-playfair text-2xl font-bold text-stone-900">
                     {m.value}
                   </p>
-                  <p className="mt-1 text-xs leading-snug text-stone-500">
+                  <p className="mt-1 text-xs leading-snug text-stone-600">
                     {m.label}
                   </p>
                 </div>
@@ -121,7 +121,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               <ul className="mt-5 space-y-3">
                 {project.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-stone-400" />
+                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-stone-600" />
                     <span className="text-sm leading-relaxed text-stone-600">
                       {feature}
                     </span>
@@ -137,7 +137,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
                 <p className="font-playfair text-lg italic leading-relaxed text-stone-800">
                   &ldquo;{cs.testimonial.quote}&rdquo;
                 </p>
-                <footer className="mt-4 text-sm text-stone-500">
+                <footer className="mt-4 text-sm text-stone-600">
                   {cs.testimonial.author} — {cs.testimonial.role}
                 </footer>
               </blockquote>
@@ -163,14 +163,14 @@ export default async function CaseStudyPage({ params }: PageProps) {
         <Reveal className="mt-14 md:mt-0">
           <aside className="space-y-6 rounded-2xl border border-stone-200 bg-white p-6 md:sticky md:top-24">
             <div>
-              <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
                 Project
               </p>
               <p className="mt-1 text-sm font-medium">{project.title}</p>
             </div>
             {project.role && (
               <div>
-                <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">
+                <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
                   Role
                 </p>
                 <p className="mt-1 text-sm font-medium">{project.role}</p>
@@ -178,14 +178,14 @@ export default async function CaseStudyPage({ params }: PageProps) {
             )}
             {project.duration && (
               <div>
-                <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">
+                <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
                   Timeline
                 </p>
                 <p className="mt-1 text-sm font-medium">{project.duration}</p>
               </div>
             )}
             <div>
-              <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
                 Services
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -200,7 +200,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
               </div>
             </div>
             <div>
-              <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <p className="font-space-mono text-[10px] uppercase tracking-[0.2em] text-stone-600">
                 Stack
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
@@ -226,14 +226,14 @@ export default async function CaseStudyPage({ params }: PageProps) {
             className="group mx-auto flex max-w-6xl items-center justify-between px-6 py-12"
           >
             <div>
-              <p className="font-space-mono text-[11px] uppercase tracking-[0.2em] text-stone-400">
+              <p className="font-space-mono text-[11px] uppercase tracking-[0.2em] text-stone-600">
                 Next case study
               </p>
               <p className="mt-2 font-playfair text-xl font-bold text-stone-900 md:text-2xl">
                 {nextCase.headline}
               </p>
             </div>
-            <ArrowRight className="h-6 w-6 shrink-0 text-stone-400 transition-all group-hover:translate-x-1 group-hover:text-stone-900" />
+            <ArrowRight className="h-6 w-6 shrink-0 text-stone-600 transition-all group-hover:translate-x-1 group-hover:text-stone-900" />
           </Link>
         </section>
       )}
