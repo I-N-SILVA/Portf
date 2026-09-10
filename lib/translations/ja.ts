@@ -13,6 +13,10 @@ export const ja: Record<string, string> = {
   "hero.scene": "[ 01 / オープニング ]",
   "intro.skip": "イントロをスキップ",
   // ── Archive ──
+  // ── Glyph portal ──
+  "portal.word": "WORK",
+  "portal.enter": "アーカイブへ",
+  "portal.landing": "ここから先はすべて、実際に作られ、公開され、今も動いています。",
   "archive.section": "02 / 制作実績",
   "archive.reelHint": "ドラッグ · または ← → キー",
   "archive.filter.all": "すべて",

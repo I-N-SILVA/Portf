@@ -13,6 +13,10 @@ export const es: Record<string, string> = {
   "hero.scene": "[ 01 / APERTURA ]",
   "intro.skip": "Saltar introducción",
   // ── Archive ──
+  // ── Glyph portal ──
+  "portal.word": "OBRA",
+  "portal.enter": "Ir al archivo",
+  "portal.landing": "Todo lo que viene fue construido, publicado, y sigue funcionando.",
   "archive.section": "02 / TRABAJOS DESTACADOS",
   "archive.reelHint": "ARRASTRA EL CARRETE · O USA ← →",
   "archive.filter.all": "TODOS",

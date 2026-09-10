@@ -6,6 +6,7 @@ import ShaftIntertitle from "./ShaftIntertitle";
 import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
 import ShaftTicker from "./ShaftTicker";
+import ShaftWordPortal from "./ShaftWordPortal";
 import ShaftOffers from "./ShaftOffers";
 import ShaftArchive from "./ShaftArchive";
 
@@ -121,7 +122,13 @@ export default function ShaftLandingContent({
         // pb on small screens only: the section dots and the booking pill are
         // fixed to the bottom edge there, and without it the last lines of
         // the page could never be scrolled out from under them.
-        className="w-full min-h-screen overflow-x-hidden relative pb-28 md:pb-0"
+        // overflow-x-clip, not -hidden. `hidden` on one axis forces the other
+        // to compute to `auto`, which makes this element a scroll container
+        // as far as the DOM is concerned — so anything that walks up looking
+        // for the scrolling ancestor finds <main>, which never scrolls, and
+        // reads a scroll position that never changes. `clip` does the same
+        // clipping without creating the container.
+        className="w-full min-h-screen overflow-x-clip relative pb-28 md:pb-0"
         style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
       >
           <ShaftStatusStrip />
@@ -134,6 +141,14 @@ export default function ShaftLandingContent({
           </ShaftPerspectiveSection>
 
           <ShaftTicker />
+
+          {/*
+            The cut between chapter one and chapter two. Deliberately not
+            wrapped in ShaftPerspectiveSection: that tilts and fades its
+            child on scroll, and this component is already a scroll-driven
+            camera — two of them on the same pixels fight each other.
+          */}
+          <ShaftWordPortal />
 
           <ShaftPerspectiveSection>
             <ShaftArchive />

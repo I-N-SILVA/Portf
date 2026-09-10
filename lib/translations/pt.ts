@@ -14,6 +14,10 @@ export const pt: Record<string, string> = {
   "hero.scene": "[ 01 / ABERTURA ]",
   "intro.skip": "Saltar introdução",
   // ── Archive ──
+  // ── Glyph portal ──
+  "portal.word": "OBRA",
+  "portal.enter": "Ir para o arquivo",
+  "portal.landing": "Tudo daqui para a frente foi construído, publicado, e continua a correr.",
   "archive.section": "02 / TRABALHOS SELECIONADOS",
   "archive.reelHint": "ARRASTE O ROLO · OU USE ← →",
   "archive.filter.all": "TODOS",

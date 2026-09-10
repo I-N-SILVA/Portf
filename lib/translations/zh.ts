@@ -13,6 +13,10 @@ export const zh: Record<string, string> = {
   "hero.scene": "[ 01 / 开场 ]",
   "intro.skip": "跳过开场",
   // ── Archive ──
+  // ── Glyph portal ──
+  "portal.word": "WORK",
+  "portal.enter": "前往作品档案",
+  "portal.landing": "从这里往下，每一件都真正做出来、上线了，并且仍在运行。",
   "archive.section": "02 / 精选项目",
   "archive.reelHint": "拖动胶片 · 或使用 ← →",
   "archive.filter.all": "全部",
