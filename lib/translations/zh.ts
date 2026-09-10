@@ -68,6 +68,15 @@ export const zh: Record<string, string> = {
   // ── Added on the improvement branch ──
   "nav.offers": "服务",
   "offers.section": "03 / 能力范围",
+  // ── Capabilities intake ──
+  "intake.prompt": "什么在消耗你的时间？",
+  "intake.a": "团队每周重复的流程",
+  "intake.b": "还没人能试用的想法",
+  "intake.c": "来了又走的流量",
+  "intake.d": "还不确定 — 有点乱",
+  "intake.hint": "按键或点击",
+  "intake.reset": "[ ESC ] 重新开始",
+  "intake.cta": "从这里开始 →",
   "offers.title": "我能在 2–4 周内为你做出来的东西。",
   "offers.subtitle": "三项明确的服务：",
   "offers.1.title": "可直接演示的 MVP 原型",

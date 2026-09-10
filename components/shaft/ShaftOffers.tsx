@@ -1,12 +1,40 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/lib/i18n";
+import { IntakeTerminal } from "@/components/ui/intake-terminal";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
+
+/** Where the studio can be reached once the triage has named a problem. */
+const EMAIL = "iannogueira@proton.me";
+
+/**
+ * Which capability each answer resolves to. `null` is the "it's messy"
+ * answer, which resolves to all of them — that is a real outcome, not a
+ * failure to choose, and it is the one the closing line already speaks to.
+ */
+const ROUTES: Record<string, string | null> = {
+  a: "03",
+  b: "01",
+  c: "02",
+  d: null,
+};
 
 export default function ShaftOffers() {
   const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
+  const { playSound } = useSoundEffects();
+  const [answer, setAnswer] = useState<string | null>(null);
+
+  /**
+   * The terminal only exists once the JavaScript that drives it does.
+   * Rendering it server-side would ship a menu whose buttons do nothing to
+   * anyone whose bundle fails, and the three slips below are the real
+   * content — they render either way, in full, unfiltered.
+   */
+  const [live, setLive] = useState(false);
+  useEffect(() => setLive(true), []);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
@@ -15,6 +43,10 @@ export default function ShaftOffers() {
     { num: "02", title: t("offers.2.title"), body1: t("offers.2.body1"), body2: t("offers.2.body2") },
     { num: "03", title: t("offers.3.title"), body1: t("offers.3.body1"), body2: t("offers.3.body2") },
   ];
+
+  const routed = answer ? ROUTES[answer] : undefined;
+  /** True once an answer has narrowed the drawer to one slip. */
+  const narrowed = answer !== null && routed !== null;
 
   return (
     <section
@@ -93,6 +125,27 @@ export default function ShaftOffers() {
           </motion.p>
         </div>
 
+        {live && (
+          <IntakeTerminal
+            className="mb-16 md:mb-20 [&_[data-part=hint]]:text-[rgb(var(--shaft-muted))] [&_[data-part=prompt]]:text-[rgb(var(--shaft-cream))] [&_button:last-of-type]:text-[rgb(var(--shaft-muted))]"
+            prompt={t("intake.prompt")}
+            hint={t("intake.hint")}
+            resetLabel={t("intake.reset")}
+            value={answer}
+            onChange={(next) => {
+              setAnswer(next);
+              if (next) playSound("click");
+            }}
+            options={[
+              { value: "a", label: t("intake.a") },
+              { value: "b", label: t("intake.b") },
+              { value: "c", label: t("intake.c") },
+              { value: "d", label: t("intake.d") },
+            ]}
+            optionClassName="text-[rgb(var(--shaft-cream-dim))] hover:text-[rgb(var(--shaft-cream))] data-[active=true]:text-[rgb(var(--shaft-cream))] [&_[data-tab]]:bg-[rgb(var(--shaft-crimson))] [&>span:nth-child(2)]:text-[rgb(var(--shaft-crimson-text))]"
+          />
+        )}
+
         {/*
           A drawer of catalogue slips rather than three stacked essays.
 
@@ -111,13 +164,27 @@ export default function ShaftOffers() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.45, delay: 0.08 * i }}
-              className="group relative flex flex-col p-8 lg:p-10"
-              style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
+              className="group relative flex flex-col p-8 transition-colors duration-500 lg:p-10"
+              data-picked={narrowed ? routed === offer.num : undefined}
+              style={{
+                /*
+                  Recession by surface, never by opacity. Dimming the text of
+                  the slips you did not pick would drop them under AA, and
+                  they are still meant to be readable — the brief was that
+                  they recede, not that they go away. Losing the fill lets
+                  them sink into the section while every word keeps its
+                  contrast.
+                */
+                backgroundColor:
+                  narrowed && routed !== offer.num
+                    ? "rgb(var(--shaft-bg))"
+                    : "rgb(var(--shaft-surface))",
+              }}
             >
-              {/* Filing rule — drawn on hover, and always on for touch. */}
+              {/* Filing rule — drawn on hover, and held open once picked. */}
               <span
                 aria-hidden="true"
-                className="absolute left-0 top-0 h-0.5 w-0 transition-all duration-500 ease-out group-hover:w-full group-focus-within:w-full"
+                className="absolute left-0 top-0 h-0.5 w-0 transition-all duration-500 ease-out group-hover:w-full group-focus-within:w-full group-data-[picked=true]:w-full"
                 style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
               />
 
@@ -159,6 +226,26 @@ export default function ShaftOffers() {
                 {offer.body2}
               </p>
 
+              {/*
+                The answer carries into the subject line, so the first mail
+                already says which of the three this is about and in the
+                reader's own words.
+              */}
+              {narrowed && routed === offer.num && (
+                <a
+                  href={`mailto:${EMAIL}?subject=${encodeURIComponent(
+                    `${offer.title} — ${answer ? t(`intake.${answer}`) : ""}`,
+                  )}`}
+                  className="mt-8 inline-flex min-h-11 items-center border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em] transition-colors"
+                  style={{
+                    borderColor: "rgb(var(--shaft-crimson-text))",
+                    color: "rgb(var(--shaft-crimson-text))",
+                  }}
+                >
+                  {t("intake.cta")}
+                </a>
+              )}
+
               {/* The punch: what makes a catalogue card a catalogue card. */}
               <span
                 aria-hidden="true"
@@ -177,10 +264,41 @@ export default function ShaftOffers() {
             transition={{ duration: 0.5, delay: 0.5 }}
             className="mt-16 md:mt-24 max-w-xl"
         >
-          <div className="h-px w-16 mb-8" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
-          <p className="font-playfair text-xl md:text-2xl leading-snug" style={{ color: "rgb(var(--shaft-cream))" }}>
+          {/*
+            "I don't know yet" resolves here rather than to a slip. The rule
+            widens and the line brightens so the answer visibly lands
+            somewhere instead of appearing to do nothing.
+          */}
+          <div
+            className="mb-8 h-px transition-all duration-500"
+            style={{
+              width: answer === "d" ? "100%" : "4rem",
+              backgroundColor: "rgb(var(--shaft-crimson))",
+            }}
+          />
+          <p
+            className="font-playfair text-xl leading-snug transition-colors duration-500 md:text-2xl"
+            style={{
+              color:
+                answer === "d"
+                  ? "rgb(var(--shaft-cream))"
+                  : "rgb(var(--shaft-cream-dim))",
+            }}
+          >
             {t("offers.cta")}
           </p>
+          {answer === "d" && (
+            <a
+              href={`mailto:${EMAIL}?subject=${encodeURIComponent(t("intake.d"))}`}
+              className="mt-8 inline-flex min-h-11 items-center border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em]"
+              style={{
+                borderColor: "rgb(var(--shaft-crimson-text))",
+                color: "rgb(var(--shaft-crimson-text))",
+              }}
+            >
+              {t("intake.cta")}
+            </a>
+          )}
         </motion.div>
       </div>
     </section>

@@ -68,6 +68,15 @@ export const es: Record<string, string> = {
   // ── Added on the improvement branch ──
   "nav.offers": "SERVICIOS",
   "offers.section": "03 / CAPACIDADES",
+  // ── Capabilities intake ──
+  "intake.prompt": "¿QUÉ SE ESTÁ COMIENDO TU TIEMPO?",
+  "intake.a": "Un proceso que mi equipo repite cada semana",
+  "intake.b": "Una idea que nadie puede probar todavía",
+  "intake.c": "Tráfico que llega y se va",
+  "intake.d": "Aún no lo sé — es un lío",
+  "intake.hint": "PULSA UNA TECLA O HAZ CLIC",
+  "intake.reset": "[ ESC ] EMPEZAR DE NUEVO",
+  "intake.cta": "EMPEZAR AQUÍ →",
   "offers.title": "Lo que puedo construir para ti en 2–4 semanas.",
   "offers.subtitle": "Tres servicios concretos:",
   "offers.1.title": "PROTOTIPOS MVP LISTOS PARA PROBAR",

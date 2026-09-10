@@ -78,6 +78,15 @@ export const pt: Record<string, string> = {
 
   // ── Offers ──
   "offers.section": "03 / CAPACIDADES",
+  // ── Capabilities intake ──
+  "intake.prompt": "O QUE ESTÁ A CONSUMIR O SEU TEMPO?",
+  "intake.a": "Um processo que a minha equipa repete todas as semanas",
+  "intake.b": "Uma ideia que ainda ninguém consegue experimentar",
+  "intake.c": "Tráfego que chega e vai embora",
+  "intake.d": "Ainda não sei — está confuso",
+  "intake.hint": "PRIMA UMA TECLA OU CLIQUE",
+  "intake.reset": "[ ESC ] RECOMEÇAR",
+  "intake.cta": "COMEÇAR AQUI →",
   "offers.title": "O que posso construir para você em 2–4 semanas.",
   "offers.subtitle": "Três ofertas focadas:",
   "offers.1.title": "PROTÓTIPOS MVP PRONTOS A TESTAR",

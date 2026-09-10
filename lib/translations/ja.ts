@@ -68,6 +68,15 @@ export const ja: Record<string, string> = {
   // ── Added on the improvement branch ──
   "nav.offers": "サービス",
   "offers.section": "03 / 提供できること",
+  // ── Capabilities intake ──
+  "intake.prompt": "時間を奪っているのは何ですか？",
+  "intake.a": "チームが毎週繰り返している作業",
+  "intake.b": "まだ誰も試せていないアイデア",
+  "intake.c": "来ては去っていくトラフィック",
+  "intake.d": "まだ分からない — 整理できていない",
+  "intake.hint": "キーを押すかクリック",
+  "intake.reset": "[ ESC ] やり直す",
+  "intake.cta": "ここから始める →",
   "offers.title": "2〜4週間でお作りできるもの。",
   "offers.subtitle": "3つのサービス：",
   "offers.1.title": "すぐ触れるMVPプロトタイプ",

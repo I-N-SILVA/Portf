@@ -79,6 +79,15 @@ export const en: Record<string, string> = {
 
   // ── Offers ──
   "offers.section": "03 / CAPABILITIES",
+  // ── Capabilities intake ──
+  "intake.prompt": "WHAT'S EATING YOUR TIME?",
+  "intake.a": "A process my team repeats every week",
+  "intake.b": "An idea nobody can try yet",
+  "intake.c": "Traffic that arrives and leaves",
+  "intake.d": "I don't know yet — it's messy",
+  "intake.hint": "PRESS A KEY OR CLICK",
+  "intake.reset": "[ ESC ] START OVER",
+  "intake.cta": "START HERE →",
   "offers.title": "What I can build for you in 2–4 weeks.",
   "offers.subtitle": "Three focused offers:",
   "offers.1.title": "CLICK‑READY MVP PROTOTYPES",
