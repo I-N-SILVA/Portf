@@ -27,7 +27,10 @@ export default function ShaftProjectReel({ projects }: { projects: Project[] }) 
   const slides = useMemo<CoverflowSlide[]>(
     () =>
       projects.map((project) => ({
-        src: project.image,
+        // Prefer the real screenshot, the way the archive already does.
+        // `image` is a stock photo for at least one entry, and the reel is
+        // where the lead card is largest.
+        src: project.bannerImage ?? project.image,
         // The list carries the same title; this one is decoration beside it,
         // so it names the plate rather than repeating the whole entry.
         alt: t(`projects.${project.id}.title`),
