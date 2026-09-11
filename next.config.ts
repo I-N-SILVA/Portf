@@ -35,12 +35,10 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-    ],
+    // No remote patterns: every image the site renders is served from
+    // /public. Adding a host here also means adding it to img-src in
+    // lib/security/csp.ts, so the two stay empty together.
+    remotePatterns: [],
   },
 
   /**

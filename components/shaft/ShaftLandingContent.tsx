@@ -6,7 +6,6 @@ import ShaftIntertitle from "./ShaftIntertitle";
 import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
 import ShaftTicker from "./ShaftTicker";
-import ShaftWordPortal from "./ShaftWordPortal";
 import ShaftOffers from "./ShaftOffers";
 import ShaftArchive from "./ShaftArchive";
 
@@ -143,12 +142,12 @@ export default function ShaftLandingContent({
           <ShaftTicker />
 
           {/*
-            The cut between chapter one and chapter two. Deliberately not
-            wrapped in ShaftPerspectiveSection: that tilts and fades its
-            child on scroll, and this component is already a scroll-driven
-            camera — two of them on the same pixels fight each other.
+            The word portal used to sit here, as the cut between chapter one
+            and chapter two. It cost 2.8 viewports of scroll to deliver one
+            transition, which is a long toll on the path to the work — the
+            reel is what people came for. It lives at /studio/lab now, where
+            looking at it is the point rather than the tax.
           */}
-          <ShaftWordPortal />
 
           <ShaftPerspectiveSection>
             <ShaftArchive />

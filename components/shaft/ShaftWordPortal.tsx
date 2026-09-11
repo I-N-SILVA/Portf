@@ -2,6 +2,17 @@
 
 import { useEffect, useId, useRef } from "react";
 import { useTranslation } from "@/lib/i18n";
+import {
+  COVERED,
+  ease,
+  SECTION_VIEWPORTS,
+  SCROLL_LENGTH,
+  aimAt,
+  chromeOpacity,
+  diveProgress,
+  fullScale,
+  scaleAt,
+} from "@/lib/portal-geometry";
 
 /**
  * The cut between chapter one and chapter two: the word WORK, scaled up on
@@ -27,34 +38,6 @@ import { useTranslation } from "@/lib/i18n";
  * scroll bar keeps telling the truth about how long the page is — nothing
  * here intercepts or slows a wheel event.
  */
-
-/** How many viewport heights the dive takes. */
-const SCROLL_LENGTH = 1.8;
-
-/**
- * Where the camera aims, in fractions of the word's own bounding box, and
- * how much ink is there.
- *
- * Both were measured, not guessed. "WORK" was rasterised in Playfair Display
- * at 900 and every point on a grid tested for the largest disk of solid ink
- * that fits around it; the winner is the left side of the O's bowl, with a
- * radius of 0.14 of the word's height.
- *
- * Guessing failed twice and is worth recording. The W's stem looked like the
- * obvious target and is a *diagonal*, so it slides out from under a fixed
- * point as the aim moves down the letter — and a radius picked by eye was
- * 1.6x too small, which sent the camera through the far side of the stroke
- * and out into the counter. The screen went black at the moment the dive was
- * supposed to land.
- *
- * RADIUS is held slightly under the measurement so the ink is guaranteed to
- * have covered the viewport before the clip is dropped.
- */
-const ANCHOR = { x: 0.51, y: 0.42 };
-const RADIUS = 0.125;
-
-/** Past this much of the scroll the ink covers the screen; the clip comes off. */
-const COVERED = 0.78;
 
 export default function ShaftWordPortal() {
   const { t } = useTranslation();
@@ -102,24 +85,19 @@ export default function ShaftWordPortal() {
       if (!box.width || !box.height) return false;
       // Fill 84% of the width, or 38% of the height, whichever is smaller.
       base = Math.min((width * 0.84) / box.width, (height * 0.38) / box.height);
-      full = Math.hypot(width, height) / (box.height * RADIUS);
+      full = fullScale(width, height, box.height);
       return true;
     };
 
     const draw = (progress: number) => {
       const still = reduce.matches;
       const p = still ? 0 : progress;
-      const t = Math.min(1, p / COVERED);
-      // Ease in, then out. Linear reads as a machine pushing a slider.
-      const eased = t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
-      // Geometric, not linear: each step of scroll should feel like the same
-      // proportional move, the way a real lens does.
-      const scale = base * Math.pow(full / base, eased);
+      const t = diveProgress(p);
+      const scale = scaleAt(p, base, full);
 
-      // Slide the aim from the middle of the word to the anchor as the camera
-      // pushes in, so the opening frame is centred and the dive is not.
-      const ax = box.x + box.width * (0.5 + (ANCHOR.x - 0.5) * eased);
-      const ay = box.y + box.height * (0.5 + (ANCHOR.y - 0.5) * eased);
+      const aim = aimAt(p);
+      const ax = box.x + box.width * aim.x;
+      const ay = box.y + box.height * aim.y;
 
       text.setAttribute(
         "transform",
@@ -132,7 +110,7 @@ export default function ShaftWordPortal() {
         "--portal-caption",
         String(1 - Math.min(1, p / 0.16)),
       );
-      section.style.setProperty("--portal-grow", String(1 + 0.16 * eased));
+      section.style.setProperty("--portal-grow", String(1 + 0.16 * ease(t)));
       section.style.setProperty(
         "--portal-reveal",
         String(still ? 1 : Math.max(0, Math.min(1, (p - COVERED) / 0.12))),
@@ -153,11 +131,9 @@ export default function ShaftWordPortal() {
         is pinned at 1 by then and cannot drive it.
       */
       const rect = section.getBoundingClientRect();
-      const leaving = Math.max(0, Math.min(1, rect.bottom / height));
-      const dive = Math.max(0, Math.min(1, (p - 0.12) / 0.25));
       document.documentElement.style.setProperty(
         "--shaft-chrome",
-        String(1 - dive * leaving),
+        String(chromeOpacity(p, rect.bottom / height)),
       );
     };
 
@@ -226,7 +202,7 @@ export default function ShaftWordPortal() {
         the pin releases before the dive finishes — which it did, at about
         44%, dropping the reader into the archive mid-zoom.
       */
-      style={{ height: `calc(${1 + SCROLL_LENGTH} * 100svh)` }}
+      style={{ height: `calc(${SECTION_VIEWPORTS} * 100svh)` }}
     >
       <div ref={pinRef} className="sticky top-0 h-svh overflow-clip">
         {/*

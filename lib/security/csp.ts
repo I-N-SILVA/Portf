@@ -76,13 +76,10 @@ export function contentSecurityPolicy(nonce?: string): string {
     // next/font self-hosts Google Fonts at build time, so no external font
     // origin is needed here.
     "font-src": ["'self'", "data:"],
-    "img-src": [
-      "'self'",
-      "data:",
-      "blob:",
-      "https://images.unsplash.com",
-      "https://www.transparenttextures.com",
-    ],
+    // Every image the site renders is served from /public. Keep this list
+    // in step with `remotePatterns` in next.config.ts: a remote image needs
+    // an entry in both, and the CSP half fails only in production.
+    "img-src": ["'self'", "data:", "blob:"],
     "media-src": ["'self'"],
     "connect-src": ["'self'", ...SUPABASE],
     "frame-src": ["'self'", ...FRAMES, ...bookingOrigin()],

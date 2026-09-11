@@ -284,19 +284,6 @@ html[data-shaft-light] .shaft-paper-texture {
   }
 
 
-  /* Paper Texture Overlay - Removed external dependency for performance */
-  /* .paper-texture::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image: url("https://www.transparenttextures.com/patterns/felt.png");
-    opacity: 0.03;
-    pointer-events: none;
-    z-index: 1;
-    mix-blend-mode: multiply;
-  } */
-
-
   body {
     @apply text-foreground scroll-smooth antialiased;
     background: var(--sky-page-bg);

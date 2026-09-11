@@ -45,7 +45,11 @@ describe("contentSecurityPolicy", () => {
   });
 
   it("permits exactly the origins the app embeds or loads from", () => {
-    expect(relaxed["img-src"]).toContain("https://images.unsplash.com");
+    // Every image is served from /public, so no third-party image origin
+    // should appear. This pairs with an empty `remotePatterns` in
+    // next.config.ts — a new remote image needs both, and this catches
+    // the half of it that would otherwise fail only in production.
+    expect(relaxed["img-src"]).toEqual(["'self'", "data:", "blob:"]);
     expect(relaxed["frame-src"]).toContain("https://www.youtube.com");
     expect(relaxed["frame-src"]).toContain("https://www.loom.com");
     // next/font self-hosts, so no external font origin should appear.

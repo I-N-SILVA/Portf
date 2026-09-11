@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { IntakeTerminal } from "@/components/ui/intake-terminal";
+import ShaftEnquiryForm from "./ShaftEnquiryForm";
 import { INTAKE_ROUTES } from "@/lib/offers";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 
@@ -49,11 +50,11 @@ export default function ShaftOffers() {
    * offer, the problem they picked, and — once they have answered the
    * follow-up — when they want it.
    */
-  const mailto = (subject: string) => {
-    const parts = [subject];
+  const intakeContext = (offerTitle: string) => {
+    const parts = [offerTitle];
     if (answer) parts.push(t(`intake.${answer}`));
     if (when) parts.push(t(`intake.q2.${when}`));
-    return `mailto:${EMAIL}?subject=${encodeURIComponent(parts.join(" — "))}`;
+    return parts.join(" — ");
   };
   /** True once an answer has narrowed the drawer to one slip. */
   const narrowed = answer !== null && routed !== null;
@@ -287,21 +288,20 @@ export default function ShaftOffers() {
               </div>
 
               {/*
-                The answer carries into the subject line, so the first mail
-                already says which of the three this is about and in the
-                reader's own words.
+                The slip the visitor was routed to ends in a form, not a
+                mailto. Both answers prefill the message, so what lands in
+                /admin/enquiries already says which of the three this is
+                about, what the problem is and when they want it — in their
+                own words — and the lead is durable the moment they press
+                send rather than depending on a mail client existing.
               */}
               {narrowed && routed === offer.num && (
-                <a
-                  href={mailto(offer.title)}
-                  className="mt-8 inline-flex min-h-11 items-center border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em] transition-colors"
-                  style={{
-                    borderColor: "rgb(var(--shaft-crimson-text))",
-                    color: "rgb(var(--shaft-crimson-text))",
-                  }}
-                >
-                  {t("intake.cta")}
-                </a>
+                <ShaftEnquiryForm
+                  className="mt-8 border-t pt-8"
+                  projectType={offer.title}
+                  context={intakeContext(offer.title)}
+                  email={EMAIL}
+                />
               )}
 
               {/* The punch: what makes a catalogue card a catalogue card. */}
@@ -345,17 +345,19 @@ export default function ShaftOffers() {
           >
             {t("offers.cta")}
           </p>
+          {/*
+            The same form as the slips. Someone who picked "I don't know yet"
+            is the visitor most worth capturing and the least able to write a
+            subject line, so this is the one place the message genuinely does
+            start empty — the placeholder asks the question instead.
+          */}
           {answer === "d" && (
-            <a
-              href={mailto(t("offers.section"))}
-              className="mt-8 inline-flex min-h-11 items-center border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em]"
-              style={{
-                borderColor: "rgb(var(--shaft-crimson-text))",
-                color: "rgb(var(--shaft-crimson-text))",
-              }}
-            >
-              {t("intake.cta")}
-            </a>
+            <ShaftEnquiryForm
+              className="mt-8 border-t pt-8"
+              projectType={t("offers.section")}
+              context={intakeContext(t("intake.d"))}
+              email={EMAIL}
+            />
           )}
         </motion.div>
       </div>
