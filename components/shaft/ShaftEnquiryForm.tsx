@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { submitEnquiry } from "@/app/enquiry-actions";
 import { useTranslation } from "@/lib/i18n";
 
@@ -38,9 +38,27 @@ export default function ShaftEnquiryForm({
 }: Props) {
   const { t } = useTranslation();
   const id = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
   const [error, setError] = useState<string | null>(null);
   const statusRef = useRef<HTMLParagraphElement>(null);
+
+  /*
+    The message is controlled rather than defaulted because this form mounts
+    as soon as the first question routes the visitor to a slip — the second
+    question is still unanswered above it, and `defaultValue` only reads on
+    mount, so the timeline answer would never reach the field.
+
+    It follows the transcript only while the visitor has not typed. Once they
+    have, their words win: changing an answer above must not erase a sentence
+    they wrote below it.
+  */
+  const [message, setMessage] = useState(context ?? "");
+  const edited = useRef(false);
+  useEffect(() => {
+    if (!edited.current) setMessage(context ?? "");
+  }, [context]);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,11 +67,14 @@ export default function ShaftEnquiryForm({
     setState("sending");
     setError(null);
 
+    // The action catches its own failures, but the call itself can still
+    // reject if the request never completes — a dropped connection mid-submit
+    // must not leave the button stuck on "sending" with nowhere to go.
     const result = await submitEnquiry({
       email: String(form.get("email") ?? ""),
       message: String(form.get("message") ?? ""),
       projectType,
-    });
+    }).catch(() => ({ ok: false as const, error: "unavailable" as const }));
 
     if (result.ok) {
       setState("sent");
@@ -107,7 +128,7 @@ export default function ShaftEnquiryForm({
         required
         autoComplete="email"
         placeholder={t("enquiry.email.placeholder")}
-        className="mt-2 block w-full border bg-transparent px-3 py-2.5 font-space-mono text-[13px] outline-none transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="mt-2 block w-full border bg-transparent px-3 py-2.5 font-space-mono text-[13px] outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
           borderColor: "rgb(var(--shaft-border))",
           color: "rgb(var(--shaft-cream))",
@@ -127,9 +148,13 @@ export default function ShaftEnquiryForm({
         name="message"
         required
         rows={3}
-        defaultValue={context ?? ""}
+        value={message}
+        onChange={(event) => {
+          edited.current = true;
+          setMessage(event.target.value);
+        }}
         placeholder={t("enquiry.message.placeholder")}
-        className="mt-2 block w-full resize-y border bg-transparent px-3 py-2.5 text-[13px] leading-relaxed outline-none transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="mt-2 block w-full resize-y border bg-transparent px-3 py-2.5 text-[13px] leading-relaxed outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
         style={{
           borderColor: "rgb(var(--shaft-border))",
           color: "rgb(var(--shaft-cream))",
@@ -164,7 +189,10 @@ export default function ShaftEnquiryForm({
         {error}
       </p>
 
-      <p className="mt-1 text-[11px] leading-relaxed" style={{ color: "rgb(var(--shaft-muted))" }}>
+      <p
+        className="mt-1 text-[11px] leading-relaxed"
+        style={{ color: "rgb(var(--shaft-muted))" }}
+      >
         {t("enquiry.alt")}{" "}
         <a
           href={`mailto:${fallbackEmail}`}

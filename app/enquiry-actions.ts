@@ -41,22 +41,34 @@ export async function submitEnquiry(input: {
     return { ok: false, error: "invalid" };
   }
 
-  const supabase = await createClient();
-  const { data, error } = await supabase.rpc("submit_contact", {
-    p_name: name,
-    p_email: email,
-    p_message: message,
-    p_company: input.company?.trim() || undefined,
-    p_project_type: input.projectType?.trim() || undefined,
-    p_ref: await resolveRef(input.ref),
-  });
+  /*
+    Everything from here is wrapped, because anything that escapes a server
+    action arrives at the caller as a rejected promise — and a caller that
+    does not expect one leaves the button reading "sending" forever while the
+    enquiry goes nowhere. That is the precise failure this whole form exists
+    to remove, so it must not be reintroduced by a missing env var, an
+    unreachable database, or a schema drift.
+  */
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc("submit_contact", {
+      p_name: name,
+      p_email: email,
+      p_message: message,
+      p_company: input.company?.trim() || undefined,
+      p_project_type: input.projectType?.trim() || undefined,
+      p_ref: await resolveRef(input.ref),
+    });
 
-  // The function returns false rather than raising when it rejects input or
-  // trips the rate limit, so a false is the throttle far more often than it
-  // is bad input — the shape was already checked above.
-  if (error) return { ok: false, error: "unavailable" };
-  if (data !== true) return { ok: false, error: "throttled" };
-  return { ok: true };
+    // The function returns false rather than raising when it rejects input or
+    // trips the rate limit, so a false is the throttle far more often than it
+    // is bad input — the shape was already checked above.
+    if (error) return { ok: false, error: "unavailable" };
+    if (data !== true) return { ok: false, error: "throttled" };
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "unavailable" };
+  }
 }
 
 /**
