@@ -519,3 +519,23 @@ html[data-booted] .shaft-intro-overlay {
     animation: none;
   }
 }
+
+/*
+  The send button while a dispatch is in flight. A pulse on three dots rather
+  than a spinner: the drawer has no other rounded geometry, and a spinner is
+  the one shape that would announce itself as a component from elsewhere.
+*/
+@keyframes shaft-transmit {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+.shaft-transmit {
+  animation: shaft-transmit 900ms ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shaft-transmit {
+    animation: none;
+    opacity: 1;
+  }
+}

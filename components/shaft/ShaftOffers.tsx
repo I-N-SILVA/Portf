@@ -101,12 +101,22 @@ export default function ShaftOffers() {
    * offer, the problem they picked, and — once they have answered the
    * follow-up — when they want it.
    */
-  const intakeContext = (offerTitle: string) => {
-    const parts = [offerTitle];
-    if (answer) parts.push(t(`intake.${answer}`));
-    if (when) parts.push(t(`intake.q2.${when}`));
-    if (budget) parts.push(t(`intake.q3.${budget}`));
-    return parts.join(" — ");
+  /**
+   * The answers as labelled lines rather than one run-on sentence. The form
+   * prints them as a manifest, and what lands in /admin keeps the same shape
+   * — a record that can be read at a glance instead of a string that has to
+   * be decoded back into fields.
+   */
+  const intakeManifest = (offerTitle?: string) => {
+    // No JOB line on the "I don't know yet" path: there is no offer there, and
+    // filling the slot with the problem again printed the same sentence twice.
+    const lines = offerTitle
+      ? [{ label: t("enquiry.field.offer"), value: offerTitle }]
+      : [];
+    if (answer) lines.push({ label: t("enquiry.field.problem"), value: t(`intake.${answer}`) });
+    if (when) lines.push({ label: t("enquiry.field.when"), value: t(`intake.q2.${when}`) });
+    if (budget) lines.push({ label: t("enquiry.field.budget"), value: t(`intake.q3.${budget}`) });
+    return lines;
   };
   /**
    * True once the drawer is narrowed to one slip *and* there is nothing left
@@ -450,7 +460,7 @@ export default function ShaftOffers() {
                 <ShaftEnquiryForm
                   className="mt-8 border-t pt-8"
                   projectType={offer.title}
-                  context={intakeContext(offer.title)}
+                  transcript={intakeManifest(offer.title)}
                   email={EMAIL}
                 />
               )}
@@ -506,7 +516,7 @@ export default function ShaftOffers() {
             <ShaftEnquiryForm
               className="mt-8 border-t pt-8"
               projectType={t("offers.section")}
-              context={intakeContext(t("intake.d"))}
+              transcript={intakeManifest()}
               email={EMAIL}
             />
           )}

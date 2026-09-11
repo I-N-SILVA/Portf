@@ -12,7 +12,6 @@ import ShaftArchive from "./ShaftArchive";
 import ShaftCall from "./ShaftCall";
 import ShaftSocialDock from "./ShaftSocialDock";
 import ShaftMobileCTA from "./ShaftMobileCTA";
-import ShaftStatusStrip from "./ShaftStatusStrip";
 import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
 import BootSequence from "@/components/ui/BootSequence";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
@@ -141,7 +140,13 @@ export default function ShaftLandingContent({
         className="w-full min-h-screen overflow-x-clip relative pb-28 md:pb-0"
         style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
       >
-          <ShaftStatusStrip />
+          {/*
+            The left status rail is gone. It printed coordinates and a
+            "system active" string vertically at 8px, which is below the size
+            anyone reads — so it was costing a permanent column of visual
+            noise down the side of every section to say nothing. Five things
+            floated over this page; four is already a lot.
+          */}
           <ShaftNav visible={true} />
           <ShaftSocialDock />
           <ShaftMobileCTA />

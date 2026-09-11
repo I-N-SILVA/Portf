@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 import { submitEnquiry } from "@/app/enquiry-actions";
 import { useTranslation } from "@/lib/i18n";
 
@@ -8,57 +8,41 @@ interface Props {
   /** Which offer this is about; rides along as the project type. */
   projectType?: string;
   /**
-   * What the visitor already told the terminal, in their own words. Prefills
-   * the message so the field is never an empty box demanding a cover letter.
+   * What the terminal already collected, as labelled lines. Shown as a
+   * standing record rather than poured into a textarea.
    */
-  context?: string;
+  transcript?: { label: string; value: string }[];
   className?: string;
   /** Fallback address, for the escape hatch under the form. */
   email: string;
 }
 
 /**
- * The last step of the intake: two fields and a button.
+ * The last command in the terminal, not a contact form stapled to the end of
+ * one.
  *
- * This replaces a `mailto:` link. A mailto asks the visitor to leave the
- * page, in an application that may not be configured, and to compose a note
- * from a blank cursor — and if any of that fails the enquiry simply never
- * existed. Capturing it here means the lead is durable before the visitor
- * does anything else, and the address is still offered underneath for the
- * people who genuinely prefer their own mail client.
+ * The first version dumped the three answers into a textarea as one run-on
+ * string and asked the visitor to edit it. That is backwards: those answers
+ * are already correct, and presenting them as editable prose invited people
+ * to rewrite what the terminal had carefully structured — while hiding the
+ * fact that a real record was being assembled.
  *
- * The message is prefilled with the answers the terminal already collected,
- * so the visitor is editing a sentence rather than facing an empty box.
+ * So the answers are a manifest, printed as fixed field lines the way the
+ * rest of the drawer prints things. Only two things are actually asked: an
+ * address, and anything the manifest does not already say. The visitor sees
+ * a dispatch being filled in and signs the bottom of it.
  */
 export default function ShaftEnquiryForm({
   projectType,
-  context,
+  transcript = [],
   className,
   email: fallbackEmail,
 }: Props) {
   const { t } = useTranslation();
   const id = useId().replace(/[^a-zA-Z0-9]/g, "");
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">(
-    "idle",
-  );
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
-  const statusRef = useRef<HTMLParagraphElement>(null);
-
-  /*
-    The message is controlled rather than defaulted because this form mounts
-    as soon as the first question routes the visitor to a slip — the second
-    question is still unanswered above it, and `defaultValue` only reads on
-    mount, so the timeline answer would never reach the field.
-
-    It follows the transcript only while the visitor has not typed. Once they
-    have, their words win: changing an answer above must not erase a sentence
-    they wrote below it.
-  */
-  const [message, setMessage] = useState(context ?? "");
-  const edited = useRef(false);
-  useEffect(() => {
-    if (!edited.current) setMessage(context ?? "");
-  }, [context]);
+  const noteRef = useRef<HTMLTextAreaElement>(null);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -67,12 +51,16 @@ export default function ShaftEnquiryForm({
     setState("sending");
     setError(null);
 
-    // The action catches its own failures, but the call itself can still
-    // reject if the request never completes — a dropped connection mid-submit
-    // must not leave the button stuck on "sending" with nowhere to go.
+    // The manifest is the message. A note, if there is one, is appended under
+    // it — so what lands in /admin reads as a record rather than a sentence
+    // that has to be decoded back into fields.
+    const note = String(form.get("note") ?? "").trim();
+    const manifest = transcript.map((line) => `${line.label}: ${line.value}`).join("\n");
+    const message = note ? `${manifest}\n\n${note}` : manifest;
+
     const result = await submitEnquiry({
       email: String(form.get("email") ?? ""),
-      message: String(form.get("message") ?? ""),
+      message,
       projectType,
     }).catch(() => ({ ok: false as const, error: "unavailable" as const }));
 
@@ -90,14 +78,12 @@ export default function ShaftEnquiryForm({
     );
   };
 
+  /* ── The stamped slip ──────────────────────────────────────────────── */
   if (state === "sent") {
     return (
-      <div
-        className={className}
-        style={{ borderColor: "rgb(var(--shaft-crimson-text))" }}
-      >
+      <div className={className}>
         <p
-          className="font-space-mono text-[11px] uppercase tracking-[0.28em]"
+          className="font-space-mono text-[10px] uppercase tracking-[0.3em]"
           style={{ color: "rgb(var(--shaft-crimson-text))" }}
         >
           {t("enquiry.sent.title")}
@@ -114,6 +100,36 @@ export default function ShaftEnquiryForm({
 
   return (
     <form onSubmit={onSubmit} className={className} noValidate>
+      {/*
+        The manifest. Read-only on purpose: these came from the terminal and
+        are already right. Rendered as a definition list because that is what
+        it is — labelled values, not a paragraph.
+      */}
+      {transcript.length > 0 && (
+        <dl className="mb-7">
+          {transcript.map((line) => (
+            <div
+              key={line.label}
+              className="flex gap-4 border-b py-2 last:border-b-0"
+              style={{ borderColor: "rgb(var(--shaft-border))" }}
+            >
+              <dt
+                className="w-20 shrink-0 font-space-mono text-[9px] uppercase leading-5 tracking-[0.2em]"
+                style={{ color: "rgb(var(--shaft-muted))" }}
+              >
+                {line.label}
+              </dt>
+              <dd
+                className="flex-1 text-[12px] leading-5"
+                style={{ color: "rgb(var(--shaft-cream-dim))" }}
+              >
+                {line.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
       <label
         htmlFor={`${id}-email`}
         className="block font-space-mono text-[10px] uppercase tracking-[0.28em]"
@@ -121,6 +137,11 @@ export default function ShaftEnquiryForm({
       >
         {t("enquiry.email.label")}
       </label>
+      {/*
+        A ruled line rather than a box. The drawer is built from rules and
+        field labels, and a bordered input in the middle of it reads as a
+        widget someone dropped in from a different site.
+      */}
       <input
         id={`${id}-email`}
         name="email"
@@ -128,50 +149,49 @@ export default function ShaftEnquiryForm({
         required
         autoComplete="email"
         placeholder={t("enquiry.email.placeholder")}
-        className="mt-2 block w-full border bg-transparent px-3 py-2.5 font-space-mono text-[13px] outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="mt-1.5 block w-full border-0 border-b bg-transparent px-0 py-2 font-space-mono text-[14px] outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus:border-b-[rgb(var(--shaft-crimson-text))] focus-visible:outline-none"
         style={{
-          borderColor: "rgb(var(--shaft-border))",
+          borderBottomColor: "rgb(var(--shaft-border))",
           color: "rgb(var(--shaft-cream))",
-          outlineColor: "rgb(var(--shaft-crimson-text))",
         }}
       />
 
       <label
-        htmlFor={`${id}-message`}
-        className="mt-5 block font-space-mono text-[10px] uppercase tracking-[0.28em]"
+        htmlFor={`${id}-note`}
+        className="mt-6 block font-space-mono text-[10px] uppercase tracking-[0.28em]"
         style={{ color: "rgb(var(--shaft-muted))" }}
       >
-        {t("enquiry.message.label")}
+        {t("enquiry.note.label")}
       </label>
       <textarea
-        id={`${id}-message`}
-        name="message"
-        required
-        rows={3}
-        value={message}
-        onChange={(event) => {
-          edited.current = true;
-          setMessage(event.target.value);
-        }}
-        placeholder={t("enquiry.message.placeholder")}
-        className="mt-2 block w-full resize-y border bg-transparent px-3 py-2.5 text-[13px] leading-relaxed outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+        ref={noteRef}
+        id={`${id}-note`}
+        name="note"
+        rows={2}
+        placeholder={t("enquiry.note.placeholder")}
+        className="mt-1.5 block w-full resize-y border-0 border-b bg-transparent px-0 py-2 text-[13px] leading-relaxed outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus:border-b-[rgb(var(--shaft-crimson-text))] focus-visible:outline-none"
         style={{
-          borderColor: "rgb(var(--shaft-border))",
+          borderBottomColor: "rgb(var(--shaft-border))",
           color: "rgb(var(--shaft-cream))",
-          outlineColor: "rgb(var(--shaft-crimson-text))",
         }}
       />
 
       <button
         type="submit"
         disabled={state === "sending"}
-        className="mt-6 inline-flex min-h-11 items-center border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em] transition-colors disabled:opacity-60"
+        className="group mt-7 inline-flex min-h-11 items-center gap-3 border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em] transition-colors hover:bg-[rgb(var(--shaft-crimson-text))] hover:text-[rgb(var(--shaft-bg))] disabled:opacity-60 disabled:hover:bg-transparent disabled:hover:text-[rgb(var(--shaft-crimson-text))]"
         style={{
           borderColor: "rgb(var(--shaft-crimson-text))",
           color: "rgb(var(--shaft-crimson-text))",
         }}
       >
         {state === "sending" ? t("enquiry.sending") : t("enquiry.submit")}
+        <span
+          aria-hidden="true"
+          className={state === "sending" ? "shaft-transmit" : undefined}
+        >
+          {state === "sending" ? "•••" : "→"}
+        </span>
       </button>
 
       {/*
@@ -180,7 +200,6 @@ export default function ShaftEnquiryForm({
         than announcing.
       */}
       <p
-        ref={statusRef}
         role="status"
         aria-live="polite"
         className="mt-3 min-h-[1.2em] text-[12px] leading-relaxed"
@@ -189,10 +208,7 @@ export default function ShaftEnquiryForm({
         {error}
       </p>
 
-      <p
-        className="mt-1 text-[11px] leading-relaxed"
-        style={{ color: "rgb(var(--shaft-muted))" }}
-      >
+      <p className="mt-1 text-[11px] leading-relaxed" style={{ color: "rgb(var(--shaft-muted))" }}>
         {t("enquiry.alt")}{" "}
         <a
           href={`mailto:${fallbackEmail}`}
