@@ -32,7 +32,18 @@ function IntroSkip({ onSkip }: { onSkip: () => void }) {
     <button
       type="button"
       onClick={onSkip}
-      className="fixed bottom-6 right-6 z-[260] min-h-11 border border-white/25 bg-black/40 px-4 py-2 font-space-mono text-[10px] uppercase tracking-[0.2em] text-white backdrop-blur-sm transition-colors hover:border-white hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+      /*
+        Theme tokens, not white-on-black. This was `text-white` over
+        `bg-black/40`, which is fine on the dark intro and 1.10:1 on the light
+        one — the overlay is cream there, so 40% black over it lands at a mid
+        grey and the label vanishes into it. It is the only way out of the
+        intro, so it is the last control that can afford to be invisible.
+
+        --shaft-cream on --shaft-bg is the theme's own text-on-ground pair and
+        is audited in both directions; the hover inverts them rather than
+        reaching for absolute colours.
+      */
+      className="fixed bottom-6 right-6 z-[260] min-h-11 border border-[rgb(var(--shaft-border))] bg-[rgb(var(--shaft-bg)/0.85)] px-4 py-2 font-space-mono text-[10px] uppercase tracking-[0.2em] text-[rgb(var(--shaft-cream))] backdrop-blur-sm transition-colors hover:border-[rgb(var(--shaft-cream))] hover:bg-[rgb(var(--shaft-cream))] hover:text-[rgb(var(--shaft-bg))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[rgb(var(--shaft-crimson-text))]"
     >
       {t("intro.skip")} →
     </button>
