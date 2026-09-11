@@ -52,6 +52,9 @@ variables, DNS and verification steps: **[docs/deploying.md](docs/deploying.md)*
 Architecture, data model, and how each module works:
 **[docs/portal-admin.md](docs/portal-admin.md)**.
 
+Auth emails landing in the wrong place, or not arriving at all:
+**[docs/supabase-auth-redirects.md](docs/supabase-auth-redirects.md)**.
+
 The data model, drawn: **[docs/data-model.md](docs/data-model.md)**.
 
 Known gaps and what to pick up next: **[docs/improvements.md](docs/improvements.md)**.
