@@ -50,18 +50,21 @@ export default function LabPage() {
         on :root, so it carries its palette into this shell rather than
         inheriting the studio's paper and ink.
       */}
-      <ShaftWordPortal />
+      <ShaftWordPortal skipTo="#how-it-is-built" skipLabel="SKIP THE DIVE" />
 
       <section className="mx-auto max-w-3xl px-6 pb-24 pt-20">
-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
+        <h2
+          id="how-it-is-built"
+          className="scroll-mt-24 text-2xl font-bold tracking-tight md:text-3xl"
+        >
           How it is built
         </h2>
         <div className="mt-6 space-y-5 text-lg leading-relaxed text-stone-700">
           <p>
             An SVG <code className="font-mono text-base">clipPath</code> holds
-            the word; a plain div holds the field behind it. Clipping the div
-            by the path is what makes the letters windows rather than glyphs,
-            and scaling the path is the camera moving. Past the point where one
+            the word; a plain div holds the field behind it. Clipping the div by
+            the path is what makes the letters windows rather than glyphs, and
+            scaling the path is the camera moving. Past the point where one
             stroke covers the viewport the clip comes off entirely — cheaper to
             paint, and the moment the section stops being a word.
           </p>
@@ -69,16 +72,16 @@ export default function LabPage() {
             The hard part is knowing where to aim. A component that can do this
             to <em>any</em> word has to rasterise each glyph and scan it,
             because the middle of a letter is as likely to be a counter as a
-            stroke — aim at the hole and the screen goes black. With one word
-            in one face the target is a constant, so it was measured once:
-            WORK rendered in Playfair Display at 900, every point on a grid
-            tested for the largest disk of solid ink that fits around it. The
-            bowl of the O wins.
+            stroke — aim at the hole and the screen goes black. With one word in
+            one face the target is a constant, so it was measured once: WORK
+            rendered in Playfair Display at 900, every point on a grid tested
+            for the largest disk of solid ink that fits around it. The bowl of
+            the O wins.
           </p>
           <p>
-            The pin is sticky and the section is as tall as the dive is long,
-            so the scrollbar keeps telling the truth about the length of the
-            page. Nothing here intercepts a wheel event or animates the scroll
+            The pin is sticky and the section is as tall as the dive is long, so
+            the scrollbar keeps telling the truth about the length of the page.
+            Nothing here intercepts a wheel event or animates the scroll
             position, which is why it still behaves under a trackpad flick.
           </p>
         </div>

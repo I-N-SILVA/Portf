@@ -39,7 +39,22 @@ import {
  * here intercepts or slows a wheel event.
  */
 
-export default function ShaftWordPortal() {
+interface Props {
+  /**
+   * Where the escape hatch goes. Defaults to the landing's archive, which is
+   * what the portal was built to introduce; mounted anywhere else there is no
+   * such anchor, and a link to a section that is not on the page is worse
+   * than no link at all.
+   */
+  skipTo?: string;
+  /** The label on that hatch, when the destination is not the archive. */
+  skipLabel?: string;
+}
+
+export default function ShaftWordPortal({
+  skipTo = "#shaft-archive",
+  skipLabel,
+}: Props = {}) {
   const { t } = useTranslation();
   const word = t("portal.word");
 
@@ -202,7 +217,19 @@ export default function ShaftWordPortal() {
         the pin releases before the dive finishes — which it did, at about
         44%, dropping the reader into the archive mid-zoom.
       */
-      style={{ height: `calc(${SECTION_VIEWPORTS} * 100svh)` }}
+      /*
+        The ground is the component's own, not the page's. The word is a hole
+        in a sheet, so whatever sits outside the letterforms *is* the sheet —
+        and on the landing that happened to be the page's own near-black. Mounted
+        anywhere lighter (the studio's paper, say) the sheet and the field
+        become the same colour and the word disappears entirely. Painting it
+        here costs the landing nothing, since --shaft-bg is what the landing
+        already was, and makes the piece portable.
+      */
+      style={{
+        height: `calc(${SECTION_VIEWPORTS} * 100svh)`,
+        backgroundColor: "rgb(var(--shaft-bg))",
+      }}
     >
       <div ref={pinRef} className="sticky top-0 h-svh overflow-clip">
         {/*
@@ -265,10 +292,10 @@ export default function ShaftWordPortal() {
         >
           <span>{t("portal.hint")}</span>
           <a
-            href="#shaft-archive"
+            href={skipTo}
             className="min-h-11 py-4 transition-opacity hover:opacity-70"
           >
-            {t("portal.enter")} ↘
+            {skipLabel ?? t("portal.enter")} ↘
           </a>
         </p>
       </div>

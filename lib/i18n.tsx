@@ -33,10 +33,17 @@ interface LocaleContextValue {
   t: (key: string) => string;
 }
 
+/*
+  The default falls back to English rather than echoing the key. A component
+  rendered outside a provider is a mistake, but returning "portal.word" makes
+  that mistake render as raw dot-notation in 120pt type on the page, which is
+  worse than quietly being in English — and, for anything that measures its
+  own text, it silently changes the geometry too.
+*/
 const LocaleContext = createContext<LocaleContextValue>({
   locale: "en",
   setLocale: () => {},
-  t: (key) => key,
+  t: (key) => en[key] ?? key,
 });
 
 /* ─── Provider ───────────────────────────────────────────────────────── */
