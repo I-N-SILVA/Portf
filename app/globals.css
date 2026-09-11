@@ -493,3 +493,29 @@ html[data-booted] .shaft-intro-overlay {
     opacity: 1;
   }
 }
+
+/*
+  The work gallery's plate, when the selection changes. A fade with a touch of
+  scale rather than a slide: the plates are different shapes, and anything
+  that moves them horizontally reads as a carousel — which is the interaction
+  this component replaced.
+*/
+@keyframes shaft-plate-in {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 0.88;
+    transform: scale(1);
+  }
+}
+.shaft-plate-in {
+  animation: shaft-plate-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shaft-plate-in {
+    animation: none;
+  }
+}

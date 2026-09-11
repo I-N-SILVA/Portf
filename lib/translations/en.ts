@@ -19,6 +19,8 @@ export const en: Record<string, string> = {
   "portal.hint": "Scroll through.",
   "portal.enter": "Skip to the archive",
   "portal.landing": "Everything past this point was built, shipped, and is still running.",
+  "archive.open": "OPEN THE RECORD",
+  "archive.hint": "↑ ↓ TO MOVE THROUGH THE WORK",
   "archive.section": "02 / SELECTED WORK",
   "archive.reelHint": "DRAG THE REEL · OR USE ← →",
   "archive.filter.all": "ALL",

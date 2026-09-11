@@ -18,6 +18,8 @@ export const ja: Record<string, string> = {
   "portal.hint": "スクロールして通り抜ける。",
   "portal.enter": "アーカイブへ",
   "portal.landing": "ここから先はすべて、実際に作られ、公開され、今も動いています。",
+  "archive.open": "記録を開く",
+  "archive.hint": "↑ ↓ で作品を移動",
   "archive.section": "02 / 制作実績",
   "archive.reelHint": "ドラッグ · または ← → キー",
   "archive.filter.all": "すべて",

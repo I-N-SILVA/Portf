@@ -18,6 +18,8 @@ export const zh: Record<string, string> = {
   "portal.hint": "向下滚动，穿过去。",
   "portal.enter": "前往作品档案",
   "portal.landing": "从这里往下，每一件都真正做出来、上线了，并且仍在运行。",
+  "archive.open": "打开记录",
+  "archive.hint": "↑ ↓ 浏览作品",
   "archive.section": "02 / 精选项目",
   "archive.reelHint": "拖动胶片 · 或使用 ← →",
   "archive.filter.all": "全部",

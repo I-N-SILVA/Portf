@@ -18,6 +18,8 @@ export const es: Record<string, string> = {
   "portal.hint": "Atraviesa.",
   "portal.enter": "Ir al archivo",
   "portal.landing": "Todo lo que viene fue construido, publicado, y sigue funcionando.",
+  "archive.open": "ABRIR EL REGISTRO",
+  "archive.hint": "↑ ↓ PARA RECORRER LOS TRABAJOS",
   "archive.section": "02 / TRABAJOS DESTACADOS",
   "archive.reelHint": "ARRASTRA EL CARRETE · O USA ← →",
   "archive.filter.all": "TODOS",
