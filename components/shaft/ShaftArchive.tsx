@@ -62,6 +62,8 @@ type LabItem = {
   image: string;
   stack: string[];
   status: LabStatus;
+  /** Crop anchor for the thumbnail. Defaults to the top-left, where app chrome lives. */
+  focus?: "left-top" | "center";
   /** Absent for private repos: no dead links. */
   url?: string;
 };
@@ -69,25 +71,26 @@ type LabItem = {
 /** The first entry is the featured card on desktop, so keep the most visual one there. */
 const LAB: LabItem[] = [
   {
+    name: "MUSKI",
+    summary: "Desktop music vault on a Rust audio engine, with lyrics, mixtapes and a reactive visualiser.",
+    image: "/projects/muski-player.webp",
+    stack: ["Tauri", "Rust", "React"],
+    status: "private",
+  },
+  {
+    name: "QLICO",
+    summary: "Drop in a PDF and it becomes an interactive edition you share as one link, then see which pages people finish and what they click.",
+    url: "https://folio-liard-nu.vercel.app",
+    image: "/projects/qlico.webp",
+    focus: "center",
+    stack: ["Next.js", "Supabase", "Stripe"],
+    status: "live",
+  },
+  {
     name: "Satori no Manga",
     summary: "Self-hosted manga reader: multi-source search, offline vault, release calendar and a cinematic reader.",
     image: "/projects/manga-spotlight.webp",
     stack: ["React", "FastAPI", "Docker"],
-    status: "private",
-  },
-  {
-    name: "Promptuous",
-    summary: "Prompt library and versioning workspace for people who run AI in production.",
-    url: "https://prompt-vaulty.vercel.app/",
-    image: "/projects/promptuous.webp",
-    stack: ["React", "Vite", "PWA"],
-    status: "live",
-  },
-  {
-    name: "MUSKI",
-    summary: "Desktop music vault on a Rust audio engine, with lyrics, mixtapes and a reactive visualiser.",
-    image: "/projects/muski-scope.webp",
-    stack: ["Tauri", "Rust", "React"],
     status: "private",
   },
   {
@@ -239,7 +242,7 @@ function LabCard({ item, index }: { item: LabItem; index: number }) {
           alt={`${item.name} screenshot`}
           fill
           sizes={featured ? "(min-width: 1024px) 60vw, (min-width: 768px) 90vw, 78vw" : "(min-width: 1024px) 14vw, (min-width: 768px) 30vw, 78vw"}
-          className="object-cover object-left-top transition-transform duration-500 group-hover:scale-[1.04]"
+          className={`object-cover ${item.focus === "center" ? "object-center" : "object-left-top"} transition-transform duration-500 group-hover:scale-[1.04]`}
         />
       </div>
       <div className={`flex flex-col ${featured ? "p-5 md:p-6 lg:flex-none" : "flex-1 p-4 md:p-5"}`}>
