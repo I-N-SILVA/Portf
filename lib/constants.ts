@@ -14,7 +14,7 @@ export const PROFILE_STATS = [
 // ─── Site ─────────────────────────────────────────────────────────────────
 export const SITE = {
   NAME: "Ian N. Silva",
-  TITLE: "Ian N. Silva — AI Automation Engineer & Full-Stack Developer",
+  TITLE: "Ian N. Silva | Fixed-Price MVPs and Landing Pages, UK",
   /*
     Read by the SERP snippet, both share cards, the Person schema and
     /llms.txt, so it is the one sentence that has to match what is actually
@@ -22,7 +22,7 @@ export const SITE = {
     of which is on the page — because it predates the current offering.
   */
   DESCRIPTION:
-    "Ian N. Silva — AI automation, working prototypes and landing pages that earn their traffic. Built and shipped in two to four weeks. Remote, worldwide.",
+    "Fixed-price MVPs and landing pages for founders and small businesses. A working product with login for £2,000, with payments for £4,000, or a landing page from £350. UK-based.",
   URL: "https://iamnsilva.me",
   EMAIL: "iannogueira@proton.me",
 } as const;

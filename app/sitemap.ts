@@ -46,6 +46,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
       alternates: { languages },
     })),
+    ...Object.values(routes.services).map((path) => ({
+      url: siteUrl(path),
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
     ...caseStudies.map((study) => ({
       url: siteUrl(routes.studio.work(study.slug)),
       lastModified: now,

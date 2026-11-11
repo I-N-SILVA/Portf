@@ -16,6 +16,21 @@ import AmbientHum from "./AmbientHum";
 import BootSequence from "@/components/ui/BootSequence";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LocaleProvider, useTranslation, type Locale } from "@/lib/i18n";
+import { INTAKE_FAQ } from "@/lib/offers";
+
+/**
+ * The landing FAQ as FAQPage schema. It lives here, not in the root layout, so the service pages
+ * (which carry their own FAQPage) never ship two FAQ blocks on one URL.
+ */
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: INTAKE_FAQ.map(({ question, answer }) => ({
+    "@type": "Question",
+    name: question,
+    acceptedAnswer: { "@type": "Answer", text: answer },
+  })),
+};
 
 /**
  * `sessionStorage` key set once the intro has played. A companion inline
@@ -100,6 +115,7 @@ export default function ShaftLandingContent({
 
   return (
     <LocaleProvider initialLocale={locale}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <div className="shaft-paper-texture" />
       {stage !== "main" && <IntroSkip onSkip={completeIntro} />}
 

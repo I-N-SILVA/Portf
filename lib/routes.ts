@@ -67,6 +67,9 @@ export const routes = {
   /** TidyCal's after-booking redirect. */
   booked: "/booked",
 
+  /** Service pages: one per offer, written for search and answer engines. */
+  services: { mvp: "/mvp-development", landing: "/landing-page-design" },
+
   /** Post-login resolver for client and admin workspaces. */
   portal: "/portal",
 

@@ -16,7 +16,7 @@ import "./globals.css";
 import "@/components/brand/tokens.css";
 import "@/components/brand/brand-global.css";
 import { SITE } from "@/lib/constants";
-import { INTAKE_FAQ, OFFERS } from "@/lib/offers";
+import { LANDING, MVP_TIERS } from "@/lib/offers";
 import { socialLinks } from "@/lib/placeholder-content";
 
 export const metadata: Metadata = {
@@ -81,51 +81,64 @@ export const viewport = {
  */
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  name: SITE.NAME,
-  jobTitle: "AI Automation Engineer & Full-Stack Developer",
-  description: SITE.DESCRIPTION,
-  url: SITE.URL,
-  email: `mailto:${SITE.EMAIL}`,
-  sameAs: socialLinks.map((link) => link.url),
-  knowsAbout: [
-    "AI automation",
-    "AI agents and LLM workflows",
-    "Rapid prototyping and MVPs",
-    "Conversion-focused landing pages",
-    "Full-stack development",
-    "Behavioral economics",
-  ],
-  makesOffer: OFFERS.map(({ name, description }) => ({
-    "@type": "Offer",
-    itemOffered: {
-      "@type": "Service",
-      name,
-      description,
-      provider: { "@type": "Person", name: SITE.NAME, url: SITE.URL },
-      areaServed: "Worldwide",
-      serviceType: name,
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${SITE.URL}/#ian`,
+      name: SITE.NAME,
+      jobTitle: "MVP developer and landing page designer",
+      description: SITE.DESCRIPTION,
+      url: SITE.URL,
+      email: `mailto:${SITE.EMAIL}`,
+      sameAs: socialLinks.map((link) => link.url),
+      worksFor: { "@id": `${SITE.URL}/#studio` },
+      knowsAbout: [
+        "MVP development",
+        "Landing page design",
+        "Next.js and React",
+        "Supabase and Postgres",
+        "Stripe payments",
+        "AI automation",
+        "Behavioral economics",
+      ],
     },
-  })),
+    {
+      // The business, so search and answer engines can match "MVP developer UK" to a provider with
+      // prices. No street address on purpose: it is a remote studio run from home.
+      "@type": "ProfessionalService",
+      "@id": `${SITE.URL}/#studio`,
+      name: SITE.NAME,
+      description: SITE.DESCRIPTION,
+      url: SITE.URL,
+      email: SITE.EMAIL,
+      founder: { "@id": `${SITE.URL}/#ian` },
+      address: { "@type": "PostalAddress", addressCountry: "GB" },
+      areaServed: [{ "@type": "Country", name: "United Kingdom" }, { "@type": "City", name: "London" }],
+      priceRange: "£350 to £4,000",
+      currenciesAccepted: "GBP",
+      sameAs: socialLinks.map((link) => link.url),
+      makesOffer: [
+        ...MVP_TIERS.map((tier) => ({
+          "@type": "Offer",
+          name: tier.id === "auth" ? "MVP Sprint, with login" : "MVP Sprint, with payments",
+          price: Number(tier.price.replace(/[^0-9]/g, "")),
+          priceCurrency: "GBP",
+          url: `${SITE.URL}/mvp-development`,
+          itemOffered: { "@type": "Service", name: "MVP development", serviceType: "MVP development" },
+        })),
+        {
+          "@type": "Offer",
+          name: "Landing page",
+          price: Number(LANDING.price.replace(/[^0-9]/g, "")),
+          priceCurrency: "GBP",
+          url: `${SITE.URL}/landing-page-design`,
+          itemOffered: { "@type": "Service", name: "Landing page design", serviceType: "Landing page design" },
+        },
+      ],
+    },
+  ],
 };
 
-/**
- * The intake terminal's four questions, as FAQPage.
- *
- * Answer engines lift question-shaped content, and since the studio's FAQ
- * left with the studio this site had none. These are not new copy — they are
- * the questions the capabilities section already asks, in the shape a machine
- * can quote.
- */
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: INTAKE_FAQ.map(({ question, answer }) => ({
-    "@type": "Question",
-    name: question,
-    acceptedAnswer: { "@type": "Answer", text: answer },
-  })),
-};
 
 import { Providers } from "./providers";
 import { SupabaseRuntimeConfig } from "@/components/SupabaseRuntimeConfig";
@@ -176,10 +189,6 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
       <body

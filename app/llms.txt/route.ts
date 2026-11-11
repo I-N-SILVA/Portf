@@ -1,7 +1,9 @@
 import { SITE } from "@/lib/constants";
-import { INTAKE_FAQ, OFFERS } from "@/lib/offers";
+import { INTAKE_FAQ } from "@/lib/offers";
+import { BOOKING } from "@/lib/booking";
+import { SERVICES } from "@/lib/services";
+import { LAB, PRODUCTS } from "@/lib/work";
 import { caseStudies } from "@/lib/client-content";
-import { projects } from "@/lib/placeholder-content";
 import { routes, siteUrl } from "@/lib/routes";
 
 /**
@@ -20,42 +22,47 @@ import { routes, siteUrl } from "@/lib/routes";
 export const dynamic = "force-static";
 
 export function GET(): Response {
-  const live = projects.filter((project) => !project.retired);
+  const mvp = SERVICES.mvp;
+  const landing = SERVICES.landing;
+  const external = (href: string) => (/^https?:/.test(href) ? href : siteUrl(href));
 
   const body = [
     `# ${SITE.NAME}`,
     "",
     `> ${SITE.DESCRIPTION}`,
     "",
-    `Contact: ${SITE.EMAIL}`,
-    `Site: ${SITE.URL}`,
+    "Ian N. Silva is a UK-based developer who builds fixed-price MVPs and landing pages for founders and small businesses. He works remotely with clients across the UK, London included.",
     "",
-    "## What this studio does",
+    `- Site: ${SITE.URL}`,
+    `- Book a free 20-minute call: ${BOOKING.fitCall}`,
+    `- Email: ${SITE.EMAIL}`,
     "",
-    ...OFFERS.map((offer) => `- **${offer.name}** — ${offer.description}`),
+    "## Services and prices (GBP, fixed price)",
     "",
-    "Typical engagement is two to four weeks. Work is remote and worldwide.",
+    ...[mvp, landing].flatMap((s) => [
+      `### ${s.serviceType}: ${siteUrl(s.slug)}`,
+      "",
+      ...s.tiers.map((t) => `- **${t.name}**: ${t.price}, ${t.timeline}. Includes: ${t.includes.join("; ")}.`),
+      "",
+    ]),
+    "Payment: MVP Sprints are 50% to start and 50% on launch. Landing pages are paid upfront. Extras (logo, more pages, copywriting) are quoted on the call before anything starts. The client owns the code from day one.",
     "",
     "## Common questions",
     "",
-    ...INTAKE_FAQ.flatMap(({ question, answer }) => [
-      `### ${question}`,
-      "",
-      answer,
-      "",
-    ]),
+    ...[...INTAKE_FAQ.map(({ question, answer }) => ({ q: question, a: answer })), ...mvp.answers, ...mvp.faq, ...landing.answers, ...landing.faq].flatMap(({ q, a }) => [`### ${q}`, "", a, ""]),
     "## Selected work",
     "",
-    ...live.map(
-      (project) =>
-        `- **${project.title}** (${project.category}) — ${project.description} ${siteUrl(`/projects/${project.id}`)}`,
-    ),
+    ...PRODUCTS.map((p) => `- **${p.name}** (${p.role}): ${p.summary} ${external(p.url)}`),
+    "",
+    "## The lab (tools Ian builds for himself)",
+    "",
+    ...LAB.map((l) => `- **${l.name}** (${l.stack.join(", ")}; ${l.status === "oss" ? "open source" : l.status}): ${l.summary}${l.url ? ` ${l.url}` : ""}`),
     "",
     "## Case studies",
     "",
     ...caseStudies.map(
       (study) =>
-        `- **${study.headline}** (${study.industry}) — ${study.problem} ${siteUrl(routes.studio.work(study.slug))}`,
+        `- **${study.headline}** (${study.industry}): ${study.problem} ${siteUrl(routes.studio.work(study.slug))}`,
     ),
     "",
     "## Not for indexing",

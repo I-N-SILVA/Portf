@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { routes } from "@/lib/routes";
+
 import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState, type MouseEvent } from "react";
 import { useTranslation } from "@/lib/i18n";
@@ -240,6 +243,13 @@ export default function ShaftOffers() {
                 {t("mvp.cta")}
                 <span aria-hidden="true" className="transition-transform duration-150 group-hover/cta:translate-x-1">→</span>
               </a>
+              <Link
+                href={routes.services.mvp}
+                className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 font-space-mono text-[11px] uppercase tracking-[0.16em] transition-colors hover:text-[rgb(var(--shaft-cream))]"
+                style={{ color: "rgb(var(--shaft-muted))" }}
+              >
+                {t("offers.mvpMore")} <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
         </motion.div>
@@ -286,7 +296,10 @@ export default function ShaftOffers() {
           </div>
         </motion.div>
         <p className="mt-4 text-[14px]" style={{ color: "rgb(var(--shaft-muted))" }}>
-          {t("landing.note")}
+          {t("landing.note")}{" "}
+          <Link href={routes.services.landing} className="underline underline-offset-4 transition-colors hover:text-[rgb(var(--shaft-cream))]">
+            {t("offers.landingMore")} →
+          </Link>
         </p>
 
       </div>
