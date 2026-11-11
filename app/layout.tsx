@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import Script from "next/script";
 import { CSP_STRICT } from "@/lib/security/csp";
+import { ANALYTICS_ENABLED, UMAMI } from "@/lib/analytics";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/syne";
 import "@fontsource-variable/playfair-display";
@@ -197,6 +199,14 @@ export default async function RootLayout({
         <SupabaseRuntimeConfig {...runtimeSupabaseConfig()}>
           <Providers>{children}</Providers>
         </SupabaseRuntimeConfig>
+        {ANALYTICS_ENABLED && (
+          <Script
+            src={UMAMI.script}
+            data-website-id={UMAMI.websiteId}
+            strategy="afterInteractive"
+            nonce={nonce}
+          />
+        )}
       </body>
     </html>
   );

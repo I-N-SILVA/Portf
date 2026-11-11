@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
+import { track } from "@/lib/analytics";
 import { useTranslation } from "@/lib/i18n";
 import Accent from "./Accent";
 import { ProjectDeck, type Project } from "@/components/ui/scroll-stacking-cards";
@@ -119,6 +120,7 @@ function MobileWork() {
         <li key={p.name}>
           <a
             href={p.url}
+            {...track("work-open", { project: p.name, view: "mobile" })}
             target={isExternal(p.url) ? "_blank" : undefined}
             rel={isExternal(p.url) ? "noopener noreferrer" : undefined}
             className="group block overflow-hidden rounded-2xl border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--shaft-crimson-text))]"
@@ -282,6 +284,7 @@ function LabCard({ item, index }: { item: LabItem; index: number }) {
         ) : (
           <a
             href="#shaft-call"
+            {...track("lab-demo-request", { project: item.name })}
             className="mt-3 inline-flex min-h-11 items-center font-space-mono text-[11px] uppercase tracking-[0.16em] transition-colors hover:text-[rgb(var(--shaft-cream))] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--shaft-crimson))]"
             style={muted}
           >
@@ -302,6 +305,7 @@ function LabCard({ item, index }: { item: LabItem; index: number }) {
           href={item.url}
           target="_blank"
           rel="noopener noreferrer"
+          {...track("lab-open", { project: item.name })}
           className={`${shell} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--shaft-crimson))]`}
           style={surface}
         >

@@ -34,13 +34,15 @@ describe("contentSecurityPolicy", () => {
     expect(strict["script-src"]).toContain("'strict-dynamic'");
   });
 
-  it("allows Supabase over both http and websocket, and nothing else", () => {
+  it("allows Supabase over both http and websocket, plus Umami, and nothing else", () => {
     // Realtime is a websocket; without wss: the message thread silently stops
     // updating and only in production, where the CSP is actually sent.
     expect(relaxed["connect-src"]).toEqual([
       "'self'",
       "https://*.supabase.co",
       "wss://*.supabase.co",
+      "https://cloud.umami.is",
+      "https://gateway.umami.is",
     ]);
   });
 

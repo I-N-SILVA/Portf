@@ -6,6 +6,7 @@ import { useTranslation } from "@/lib/i18n";
 import Accent from "./Accent";
 import { LANDING, MVP_TIERS, type MvpTier } from "@/lib/offers";
 import { BOOKING } from "@/lib/booking";
+import { track } from "@/lib/analytics";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 function Mono({ children, color = "--shaft-muted" }: { children: React.ReactNode; color?: string }) {
@@ -229,6 +230,7 @@ export default function ShaftOffers() {
 
               <a
                 href={BOOKING.fitCall}
+                {...track("book-call", { location: "offer-mvp" })}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => playSound("click")}
@@ -273,6 +275,7 @@ export default function ShaftOffers() {
             </div>
             <a
               href={BOOKING.fitCall}
+                {...track("book-call", { location: "offer-landing" })}
               target="_blank"
               rel="noopener noreferrer"
               className="group inline-flex min-h-12 items-center gap-2 border px-6 py-3 text-[15px] font-semibold transition-colors duration-150 hover:bg-[rgb(var(--shaft-crimson))] hover:text-white"

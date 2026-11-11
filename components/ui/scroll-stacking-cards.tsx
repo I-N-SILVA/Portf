@@ -16,6 +16,7 @@ import { useRef, type ReactNode } from "react";
 import { MotionConfig, motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { track } from "@/lib/analytics";
 
 export type Project = {
   name: string;
@@ -131,6 +132,7 @@ function Visit({ p, ground }: { p: Project; ground: string }) {
       <div className="absolute right-full bottom-0">{corner}</div>
       <a
         href={p.url}
+        {...track("work-open", { project: p.name, view: "desktop" })}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={`Visit ${p.name} at ${host(p.url)} (opens in a new tab)`}

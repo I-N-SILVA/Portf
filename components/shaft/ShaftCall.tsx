@@ -6,6 +6,7 @@ import { useState } from "react";
 import { socialLinks } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
 import { BOOKING, CONTACT_EMAIL } from "@/lib/booking";
+import { track } from "@/lib/analytics";
 import Image from "next/image";
 import Accent from "./Accent";
 import { useSoundEffects, useSoundPreference } from "@/hooks/useSoundEffects";
@@ -148,6 +149,7 @@ export default function ShaftCall() {
             </ul>
             <a
               href={BOOKING.fitCall}
+                {...track("book-call", { location: "call-section" })}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playSound("click")}
@@ -297,6 +299,7 @@ export default function ShaftCall() {
               <li>
                 <a
                   href={BOOKING.fitCall}
+                {...track("book-call", { location: "call-contact" })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition-colors hover:text-[rgb(var(--shaft-cream))]"

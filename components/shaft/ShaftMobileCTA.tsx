@@ -3,6 +3,7 @@
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation } from "@/lib/i18n";
 import { BOOKING } from "@/lib/booking";
+import { track } from "@/lib/analytics";
 import ShaftSocialDock from "./ShaftSocialDock";
 
 /**
@@ -23,6 +24,7 @@ export default function ShaftMobileCTA() {
       <ShaftSocialDock inline />
       <a
         href={BOOKING.fitCall}
+                {...track("book-call", { location: "mobile-bar" })}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => playSound("click")}

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation } from "@/lib/i18n";
 import { BOOKING } from "@/lib/booking";
+import { track } from "@/lib/analytics";
 import ShaftDecipher from "./ShaftDecipher";
 import PaperPortrait from "./PaperPortrait";
 import { accentRuns, plain } from "@/lib/accent";
@@ -302,6 +303,7 @@ export default function ShaftHero() {
           <motion.div {...enter(0.4)} className="mt-9 flex flex-wrap items-center gap-3 sm:gap-4 relative z-20">
             <a
               href={BOOKING.fitCall}
+                {...track("book-call", { location: "hero" })}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => playSound("click")}

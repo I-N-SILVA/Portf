@@ -1,3 +1,5 @@
+import { UMAMI } from "../analytics";
+
 /**
  * The Content-Security-Policy this site sends, in two flavours.
  *
@@ -62,7 +64,7 @@ export function contentSecurityPolicy(nonce?: string): string {
       // 'unsafe-inline' fallbacks are ignored by browsers that understand
       // 'strict-dynamic' and keep older ones working.
       `'self' 'nonce-${nonce}' 'strict-dynamic' https: 'unsafe-inline'${devEval}`
-    : `'self' 'unsafe-inline'${devEval}`;
+    : `'self' 'unsafe-inline' ${UMAMI.origins[0]}${devEval}`;
 
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
@@ -81,7 +83,7 @@ export function contentSecurityPolicy(nonce?: string): string {
     // an entry in both, and the CSP half fails only in production.
     "img-src": ["'self'", "data:", "blob:"],
     "media-src": ["'self'"],
-    "connect-src": ["'self'", ...SUPABASE],
+    "connect-src": ["'self'", ...SUPABASE, ...UMAMI.origins],
     "frame-src": ["'self'", ...FRAMES, ...bookingOrigin()],
     // Nothing on this site is a legitimate plugin or applet.
     "object-src": ["'none'"],

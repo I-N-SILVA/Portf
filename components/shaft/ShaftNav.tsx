@@ -6,6 +6,7 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation, LOCALES, type Locale } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
 import { BOOKING } from "@/lib/booking";
+import { track } from "@/lib/analytics";
 
 const chapters = [
   { id: "shaft-hero", key: "nav.opening", num: "01" },
@@ -230,6 +231,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
       {visible && (
         <a
           href={BOOKING.fitCall}
+                {...track("book-call", { location: "nav" })}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => playSound("click")}
