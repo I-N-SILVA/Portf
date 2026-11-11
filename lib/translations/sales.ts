@@ -1,0 +1,201 @@
+/**
+ * Landing-page sales copy: hero, proof strip, services, prices, FAQ, booking.
+ *
+ * Spread at the END of each locale bundle, so these keys replace any older
+ * key with the same name. Prices themselves live in lib/offers.ts; only the
+ * words around them are translated here.
+ */
+
+export const salesEn: Record<string, string> = {
+  "intertitle.subtitle": "BUILDER · BEHAVIOURAL ECONOMICS",
+
+  // Hero
+  "hero.eyebrow": "Ian N. Silva · builder, trained in behavioural economics",
+  "hero.title": "Websites, MVPs and automations people actually use.",
+  "hero.sub": "I design and build launch pages, working prototypes and AI automations for founders and small teams. Fixed prices, shipped in days or weeks, with real numbers after launch.",
+  "hero.cta": "Book a free 20-min call",
+  "hero.viewWork": "See the work",
+
+
+  // Work
+  "archive.section": "02 / Selected work",
+  "archive.title": "Selected *work*",
+  "archive.sub": "Products and systems first, then the tools I build for myself.",
+  "archive.lab": "The lab · tools I build for myself",
+  "archive.labOpen": "Open",
+
+  // Services
+
+  // Entry steps
+
+  // Add-ons and bundle
+
+  // Intake
+
+  // Call
+  "call.section": "04 / Book",
+  "call.title1": "BOOK THE",
+  "call.title2": "CALL.",
+  "call.body": "20 minutes, free. You describe the problem, I tell you if I'm the right fit and roughly what it costs. If I'm not, I'll say so and point you somewhere better.",
+  "call.cta.open": "Book a free 20-min call",
+  "call.email.prefix": "Prefer email? I reply within one working day:",
+  "standing.focus.value": "Launch pages · Prototypes & MVPs · AI automation",
+
+  // FAQ
+  "faq.title": "Questions people *ask*",
+  "faq.2.q": "How fast can you start?",
+  "faq.2.a": "I take one or two new projects a month, so usually within one to two weeks of the fit call.",
+  "faq.3.q": "Do I own everything?",
+  "faq.3.a": "Yes. Code, designs and accounts are yours from day one, set up in your own GitHub, hosting and tools.",
+  "faq.4.q": "What do you need from me?",
+  "faq.4.a": "A 30-minute kickoff, quick answers during the build, and access to the tools involved. I write the copy unless you'd rather.",
+
+  // Nav and footer
+  "nav.opening": "INTRO",
+  "nav.archive": "WORK",
+  "nav.offers": "SERVICES",
+  "nav.call": "BOOK",
+  "nav.book": "BOOK A CALL",
+  "footer.sound.on": "SOUND ON",
+  "footer.sound.off": "SOUND OFF",
+};
+
+export const salesPt: Record<string, string> = {
+  "intertitle.subtitle": "BUILDER · ECONOMIA COMPORTAMENTAL",
+  "hero.eyebrow": "Ian N. Silva · builder, formado em economia comportamental",
+  "hero.title": "Sites, MVPs e automações que as pessoas usam de verdade.",
+  "hero.sub": "Desenho e construo landing pages, protótipos funcionais e automações com IA para founders e equipes pequenas. Preço fixo, entregue em dias ou semanas, com números reais depois do lançamento.",
+  "hero.cta": "Agendar conversa grátis de 20 min",
+  "hero.viewWork": "Ver o trabalho",
+  "archive.section": "02 / Trabalhos selecionados",
+  "archive.title": "Trabalhos *selecionados*",
+  "archive.sub": "Primeiro produtos e sistemas, depois as ferramentas que construo para mim.",
+  "archive.lab": "O laboratório · ferramentas que construo para mim",
+  "archive.labOpen": "Abrir",
+  "call.section": "04 / Agendar",
+  "call.title1": "MARQUE A",
+  "call.title2": "CONVERSA.",
+  "call.body": "20 minutos, grátis. Você descreve o problema, eu digo se sou a pessoa certa e quanto custa, mais ou menos. Se não for, eu falo e indico alguém melhor.",
+  "call.cta.open": "Agendar conversa grátis de 20 min",
+  "call.email.prefix": "Prefere email? Respondo em até um dia útil:",
+  "standing.focus.value": "Landing pages · Protótipos e MVPs · Automação com IA",
+  "faq.title": "Perguntas frequentes",
+  "faq.2.q": "Quando você pode começar?",
+  "faq.2.a": "Pego um ou dois projetos novos por mês, então normalmente em uma a duas semanas depois da conversa.",
+  "faq.3.q": "Tudo fica comigo?",
+  "faq.3.a": "Sim. Código, design e contas são seus desde o primeiro dia, no seu próprio GitHub, hospedagem e ferramentas.",
+  "faq.4.q": "O que você precisa de mim?",
+  "faq.4.a": "Uma reunião inicial de 30 minutos, respostas rápidas durante o projeto e acesso às ferramentas. Eu escrevo os textos, a não ser que você prefira.",
+  "nav.opening": "INÍCIO",
+  "nav.archive": "TRABALHOS",
+  "nav.offers": "SERVIÇOS",
+  "nav.call": "AGENDAR",
+  "nav.book": "AGENDAR CONVERSA",
+  "footer.sound.on": "SOM LIGADO",
+  "footer.sound.off": "SOM DESLIGADO",
+};
+
+export const salesEs: Record<string, string> = {
+  "intertitle.subtitle": "BUILDER · ECONOMÍA DEL COMPORTAMIENTO",
+  "hero.eyebrow": "Ian N. Silva · builder, formado en economía del comportamiento",
+  "hero.title": "Webs, MVPs y automatizaciones que la gente usa de verdad.",
+  "hero.sub": "Diseño y construyo landing pages, prototipos funcionales y automatizaciones con IA para founders y equipos pequeños. Precio fijo, entregado en días o semanas, con números reales tras el lanzamiento.",
+  "hero.cta": "Reservar llamada gratis de 20 min",
+  "hero.viewWork": "Ver el trabajo",
+  "archive.section": "02 / Trabajo seleccionado",
+  "archive.title": "Trabajo *seleccionado*",
+  "archive.sub": "Primero productos y sistemas, después las herramientas que construyo para mí.",
+  "archive.lab": "El laboratorio · herramientas que construyo para mí",
+  "archive.labOpen": "Abrir",
+  "call.section": "04 / Reservar",
+  "call.title1": "RESERVA LA",
+  "call.title2": "LLAMADA.",
+  "call.body": "20 minutos, gratis. Describes el problema y te digo si soy la persona adecuada y cuánto cuesta, más o menos. Si no lo soy, te lo digo y te indico a alguien mejor.",
+  "call.cta.open": "Reservar llamada gratis de 20 min",
+  "call.email.prefix": "¿Prefieres email? Respondo en un día laborable:",
+  "standing.focus.value": "Landing pages · Prototipos y MVPs · Automatización con IA",
+  "faq.title": "Preguntas frecuentes",
+  "faq.2.q": "¿Cuándo puedes empezar?",
+  "faq.2.a": "Acepto uno o dos proyectos nuevos al mes, así que normalmente en una o dos semanas tras la llamada.",
+  "faq.3.q": "¿Todo es mío?",
+  "faq.3.a": "Sí. Código, diseño y cuentas son tuyos desde el primer día, en tu propio GitHub, hosting y herramientas.",
+  "faq.4.q": "¿Qué necesitas de mí?",
+  "faq.4.a": "Una reunión inicial de 30 minutos, respuestas rápidas durante el proyecto y acceso a las herramientas. Yo escribo los textos, salvo que prefieras hacerlo tú.",
+  "nav.opening": "INICIO",
+  "nav.archive": "TRABAJO",
+  "nav.offers": "SERVICIOS",
+  "nav.call": "RESERVAR",
+  "nav.book": "RESERVAR LLAMADA",
+  "footer.sound.on": "SONIDO ON",
+  "footer.sound.off": "SONIDO OFF",
+};
+
+export const salesJa: Record<string, string> = {
+  "intertitle.subtitle": "ビルダー · 行動経済学",
+  "hero.eyebrow": "Ian N. Silva · 行動経済学を学んだビルダー",
+  "hero.title": "本当に使われるウェブサイト、MVP、自動化。",
+  "hero.sub": "創業者や小さなチームのために、ランディングページ、動くプロトタイプ、AI自動化を設計・開発します。固定価格で、数日から数週間で納品。公開後は実際の数字で効果を確認します。",
+  "hero.cta": "無料20分の相談を予約",
+  "hero.viewWork": "実績を見る",
+  "archive.section": "02 / 実績",
+  "archive.title": "実績",
+  "archive.sub": "まずプロダクトとシステム、次に自分のために作ったツール。",
+  "archive.lab": "ラボ · 自分のために作ったツール",
+  "archive.labOpen": "開く",
+  "call.section": "04 / 予約",
+  "call.title1": "相談を",
+  "call.title2": "予約。",
+  "call.body": "20分、無料。課題を伺い、私が適任か、おおよその費用をお伝えします。適任でなければ正直にそう伝え、より合う人を紹介します。",
+  "call.cta.open": "無料20分の相談を予約",
+  "call.email.prefix": "メールがよければ、1営業日以内に返信します：",
+  "standing.focus.value": "ランディングページ · プロトタイプとMVP · AI自動化",
+  "faq.title": "よくある質問",
+  "faq.2.q": "いつから始められますか？",
+  "faq.2.a": "新規案件は月1〜2件なので、通常は相談から1〜2週間以内に始められます。",
+  "faq.3.q": "成果物はすべて自分のものになりますか？",
+  "faq.3.a": "はい。コード、デザイン、アカウントは初日からお客様のもので、お客様のGitHub、ホスティング、ツール上に構築します。",
+  "faq.4.q": "こちらで用意するものは？",
+  "faq.4.a": "30分のキックオフ、開発中の迅速な回答、関係ツールへのアクセス。コピーは、ご希望がなければ私が書きます。",
+  "nav.opening": "トップ",
+  "nav.archive": "実績",
+  "nav.offers": "サービス",
+  "nav.call": "予約",
+  "nav.book": "相談を予約",
+  "footer.sound.on": "サウンド ON",
+  "footer.sound.off": "サウンド OFF",
+};
+
+export const salesZh: Record<string, string> = {
+  "intertitle.subtitle": "构建者 · 行为经济学",
+  "hero.eyebrow": "Ian N. Silva · 受过行为经济学训练的构建者",
+  "hero.title": "真正有人用的网站、MVP 和自动化。",
+  "hero.sub": "我为创始人和小团队设计并开发落地页、可用的原型和 AI 自动化。固定价格，几天到几周交付，上线后用真实数据说话。",
+  "hero.cta": "预约免费 20 分钟通话",
+  "hero.viewWork": "查看作品",
+  "archive.section": "02 / 精选作品",
+  "archive.title": "精选作品",
+  "archive.sub": "先看产品与系统，再看我为自己做的工具。",
+  "archive.lab": "实验室 · 我为自己做的工具",
+  "archive.labOpen": "打开",
+  "call.section": "04 / 预约",
+  "call.title1": "预约",
+  "call.title2": "通话。",
+  "call.body": "20 分钟，免费。你描述问题，我告诉你我是否合适，以及大概费用。如果不合适，我会直说，并推荐更合适的人。",
+  "call.cta.open": "预约免费 20 分钟通话",
+  "call.email.prefix": "更喜欢邮件？我会在一个工作日内回复：",
+  "standing.focus.value": "落地页 · 原型与 MVP · AI 自动化",
+  "faq.title": "常见问题",
+  "faq.2.q": "多快能开始？",
+  "faq.2.a": "我每月只接一到两个新项目，通常在通话后一到两周内开始。",
+  "faq.3.q": "所有东西都归我吗？",
+  "faq.3.a": "是的。代码、设计和账号从第一天起就是你的，建在你自己的 GitHub、主机和工具上。",
+  "faq.4.q": "需要我提供什么？",
+  "faq.4.a": "一次 30 分钟的启动会，开发期间及时回复，以及相关工具的访问权限。文案默认由我来写。",
+  "nav.opening": "首页",
+  "nav.archive": "作品",
+  "nav.offers": "服务",
+  "nav.call": "预约",
+  "nav.book": "预约通话",
+  "footer.sound.on": "声音 开",
+  "footer.sound.off": "声音 关",
+};

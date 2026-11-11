@@ -84,7 +84,7 @@ export default function ShaftEnquiryForm({
       <div className={className}>
         <p
           className="font-space-mono text-[10px] uppercase tracking-[0.3em]"
-          style={{ color: "rgb(var(--shaft-crimson-text))" }}
+          style={{ color: "rgb(var(--shaft-muted))" }}
         >
           {t("enquiry.sent.title")}
         </p>
@@ -149,7 +149,7 @@ export default function ShaftEnquiryForm({
         required
         autoComplete="email"
         placeholder={t("enquiry.email.placeholder")}
-        className="mt-1.5 block w-full border-0 border-b bg-transparent px-0 py-2 font-space-mono text-[14px] outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus:border-b-[rgb(var(--shaft-crimson-text))] focus-visible:outline-none"
+        className="mt-1.5 block w-full border-0 border-b bg-transparent px-0 py-2 font-space-mono text-[14px] outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus:border-b-[rgb(var(--shaft-cream))] focus-visible:outline-none"
         style={{
           borderBottomColor: "rgb(var(--shaft-border))",
           color: "rgb(var(--shaft-cream))",
@@ -169,7 +169,7 @@ export default function ShaftEnquiryForm({
         name="note"
         rows={2}
         placeholder={t("enquiry.note.placeholder")}
-        className="mt-1.5 block w-full resize-y border-0 border-b bg-transparent px-0 py-2 text-[13px] leading-relaxed outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus:border-b-[rgb(var(--shaft-crimson-text))] focus-visible:outline-none"
+        className="mt-1.5 block w-full resize-y border-0 border-b bg-transparent px-0 py-2 text-[13px] leading-relaxed outline-none transition-colors placeholder:text-[rgb(var(--shaft-muted))] focus:border-b-[rgb(var(--shaft-cream))] focus-visible:outline-none"
         style={{
           borderBottomColor: "rgb(var(--shaft-border))",
           color: "rgb(var(--shaft-cream))",
@@ -179,10 +179,10 @@ export default function ShaftEnquiryForm({
       <button
         type="submit"
         disabled={state === "sending"}
-        className="group mt-7 inline-flex min-h-11 items-center gap-3 border px-5 font-space-mono text-[10px] uppercase tracking-[0.28em] transition-colors hover:bg-[rgb(var(--shaft-crimson-text))] hover:text-[rgb(var(--shaft-bg))] disabled:opacity-60 disabled:hover:bg-transparent disabled:hover:text-[rgb(var(--shaft-crimson-text))]"
+        className="group mt-7 inline-flex min-h-12 items-center gap-3 px-6 text-[15px] font-semibold transition-transform hover:-translate-y-0.5 disabled:opacity-60"
         style={{
-          borderColor: "rgb(var(--shaft-crimson-text))",
-          color: "rgb(var(--shaft-crimson-text))",
+          backgroundColor: "rgb(var(--shaft-crimson))",
+          color: "#fff",
         }}
       >
         {state === "sending" ? t("enquiry.sending") : t("enquiry.submit")}
@@ -203,7 +203,7 @@ export default function ShaftEnquiryForm({
         role="status"
         aria-live="polite"
         className="mt-3 min-h-[1.2em] text-[12px] leading-relaxed"
-        style={{ color: "rgb(var(--shaft-crimson-text))" }}
+        style={{ color: "rgb(var(--shaft-muted))" }}
       >
         {error}
       </p>

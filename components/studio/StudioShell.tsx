@@ -2,8 +2,8 @@ import { CLIENT_SITE } from "@/lib/client-content";
 import { routes } from "@/lib/routes";
 import { BrandMotionProvider, MotionToggle } from "@/components/brand/BrandMotion";
 import BrandMark from "@/components/brand/BrandMark";
-import Link from "next/link";
 import StudioNav from "@/components/studio/StudioNav";
+import { FilmWipeIn } from "@/components/shaft/FilmWipe";
 
 /**
  * The paper-and-ink chrome shared by every public client-facing page:
@@ -27,6 +27,7 @@ export default function StudioShell({
       >
         Skip to content
       </a>
+      <FilmWipeIn />
       {showNav && <StudioNav />}
       <div id="main" tabIndex={-1}><div id="main-content">{children}</div></div>
       <footer className="border-t border-stone-800 bg-[var(--brand-ink)] px-6 pb-24 pt-8 md:pb-8">
@@ -49,7 +50,7 @@ export default function StudioShell({
             Looking for the interactive portfolio? →
           </a>
         </div>
-        <div className="mx-auto mt-6 flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/20 pt-5"><Link href="/studio/brand" className="text-xs text-[var(--brand-paper)] underline underline-offset-4">Brand & motion library ↗</Link><MotionToggle /></div>
+        <div className="mx-auto mt-6 flex max-w-6xl flex-wrap items-center justify-end gap-4 border-t border-white/20 pt-5"><MotionToggle /></div>
       </footer>
     </div></BrandMotionProvider>
   );

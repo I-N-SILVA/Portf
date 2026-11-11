@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import ShaftIntertitle from "./ShaftIntertitle";
 import ShaftNav from "./ShaftNav";
 import ShaftHero from "./ShaftHero";
-import ShaftTicker from "./ShaftTicker";
 import ShaftOffers from "./ShaftOffers";
 import ShaftArchive from "./ShaftArchive";
 
 import ShaftCall from "./ShaftCall";
-import ShaftSocialDock from "./ShaftSocialDock";
 import ShaftMobileCTA from "./ShaftMobileCTA";
-import ShaftPerspectiveSection from "./ShaftPerspectiveSection";
+import ShaftSocialDock from "./ShaftSocialDock";
+import { FilmWipeOut } from "./FilmWipe";
+import AmbientHum from "./AmbientHum";
 import BootSequence from "@/components/ui/BootSequence";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { LocaleProvider, useTranslation, type Locale } from "@/lib/i18n";
@@ -55,22 +55,21 @@ export default function ShaftLandingContent({
   /** Set by the /pt /es /ja /zh routes; absent on `/`. */
   locale?: Locale;
 } = {}) {
-  const [stage, setStage] = useState<"boot" | "intertitle" | "main">("boot");
+  // Direct landing on hero by default for instant, friction-free engagement.
+  // Intro can be triggered explicitly via ?intro=1
+  const [stage, setStage] = useState<"boot" | "intertitle" | "main">("main");
+  // Type comparison: ?type=product swaps the headline face (see globals.css).
+  const [typeClass, setTypeClass] = useState("");
   const { playSound } = useSoundEffects();
 
-  // Play the intro once per session, not once per navigation — and not at
-  // all for someone who has asked for less motion. Everyone else can skip
-  // either of the two full-screen animations with the visible control.
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setStage("main");
-      return;
-    }
     try {
-      if (sessionStorage.getItem(BOOTED_KEY)) setStage("main");
-    } catch {
-      // Private mode, or storage disabled — just play the intro.
-    }
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("type") === "product") setTypeClass(" type-product");
+      if (params.get("intro") === "1") {
+        setStage("boot");
+      }
+    } catch {}
   }, []);
 
   const handleBootComplete = useCallback(() => {
@@ -137,7 +136,7 @@ export default function ShaftLandingContent({
         // for the scrolling ancestor finds <main>, which never scrolls, and
         // reads a scroll position that never changes. `clip` does the same
         // clipping without creating the container.
-        className="w-full min-h-screen overflow-x-clip relative pb-28 md:pb-0"
+        className={`shaft-type${typeClass} w-full min-h-screen overflow-x-clip relative pb-20 md:pb-0`}
         style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
       >
           {/*
@@ -148,36 +147,19 @@ export default function ShaftLandingContent({
             floated over this page; four is already a lot.
           */}
           <ShaftNav visible={true} />
-          <ShaftSocialDock />
           <ShaftMobileCTA />
+          <ShaftSocialDock />
+          <FilmWipeOut />
+          <AmbientHum />
 
-          <ShaftPerspectiveSection>
-            <ShaftHero />
-          </ShaftPerspectiveSection>
-
-          <ShaftTicker />
-
-          {/*
-            The word portal used to sit here, as the cut between chapter one
-            and chapter two. It cost 2.8 viewports of scroll to deliver one
-            transition, which is a long toll on the path to the work — the
-            reel is what people came for. It lives at /studio/lab now, where
-            looking at it is the point rather than the tax.
-          */}
-
-          <ShaftPerspectiveSection>
-            <ShaftArchive />
-          </ShaftPerspectiveSection>
-
-          <ShaftPerspectiveSection>
-            <ShaftOffers />
-          </ShaftPerspectiveSection>
+          <ShaftHero />
 
 
+          <ShaftArchive />
 
-        <ShaftPerspectiveSection>
+          <ShaftOffers />
+
           <ShaftCall />
-        </ShaftPerspectiveSection>
       </motion.main>
     </LocaleProvider>
   );

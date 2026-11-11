@@ -1,72 +1,81 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
-import type { MotionValue } from "framer-motion";
-import { useRef, useEffect } from "react";
+import { motion, useReducedMotion, useScroll, useTransform, useMotionValue, useSpring, type MotionValue } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation } from "@/lib/i18n";
+import { BOOKING } from "@/lib/booking";
 import ShaftDecipher from "./ShaftDecipher";
-import Image from "next/image";
+import PaperPortrait from "./PaperPortrait";
+import { accentRuns, plain } from "@/lib/accent";
 
-/* ─── Effect 1: Cinematic Blur Reveal (Active) ─────────────────────────── */
-function CinematicBlurName({ text, delay = 0 }: { text: string; delay?: number }) {
+/**
+ * Word-by-word blur-in for the headline: kinetic, but it settles fast. A
+ * *marked* run turns Playfair italic in crimson.
+ */
+function BlurWords({ text, delay = 0 }: { text: string; delay?: number }) {
   const reduceMotion = useReducedMotion();
+  let n = 0;
   return (
-    <span className="inline-flex" aria-label={text}>
-      {text.split("").map((char, i) => (
-        <motion.span
-          key={`${char}-${i}`}
-          initial={reduceMotion ? false : { opacity: 0, filter: "blur(16px)", scale: 1.1, x: -10 }}
-          animate={{ opacity: 1, filter: "blur(0px)", scale: 1, x: 0 }}
-          transition={{ duration: 0.9, delay: delay + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="inline-block will-change-transform"
-        >
-          {char === " " ? <span>&nbsp;</span> : char}
-        </motion.span>
-      ))}
-    </span>
+    <>
+      <span className="sr-only">{plain(text)}</span>
+      {accentRuns(text).flatMap((run, r) =>
+        run.text.split(/(\s+)/).filter(Boolean).map((word, w) => {
+          if (/^\s+$/.test(word)) return <span key={`${r}-${w}`} aria-hidden="true">{" "}</span>;
+          const i = n++;
+          return (
+            <motion.span
+              key={`${r}-${w}`}
+              aria-hidden="true"
+              initial={reduceMotion ? false : { opacity: 0, filter: "blur(12px)", y: 14 }}
+              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+              transition={{ duration: 0.55, delay: delay + i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+              className="inline-block will-change-transform"
+            >
+              {word}
+            </motion.span>
+          );
+        }),
+      )}
+    </>
   );
 }
 
-/* ─── HUD Shard Sub-component ─────────────────────────────────────── */
-function HUDShard({ img, top, left, size, delay, rot, index, springX, springY }: { 
-  img: string; top: string; left: string; size: string; delay: number; rot: number; index: number;
+/**
+ * Floating project fragments behind the hero, brought back from the earlier
+ * build: grayscale, softly blurred, drifting with the cursor at their own
+ * depth. Still under reduced motion.
+ */
+const SHARDS = [
+  { img: "/projects/notchy-site.webp", top: "12%", left: "6%", size: 132, rot: 12 },
+  { img: "/projects/stocksnap.webp", top: "66%", left: "3%", size: 168, rot: -9 },
+  { img: "/projects/florita.webp", top: "8%", left: "52%", size: 112, rot: 6 },
+  { img: "/projects/snaqr.webp", top: "78%", left: "46%", size: 124, rot: -16 },
+  { img: "/projects/terminal-dj-spectrum.webp", top: "40%", left: "90%", size: 104, rot: 18 },
+];
+
+function HUDShard({
+  img, top, left, size, rot, index, springX, springY,
+}: {
+  img: string; top: string; left: string; size: number; rot: number; index: number;
   springX: MotionValue<number>; springY: MotionValue<number>;
 }) {
-  const x = useTransform(springX, (v: number) => v * (1 + index * 0.2));
-  const yParallax = useTransform(springY, (v: number) => v * (1 + index * 0.2));
-
+  const reduceMotion = useReducedMotion();
+  const depth = 1.4 + index * 0.45;
+  const x = useTransform(springX, (v) => v * depth);
+  const y = useTransform(springY, (v) => v * depth);
   return (
-    <motion.div
-      className="absolute overflow-hidden border border-white/10 grayscale blur-[1.5px] transition-all duration-1000"
-      style={{
-        top,
-        left,
-        width: size,
-        height: size,
-        x,
-        y: yParallax,
-        rotate: rot,
-      }}
-      animate={{
-        y: [0, -20, 0],
-        rotate: [rot, rot + 5, rot],
-      }}
-      transition={{
-        duration: 5 + index,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay,
-      }}
-    >
-      <Image
-        src={img}
-        alt="Shard"
-        fill
-        sizes={size}
-        className="object-cover opacity-60"
-      />
-      <div className="absolute inset-0 shaft-scanline opacity-40" />
+    <motion.div className="absolute" style={{ top, left, width: size, height: size, x, y }}>
+      <motion.div
+        className="relative h-full w-full overflow-hidden border border-white/10 grayscale blur-[1.5px]"
+        style={{ rotate: rot }}
+        animate={reduceMotion ? undefined : { y: [0, -18, 0], rotate: [rot, rot + 4, rot] }}
+        transition={{ duration: 6 + index, repeat: Infinity, ease: "easeInOut", delay: index * 0.7 }}
+      >
+        <Image src={img} alt="" fill sizes="170px" className="object-cover opacity-70" />
+        <div className="absolute inset-0 shaft-scanline opacity-40" />
+      </motion.div>
     </motion.div>
   );
 }
@@ -76,337 +85,295 @@ export default function ShaftHero() {
   const { playSound } = useSoundEffects();
   const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
+  const [posterCut, setPosterCut] = useState(false);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
-  
-  // Vertical Parallax
-  const watermarkY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
-  const frameY     = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
 
-  // Mouse Follow Parallax
+  const watermarkY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
+  const frameY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+  const watermarkX = useTransform(springX, (v) => v * -0.5);
+  const plateX = useTransform(springX, (v) => v * 0.65);
+  const plateY = useTransform(springY, (v) => v * 0.65);
+  const slashX = useTransform(springX, (v) => v * 1.1);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      mouseX.set((clientX / innerWidth - 0.5) * 20);
-      mouseY.set((clientY / innerHeight - 0.5) * 20);
+    if (reduceMotion) return;
+    const onMove = (e: MouseEvent) => {
+      mouseX.set((e.clientX / window.innerWidth - 0.5) * 20);
+      mouseY.set((e.clientY / window.innerHeight - 0.5) * 20);
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, [mouseX, mouseY]);
+    window.addEventListener("mousemove", onMove);
+    return () => window.removeEventListener("mousemove", onMove);
+  }, [mouseX, mouseY, reduceMotion]);
 
-  const scrollToNext = () => {
-    playSound("click");
-    // This pointed at #shaft-identity, which was neither the next section
-    // (the archive is) nor, now, a section at all.
-    document.getElementById("shaft-archive")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const enter = (delay: number) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 12 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] as const },
+        };
 
   return (
     <section
       ref={sectionRef}
       id="shaft-hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      className="relative min-h-[100svh] flex items-center overflow-hidden pt-24 pb-28 md:py-0"
       style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
     >
-      {/* ── Background Overlays ── */}
+      <div className="shaft-light-leak" aria-hidden="true" />
       <div className="shaft-scanline" />
+      <div className="shaft-grain" aria-hidden="true" />
       <div className="shaft-vignette" />
 
-      {/* ── Background geometry & Portrait Window ── */}
+      {/* ── Background geometry ── */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        
-        {/* ── HUD Shards (Floating Project Fragments) ── */}
-        <div className="absolute inset-0 opacity-20">
-          {[
-            { img: "/projects/ai-agents.webp", top: "15%", left: "10%", size: "120px", delay: 0, rot: 15 },
-            { img: "/projects/calendar.webp", top: "65%", left: "5%", size: "160px", delay: 1, rot: -10 },
-            { img: "/projects/defi-analytics.webp", top: "25%", left: "80%", size: "140px", delay: 2, rot: 5 },
-            { img: "/projects/prompt-library.webp", top: "75%", left: "75%", size: "110px", delay: 1.5, rot: -20 },
-          ].map((shard, i) => (
-            <HUDShard
-              key={i}
-              {...shard}
-              index={i}
-              springX={springX}
-              springY={springY}
-            />
+        <div aria-hidden="true" className="absolute inset-0 hidden md:block opacity-[0.22]">
+          {SHARDS.map((sh, i) => (
+            <HUDShard key={sh.img} {...sh} index={i} springX={springX} springY={springY} />
           ))}
         </div>
+        <div
+          aria-hidden="true"
+          className="absolute inset-y-0 left-6 md:left-16 lg:left-24 w-px opacity-35"
+          style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute left-0 right-0 top-[14%] h-px opacity-30 hidden md:block"
+          style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute left-0 right-0 bottom-[12%] h-px opacity-20 hidden md:block"
+          style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+        />
 
-        {/* Large watermark number — parallax */}
         <motion.div
           className="absolute right-[4%] top-1/2 -translate-y-1/2 font-playfair font-black leading-none select-none shaft-glitch"
           style={{
             fontSize: "clamp(120px, 28vw, 380px)",
-            color: "rgb(20 20 20)",
-            userSelect: "none",
+            color: "rgb(var(--shaft-surface))",
             y: watermarkY,
-            x: useTransform(springX, (v) => v * -0.5),
+            x: watermarkX,
           }}
           aria-hidden="true"
         >
           01
         </motion.div>
 
-        {/* ── Desktop portrait frame ── */}
-        <motion.div
-          className="absolute inset-0 hidden md:block"
-          style={{ y: frameY }}
-          aria-hidden="true"
-        >
-          {/* Main Portrait Panel */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onAnimationComplete={() => playSound("shutter")}
-            transition={{ duration: 1.2, delay: 0.5 }}
-            className="absolute right-[8%] top-[12%] w-[38vw] h-[72vh] group overflow-hidden border border-white/5"
-            style={{ 
-              x: useTransform(springX, (v) => v * 0.8),
-              y: useTransform(springY, (v) => v * 0.8),
-            }}
-          >
-            <Image
-              src="/hero-portrait.webp"
-              alt="Ian N. Silva"
-              fill
-              priority
-              sizes="(min-width: 768px) 38vw, 1px"
-              className="absolute inset-0 w-full h-full object-contain object-bottom opacity-90 drop-shadow-2xl transition-all duration-1000 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 shaft-scanline opacity-20" />
-            {/* Bottom gradient so portrait blends into bg */}
-            <div
-              className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
-              style={{ background: "linear-gradient(to top, rgb(var(--shaft-bg)), transparent)" }}
-            />
-          </motion.div>
-
-          {/* Rectangular secondary frame */}
+        {/* ── Portrait plate, desktop ── */}
+        <motion.div className="absolute inset-0 hidden md:block" style={{ y: frameY }} aria-hidden="true">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.15, delay: 0.9 }}
-            className="absolute right-[6%] top-[10%] hidden md:block"
-            style={{
-              width: "14vw",
-              height: "48vh",
-              border: "1px solid rgb(var(--shaft-border))",
-              x: springX,
-              y: springY,
-            }}
+            transition={{ duration: 0.25, delay: 0.75 }}
+            className="absolute right-[8.5%] lg:right-[10.5%] top-[13%] w-[29vw] max-w-[420px] h-[70vh] max-h-[640px]"
+            style={{ border: "1px solid rgb(var(--shaft-border))", x: springX, y: springY }}
           />
 
-          {/* Accent diagonal slash */}
+          <motion.div
+            initial={reduceMotion ? false : { opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            onMouseEnter={() => {
+              setPosterCut(true);
+              playSound("shutter");
+            }}
+            onMouseLeave={() => setPosterCut(false)}
+            className="pointer-events-auto cursor-pointer absolute right-[10%] lg:right-[12%] top-[15%] w-[29vw] max-w-[420px] h-[70vh] max-h-[640px] flex flex-col border"
+            style={{
+              borderColor: posterCut ? "rgb(var(--shaft-crimson))" : "rgb(var(--shaft-border))",
+              backgroundColor: "rgb(var(--shaft-surface))",
+              x: plateX,
+              y: plateY,
+            }}
+          >
+            <div
+              className="flex items-center justify-between px-3.5 py-2 border-b font-space-mono text-[9px] tracking-[0.24em] uppercase shrink-0 z-20"
+              style={{
+                borderColor: "rgb(var(--shaft-border))",
+                backgroundColor: "rgb(var(--shaft-bg) / 0.9)",
+                color: "rgb(var(--shaft-muted))",
+              }}
+            >
+              <span>Fig. 01 · Ian N. Silva</span>
+              <span style={{ color: "rgb(var(--shaft-muted))" }}>
+                {posterCut ? "[ 静止画 · CUT B ]" : "[ HOVER · CUT A ]"}
+              </span>
+            </div>
+
+            <div className="relative flex-1 w-full">
+              <PaperPortrait src="/brand-avatar.webp" mx={springX} my={springY} scroll={scrollYProgress} flat={posterCut} />
+              <div
+                className="absolute inset-x-0 bottom-0 h-24 pointer-events-none"
+                style={{ background: "linear-gradient(to top, rgb(var(--shaft-surface) / 0.85), transparent)" }}
+              />
+              <div className="absolute inset-0 shaft-scanline opacity-20 pointer-events-none" />
+            </div>
+
+            <div
+              className="flex items-center justify-between px-3.5 py-2 border-t font-space-mono text-[9px] tracking-[0.24em] uppercase shrink-0 z-20"
+              style={{
+                borderColor: "rgb(var(--shaft-border))",
+                backgroundColor: "rgb(var(--shaft-bg) / 0.92)",
+                color: "rgb(var(--shaft-muted))",
+              }}
+            >
+              <span>MVPs · Landing pages</span>
+              <span>Est. 2026</span>
+            </div>
+          </motion.div>
+
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 0.6 }}
-            transition={{ duration: 0.3, delay: 1.1 }}
-            className="absolute hidden md:block"
+            animate={{ scaleX: 1, opacity: 0.75 }}
+            transition={{ duration: 0.3, delay: 0.9 }}
+            className="absolute"
             style={{
-              right: "5%",
-              top: "9%",
-              width: "18vw",
+              right: "8%",
+              top: "11.5%",
+              width: "16vw",
               height: "1px",
               backgroundColor: "rgb(var(--shaft-crimson))",
-              transform: "rotate(1.5deg)",
+              rotate: "1.5deg",
               transformOrigin: "left center",
-              x: useTransform(springX, (v) => v * 1.2),
-            }}
-          />
-
-          {/* Bottom horizontal rule */}
-          <motion.div
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 0.4 }}
-            transition={{ duration: 0.35, delay: 1.15 }}
-            className="absolute hidden md:block"
-            style={{
-              right: "5%",
-              top: "75%",
-              width: "18vw",
-              height: "1px",
-              backgroundColor: "rgb(var(--shaft-border))",
-              x: useTransform(springX, (v) => v * 0.9),
+              x: slashX,
             }}
           />
         </motion.div>
 
-        {/* ── Mobile portrait — visible below md ── */}
+        {/* ── Portrait, mobile ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 0.35, y: 0 }}
+          animate={{ opacity: 0.22, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="absolute bottom-0 right-0 w-[75vw] h-[50vh] md:hidden"
+          className="absolute bottom-0 right-0 w-[60vw] h-[36vh] md:hidden"
+          aria-hidden="true"
         >
-          <Image
-            src="/hero-portrait.webp"
-            alt="Ian N. Silva"
-            fill
-            priority
-            sizes="(max-width: 767px) 75vw, 1px"
-            className="object-contain object-bottom opacity-80"
-          />
+          <Image src="/hero-portrait.webp" alt="" fill sizes="(max-width: 767px) 60vw, 1px" className="object-contain object-bottom" />
           <div
-            className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+            className="absolute bottom-0 left-0 right-0 h-20"
             style={{ background: "linear-gradient(to top, rgb(var(--shaft-bg)), transparent)" }}
           />
-          <div className="absolute inset-0 shaft-scanline opacity-10" />
         </motion.div>
       </div>
 
-      {/* ── Scene marker — top right ── */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.1, delay: 0.35 }}
-        className="absolute top-6 right-6 md:top-8 md:right-8 font-space-mono text-[8px] md:text-[9px] tracking-[0.45em] uppercase z-20 hidden md:block"
-        style={{ color: "rgb(var(--shaft-muted))" }}
-      >
-        {t("hero.scene")}
-      </motion.div>
-
-      {/* ── Main content — left-biased ── */}
+      {/* ── Copy ── */}
       <div className="relative z-10 w-full px-6 md:px-16 lg:px-24">
-        <div className="max-w-full md:max-w-[62%]">
-
-          {/* Pre-title annotation */}
+        <div className="max-w-full md:max-w-[55%]">
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.1, delay: 0.15 }}
-            className="font-space-mono text-[10px] md:text-[11px] tracking-[0.3em] uppercase mb-4 md:mb-6"
-            style={{ color: "rgb(var(--shaft-crimson-text))" }}
+            {...enter(0.05)}
+            className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6"
           >
-            {t("hero.pretitle")}
+            <span className="font-space-mono text-[11px] md:text-[12px] tracking-[0.16em] uppercase" style={{ color: "rgb(var(--shaft-muted))" }}>
+              {t("hero.eyebrow")}
+            </span>
           </motion.div>
 
-          {/*
-            Name — letter-by-letter kinetic reveal.
-
-            One <h1> across both lines. It used to be two, which told a screen
-            reader the page had two top-level headings, neither of which was a
-            whole name: "Ian N." and then, separately, "Silva.". The two
-            overflow clips still do the reveal, they are just inside the
-            heading now instead of wrapping one each.
-          */}
           <h1
-            className="font-playfair font-black leading-[0.83] tracking-tighter"
-            style={{
-              color: "rgb(var(--shaft-cream))",
-              fontSize: "clamp(52px, 13vw, 200px)",
-            }}
+            className="font-playfair font-black leading-[0.95] tracking-tight"
+            style={{ color: "rgb(var(--shaft-cream))", fontSize: "clamp(40px, 6vw, 96px)" }}
           >
-            <span className="block overflow-hidden">
-              <CinematicBlurName text="IAN N." delay={0.1} />
-            </span>
-            <span className="block overflow-hidden" style={{ marginLeft: "3vw" }}>
-              <CinematicBlurName text="SILVA." delay={1.0} />
-            </span>
+            <BlurWords text={t("hero.title")} delay={0.1} />
           </h1>
 
-          {/* Animated underline that traces under the name */}
           <motion.div
-            className="h-px w-full mt-6 md:mt-8 mb-4 md:mb-6 origin-left"
+            className="h-px w-full mt-7 origin-left"
             style={{ backgroundColor: "rgb(var(--shaft-border))" }}
-            initial={{ scaleX: 0 }}
+            initial={reduceMotion ? false : { scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: 0.35, delay: 0.7 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
           />
 
-          {/* Tagline */}
           <motion.p
-            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: 0.8 }}
-            className="font-space-mono text-[11px] md:text-[13px] leading-relaxed tracking-[0.16em] md:tracking-[0.24em] uppercase"
-            style={{ color: "rgb(var(--shaft-muted))" }}
+            {...enter(0.3)}
+            className="mt-6 max-w-[34rem] text-[17px] md:text-[19px] leading-[1.6]"
+            style={{ color: "rgb(var(--shaft-cream-dim))" }}
           >
-            {t("hero.tagline")}{" "}
-            <span style={{ color: "rgb(var(--shaft-cream-dim))" }}>
-              {t("hero.tagline2")}
-            </span>
+            {t("hero.sub")}
           </motion.p>
 
-          {/* Episode marker */}
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2, delay: 0.95 }}
-            className="mt-6 md:mt-8 flex items-center gap-3"
-          >
-            <div
-              className="w-1.5 h-1.5 shrink-0"
-              style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-            />
-            <span
-              className="font-space-mono text-[10px] md:text-[11px] leading-relaxed tracking-[0.14em] md:tracking-[0.2em] uppercase max-w-2xl"
-              style={{ color: "rgb(var(--shaft-muted))" }}
+          <motion.div {...enter(0.4)} className="mt-9 flex flex-wrap items-center gap-3 sm:gap-4 relative z-20">
+            <a
+              href={BOOKING.fitCall}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => playSound("click")}
+              className="group relative inline-flex min-h-14 items-center gap-3 overflow-hidden px-8 py-[18px] text-[16px] font-semibold transition-transform duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[rgb(var(--shaft-cream))]"
+              style={{ backgroundColor: "rgb(var(--shaft-crimson))", color: "#fff" }}
             >
-              {t("hero.marker")}
-            </span>
-          </motion.div>
-
-          {/* Primary routes: inspect the work or start a conversation. */}
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: 1.1 }}
-            className="mt-8 md:mt-10 flex flex-wrap items-center gap-3 relative z-20"
-          >
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent"
+              />
+              <span className="relative">{t("hero.cta")}</span>
+              <span aria-hidden="true" className="relative transition-transform duration-200 group-hover:translate-x-1.5">→</span>
+            </a>
             <button
+              type="button"
               onClick={() => {
                 playSound("click");
                 document.getElementById("shaft-archive")?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="shaft-control group flex items-center border px-5 py-3 transition-colors text-[rgb(var(--shaft-cream))] hover:bg-[rgb(var(--shaft-cream))] hover:text-[rgb(var(--shaft-bg))]"
-              style={{ borderColor: "rgb(var(--shaft-cream))" }}
-            >
-              <span className="font-space-mono text-[10px] tracking-[0.24em] uppercase">{t("hero.viewWork")}</span>
-              <span className="ml-4 transition-transform group-hover:translate-x-1">↓</span>
-            </button>
-            <button
-              onClick={() => {
-                playSound("click");
-                document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" });
+              className="inline-flex min-h-14 items-center gap-3 border px-8 py-[18px] text-[16px] backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:bg-[rgb(var(--shaft-cream))] hover:text-[rgb(var(--shaft-bg))]"
+              style={{
+                borderColor: "rgb(var(--shaft-cream) / 0.55)",
+                color: "rgb(var(--shaft-cream))",
+                backgroundColor: "rgb(var(--shaft-surface) / 0.6)",
               }}
-              className="shaft-control group flex items-center border px-5 py-3 transition-colors hover:bg-[rgb(var(--shaft-crimson))]"
-              style={{ borderColor: "rgb(var(--shaft-crimson))", color: "rgb(var(--shaft-cream))" }}
             >
-              <span className="font-space-mono text-[10px] tracking-[0.24em] uppercase"><ShaftDecipher text={t("hero.cta")} /></span>
-              <span className="ml-4 text-[rgb(var(--shaft-crimson-text))] transition-all group-hover:translate-x-1 group-hover:text-[rgb(var(--shaft-cream))]">→</span>
+              {t("hero.viewWork")}
+              <span aria-hidden="true">↓</span>
             </button>
           </motion.div>
+
+          <motion.p
+            {...enter(0.5)}
+            className="mt-6 flex items-center gap-2.5 font-space-mono text-[11px] tracking-[0.14em] uppercase"
+            style={{ color: "rgb(var(--shaft-muted))" }}
+          >
+            <span aria-hidden="true" className="h-1.5 w-1.5" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
+            {t("hero.note")}
+          </motion.p>
         </div>
       </div>
 
-      {/* ── Scroll indicator ── */}
+      {/* ── Scroll cue ── */}
       <motion.button
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.2, delay: 1.3 }}
-        onClick={scrollToNext}
-        className="absolute bottom-6 md:bottom-8 left-6 md:left-16 lg:left-24 flex items-center gap-4 group z-20"
-        aria-label="Scroll down"
+        transition={{ duration: 0.3, delay: 0.7 }}
+        onClick={() => {
+          playSound("click");
+          document.getElementById("shaft-archive")?.scrollIntoView({ behavior: "smooth" });
+        }}
+        className="absolute bottom-6 md:bottom-8 left-6 md:left-16 lg:left-24 hidden md:flex items-center gap-4 z-20"
+        aria-label="Scroll to the work"
       >
         <motion.div
-          animate={{ y: [0, 7, 0] }}
+          animate={reduceMotion ? undefined : { y: [0, 7, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
           className="w-px h-10"
-          style={{ backgroundColor: "rgb(var(--shaft-border))" }}
+          style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
         />
-        <span
-          className="font-space-mono text-[7px] md:text-[8px] tracking-[0.35em] uppercase"
-          style={{ color: "rgb(var(--shaft-muted))" }}
-        >
+        <span className="font-space-mono text-[10px] tracking-[0.3em] uppercase" style={{ color: "rgb(var(--shaft-muted))" }}>
           <ShaftDecipher text={t("hero.scroll")} />
         </span>
       </motion.button>
+
+      <div
+        className="absolute bottom-6 md:bottom-8 right-6 md:right-16 lg:right-24 hidden md:block font-space-mono text-[10px] tracking-[0.3em] uppercase z-20"
+        style={{ color: "rgb(var(--shaft-muted))" }}
+        aria-hidden="true"
+      >
+        {t("hero.scene")}
+      </div>
     </section>
   );
 }

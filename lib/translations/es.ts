@@ -1,3 +1,6 @@
+import { salesEs } from "./sales";
+import { offerEs } from "./offer";
+
 export const es: Record<string, string> = {
   "intertitle.year": "PORTAFOLIO · 2026",
   "intertitle.subtitle": "INGENIERO DE AUTOMATIZACIÓN IA",
@@ -140,4 +143,6 @@ export const es: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "Plataforma de gestión de prompts de IA: una biblioteca completa para organizar, refinar y desplegar prompts con eficacia",
   "projects.3.full": "Promptuous es una biblioteca y sistema de gestión de prompts pensado para profesionales de la IA, desarrolladores y creadores de contenido que necesitan organizar, refinar y desplegar prompts con eficacia. La plataforma ofrece un espacio de trabajo centralizado para almacenar, clasificar e iterar sobre prompts en distintos casos de uso, desde aplicaciones creativas hasta flujos de trabajo de propósito general.",
+  ...salesEs,
+  ...offerEs,
 };

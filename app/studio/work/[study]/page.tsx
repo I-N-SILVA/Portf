@@ -11,6 +11,7 @@ import {
 import ContactCTA from "@/components/studio/ContactCTA";
 import DemoFrame from "@/components/studio/DemoFrame";
 import Reveal from "@/components/studio/Reveal";
+import Redacted from "@/components/studio/Redacted";
 import { routes } from "@/lib/routes";
 
 interface PageProps {
@@ -57,7 +58,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
             Back to the portfolio
           </Link>
           <p className="mt-8 font-space-mono text-xs uppercase tracking-[0.25em] text-stone-600">
-            {cs.industry}
+            File · {cs.industry}
           </p>
           <h1 className="mt-4 max-w-4xl font-playfair text-3xl font-bold leading-[1.15] tracking-tight md:text-5xl">
             {cs.headline}
@@ -83,15 +84,21 @@ export default async function CaseStudyPage({ params }: PageProps) {
         <div className="space-y-14">
           <Reveal>
             <h2 className="font-playfair text-2xl font-bold">The problem</h2>
-            <p className="mt-4 leading-relaxed text-stone-600">{cs.problem}</p>
+            <Redacted>
+              <p className="mt-4 leading-relaxed text-stone-600">{cs.problem}</p>
+            </Redacted>
           </Reveal>
           <Reveal>
             <h2 className="font-playfair text-2xl font-bold">The approach</h2>
-            <p className="mt-4 leading-relaxed text-stone-600">{cs.approach}</p>
+            <Redacted>
+              <p className="mt-4 leading-relaxed text-stone-600">{cs.approach}</p>
+            </Redacted>
           </Reveal>
           <Reveal>
             <h2 className="font-playfair text-2xl font-bold">The outcome</h2>
-            <p className="mt-4 leading-relaxed text-stone-600">{cs.outcome}</p>
+            <Redacted>
+              <p className="mt-4 leading-relaxed text-stone-600">{cs.outcome}</p>
+            </Redacted>
           </Reveal>
 
           {/* Metrics */}

@@ -74,6 +74,7 @@ export const routes = {
    */
   studio: {
     work: (caseSlug: string) => `/studio/work/${caseSlug}`,
+    lab: "/studio/lab",
   },
 
   /**

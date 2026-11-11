@@ -1,3 +1,6 @@
+import { salesEn } from "./sales";
+import { offerEn } from "./offer";
+
 export const en: Record<string, string> = {
   // ── Intertitle ──
   "intertitle.year": "PORTFOLIO · 2026",
@@ -140,4 +143,6 @@ export const en: Record<string, string> = {
   "offers.1.window": "DAYS 1–5",
   "offers.bestWhen": "BEST WHEN —",
   "offers.cta": "Not sure what you need? Bring the messy idea. We'll figure out the smallest, most powerful thing we can build first.",
+  ...salesEn,
+  ...offerEn,
 };

@@ -1,54 +1,36 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll } from "framer-motion";
-import { useState, useEffect } from "react";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useTranslation } from "@/lib/i18n";
+import { BOOKING } from "@/lib/booking";
+import ShaftSocialDock from "./ShaftSocialDock";
 
+/**
+ * Phone bottom bar: the logo (opens socials and email) and the booking
+ * button. It stays put for the whole page. It used to slide away over the
+ * hero and the booking section, which also took the logo with it, and a bar
+ * that comes and goes reads as layout shifting under the thumb.
+ */
 export default function ShaftMobileCTA() {
-  const [visible, setVisible] = useState(false);
-  const { scrollY } = useScroll();
   const { playSound } = useSoundEffects();
-
-  useEffect(() => {
-    return scrollY.on("change", (latestVal) => {
-      // Show out of hero section (hero is usually ~100vh)
-      const threshold = typeof window !== "undefined" ? window.innerHeight * 0.8 : 800;
-      if (latestVal > threshold) {
-        setVisible(true);
-      } else {
-        setVisible(false);
-      }
-    });
-  }, [scrollY]);
-
-  const handleBookClick = () => {
-    playSound("click");
-    document.getElementById("shaft-call")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const { t } = useTranslation();
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: 20 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          onClick={handleBookClick}
-          className="fixed bottom-24 right-6 z-[105] md:hidden flex items-center justify-center rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.4)] backdrop-blur-md"
-          style={{
-            backgroundColor: "rgb(var(--shaft-crimson))",
-            color: "rgb(var(--shaft-cream))",
-            padding: "12px 20px",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-          aria-label="Schedule Call"
-        >
-          <span className="font-space-mono text-[9px] tracking-[0.2em] font-bold uppercase leading-none mt-px">
-            Book
-          </span>
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <div
+      className="fixed inset-x-0 bottom-0 z-[105] flex items-center gap-3 border-t px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden"
+      style={{ backgroundColor: "rgb(var(--shaft-bg) / 0.92)", borderColor: "rgb(var(--shaft-border))" }}
+    >
+      <ShaftSocialDock inline />
+      <a
+        href={BOOKING.fitCall}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => playSound("click")}
+        className="flex min-h-12 flex-1 items-center justify-center gap-2 text-[15px] font-semibold"
+        style={{ backgroundColor: "rgb(var(--shaft-crimson))", color: "#fff" }}
+      >
+        {t("hero.cta")} <span aria-hidden="true">→</span>
+      </a>
+    </div>
   );
 }

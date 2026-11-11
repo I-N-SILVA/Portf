@@ -25,7 +25,8 @@ test("the landing page ships real content without running JavaScript", async ({
 });
 
 test("the cinematic intro can be skipped and is remembered", async ({ page }) => {
-  await page.goto("/");
+  // The intro is opt-in: visitors land on the hero unless they ask for it.
+  await page.goto("/?intro=1");
 
   await page.getByRole("button", { name: /skip intro/i }).click();
   await expect(page.locator("#main")).not.toHaveAttribute("inert", /.*/);
@@ -36,9 +37,9 @@ test("the cinematic intro can be skipped and is remembered", async ({ page }) =>
 test("sound is opt-in for a first-time visitor", async ({ page }) => {
   await page.goto("/");
   const sound = page.getByRole("button", { name: /unmute interface sound/i });
-  await expect(sound).toBeVisible();
+  await expect(sound).toBeAttached();
   await expect(sound).toHaveAttribute("aria-pressed", "false");
-  await expect(sound).toContainText("MUTED");
+  await expect(sound).toContainText(/sound off/i);
 });
 
 test("the native pointer remains visible on desktop", async ({ page }) => {

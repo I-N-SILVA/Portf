@@ -1,526 +1,291 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState, type MouseEvent } from "react";
 import { useTranslation } from "@/lib/i18n";
-import Link from "next/link";
-import { IntakeTerminal } from "@/components/ui/intake-terminal";
-import ShaftEnquiryForm from "./ShaftEnquiryForm";
-import { INTAKE_ROUTES } from "@/lib/offers";
-import { routes } from "@/lib/routes";
+import Accent from "./Accent";
+import { LANDING, MVP_TIERS, type MvpTier } from "@/lib/offers";
+import { BOOKING } from "@/lib/booking";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 
-/** Where the studio can be reached once the triage has named a problem. */
-const EMAIL = "iannogueira@proton.me";
+function Mono({ children, color = "--shaft-muted" }: { children: React.ReactNode; color?: string }) {
+  return (
+    <span className="font-space-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: `rgb(var(${color}))` }}>
+      {children}
+    </span>
+  );
+}
 
-/**
- * Which capability each answer resolves to. `null` is the "it's messy"
- * answer, which resolves to all of them — that is a real outcome, not a
- * failure to choose, and it is the one the closing line already speaks to.
- */
-const ROUTES = INTAKE_ROUTES;
+/** Crimson registration marks in the four corners of the featured card. */
+function Corners() {
+  const base = "absolute h-4 w-4 pointer-events-none";
+  const c = "rgb(var(--shaft-crimson))";
+  return (
+    <>
+      <span aria-hidden="true" className={`${base} left-3 top-3 border-l-2 border-t-2`} style={{ borderColor: c }} />
+      <span aria-hidden="true" className={`${base} right-3 top-3 border-r-2 border-t-2`} style={{ borderColor: c }} />
+      <span aria-hidden="true" className={`${base} left-3 bottom-3 border-l-2 border-b-2`} style={{ borderColor: c }} />
+      <span aria-hidden="true" className={`${base} right-3 bottom-3 border-r-2 border-b-2`} style={{ borderColor: c }} />
+    </>
+  );
+}
+
 
 export default function ShaftOffers() {
   const sectionRef = useRef<HTMLElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const { playSound } = useSoundEffects();
-  const [answer, setAnswer] = useState<string | null>(null);
-  /** The second question. Only asked once the first has been answered. */
-  const [when, setWhen] = useState<string | null>(null);
-  /**
-   * The third. Asked last and deliberately not printed on the slips: a number
-   * on the card is the thing people leave over, but a number they choose is
-   * the thing that makes a reply useful. Everyone who reaches this has already
-   * described a problem and a deadline, so the question costs the least here
-   * and is worth the most — an enquiry with a band attached can be answered
-   * with a yes or a no instead of another email asking for one.
-   */
-  const [budget, setBudget] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
+  const [tier, setTier] = useState<MvpTier>("auth");
 
-  /**
-   * The terminal only exists once the JavaScript that drives it does.
-   * Rendering it server-side would ship a menu whose buttons do nothing to
-   * anyone whose bundle fails, and the three slips below are the real
-   * content — they render either way, in full, unfiltered.
-   */
-  const [live, setLive] = useState(false);
-  useEffect(() => setLive(true), []);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
-  /*
-    Each slip carries one more line than it used to: evidence.
+  const active = MVP_TIERS.find((x) => x.id === tier)!;
 
-    "Best when" tells a visitor whether the problem is theirs. It does not
-    tell them this has ever worked, and a claim about a two-week build is
-    exactly the kind that wants a receipt. Where a shipped project genuinely
-    demonstrates the offer, the slip links to it. Where none does — nothing in
-    the archive is a landing-page job — the slot carries the deliverables
-    instead, so the row still balances and nothing is invented to fill it.
-  */
-  const offers = [
-    {
-      num: "01",
-      title: t("offers.1.title"),
-      body1: t("offers.1.body1"),
-      body2: t("offers.1.body2"),
-      window: t("offers.1.window"),
-      proof: {
-        label: t("offers.1.proof"),
-        href: routes.studio.work("stocksnap-field-inventory"),
-      },
-    },
-    {
-      num: "02",
-      title: t("offers.2.title"),
-      body1: t("offers.2.body1"),
-      body2: t("offers.2.body2"),
-      window: t("offers.2.window"),
-      proof: { label: t("offers.2.proof"), href: null },
-    },
-    {
-      num: "03",
-      title: t("offers.3.title"),
-      body1: t("offers.3.body1"),
-      body2: t("offers.3.body2"),
-      window: t("offers.3.window"),
-      proof: {
-        label: t("offers.3.proof"),
-        href: routes.studio.work("multi-platform-content-engine"),
-      },
-    },
-  ];
-
-  const routed = answer ? ROUTES[answer] : undefined;
-
-  /**
-   * The mail already says what it is about, in the reader's own words: the
-   * offer, the problem they picked, and — once they have answered the
-   * follow-up — when they want it.
-   */
-  /**
-   * The answers as labelled lines rather than one run-on sentence. The form
-   * prints them as a manifest, and what lands in /admin keeps the same shape
-   * — a record that can be read at a glance instead of a string that has to
-   * be decoded back into fields.
-   */
-  const intakeManifest = (offerTitle?: string) => {
-    // No JOB line on the "I don't know yet" path: there is no offer there, and
-    // filling the slot with the problem again printed the same sentence twice.
-    const lines = offerTitle
-      ? [{ label: t("enquiry.field.offer"), value: offerTitle }]
-      : [];
-    if (answer) lines.push({ label: t("enquiry.field.problem"), value: t(`intake.${answer}`) });
-    if (when) lines.push({ label: t("enquiry.field.when"), value: t(`intake.q2.${when}`) });
-    if (budget) lines.push({ label: t("enquiry.field.budget"), value: t(`intake.q3.${budget}`) });
-    return lines;
+  // Spotlight that follows the cursor across the featured card.
+  const onMove = (e: MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el || reduceMotion) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
   };
-  /**
-   * True once the drawer is narrowed to one slip *and* there is nothing left
-   * to ask. The form used to appear after the first answer, which put it
-   * above two unanswered questions and meant most enquiries arrived carrying
-   * only a category.
-   */
-  const narrowed = answer !== null && routed !== null && budget !== null;
+
+  const pickTier = (id: MvpTier) => {
+    if (id === tier) return;
+    playSound("click");
+    setTier(id);
+  };
+
+  const reveal = (i: number) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 18 },
+          whileInView: { opacity: 1, y: 0 },
+          viewport: { once: true, margin: "-60px" },
+          transition: { duration: 0.5, delay: 0.08 * i, ease: [0.22, 1, 0.36, 1] as const },
+        };
 
   return (
     <section
       ref={sectionRef}
       id="shaft-offers"
-      className="relative py-28 overflow-hidden"
+      className="relative scroll-mt-20 overflow-hidden py-20 md:py-28"
       style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
     >
-      {/* Watermark — parallax + Glitch */}
       <motion.div
         aria-hidden="true"
-        className="absolute right-0 top-20 font-playfair font-black leading-none pointer-events-none select-none shaft-glitch"
-        style={{
-          fontSize: "clamp(120px, 22vw, 320px)",
-          // Was a hardcoded rgb(8 8 8): correct against the dark ground and a
-          // solid black slab on the parchment theme. --shaft-surface is the
-          // one-step-off-the-background token, so it stays a watermark in
-          // both.
-          color: "rgb(var(--shaft-surface))",
-          lineHeight: 1,
-          y: watermarkY,
-        }}
+        className="absolute right-0 top-10 font-playfair font-black leading-none pointer-events-none select-none shaft-glitch"
+        style={{ fontSize: "clamp(120px, 22vw, 320px)", color: "rgb(var(--shaft-surface))", y: watermarkY }}
       >
         03
       </motion.div>
 
-      <div className="px-8 md:px-16 lg:px-24 relative z-10">
-        {/* Section intertitle */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.15 }}
-          className="flex items-center gap-4 mb-14"
-        >
-          <div
-            className="h-px w-10 shrink-0"
-            style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-          />
-          <span
-            className="font-space-mono text-[8px] tracking-[0.55em] uppercase"
-            style={{ color: "rgb(var(--shaft-gold))" }}
-          >
-            {t("offers.section")}
-          </span>
-          <motion.div
-            className="h-px flex-1 origin-left"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{
-              duration: 0.6,
-              delay: 0.05,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-            style={{ backgroundColor: "rgb(var(--shaft-border))" }}
-          />
-        </motion.div>
-
-        {/* Header Block */}
-        <div className="mb-16 md:mb-24">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="font-playfair font-black leading-[0.9] tracking-tight mb-8"
-            style={{
-              color: "rgb(var(--shaft-cream))",
-              fontSize: "clamp(48px, 6vw, 84px)",
-              maxWidth: "800px",
-            }}
-          >
-            {t("offers.title")}
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="font-space-mono text-[10px] md:text-[12px] tracking-[0.2em] uppercase"
-            style={{ color: "rgb(var(--shaft-muted))" }}
-          >
-            {t("offers.subtitle")}
-          </motion.p>
+      <div className="relative z-10 px-6 md:px-16 lg:px-24">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
+          <Mono>{t("offers.section")}</Mono>
+          <div className="h-px flex-1" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
         </div>
-
-        {live && (
-          <IntakeTerminal
-            className="mb-16 md:mb-20 [&_[data-part=answer]]:text-[rgb(var(--shaft-cream-dim))] [&_[data-part=arrow]]:text-[rgb(var(--shaft-crimson-text))] [&_[data-part=hint]]:text-[rgb(var(--shaft-muted))] [&_[data-part=prompt]]:text-[rgb(var(--shaft-cream))] [&_[data-part=reset]]:text-[rgb(var(--shaft-muted))]"
-            prompt={t("intake.prompt")}
-            hint={t("intake.hint")}
-            resetLabel={when ? undefined : t("intake.reset")}
-            value={answer}
-            collapseOnAnswer
-            onChange={(next) => {
-              setAnswer(next);
-              // A different problem deserves the timing question again.
-              setWhen(null);
-              if (next) playSound("click");
-            }}
-            options={[
-              { value: "a", label: t("intake.a") },
-              { value: "b", label: t("intake.b") },
-              { value: "c", label: t("intake.c") },
-              { value: "d", label: t("intake.d") },
-            ]}
-            optionClassName="text-[rgb(var(--shaft-cream-dim))] hover:text-[rgb(var(--shaft-cream))] data-[active=true]:text-[rgb(var(--shaft-cream))] [&_[data-tab]]:bg-[rgb(var(--shaft-crimson))] [&>span:nth-child(2)]:text-[rgb(var(--shaft-crimson-text))]"
-          />
-        )}
-
-        {/*
-          The follow-up. A terminal accumulates: the first question settles
-          into a transcript line and this one appears beneath it, so two
-          clicks describe a problem and a timeline rather than one click
-          describing a category. Both answers ride the mailto subject, which
-          is the difference between an enquiry and a qualified one.
-        */}
-        {live && answer && (
-          <IntakeTerminal
-            className="-mt-6 mb-16 md:mb-20 [&_[data-part=hint]]:text-[rgb(var(--shaft-muted))] [&_[data-part=prompt]]:text-[rgb(var(--shaft-cream))] [&_[data-part=reset]]:text-[rgb(var(--shaft-muted))] [&_[data-part=answer]]:text-[rgb(var(--shaft-cream-dim))] [&_[data-part=arrow]]:text-[rgb(var(--shaft-crimson-text))]"
-            prompt={t("intake.q2")}
-            resetLabel={t("intake.reset")}
-            typewriter={false}
-            collapseOnAnswer
-            value={when}
-            onChange={(next) => {
-              setWhen(next);
-              if (next) playSound("click");
-            }}
-            options={[
-              { value: "a", label: t("intake.q2.a") },
-              { value: "b", label: t("intake.q2.b") },
-              { value: "c", label: t("intake.q2.c") },
-            ]}
-            optionClassName="text-[rgb(var(--shaft-cream-dim))] hover:text-[rgb(var(--shaft-cream))] data-[active=true]:text-[rgb(var(--shaft-cream))] [&_[data-tab]]:bg-[rgb(var(--shaft-crimson))] [&>span:nth-child(2)]:text-[rgb(var(--shaft-crimson-text))]"
-          />
-        )}
-
-        {/*
-          The budget band, asked last.
-
-          Deliberately not printed on the slips. A number on a card is the
-          thing people leave over — they read it, decide they are the wrong
-          size of client, and close the tab without ever describing what they
-          wanted. A number they pick is the opposite: by here they have named
-          a problem and a deadline, so answering costs almost nothing, and the
-          enquiry arrives answerable with a yes or a no rather than another
-          email asking for one.
-
-          The last option is not "prefer not to say". It is an invitation to
-          the conversation, because the person who has no idea what this
-          should cost is the one most worth talking to and the one a band
-          would otherwise turn away.
-        */}
-        {live && answer && when && (
-          <IntakeTerminal
-            className="-mt-6 mb-16 md:mb-20 [&_[data-part=hint]]:text-[rgb(var(--shaft-muted))] [&_[data-part=prompt]]:text-[rgb(var(--shaft-cream))] [&_[data-part=reset]]:text-[rgb(var(--shaft-muted))] [&_[data-part=answer]]:text-[rgb(var(--shaft-cream-dim))] [&_[data-part=arrow]]:text-[rgb(var(--shaft-crimson-text))]"
-            prompt={t("intake.q3")}
-            resetLabel={t("intake.reset")}
-            typewriter={false}
-            collapseOnAnswer
-            value={budget}
-            onChange={(next) => {
-              setBudget(next);
-              if (next) playSound("click");
-            }}
-            options={[
-              { value: "a", label: t("intake.q3.a") },
-              { value: "b", label: t("intake.q3.b") },
-              { value: "c", label: t("intake.q3.c") },
-              { value: "d", label: t("intake.q3.d") },
-            ]}
-            optionClassName="text-[rgb(var(--shaft-cream-dim))] hover:text-[rgb(var(--shaft-cream))] data-[active=true]:text-[rgb(var(--shaft-cream))] [&_[data-tab]]:bg-[rgb(var(--shaft-crimson))] [&>span:nth-child(2)]:text-[rgb(var(--shaft-crimson-text))]"
-          />
-        )}
-
-        {/*
-          A drawer of catalogue slips rather than three stacked essays.
-
-          The old form was one full-width prose block per offer, which meant
-          the three could only be compared by scrolling between them — and
-          they exist to be compared. Side by side with the same four parts in
-          the same order (index, title, what it is, who it is for), the
-          comparison is the layout. The punch at the foot of each slip is the
-          detail that makes it a card and not a box.
-        */}
-        {/*
-          `items-start` once a slip is chosen, so the drawer opens one and
-          leaves the other two at their natural height. A stretched grid makes
-          every card as tall as the tallest, and the chosen one now carries a
-          form — which left the two beside it as several hundred pixels of
-          empty ruled surface. Before the choice the three are still stretched,
-          because that is what makes them comparable.
-        */}
-        <div
-          className={`grid gap-px md:grid-cols-3 ${narrowed ? "items-start" : ""}`}
+        <h2
+          className="font-playfair font-black leading-[0.95] tracking-tight max-w-[900px]"
+          style={{ color: "rgb(var(--shaft-cream))", fontSize: "clamp(40px, 5.6vw, 84px)" }}
         >
-          {offers.map((offer, i) => (
-            <motion.article
-              key={offer.num}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.45, delay: 0.08 * i }}
-              /*
-                The rules are drawn per slip, not by showing a coloured grid
-                background through 1px gaps. That trick needs every cell to be
-                the same height, and once a chosen slip opens while the others
-                stay short it paints the whole area under them as a solid slab
-                of border colour. A 1px outline on each card meets its
-                neighbour's across the gap and draws the same line without
-                depending on the row being full.
-              */
-              className="group relative flex flex-col p-8 shadow-[0_0_0_1px_rgb(var(--shaft-border))] transition-colors duration-500 lg:p-10"
-              data-picked={narrowed ? routed === offer.num : undefined}
-              style={{
-                /*
-                  Recession by surface, never by opacity. Dimming the text of
-                  the slips you did not pick would drop them under AA, and
-                  they are still meant to be readable — the brief was that
-                  they recede, not that they go away. Losing the fill lets
-                  them sink into the section while every word keeps its
-                  contrast.
-                */
-                backgroundColor:
-                  narrowed && routed !== offer.num
-                    ? "rgb(var(--shaft-bg))"
-                    : "rgb(var(--shaft-surface))",
-              }}
-            >
-              {/* Filing rule — drawn on hover, and held open once picked. */}
-              <span
-                aria-hidden="true"
-                className="absolute left-0 top-0 h-0.5 w-0 transition-all duration-500 ease-out group-hover:w-full group-focus-within:w-full group-data-[picked=true]:w-full"
-                style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-              />
+          <Accent text={t("offers.title")} />
+        </h2>
+        <p className="mt-5 max-w-xl text-[17px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+          {t("offers.subtitle")}
+        </p>
 
-              <div className="flex items-baseline gap-4">
-                <span
-                  className="font-space-mono text-[10px] tracking-[0.3em]"
-                  style={{ color: "rgb(var(--shaft-crimson-text))" }}
-                >
-                  [ {offer.num} ]
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="h-px flex-1"
-                  style={{ backgroundColor: "rgb(var(--shaft-border))" }}
-                />
-                {/*
-                  The headline promises two to four weeks and then nothing on
-                  the page stood behind it. Each slip now says where in that
-                  window it lands.
-                */}
-                <span
-                  className="shrink-0 font-space-mono text-[9px] uppercase tracking-[0.2em]"
-                  style={{ color: "rgb(var(--shaft-muted))" }}
-                >
-                  {offer.window}
-                </span>
-              </div>
+        {/* ── Featured: MVP Sprint ── */}
+        <motion.div
+          {...reveal(0)}
+          ref={cardRef}
+          onMouseMove={onMove}
+          className="group relative mt-14 border"
+          style={{
+            borderColor: "rgb(var(--shaft-border))",
+            backgroundColor: "rgb(var(--shaft-surface))",
+            backgroundImage:
+              "radial-gradient(520px circle at var(--mx, 75%) var(--my, 20%), rgb(var(--shaft-crimson) / 0.13), transparent 60%)",
+          }}
+        >
+          <Corners />
 
+          <div
+            className="flex items-center justify-between gap-4 border-b px-7 py-3 lg:px-10"
+            style={{ borderColor: "rgb(var(--shaft-border))" }}
+          >
+            <Mono>{t("mvp.file")}</Mono>
+            <span className="hidden sm:inline"><Mono>{t("mvp.own")}</Mono></span>
+          </div>
+
+          <div className="grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+            {/* What you get */}
+            <div className="p-7 lg:p-12">
               <h3
-                className="mt-6 font-playfair font-black leading-[1.06]"
-                style={{
-                  fontSize: "clamp(22px, 2vw, 30px)",
-                  color: "rgb(var(--shaft-cream))",
-                }}
+                className="font-playfair font-black leading-[0.9] tracking-tight"
+                style={{ color: "rgb(var(--shaft-cream))", fontSize: "clamp(44px, 5vw, 76px)" }}
               >
-                {offer.title}
+                {t("mvp.name")}
               </h3>
-
-              <p
-                className="mt-5 text-[15px] leading-relaxed"
-                style={{ color: "rgb(var(--shaft-cream-dim))" }}
-              >
-                {offer.body1}
+              <p className="mt-5 max-w-lg text-[17px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                {t("mvp.body")}
               </p>
 
-              <div className="mt-auto pt-8">
-                <span
-                  className="font-space-mono text-[9px] uppercase tracking-[0.28em]"
-                  style={{ color: "rgb(var(--shaft-gold))" }}
-                >
-                  {t("offers.bestWhen")}
-                </span>
-                <p
-                  className="mt-2 text-[12px] leading-relaxed"
-                  style={{ color: "rgb(var(--shaft-muted))" }}
-                >
-                  {offer.body2}
-                </p>
+              <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+                {Array.from({ length: MVP_TIERS[0].includes }, (_, k) => (
+                  <li key={k} className="flex gap-3 text-[15px] leading-snug" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                    <span aria-hidden="true" style={{ color: "rgb(var(--shaft-muted))" }}>+</span>
+                    {t(`mvp.inc.auth.${k + 1}`)}
+                  </li>
+                ))}
+              </ul>
 
-                {/*
-                  The receipt. A link where a shipped project genuinely
-                  demonstrates the offer; a plain line where none does, so the
-                  three slips keep the same shape and nothing is invented to
-                  fill the gap.
-                */}
-                <p className="mt-5 text-[11px] leading-relaxed">
-                  <span
-                    className="font-space-mono uppercase tracking-[0.22em]"
-                    style={{ color: "rgb(var(--shaft-crimson-text))" }}
+              <AnimatePresence initial={false}>
+                {tier === "payments" && (
+                  <motion.div
+                    key="payments"
+                    initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="overflow-hidden"
                   >
-                    {t("offers.proof")}{" "}
-                  </span>
-                  {offer.proof.href ? (
-                    <Link
-                      href={offer.proof.href}
-                      className="underline underline-offset-4 transition-opacity hover:opacity-70"
-                      style={{ color: "rgb(var(--shaft-cream-dim))" }}
-                    >
-                      {offer.proof.label}
-                    </Link>
-                  ) : (
-                    <span style={{ color: "rgb(var(--shaft-cream-dim))" }}>
-                      {offer.proof.label}
-                    </span>
-                  )}
-                </p>
+                    <div className="mt-7 border-t pt-6" style={{ borderColor: "rgb(var(--shaft-border))" }}>
+                      <Mono>{t("mvp.everything")}</Mono>
+                      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                        {Array.from({ length: MVP_TIERS[1].includes }, (_, k) => (
+                          <li key={k} className="flex gap-3 text-[15px] leading-snug" style={{ color: "rgb(var(--shaft-cream))" }}>
+                            <span aria-hidden="true" style={{ color: "rgb(var(--shaft-muted))" }}>+</span>
+                            {t(`mvp.inc.payments.${k + 1}`)}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Price panel */}
+            <div
+              className="flex flex-col border-t p-7 lg:border-l lg:border-t-0 lg:p-12"
+              style={{ borderColor: "rgb(var(--shaft-border))", backgroundColor: "rgb(var(--shaft-bg) / 0.55)" }}
+            >
+              <div
+                role="radiogroup"
+                aria-label={t("mvp.name")}
+                className="relative grid grid-cols-2 border p-1"
+                style={{ borderColor: "rgb(var(--shaft-border))" }}
+              >
+                {MVP_TIERS.map((x) => (
+                  <button
+                    key={x.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={tier === x.id}
+                    onClick={() => pickTier(x.id)}
+                    className="relative z-10 min-h-11 px-2 sm:px-3 py-2.5 font-space-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.06em] sm:tracking-[0.14em] whitespace-nowrap transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--shaft-cream))]"
+                    style={{ color: tier === x.id ? "#fff" : "rgb(var(--shaft-muted))" }}
+                  >
+                    {tier === x.id && (
+                      <motion.span
+                        layoutId="mvp-tier-pill"
+                        className="absolute inset-0 -z-10"
+                        style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
+                        transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    {t(`mvp.tier.${x.id}`)}
+                  </button>
+                ))}
               </div>
 
-              {/*
-                The slip the visitor was routed to ends in a form, not a
-                mailto. Both answers prefill the message, so what lands in
-                /admin/enquiries already says which of the three this is
-                about, what the problem is and when they want it — in their
-                own words — and the lead is durable the moment they press
-                send rather than depending on a mail client existing.
-              */}
-              {narrowed && routed === offer.num && (
-                <ShaftEnquiryForm
-                  className="mt-8 border-t pt-8"
-                  projectType={offer.title}
-                  transcript={intakeManifest(offer.title)}
-                  email={EMAIL}
-                />
-              )}
+              <div className="mt-10 overflow-hidden" aria-live="polite">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.div
+                    key={active.id}
+                    initial={reduceMotion ? false : { y: "100%", opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={reduceMotion ? undefined : { y: "-100%", opacity: 0 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="font-playfair font-black leading-none tracking-tight"
+                    style={{ color: "rgb(var(--shaft-cream))", fontSize: "clamp(64px, 7vw, 104px)" }}
+                  >
+                    {active.price}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+              <p className="mt-3 font-space-mono text-[12px] uppercase tracking-[0.16em]" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                {active.window} {t("mvp.weeks")}
+              </p>
+              <p className="mt-2 mb-10 text-[14px]" style={{ color: "rgb(var(--shaft-muted))" }}>
+                {t("mvp.fixed")}
+              </p>
 
-              {/* The punch: what makes a catalogue card a catalogue card. */}
-              <span
-                aria-hidden="true"
-                className="mx-auto mt-8 block h-2.5 w-2.5 rounded-full border"
-                style={{ borderColor: "rgb(var(--shaft-border))" }}
-              />
-            </motion.article>
-          ))}
-        </div>
-
-        {/* CTA Under Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-16 md:mt-24 max-w-xl"
-        >
-          {/*
-            "I don't know yet" resolves here rather than to a slip. The rule
-            widens and the line brightens so the answer visibly lands
-            somewhere instead of appearing to do nothing.
-          */}
-          <div
-            className="mb-8 h-px transition-all duration-500"
-            style={{
-              width: answer === "d" ? "100%" : "4rem",
-              backgroundColor: "rgb(var(--shaft-crimson))",
-            }}
-          />
-          <p
-            className="font-playfair text-xl leading-snug transition-colors duration-500 md:text-2xl"
-            style={{
-              color:
-                answer === "d"
-                  ? "rgb(var(--shaft-cream))"
-                  : "rgb(var(--shaft-cream-dim))",
-            }}
-          >
-            {t("offers.cta")}
-          </p>
-          {/*
-            The same form as the slips. Someone who picked "I don't know yet"
-            is the visitor most worth capturing and the least able to write a
-            subject line, so this is the one place the message genuinely does
-            start empty — the placeholder asks the question instead.
-          */}
-          {answer === "d" && (
-            <ShaftEnquiryForm
-              className="mt-8 border-t pt-8"
-              projectType={t("offers.section")}
-              transcript={intakeManifest()}
-              email={EMAIL}
-            />
-          )}
+              <a
+                href={BOOKING.fitCall}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => playSound("click")}
+                className="group/cta mt-10 lg:mt-auto inline-flex min-h-14 w-full items-center justify-center gap-3 px-8 py-5 text-[16px] font-semibold transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[rgb(var(--shaft-cream))]"
+                style={{ backgroundColor: "rgb(var(--shaft-crimson))", color: "#fff" }}
+              >
+                {t("mvp.cta")}
+                <span aria-hidden="true" className="transition-transform duration-150 group-hover/cta:translate-x-1">→</span>
+              </a>
+            </div>
+          </div>
         </motion.div>
+
+        {/* ── Small offer: landing page ── */}
+        <motion.div
+          {...reveal(1)}
+          className="mt-px grid gap-6 border p-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:p-10"
+          style={{ borderColor: "rgb(var(--shaft-border))", backgroundColor: "rgb(var(--shaft-bg))" }}
+        >
+          <div>
+            <h3 className="font-playfair text-[32px] font-black leading-none" style={{ color: "rgb(var(--shaft-cream))" }}>
+              {t("landing.name")}
+            </h3>
+            <p className="mt-3 max-w-xl text-[15px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+              {t("landing.body")}
+            </p>
+            <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+              {Array.from({ length: LANDING.includes }, (_, k) => (
+                <li key={k} className="text-[14px]" style={{ color: "rgb(var(--shaft-muted))" }}>
+                  <span aria-hidden="true" className="mr-2" style={{ color: "rgb(var(--shaft-muted))" }}>+</span>
+                  {t(`landing.inc.${k + 1}`)}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex flex-wrap items-center gap-6 lg:justify-end">
+            <div className="flex items-baseline gap-2">
+              <Mono>{t("landing.from")}</Mono>
+              <span className="font-playfair text-[48px] font-black leading-none" style={{ color: "rgb(var(--shaft-cream))" }}>
+                {LANDING.price}
+              </span>
+            </div>
+            <a
+              href={BOOKING.fitCall}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex min-h-12 items-center gap-2 border px-6 py-3 text-[15px] font-semibold transition-colors duration-150 hover:bg-[rgb(var(--shaft-crimson))] hover:text-white"
+              style={{ borderColor: "rgb(var(--shaft-crimson))", color: "rgb(var(--shaft-cream))" }}
+            >
+              {t("landing.cta")} <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
+            </a>
+          </div>
+        </motion.div>
+        <p className="mt-4 text-[14px]" style={{ color: "rgb(var(--shaft-muted))" }}>
+          {t("landing.note")}
+        </p>
+
       </div>
     </section>
   );

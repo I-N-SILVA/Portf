@@ -1,306 +1,355 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
 
 import { socialLinks } from "@/lib/placeholder-content";
 import { useTranslation } from "@/lib/i18n";
-import { ShaftGatewayLinks } from "./ShaftGateway";
+import { BOOKING, CONTACT_EMAIL } from "@/lib/booking";
+import Image from "next/image";
+import Accent from "./Accent";
+import { useSoundEffects, useSoundPreference } from "@/hooks/useSoundEffects";
 
-// Minimal social icon labels for text-only rendering
 const SOCIAL_LABELS: Record<string, string> = {
-  instagram: "INSTAGRAM",
-  youtube:   "YOUTUBE",
-  linkedin:  "LINKEDIN",
-  github:    "GITHUB",
-  substack:  "SUBSTACK",
+  instagram: "Instagram",
+  youtube: "YouTube",
+  linkedin: "LinkedIn",
+  github: "GitHub",
+  substack: "Substack",
 };
 
-const fadeUp = (delay = 0) => ({
-  hidden:  { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3, delay, ease: [0.22, 1, 0.36, 1] } },
-});
+const FAQ = [1, 2, 3, 4, 5] as const;
+const STEPS = [1, 2, 3] as const;
+const CORNERS = [
+  "left-3 top-3 border-l-2 border-t-2",
+  "right-3 top-3 border-r-2 border-t-2",
+  "left-3 bottom-3 border-l-2 border-b-2",
+  "right-3 bottom-3 border-r-2 border-b-2",
+] as const;
 
-const vpOpts = { once: true, margin: "-60px" };
+function Mono({ children, color = "--shaft-muted" }: { children: React.ReactNode; color?: string }) {
+  return (
+    <span className="font-space-mono text-[11px] uppercase tracking-[0.18em]" style={{ color: `rgb(var(${color}))` }}>
+      {children}
+    </span>
+  );
+}
+
+function Rule({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
+      <Mono>{label}</Mono>
+      <div className="h-px flex-1" style={{ backgroundColor: "rgb(var(--shaft-border))" }} />
+    </div>
+  );
+}
 
 export default function ShaftCall() {
-  const sectionRef = useRef<HTMLElement>(null);
   const { t } = useTranslation();
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const watermarkY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+  const { playSound } = useSoundEffects();
+  const [soundOn, setSoundOn] = useSoundPreference();
+  const reduceMotion = useReducedMotion();
+  const [openFaq, setOpenFaq] = useState<number | null>(1);
+
+  const reveal = (delay: number) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 16 },
+          whileInView: { opacity: 1, y: 0 },
+          viewport: { once: true, margin: "-60px" },
+          transition: { duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] as const },
+        };
+
+  const nav = [
+    { id: "shaft-archive", label: t("nav.archive") },
+    { id: "shaft-offers", label: t("nav.offers") },
+    { id: "shaft-call", label: t("nav.call") },
+    { id: "shaft-faq", label: "FAQ" },
+  ];
 
   return (
-    <section
-      ref={sectionRef}
-      id="shaft-call"
-      className="relative overflow-hidden"
-      style={{ backgroundColor: "rgb(var(--shaft-bg))" }}
-    >
-      {/* ── Primary theatrical CTA ── */}
-      <div className="relative min-h-screen flex flex-col justify-center px-8 md:px-16 lg:px-24 py-28">
+    <section id="shaft-call" className="relative scroll-mt-20" style={{ backgroundColor: "rgb(var(--shaft-bg))" }}>
+      {/* ── Book ── */}
+      <div className="px-6 md:px-16 lg:px-24 pt-20 md:pt-28">
+        <Rule label={t("call.section")} />
 
-        {/* Background geometry */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Watermark — parallax */}
-          <motion.div
-            aria-hidden="true"
-            className="absolute left-0 bottom-0 font-playfair font-black leading-none pointer-events-none select-none"
-            style={{
-              fontSize: "clamp(120px, 22vw, 320px)",
-              // Hardcoded near-black: a watermark on the dark ground, a solid
-              // slab on parchment. --shaft-surface is one step off the
-              // background in either theme.
-              color: "rgb(var(--shaft-surface))",
-              lineHeight: 1,
-              y: watermarkY,
-            }}
-          >
-            04
-          </motion.div>
-
-          {/* Faint crimson horizontal stripe */}
-          <div
-            className="absolute top-1/2 left-0 right-0 h-px"
-            style={{ backgroundColor: "rgb(204 17 34 / 0.08)" }}
-          />
-        </div>
-
-        {/* Section intertitle */}
-        <motion.div
-          variants={fadeUp(0)}
-          initial="hidden"
-          whileInView="visible"
-          viewport={vpOpts}
-          className="flex items-center gap-4 mb-14 relative z-10"
-        >
-          <div className="h-px w-10 shrink-0" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
-          <span className="font-space-mono text-[8px] tracking-[0.55em] uppercase" style={{ color: "rgb(var(--shaft-gold))" }}>
-            {t("call.section")}
-          </span>
-          <motion.div 
-            className="h-px flex-1 origin-left" 
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={vpOpts}
-            transition={{ duration: 0.6, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-            style={{ backgroundColor: "rgb(var(--shaft-border))" }} 
-          />
-        </motion.div>
-
-        <div className="relative z-10">
-          {/* Title block */}
-          {/*
-            One <h2> for one sentence. It was two — "SCHEDULE" and "THE CALL."
-            as separate top-level section headings — because the crimson rule
-            animates between them. The rule is decoration, so it lives inside
-            the heading and is hidden from assistive tech instead.
-          */}
-          <h2
-            className="font-playfair font-black leading-[0.85] tracking-tighter"
-            style={{
-              color: "rgb(var(--shaft-cream))",
-              fontSize: "clamp(56px, 11vw, 160px)",
-            }}
-          >
-            <motion.span
-              className="block"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        {/*
+          Three grid items, not two: title, booking card, steps. On phones
+          they stack in that order, so the button arrives right after the
+          headline instead of three step boxes later. On desktop the card
+          sits in the right column, spanning both rows.
+        */}
+        <div className="mt-10 grid gap-10 md:mt-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-start lg:gap-x-14 lg:gap-y-14">
+          <div className="lg:col-start-1 lg:row-start-1">
+            <motion.h2
+              {...reveal(0)}
+              className="font-playfair font-black leading-[0.86] tracking-tighter"
+              style={{ color: "rgb(var(--shaft-cream))", fontSize: "clamp(40px, 9vw, 140px)" }}
             >
-              {t("call.title1")}
-            </motion.span>
+              <span className="block">{t("call.title1")}</span>
+              <span aria-hidden="true" className="block h-0.5 w-full my-3" style={{ backgroundColor: "rgb(var(--shaft-crimson))" }} />
+              <span className="block" style={{ marginLeft: "3vw" }}>{t("call.title2")}</span>
+            </motion.h2>
+          </div>
 
-            <motion.span
-              aria-hidden="true"
-              className="block h-0.5 w-full my-2 origin-left"
-              style={{ backgroundColor: "rgb(var(--shaft-crimson))" }}
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.35, delay: 0.15 }}
-            />
+            <motion.div {...reveal(0.1)} className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+              <Mono>{t("call.steps.title")}</Mono>
+              <ol className="mt-6 grid gap-px sm:grid-cols-3">
+                {STEPS.map((n) => (
+                  <li
+                    key={n}
+                    className="flex gap-4 p-5 shadow-[0_0_0_1px_rgb(var(--shaft-border))] sm:block sm:p-6"
+                    style={{ backgroundColor: "rgb(var(--shaft-surface))" }}
+                  >
+                    <span className="font-playfair text-[28px] leading-none sm:text-[44px]" style={{ color: "rgb(var(--shaft-muted))" }}>
+                      {String(n).padStart(2, "0")}
+                    </span>
+                    <div>
+                      <p className="text-[16px] font-semibold sm:mt-5 sm:text-[17px]" style={{ color: "rgb(var(--shaft-cream))" }}>
+                        {t(`call.step.${n}.t`)}
+                      </p>
+                      <p className="mt-1.5 text-[14px] leading-relaxed sm:mt-2" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                        {t(`call.step.${n}.b`)}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </motion.div>
 
-            <motion.span
-              className="block"
-              style={{ marginLeft: "3vw" }}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {t("call.title2")}
-            </motion.span>
-          </h2>
-
-          {/* Dialogue text — sparse, pause-heavy */}
-          <motion.div
-            variants={fadeUp(0.4)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={vpOpts}
-            className="mt-12 space-y-1"
+          {/* Booking card */}
+          <motion.aside
+            {...reveal(0.15)}
+            className="relative border p-6 sm:p-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:p-10 lg:sticky lg:top-28"
+            style={{ borderColor: "rgb(var(--shaft-border))", backgroundColor: "rgb(var(--shaft-surface))" }}
           >
-            {[
-              { text: t("call.line1"), dim: true },
-              { text: t("call.line2"),   dim: true },
-              { text: t("call.line3"), dim: false },
-            ].map(({ text, dim }) => (
-              <p
-                key={text}
-                className="font-playfair text-xl md:text-2xl"
-                style={{ color: dim ? "rgb(var(--shaft-muted))" : "rgb(var(--shaft-cream-dim))" }}
-              >
-                {text}
-              </p>
+            {CORNERS.map((c) => (
+              <span key={c} aria-hidden="true" className={`absolute h-4 w-4 ${c}`} style={{ borderColor: "rgb(var(--shaft-crimson))" }} />
             ))}
-          </motion.div>
-
-          {/* CTA — full-width rectangular placard */}
-          <motion.div
-            variants={fadeUp(0.6)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={vpOpts}
-            className="mt-12"
-          >
+            <Mono>{t("call.card.label")}</Mono>
+            <p className="mt-4 font-playfair text-[40px] font-black leading-[1]" style={{ color: "rgb(var(--shaft-cream))" }}>
+              {t("call.card.title")}
+            </p>
+            <p className="mt-4 text-[16px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+              {t("call.body")}
+            </p>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {[1, 2, 3].map((n) => (
+                <li
+                  key={n}
+                  className="border px-3 py-1.5 font-space-mono text-[11px] uppercase tracking-[0.14em]"
+                  style={{ borderColor: "rgb(var(--shaft-border))", color: "rgb(var(--shaft-cream-dim))" }}
+                >
+                  {t(`call.card.meta.${n}`)}
+                </li>
+              ))}
+            </ul>
             <a
-              href="https://calendly.com/iansilva-plyaz/30min"
+              href={BOOKING.fitCall}
               target="_blank"
               rel="noopener noreferrer"
-              className="group w-full flex items-center justify-between border transition-colors duration-150 hover:bg-[rgb(204_17_34)] "
-              style={{
-                borderColor: "rgb(var(--shaft-crimson))",
-                backgroundColor: "transparent",
-              }}
+              onClick={() => playSound("click")}
+              className="group mt-8 inline-flex min-h-14 w-full items-center justify-center gap-3 px-5 sm:px-8 py-5 text-[15px] sm:text-[17px] font-semibold transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[rgb(var(--shaft-cream))]"
+              style={{ backgroundColor: "rgb(var(--shaft-crimson))", color: "#fff" }}
             >
-              <span
-                className="font-space-mono text-[10px] md:text-[11px] tracking-[0.5em] uppercase px-8 py-5 border-r transition-colors duration-150"
-                style={{
-                  color: "rgb(var(--shaft-cream))",
-                  borderColor: "rgb(var(--shaft-crimson))",
-                }}
-              >
-                {t("call.cta.open")}
-              </span>
-              <motion.span
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-                className="font-space-mono text-[13px] px-6 py-5"
-                style={{ color: "rgb(var(--shaft-crimson-text))" }}
-              >
-                → ]
-              </motion.span>
+              {t("call.cta.open")}
+              <span aria-hidden="true" className="transition-transform duration-150 group-hover:translate-x-1">→</span>
             </a>
-          </motion.div>
-
-          {/* Email fallback */}
-          <motion.div
-            variants={fadeUp(0.75)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={vpOpts}
-            className="mt-6 flex flex-wrap items-center gap-4"
-          >
-            <span
-              className="font-space-mono text-[8px] tracking-[0.3em] uppercase"
-              style={{ color: "rgb(var(--shaft-muted))" }}
-            >
-              {t("call.email.prefix")}
-            </span>
-            <a
-              href="mailto:iannogueira@proton.me"
-              className="font-space-mono text-[8px] tracking-[0.3em] uppercase border-b pb-0.5 transition-opacity hover:opacity-70"
-              style={{
-                color: "rgb(var(--shaft-cream-dim))",
-                borderColor: "rgb(var(--shaft-border))",
-              }}
-            >
-              iannogueira@proton.me
-            </a>
-          </motion.div>
-
-          {/*
-            Credentials and availability, rescued from the identity section
-            when it was removed. They are the two things on a freelance
-            portfolio that actually decide whether someone writes to you, and
-            deleting the section that held them would have taken them off the
-            site entirely. Here they sit against the address, which is where
-            a reader has already decided to get in touch.
-          */}
-          <motion.dl
-            variants={fadeUp(0.85)}
-            initial="hidden"
-            whileInView="visible"
-            viewport={vpOpts}
-            className="mt-10 grid max-w-xl gap-x-10 gap-y-5 sm:grid-cols-2"
-          >
-            {[
-              ["standing.background", "standing.background.value"],
-              ["standing.focus", "standing.focus.value"],
-              ["standing.status", "standing.status.value"],
-            ].map(([labelKey, valueKey]) => (
-              <div key={labelKey}>
-                <dt
-                  className="font-space-mono text-[8px] tracking-[0.3em] uppercase"
-                  style={{ color: "rgb(var(--shaft-muted))" }}
-                >
-                  {t(labelKey)}
-                </dt>
-                <dd
-                  className="mt-2 text-[13px] leading-relaxed"
-                  style={{ color: "rgb(var(--shaft-cream-dim))" }}
-                >
-                  {t(valueKey)}
-                </dd>
-              </div>
-            ))}
-          </motion.dl>
-        </div>
-
-        {/* FIN. marker */}
-        <div className="absolute bottom-10 right-8 md:right-16 lg:right-24 pointer-events-none">
-          <span
-            className="font-playfair text-sm font-bold italic"
-            style={{ color: "rgb(var(--shaft-muted))" }}
-          >
-            {t("call.fin")}
-          </span>
+            <p className="mt-5 text-[14px] leading-relaxed" style={{ color: "rgb(var(--shaft-muted))" }}>
+              {t("call.email.prefix")}{" "}
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="underline underline-offset-4 transition-opacity hover:opacity-70"
+                style={{ color: "rgb(var(--shaft-cream-dim))" }}
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </p>
+            <dl className="mt-8 grid gap-4 border-t pt-6 sm:grid-cols-2" style={{ borderColor: "rgb(var(--shaft-border))" }}>
+              {[
+                ["standing.background", "standing.background.value"],
+                ["standing.status", "standing.status.value"],
+              ].map(([labelKey, valueKey]) => (
+                <div key={labelKey}>
+                  <dt><Mono>{t(labelKey)}</Mono></dt>
+                  <dd className="mt-1.5 text-[14px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                    {t(valueKey)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </motion.aside>
         </div>
       </div>
 
-
-
-      {/* ── Footer / Credits ── */}
-      <footer
-        className="border-t px-8 md:px-16 lg:px-24 py-8"
-        style={{ borderColor: "rgb(var(--shaft-border))" }}
-      >
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          {/* Copyright */}
-          <span
-            className="font-space-mono text-[8px] tracking-[0.35em] uppercase"
-            style={{ color: "rgb(var(--shaft-muted))" }}
-          >
-            © {new Date().getFullYear()} IAN N. SILVA — {t("call.copyright")}
-          </span>
-
-          {/* Social links as text */}
-          <div className="flex flex-wrap items-center gap-6">
-            <ShaftGatewayLinks />
-            {socialLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-space-mono text-[7px] tracking-[0.35em] uppercase transition-colors hover:opacity-100"
-                style={{ color: "rgb(var(--shaft-muted))", opacity: 0.5 }}
-              >
-                {SOCIAL_LABELS[link.icon] || link.name.toUpperCase()}
+      {/* ── FAQ ── */}
+      <div id="shaft-faq" className="scroll-mt-20 px-6 md:px-16 lg:px-24 py-16 md:py-32">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <motion.div {...reveal(0)}>
+            <h3
+              className="font-playfair font-black leading-[0.95] tracking-tight"
+              style={{ color: "rgb(var(--shaft-cream))", fontSize: "clamp(36px, 4.4vw, 64px)" }}
+            >
+              <Accent text={t("faq.title")} />
+            </h3>
+            <p className="mt-5 max-w-sm text-[16px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+              {t("faq.sub")}{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`} className="underline underline-offset-4" style={{ color: "rgb(var(--shaft-cream))" }}>
+                {CONTACT_EMAIL}
               </a>
-            ))}
+            </p>
+          </motion.div>
+
+          <motion.ul {...reveal(0.08)} className="border-t" style={{ borderColor: "rgb(var(--shaft-border))" }}>
+            {FAQ.map((n) => {
+              const open = openFaq === n;
+              return (
+                <li key={n} className="border-b" style={{ borderColor: "rgb(var(--shaft-border))" }}>
+                  <h4>
+                    <button
+                      type="button"
+                      aria-expanded={open}
+                      aria-controls={`faq-${n}`}
+                      onClick={() => setOpenFaq(open ? null : n)}
+                      className="flex w-full items-baseline gap-5 py-6 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--shaft-cream))]"
+                    >
+                      <span className="font-space-mono text-[12px]" style={{ color: "rgb(var(--shaft-muted))" }}>
+                        {String(n).padStart(2, "0")}
+                      </span>
+                      <span
+                        className="flex-1 font-playfair text-[22px] md:text-[26px] font-bold leading-tight transition-colors"
+                        style={{ color: open ? "rgb(var(--shaft-cream))" : "rgb(var(--shaft-cream-dim))" }}
+                      >
+                        {t(`faq.${n}.q`)}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="font-space-mono text-[20px] transition-transform duration-300"
+                        style={{ color: "rgb(var(--shaft-muted))", transform: open ? "rotate(45deg)" : "none" }}
+                      >
+                        +
+                      </span>
+                    </button>
+                  </h4>
+                  <AnimatePresence initial={false}>
+                    {open && (
+                      <motion.div
+                        id={`faq-${n}`}
+                        initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <p className="pb-7 pl-10 max-w-2xl text-[16px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                          {t(`faq.${n}.a`)}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              );
+            })}
+          </motion.ul>
+        </div>
+      </div>
+
+      {/* ── Footer ── */}
+      <footer className="relative overflow-hidden border-t" style={{ borderColor: "rgb(var(--shaft-border))" }}>
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 px-6 py-12 md:py-16 md:px-16 lg:grid-cols-[minmax(0,4fr)_repeat(3,minmax(0,2fr))] lg:px-24">
+          <div className="col-span-2 lg:col-span-1">
+            <p className="flex items-center gap-3 font-playfair text-[28px] font-black leading-none" style={{ color: "rgb(var(--shaft-cream))" }}>
+              <Image src="/brand/aa-mark.svg" alt="" width={44} height={39} unoptimized className="shaft-mark h-10 w-auto shrink-0" />
+              <span>Ian N. Silva<span style={{ color: "rgb(var(--shaft-crimson))" }}>.</span></span>
+            </p>
+            <p className="mt-4 max-w-xs text-[15px] leading-relaxed" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+              {t("footer.bio")}
+            </p>
+          </div>
+
+          <nav aria-label={t("footer.nav")}>
+            <Mono>{t("footer.nav")}</Mono>
+            <ul className="mt-5 space-y-3">
+              {nav.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`#${item.id}`}
+                    className="text-[15px] transition-colors hover:text-[rgb(var(--shaft-cream))]"
+                    style={{ color: "rgb(var(--shaft-cream-dim))" }}
+                  >
+                    {item.label === "FAQ" ? "FAQ" : item.label.charAt(0) + item.label.slice(1).toLowerCase()}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="order-last col-span-2 lg:order-none lg:col-span-1">
+            <Mono>{t("footer.contact")}</Mono>
+            <ul className="mt-5 space-y-3 text-[15px]">
+              <li>
+                <a href={`mailto:${CONTACT_EMAIL}`} className="break-words transition-colors hover:text-[rgb(var(--shaft-cream))]" style={{ color: "rgb(var(--shaft-cream-dim))" }}>
+                  {CONTACT_EMAIL}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={BOOKING.fitCall}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-[rgb(var(--shaft-cream))]"
+                  style={{ color: "rgb(var(--shaft-cream-dim))" }}
+                >
+                  {t("footer.book")} →
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <Mono>{t("footer.elsewhere")}</Mono>
+            <ul className="mt-5 space-y-3 text-[15px]">
+              {socialLinks.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-colors hover:text-[rgb(var(--shaft-cream))]"
+                    style={{ color: "rgb(var(--shaft-cream-dim))" }}
+                  >
+                    {SOCIAL_LABELS[link.icon] || link.name} ↗
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+
+        <div
+          className="flex flex-col gap-4 border-t px-6 py-6 md:flex-row md:items-center md:justify-between md:px-16 lg:px-24"
+          style={{ borderColor: "rgb(var(--shaft-border))" }}
+        >
+          <span className="font-space-mono text-[11px] uppercase tracking-[0.14em]" style={{ color: "rgb(var(--shaft-muted))" }}>
+            © {new Date().getFullYear()} Ian N. Silva · {t("footer.rights")}
+          </span>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 font-space-mono text-[11px] uppercase tracking-[0.14em]">
+            <button
+              type="button"
+              onClick={() => setSoundOn(!soundOn)}
+              aria-pressed={soundOn}
+              aria-label={soundOn ? "Mute interface sound" : "Unmute interface sound"}
+              className="uppercase transition-opacity hover:opacity-70"
+              style={{ color: "rgb(var(--shaft-muted))" }}
+            >
+              {soundOn ? t("footer.sound.on") : t("footer.sound.off")}
+            </button>
+            <a href="#main" className="transition-opacity hover:opacity-70" style={{ color: "rgb(var(--shaft-muted))" }}>
+              {t("footer.top")} ↑
+            </a>
           </div>
         </div>
       </footer>

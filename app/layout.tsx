@@ -4,6 +4,10 @@ import { CSP_STRICT } from "@/lib/security/csp";
 import "@fontsource-variable/inter";
 import "@fontsource-variable/syne";
 import "@fontsource-variable/playfair-display";
+import "@fontsource-variable/newsreader/opsz.css";
+import "@fontsource-variable/newsreader/opsz-italic.css";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
 import "@fontsource/space-mono/400.css";
 import "@fontsource/space-mono/700.css";
 import "./globals.css";
@@ -39,6 +43,7 @@ export const metadata: Metadata = {
   // entries pointed at an 824x1024 portrait that was neither size nor square.
   icons: {
     icon: [
+      { url: "/brand/aa-favicon.svg", type: "image/svg+xml" },
       { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
       { url: "/favicon.ico", sizes: "32x32" },
@@ -176,7 +181,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className="font-sans antialiased bg-background text-foreground overflow-x-hidden"
+        className="font-sans antialiased bg-background text-foreground overflow-x-clip"
       >
         {/* First stop in the tab order: skips the nav, the social dock and
             the ticker, which is otherwise a long walk to the content. */}

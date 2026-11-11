@@ -1,86 +1,53 @@
 /**
- * The three things the studio sells, in one place.
+ * What the studio sells, in one place.
  *
- * The display copy lives in lib/translations/* because it is translated five
- * ways. What lives here is the language-neutral spine: the id each offer is
- * routed to by the intake terminal, and a plain English name and description
- * for the machines — schema.org, llms.txt, anything that summarises the site
- * without rendering it.
+ * One main offer (the MVP Sprint, in two tiers) and one small one (a landing
+ * page). Everything else is an extra: listed in the request form, priced on
+ * the call. Display copy lives in lib/translations/sales.ts; the plain English
+ * names and descriptions here feed schema.org and llms.txt.
  *
- * Those two audiences want different sentences. A visitor reading the drawer
- * gets "a thing they can click"; a model asked what this person does needs
- * "a working, deployed prototype". Keeping both here stops the schema from
- * drifting away from the offering, which is exactly what had happened — it
- * still advertised Web3 and machine learning.
+ * Prices are GBP. Launch pricing, November 2026.
  */
-export interface Offer {
-  /** Matches the numeral printed on the slip. */
-  num: "01" | "02" | "03";
-  /** Plain English, for structured data. */
-  name: string;
-  /** Plain English, one sentence, for structured data and llms.txt. */
-  description: string;
-  /** The intake answer that routes here. */
-  intake: "a" | "b" | "c";
-}
 
-export const OFFERS: Offer[] = [
+export const MVP_TIERS = [
+  { id: "auth", price: "£2,000", window: "2–3", includes: 5 },
+  { id: "payments", price: "£4,000", window: "3–4", includes: 3 },
+] as const;
+
+export type MvpTier = (typeof MVP_TIERS)[number]["id"];
+
+export const LANDING = { price: "£350", includes: 4 };
+
+/** Extras a visitor can tick in the request form. Quoted on the call. */
+export const EXTRAS = ["brand", "pages", "copy", "automation", "care", "deck"] as const;
+
+export const OFFERS: { name: string; description: string }[] = [
   {
-    num: "01",
-    name: "Prototype & MVP build",
+    name: "MVP Sprint",
     description:
-      "A working, deployed prototype built in days so an idea can be put in front of real users, investors or a team before committing to a full build.",
-    intake: "b",
+      "A working product with sign-up and login, database, admin and deploy in 2 to 3 weeks for £2,000, or with Stripe payments in 3 to 4 weeks for £4,000.",
   },
   {
-    num: "02",
-    name: "Conversion-focused landing pages",
+    name: "Landing page",
     description:
-      "Copy, layout, build and analytics delivered as one job, so a launch, waitlist or paid campaign lands on a page that makes the argument and reports whether it worked.",
-    intake: "c",
-  },
-  {
-    num: "03",
-    name: "AI automation of repeated work",
-    description:
-      "Existing tools — email, CRM, Notion, Airtable, Stripe — wired together with AI handling the reading, sorting and drafting in between, so a weekly manual task stops needing a person.",
-    intake: "a",
+      "One responsive landing page built from your copy and brand in about 5 days, from £350.",
   },
 ];
 
-/** Intake answer → offer, or null for "I don't know yet". */
-export const INTAKE_ROUTES: Record<string, Offer["num"] | null> = {
-  ...Object.fromEntries(OFFERS.map((offer) => [offer.intake, offer.num])),
-  d: null,
-};
-
-/**
- * The intake questions, as question-and-answer pairs.
- *
- * The terminal already asks these out loud and answers them by routing. In
- * that shape they are also the only FAQ the site has, so they are emitted as
- * FAQPage structured data from the same source rather than written twice —
- * question-shaped content is what answer engines lift, and this site had
- * none since the studio's FAQ left with it.
- */
+/** Emitted as FAQPage structured data and llms.txt. */
 export const INTAKE_FAQ: { question: string; answer: string }[] = [
   {
-    question:
-      "I have a process my team repeats every week — what can Ian Silva build?",
-    answer: OFFERS[2].description,
-  },
-  {
-    question: "I have an idea nobody can try yet — what can Ian Silva build?",
-    answer: OFFERS[0].description,
-  },
-  {
-    question:
-      "My site gets traffic that arrives and leaves — what can Ian Silva build?",
-    answer: OFFERS[1].description,
-  },
-  {
-    question: "What if I don't know which of these I need?",
+    question: "What does Ian Silva build?",
     answer:
-      "Bring the problem as it actually is. The first call is free and diagnostic: if a smaller piece would settle the question faster, that is what gets built first, and if it is not work for this studio you get told so.",
+      "MVPs for founders: a working product with login, database and admin for £2,000, or with payments for £4,000. Also landing pages from £350.",
+  },
+  {
+    question: "How do prices work?",
+    answer:
+      "Fixed price for the scope agreed on the call. 50% to start, 50% on launch. Extras such as a logo, more pages or copywriting are quoted on the call.",
+  },
+  {
+    question: "What if I don't know what I need?",
+    answer: "Book the free 20-minute call. You leave knowing whether it's a fit and roughly what it costs.",
   },
 ];

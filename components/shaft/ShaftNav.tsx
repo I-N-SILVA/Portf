@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
-import { useSoundEffects, useSoundPreference } from "@/hooks/useSoundEffects";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useTranslation, LOCALES, type Locale } from "@/lib/i18n";
 import ShaftDecipher from "./ShaftDecipher";
-import { ShaftGatewayControls } from "./ShaftGateway";
+import { BOOKING } from "@/lib/booking";
 
 const chapters = [
   { id: "shaft-hero", key: "nav.opening", num: "01" },
@@ -23,7 +23,6 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
   const [isLight, setIsLight] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { playSound } = useSoundEffects();
-  const [soundOn, setSoundOn] = useSoundPreference();
   const { locale, setLocale, t } = useTranslation();
 
   const { scrollYProgress } = useScroll();
@@ -110,39 +109,6 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               borderColor: "rgb(var(--shaft-border) / 0.7)",
             }}
           >
-            {/* Sound toggle.
-                Sits first because it's the control someone reaches for in a
-                hurry: the site makes noise on click, hover and page change,
-                and until now there was no way to stop it. Clicking it off is
-                itself silent — playing a click to confirm you want silence is
-                the wrong answer. */}
-            <button
-              onClick={() => {
-                const next = !soundOn;
-                if (next) playSound("click");
-                setSoundOn(next);
-              }}
-              className="shaft-control flex items-center gap-2 px-2.5 py-1.5 border border-transparent hover:border-[rgb(var(--shaft-crimson))] transition-colors duration-200 group"
-              style={{ backgroundColor: "transparent" }}
-              aria-pressed={soundOn}
-              aria-label={
-                soundOn ? "Mute interface sound" : "Unmute interface sound"
-              }
-            >
-              <span
-                className="text-[10px]"
-                style={{ color: "rgb(var(--shaft-gold))" }}
-              >
-                {soundOn ? "◈" : "◇"}
-              </span>
-              <span
-                className="font-space-mono text-[9px] tracking-[0.18em] uppercase transition-colors group-hover:text-[rgb(var(--shaft-crimson))]"
-                style={{ color: "rgb(var(--shaft-muted))" }}
-              >
-                {soundOn ? "SOUND" : "MUTED"}
-              </span>
-            </button>
-
             {/* Theme toggle — prominent pill button */}
             <button
               onClick={toggleTheme}
@@ -155,7 +121,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               {/* Sun/Moon icon */}
               <span
                 className="text-[10px]"
-                style={{ color: "rgb(var(--shaft-gold))" }}
+                style={{ color: "rgb(var(--shaft-muted))" }}
               >
                 {isLight ? "◐" : "◑"}
               </span>
@@ -179,7 +145,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               >
                 <span
                   className="text-[10px]"
-                  style={{ color: "rgb(var(--shaft-gold))" }}
+                  style={{ color: "rgb(var(--shaft-muted))" }}
                 >
                   ⌐
                 </span>
@@ -257,11 +223,22 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               </AnimatePresence>
             </div>
 
-            {/* Out of the portfolio: the studio, and the client portal. */}
-            <ShaftGatewayControls />
           </motion.div>
         )}
       </AnimatePresence>
+
+      {visible && (
+        <a
+          href={BOOKING.fitCall}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => playSound("click")}
+          className="fixed top-6 right-8 z-[101] hidden md:inline-flex min-h-10 items-center gap-2 px-5 py-2.5 font-space-mono text-[11px] font-bold uppercase tracking-[0.16em] transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[rgb(var(--shaft-cream))]"
+          style={{ backgroundColor: "rgb(var(--shaft-crimson))", color: "#fff" }}
+        >
+          {t("nav.book")} <span aria-hidden="true">→</span>
+        </a>
+      )}
 
       {/* ═══════════════════════════════════════════════════════════════
           DESKTOP: Right-side vertical chapter list
@@ -281,7 +258,7 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 16 }}
               transition={{ duration: 0.25, delay: 0.15 }}
-              className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] hidden lg:flex flex-col items-end"
+              className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] hidden 2xl:flex flex-col items-end"
               aria-label="Chapter navigation"
             >
               {/* Base connector line */}
@@ -339,53 +316,6 @@ export default function ShaftNav({ visible }: ShaftNavProps) {
         </AnimatePresence>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════════════
-          MOBILE: Fixed bottom strip — chapter nav only
-          ═══════════════════════════════════════════════════════════════ */}
-      <AnimatePresence>
-        {visible && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.25, delay: 0.15 }}
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100] flex lg:hidden items-center gap-0"
-            style={{
-              backgroundColor: "rgb(var(--shaft-surface) / 0.9)",
-              border: "1px solid rgb(var(--shaft-border))",
-              backdropFilter: "blur(16px)",
-            }}
-          >
-            {chapters.map((ch) => {
-              const isActive = active === ch.id;
-              return (
-                <button
-                  key={ch.id}
-                  onClick={() => scrollTo(ch.id)}
-                  className="relative px-3 py-2.5 transition-colors duration-100"
-                  style={{
-                    backgroundColor: isActive
-                      ? "rgb(var(--shaft-crimson))"
-                      : "transparent",
-                  }}
-                  aria-label={t(ch.key)}
-                >
-                  <span
-                    className="font-space-mono text-[8px] tracking-[0.2em]"
-                    style={{
-                      color: isActive
-                        ? "rgb(var(--shaft-cream))"
-                        : "rgb(var(--shaft-muted))",
-                    }}
-                  >
-                    {ch.num}
-                  </span>
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 }

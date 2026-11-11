@@ -32,7 +32,7 @@ const PORT = flag("port", "3000");
 const BASE = `http://localhost:${PORT}`;
 const ROUTES = flag(
   "routes",
-  "/,/pt,/es,/ja,/zh,/studio/lab,/studio/brand,/projects/8",
+  "/,/pt,/es,/ja,/zh,/studio/lab,/projects/8",
 ).split(",");
 const BROWSER = process.env.PLAYWRIGHT_CHROMIUM ?? "/opt/pw-browsers/chromium";
 

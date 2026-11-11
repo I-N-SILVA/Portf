@@ -1,3 +1,6 @@
+import { salesZh } from "./sales";
+import { offerZh } from "./offer";
+
 export const zh: Record<string, string> = {
   "intertitle.year": "作品集 · 2026",
   "intertitle.subtitle": "AI自动化工程师",
@@ -140,4 +143,6 @@ export const zh: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "AI 提示词管理平台——一套功能完整的提示词库，用于高效地整理、打磨和投入使用",
   "projects.3.full": "Promptuous 是一套完整的提示词库与管理系统，为需要高效整理、打磨并投入使用提示词的 AI 从业者、开发者和内容创作者而设计。平台提供集中的工作空间，用于存储、分类并反复迭代提示词，覆盖从创意应用到通用工作流的各类场景。",
+  ...salesZh,
+  ...offerZh,
 };

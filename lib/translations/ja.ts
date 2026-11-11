@@ -1,3 +1,6 @@
+import { salesJa } from "./sales";
+import { offerJa } from "./offer";
+
 export const ja: Record<string, string> = {
   "intertitle.year": "ポートフォリオ · 2026",
   "intertitle.subtitle": "AI自動化エンジニア",
@@ -140,4 +143,6 @@ export const ja: Record<string, string> = {
   "projects.3.title": "Promptuous",
   "projects.3.desc": "AIプロンプト管理プラットフォーム。プロンプトの整理・改善・運用をまとめて担う本格的なライブラリ",
   "projects.3.full": "Promptuousは、プロンプトを効率よく整理・改善・運用する必要のあるAI実務者、開発者、コンテンツ制作者のために設計された、本格的なプロンプトライブラリ兼管理システムです。クリエイティブな用途から汎用的なワークフローまで、さまざまなユースケースにまたがるプロンプトを、一箇所で保存・分類し、繰り返し磨き込める作業環境を提供します。",
+  ...salesJa,
+  ...offerJa,
 };

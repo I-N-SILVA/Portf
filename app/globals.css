@@ -87,6 +87,9 @@ html[data-shaft-light] .shaft-paper-texture {
 
 @media (min-width: 768px) {
   [id^="shaft-"] {
+    scroll-margin-top: 3.5rem;
+  }
+  #shaft-hero {
     scroll-margin-top: 0;
   }
 }
@@ -538,4 +541,87 @@ html[data-booted] .shaft-intro-overlay {
     animation: none;
     opacity: 1;
   }
+}
+
+
+/* ─── Landing typography ──────────────────────────────────────────────
+   Scoped to the landing (and /brief) so the portal and admin keep theirs.
+   Modelled on what the reference sites actually ship (checked live,
+   Nov 2026): one quiet face at regular weight, a mono for labels, no
+   black weights, no coloured words. Scale and space do the work.
+
+   Editorial (default)  Newsreader 400 headlines, Geist text, Geist Mono
+                        labels. Reference: Anthropic, Studio Freight.
+   Product (.type-product, or ?type=product to compare)  Geist 500 tight
+                        headlines. Reference: Vercel, basement, Stripe.
+   ───────────────────────────────────────────────────────────────────── */
+.shaft-type {
+  --font-playfair: "Newsreader Variable";
+  --font-inter: "Geist Variable";
+  --font-space-mono: "Geist Mono Variable";
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+.shaft-type .font-playfair {
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  font-optical-sizing: auto;
+}
+.shaft-type .font-space-mono {
+  font-weight: 400;
+}
+.shaft-type.type-product {
+  --font-playfair: "Geist Variable";
+}
+.shaft-type.type-product .font-playfair {
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+
+/* ─── Hero atmosphere: film grain and a drifting crimson light leak ─── */
+.shaft-grain {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: shaft-grain 0.9s steps(6) infinite;
+}
+@keyframes shaft-grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-4%, 3%); }
+  40% { transform: translate(3%, -5%); }
+  60% { transform: translate(-6%, -2%); }
+  80% { transform: translate(5%, 4%); }
+  100% { transform: translate(0, 0); }
+}
+.shaft-light-leak {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38vw 38vw at 78% 30%, rgb(204 17 34 / 0.16), transparent 70%),
+    radial-gradient(30vw 30vw at 12% 85%, rgb(226 179 64 / 0.06), transparent 70%);
+  animation: shaft-leak 18s ease-in-out infinite alternate;
+}
+@keyframes shaft-leak {
+  from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.85; }
+  to { transform: translate3d(-6%, 4%, 0) scale(1.12); opacity: 1; }
+}
+html[data-shaft-light] .shaft-grain { opacity: 0.05; }
+@media (prefers-reduced-motion: reduce) {
+  .shaft-grain, .shaft-light-leak { animation: none; }
+}
+
+/*
+  The AA mark with no ground behind it. Its face is ink, so on the dark theme
+  a hairline paper cut-line traces the silhouette (drop-shadow follows the
+  alpha, so it outlines the head, not a box). The light theme needs none.
+*/
+.shaft-mark {
+  filter: drop-shadow(0 0 0.6px #f1efe7) drop-shadow(0 0 0.6px #f1efe7) drop-shadow(0 0 0.4px #f1efe7)
+    drop-shadow(0 6px 14px rgb(0 0 0 / 0.5));
+}
+[data-shaft-light] .shaft-mark {
+  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.16));
 }
