@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint --dir app --dir components --dir lib --dir hooks --file middleware.ts --file instrumentation.ts --file next.config.ts",
+    "lint": "eslint app components lib hooks middleware.ts instrumentation.ts next.config.ts",
     "typecheck": "tsc --noEmit",
     "check:dead": "node scripts/find-dead-modules.mjs --check",
     "check:types": "node scripts/check-types-drift.mjs --check",
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
+    "@eslint/eslintrc": "^3.3.7",
     "@playwright/test": "^1.62.1",
     "@types/node": "^22.10.5",
     "@types/react": "^19.0.6",

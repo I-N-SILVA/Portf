@@ -64,6 +64,9 @@ export function isValidSlug(slug: string): boolean {
 export const routes = {
   home: "/",
 
+  /** TidyCal's after-booking redirect. */
+  booked: "/booked",
+
   /** Post-login resolver for client and admin workspaces. */
   portal: "/portal",
 

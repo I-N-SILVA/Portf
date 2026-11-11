@@ -1,0 +1,28 @@
+import { FlatCompat } from "@eslint/eslintrc";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta.url)) });
+
+export default [
+  { ignores: ["node_modules/**", ".next/**", "next-env.d.ts", "**/*.mjs"] },
+  ...compat.config({
+    extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+    parser: "@typescript-eslint/parser",
+    parserOptions: { project: "./tsconfig.json" },
+    plugins: ["@typescript-eslint"],
+    rules: {
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        { checksVoidReturn: { attributes: false } },
+      ],
+      "@typescript-eslint/await-thenable": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+      "@typescript-eslint/no-explicit-any": "warn",
+    },
+  }),
+];
