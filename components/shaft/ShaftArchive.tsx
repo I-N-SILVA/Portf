@@ -89,7 +89,7 @@ const LAB: LabItem[] = [
   {
     name: "Satori no Manga",
     summary: "Self-hosted manga reader: multi-source search, offline vault, release calendar and a cinematic reader.",
-    image: "/projects/manga-spotlight.webp",
+    image: "/projects/satori-series.webp",
     stack: ["React", "FastAPI", "Docker"],
     status: "private",
   },
